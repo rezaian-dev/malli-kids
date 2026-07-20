@@ -1,0 +1,383 @@
+/* 🎛️ Tailwind entry for the admin route group only — see `storefront.css`
+   for the counterpart and the full rationale. Imported from
+   `admin/layout.tsx` only. */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./theme.css";
+
+/* 🚫 `src/app/(storefront)/**` is never imported from admin code (verified:
+   no cross-imports either way) — excluding it keeps the storefront's own
+   large surface (hero/marquee/carousel sections, product cards, the whole
+   public site) out of every admin page's CSS. Shared component/lib
+   directories stay on the default full-project scan. */
+@source not "./(storefront)";
+
+/* 📅 `JalaliDateField` theme — the Persian calendar popup, dressed in the
+   console's navy/gold voice (light + dark). `react-multi-date-picker`
+   ships its own layout CSS; these rules only recolor/reshape. (The popup
+   renders inline inside the dialog's stacking context — see the `portal`
+   note on `JalaliDateField` — so no z-index override is needed.) */
+.malli-jalali-field {
+  display: block !important;
+  width: 100%;
+  max-width: 100%;
+}
+
+.malli-jalali.rmdp-wrapper,
+.malli-jalali .rmdp-wrapper {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 38%, transparent);
+  background: var(--color-paper);
+  box-shadow:
+    0 24px 70px -18px rgb(4 20 39 / 0.45),
+    0 0 0 1px rgb(255 255 255 / 0.4) inset;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.malli-jalali .rmdp-calendar {
+  width: 100%;
+  padding: 0;
+}
+
+/* Header: the library wraps LEFT | MONTH_YEAR | RIGHT in an inner
+   shrink-wrapped flex div — stretch that row and grid it so the title
+   sits in the true center while the nav chips pin to the edges. */
+.malli-jalali .rmdp-header {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.5rem 0.5rem;
+  background: linear-gradient(
+    135deg,
+    var(--color-navy) 0%,
+    var(--color-navy-mid) 100%
+  );
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-gold) 45%, transparent);
+}
+
+.malli-jalali .rmdp-header > div {
+  display: grid !important;
+  grid-template-columns: 2rem minmax(0, 1fr) 2rem;
+  align-items: center;
+  justify-items: stretch;
+  width: 100% !important;
+  position: relative;
+}
+
+.malli-jalali .rmdp-header-values {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  color: var(--color-gold-soft);
+  font-weight: 900;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.malli-jalali .rmdp-header-values span {
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.6rem;
+  transition: background-color 0.15s ease;
+}
+
+.malli-jalali .rmdp-header-values span:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+
+.malli-jalali-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  margin: 0;
+  border-radius: 999px;
+  color: var(--color-gold-soft);
+  background: rgb(255 255 255 / 0.1);
+  border: 1px solid color-mix(in srgb, var(--color-gold) 40%, transparent);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.malli-jalali .rmdp-header > div > .malli-jalali-nav:first-child {
+  justify-self: start;
+}
+
+.malli-jalali .rmdp-header > div > .malli-jalali-nav:last-child {
+  justify-self: end;
+}
+
+.malli-jalali-nav:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.22);
+}
+
+.malli-jalali-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.malli-jalali .rmdp-arrow {
+  display: none !important;
+}
+
+/* Weekday row (شنبه…جمعه). */
+.malli-jalali .rmdp-week-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gold-deep);
+  font-weight: 900;
+  font-size: 0.72rem;
+  height: 2rem;
+  line-height: 1;
+}
+
+/* Day cells: the library insets the inner span 3px and uses
+   `flex-direction: column` without `align-items: center`, so Persian
+   digits sit off-center. Fill the cell and true-center the glyph. */
+.malli-jalali .rmdp-day-picker .rmdp-day {
+  width: 2.35rem;
+  height: 2.35rem;
+  color: var(--color-navy);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.malli-jalali .rmdp-day span {
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  text-align: center;
+  border-radius: 999px;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Shift only the glyph, not the circle: `translate` on the span moved
+   the gold fill with the digit so they stayed misaligned. Top padding
+   drops the text inside a still-full circular background. */
+.malli-jalali .rmdp-day-picker .rmdp-day span {
+  box-sizing: border-box;
+  padding: 0.22em 0 0 !important;
+}
+
+.malli-jalali .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden):hover span {
+  background: color-mix(in srgb, var(--color-gold) 22%, transparent);
+  color: var(--color-navy-deep);
+  box-shadow: none;
+}
+
+.malli-jalali .rmdp-day.rmdp-today span {
+  background: transparent;
+  color: var(--color-navy-deep);
+  box-shadow: inset 0 0 0 2px var(--color-gold);
+  font-weight: 900;
+}
+
+.malli-jalali .rmdp-day.rmdp-selected span {
+  background: linear-gradient(
+    135deg,
+    var(--color-gold-light) 0%,
+    var(--color-gold) 60%,
+    var(--color-gold-deep) 100%
+  );
+  color: var(--color-navy-deep);
+  font-weight: 900;
+  box-shadow: 0 6px 16px -4px rgb(193 147 87 / 0.7);
+}
+
+.malli-jalali .rmdp-day.rmdp-disabled,
+.malli-jalali .rmdp-day.rmdp-day-hidden {
+  color: color-mix(in srgb, var(--color-navy) 28%, transparent);
+}
+
+.malli-jalali .rmdp-day.rmdp-disabled span,
+.malli-jalali .rmdp-day.rmdp-day-hidden span {
+  background: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* Picked today keeps the gold fill, edged in navy so the two states read
+   as one deliberate chip instead of a ring fighting a pill. */
+.malli-jalali .rmdp-day.rmdp-today.rmdp-selected span {
+  box-shadow:
+    0 6px 16px -4px rgb(193 147 87 / 0.7),
+    inset 0 0 0 2px var(--color-navy-deep);
+}
+
+/* جمعه in rose — the `mapDays` class lands on the day's inner `span`,
+   not on `.rmdp-day` itself. Past days stay uniformly dim. */
+.malli-jalali
+  .rmdp-day:not(.rmdp-disabled):not(.rmdp-selected)
+  span.malli-weekend {
+  color: var(--color-rose);
+}
+
+/* Month/year pickers (opened by tapping the header values). */
+.malli-jalali .rmdp-month-picker,
+.malli-jalali .rmdp-year-picker {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.7rem 0.65rem;
+  background: var(--color-paper);
+  border-radius: 0 0 1.15rem 1.15rem;
+}
+
+.malli-jalali .rmdp-ym {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  height: auto;
+  justify-content: stretch;
+}
+
+.malli-jalali .rmdp-month-picker .rmdp-day,
+.malli-jalali .rmdp-year-picker .rmdp-day {
+  width: auto;
+  height: 2.45rem;
+  flex: none;
+  margin: 0;
+  color: var(--color-navy);
+  font-weight: 800;
+}
+
+.malli-jalali .rmdp-month-picker .rmdp-day span,
+.malli-jalali .rmdp-year-picker .rmdp-day span {
+  border-radius: 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  background: color-mix(in srgb, var(--color-navy) 5%, transparent);
+}
+
+.malli-jalali
+  .rmdp-month-picker
+  .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden):hover
+  span,
+.malli-jalali
+  .rmdp-year-picker
+  .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden):hover
+  span {
+  background: color-mix(in srgb, var(--color-gold) 22%, transparent);
+}
+
+.malli-jalali .rmdp-month-picker .rmdp-day.rmdp-selected span,
+.malli-jalali .rmdp-year-picker .rmdp-day.rmdp-selected span {
+  background: linear-gradient(
+    135deg,
+    var(--color-gold-light) 0%,
+    var(--color-gold) 60%,
+    var(--color-gold-deep) 100%
+  );
+  color: var(--color-navy-deep);
+  box-shadow: 0 6px 16px -4px rgb(193 147 87 / 0.7);
+}
+
+/* NOTE: `.rmdp-ym` elements are picker *rows*, not cells — the month/year
+   cells themselves are `.rmdp-day` (covered by the rules above), so rows
+   stay unstyled to avoid whole-row hover bars. */
+
+/* 📱 Narrow phones: the day grid shrinks so the popup (~248px) fits a
+   360px viewport inside a padded dialog — without this the fixed 2.35rem
+   cells above override the library's own responsive sizing (higher
+   specificity) and the popup bleeds past the dialog edges. */
+@media (max-width: 450px) {
+  .malli-jalali .rmdp-header {
+    padding: 0.45rem 0.4rem;
+  }
+
+  .malli-jalali .rmdp-header > div {
+    grid-template-columns: 1.75rem minmax(0, 1fr) 1.75rem;
+  }
+
+  .malli-jalali .rmdp-header-values {
+    font-size: 0.8rem;
+  }
+
+  .malli-jalali .rmdp-week-day {
+    height: 1.55rem;
+    font-size: 0.62rem;
+  }
+
+  .malli-jalali .rmdp-day-picker .rmdp-day {
+    width: 1.9rem;
+    height: 1.9rem;
+    font-size: 0.75rem;
+  }
+
+  .malli-jalali-nav {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}
+
+/* 🌙 Dark console. */
+.dark .malli-jalali.rmdp-wrapper,
+.dark .malli-jalali .rmdp-wrapper {
+  background: var(--color-dusk);
+  border-color: color-mix(in srgb, var(--color-gold) 45%, transparent);
+  box-shadow:
+    0 24px 70px -18px rgb(0 0 0 / 0.7),
+    0 0 0 1px rgb(255 255 255 / 0.06) inset;
+}
+
+.dark .malli-jalali .rmdp-day {
+  color: var(--color-ivory);
+}
+
+.dark
+  .malli-jalali
+  .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden):hover
+  span {
+  color: var(--color-gold-soft);
+}
+
+.dark .malli-jalali .rmdp-day.rmdp-today span {
+  color: var(--color-gold-soft);
+}
+
+.dark .malli-jalali .rmdp-day.rmdp-disabled,
+.dark .malli-jalali .rmdp-day.rmdp-day-hidden {
+  color: color-mix(in srgb, var(--color-ivory) 28%, transparent);
+}
+
+.dark .malli-jalali .rmdp-week-day {
+  color: var(--color-gold-soft);
+}
+
+.dark
+  .malli-jalali
+  .rmdp-day:not(.rmdp-disabled):not(.rmdp-selected)
+  span.malli-weekend {
+  color: var(--color-rose-light);
+}
+
+.dark .malli-jalali .rmdp-month-picker,
+.dark .malli-jalali .rmdp-year-picker {
+  background: var(--color-dusk);
+}
+
+.dark .malli-jalali .rmdp-month-picker .rmdp-day,
+.dark .malli-jalali .rmdp-year-picker .rmdp-day {
+  color: var(--color-ivory);
+}
