@@ -1,0 +1,39 @@
+"use client";
+
+import type { ReactNode } from "react";
+import { useStore } from "@/providers/store-provider";
+import { Button } from "@/components/ui/button";
+
+export function AddToCartButton({
+  out,
+  id,
+  size = "۹۸",
+  className,
+  children,
+}: {
+  out: boolean;
+  id: number;
+  size?: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  const { addToCart, showToast } = useStore();
+
+  function onClick(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (out) {
+      showToast("به محض موجود شدن خبرتان می‌کنیم");
+      return;
+    }
+    // 🔐 `addToCart` itself gates guests (opens the login dialog + its own
+    // toast) — only announce success when it actually added the line.
+    if (addToCart(id, size)) showToast("به سبد اضافه شد");
+  }
+
+  return (
+    <Button type="button" onClick={onClick} className={className}>
+      {children}
+    </Button>
+  );
+}
