@@ -1,0 +1,127 @@
+"use client";
+
+import { toast } from "@/lib/toast";
+import { useStore } from "@/providers/store-provider";
+import {
+  AppForm,
+  ComboboxField,
+  SubmitButton,
+  TextareaField,
+  TextField,
+  useAppForm,
+} from "@/components/form";
+import { IRAN_CITIES } from "@/lib/data/iran-cities";
+import type { User } from "@/types";
+import { updateAccountAction } from "../_lib/actions";
+import {
+  updateAccountDefaults,
+  updateAccountSchema,
+  type UpdateAccountValues,
+} from "../_lib/schemas";
+import { PROFILE_CARD } from "./profile-shared";
+import { SECTION_TITLE } from "../_lib/profile-form-styles";
+import { AddressMapField } from "./address-map-field";
+
+function toValues(user: User): UpdateAccountValues {
+  return {
+    name: [user.firstName, user.lastName].filter(Boolean).join(" "),
+    phone: user.phone || "",
+    postalCode: user.postalCode || "",
+    city: user.city || "",
+    address: user.address || "",
+    lat: user.lat,
+    lng: user.lng,
+  };
+}
+
+/** 👤 The account-details half of the profile info panel. Seeded straight
+ *  from `user` via react-hook-form's `defaultValues` (not a post-mount
+ *  `useEffect`) so it's never blank-then-filled on the first render. */
+export function AccountForm() {
+  const { user, updateUser } = useStore();
+  const form = useAppForm({
+    schema: updateAccountSchema,
+    defaultValues: user ? toValues(user) : updateAccountDefaults,
+  });
+
+  if (!user) return null;
+
+  async function onValid(values: UpdateAccountValues) {
+    const result = await updateAccountAction(values);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    updateUser(result.data);
+    toast.success("اطلاعات حساب ذخیره شد ✅");
+  }
+
+  return (
+    <AppForm
+      form={form}
+      onSubmit={onValid}
+      ariaLabel="ویرایش حساب"
+      className={PROFILE_CARD}
+      notify
+    >
+      <h2 className={SECTION_TITLE}>ویرایش حساب</h2>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <TextField
+          name="name"
+          label="نام و نام خانوادگی"
+          className="sm:col-span-2"
+          autoComplete="name"
+          required
+        />
+
+        <TextField
+          name="postalCode"
+          label="کد پستی"
+          dir="ltr"
+          inputMode="numeric"
+          inputClassName="text-left"
+          placeholder="0123456789"
+          maxLength={10}
+          hint="۱۰ رقم، بدون خط تیره."
+        />
+
+        <ComboboxField
+          name="city"
+          label="شهر"
+          options={IRAN_CITIES}
+          placeholder="نام شهر را تایپ کنید"
+          autoComplete="address-level2"
+        />
+
+        <TextareaField
+          name="address"
+          label="آدرس"
+          className="sm:col-span-2"
+          autoComplete="street-address"
+          maxLength={160}
+        />
+
+        <div className="-mt-2 sm:col-span-2">
+          <AddressMapField />
+        </div>
+
+        <TextField
+          name="phone"
+          label="شماره موبایل"
+          dir="ltr"
+          type="tel"
+          inputMode="tel"
+          inputClassName="text-left"
+          autoComplete="tel-national"
+          placeholder="0912…"
+          hint="فقط برای تماس در صورت نیاز."
+        />
+      </div>
+
+      <SubmitButton variant="navy" className="h-11 px-7" pendingLabel="در حال ذخیره…">
+        ذخیره حساب
+      </SubmitButton>
+    </AppForm>
+  );
+}
