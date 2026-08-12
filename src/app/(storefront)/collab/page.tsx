@@ -1,0 +1,13 @@
+import { buildMetadata } from "@/lib/seo";
+import { CollabLanding } from "./_components/collab-landing";
+export const dynamic = "force-static";
+
+export const metadata = buildMetadata({
+  title: "همکاری با ما",
+  description: "خرید عمده، دوخت، محتوا و مدلینگ کودک.",
+  path: "/collab",
+});
+
+export default function CollabPage() {
+  return <CollabLanding />;
+}
