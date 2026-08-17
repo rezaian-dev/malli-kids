@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useErrorRetry } from "@/hooks/use-error-retry";
 
 // 🧯 Catches errors anywhere in the admin console.
 export default function AdminError({
@@ -12,6 +14,8 @@ export default function AdminError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { retry, reload, pending } = useErrorRetry(reset);
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -23,15 +27,31 @@ export default function AdminError({
       </span>
       <div>
         <h1 className="text-navy dark:text-ivory text-xl font-black">
-          چیزی درست پیش نرفت
+          مشکلی پیش آمده
         </h1>
         <p className="text-navy/70 dark:text-wheat mt-2 max-w-sm text-sm leading-7">
-          یک خطای غیرمنتظره در کنسول مدیریت رخ داد.
+          خطای غیرمنتظره در کنسول. دوباره تلاش کنید یا صفحه را بارگذاری کنید.
         </p>
       </div>
-      <Button variant="navy" size="pill" onClick={reset}>
-        تلاش دوباره
-      </Button>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Button
+          type="button"
+          variant="navy"
+          size="pill"
+          disabled={pending}
+          onClick={retry}
+        >
+          تلاش دوباره
+        </Button>
+        <Button type="button" variant="outline" size="pill" onClick={reload}>
+          بارگذاری صفحه
+        </Button>
+        <Button asChild variant="gold" size="pill">
+          <Link href="/admin" replace>
+            داشبورد
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 }

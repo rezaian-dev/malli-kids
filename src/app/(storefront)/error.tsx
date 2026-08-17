@@ -4,9 +4,10 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useErrorRetry } from "@/hooks/use-error-retry";
 import { cn } from "@/lib/utils";
 
-// 🧯 Segment-level error boundary — header/footer stay visible via the layout.
+// 🧯 Segment error boundary — layout (header/footer) stays mounted.
 export default function StorefrontError({
   error,
   reset,
@@ -14,6 +15,8 @@ export default function StorefrontError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { retry, reload, pending } = useErrorRetry(reset);
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -30,19 +33,30 @@ export default function StorefrontError({
       </span>
       <div>
         <h1 className="text-navy dark:text-ivory text-2xl font-black">
-          چیزی درست پیش نرفت
+          مشکلی پیش آمده
         </h1>
         <p className="text-navy/70 dark:text-wheat mt-2 max-w-sm text-sm leading-7">
-          یک خطای غیرمنتظره رخ داد. می‌توانید دوباره تلاش کنید یا به خانه
-          برگردید.
+          یک خطای غیرمنتظره رخ داد. دوباره تلاش کنید؛ اگر ماند، صفحه را از نو
+          بارگذاری کنید یا به خانه برگردید.
         </p>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-3">
-        <Button variant="navy" size="pill" onClick={reset}>
+        <Button
+          type="button"
+          variant="navy"
+          size="pill"
+          disabled={pending}
+          onClick={retry}
+        >
           تلاش دوباره
         </Button>
-        <Button asChild variant="outline" size="pill">
-          <Link href="/">بازگشت به خانه</Link>
+        <Button type="button" variant="outline" size="pill" onClick={reload}>
+          بارگذاری صفحه
+        </Button>
+        <Button asChild variant="gold" size="pill">
+          <Link href="/" replace>
+            بازگشت به خانه
+          </Link>
         </Button>
       </div>
     </div>
