@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { findPublishedArticle, loadPublishedArticles } from "@/lib/articles";
-import { REVALIDATE } from "@/lib/cache";
 import { JsonLd } from "@/components/shared/json-ld";
 import { articleSchema, breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { ArticleActions } from "./_components/article-actions";
 import { ArticleView } from "./_components/article-view";
 
-export const revalidate = REVALIDATE.editorial;
+// ⚠️ Segment config must be a literal — Turbopack statically extracts this
+// export and rejects a reference (see REVALIDATE.editorial in @/lib/cache).
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
   const articles = await loadPublishedArticles();

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 
-import { REVALIDATE } from "@/lib/cache";
 import { parseProductRouteId, pdpHref, productRouteParam } from "@/lib/data/products";
 import { getAllProducts, getProductById } from "@/lib/shop/products";
 import { buildMetadata } from "@/lib/seo";
 import { ProductDetailLanding } from "./_components/product-detail-landing";
 
-export const revalidate = REVALIDATE.catalog;
+// ⚠️ Segment config must be a literal — Turbopack statically extracts this
+// export and rejects a reference (see REVALIDATE.catalog in @/lib/cache).
+export const revalidate = 60;
 
 export async function generateStaticParams() {
   const products = await getAllProducts();
