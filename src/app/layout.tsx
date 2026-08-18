@@ -4,6 +4,7 @@ import { cookies, headers } from "next/headers";
 import localFont from "next/font/local";
 import NextTopLoader from "nextjs-toploader";
 import { StoreProvider } from "@/providers/store-provider";
+import { MotionProvider } from "@/components/motion";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -104,7 +105,11 @@ export default async function RootLayout({
       dir="rtl"
       data-scroll-behavior="smooth"
       data-auth={user ? "user" : "guest"}
-      className={cn(vazir.variable, playfair.variable, "scrollbar-gutter-stable")}
+      className={cn(
+        vazir.variable,
+        playfair.variable,
+        "scrollbar-gutter-stable",
+      )}
       suppressHydrationWarning
     >
       <head>
@@ -121,12 +126,16 @@ export default async function RootLayout({
         <JsonLd data={websiteSchema()} />
         {isAdmin ? null : <NextTopLoader {...TOP_LOADER} />}
 
-        <ThemeProvider>
-          <StoreProvider initialState={initialState}>
-            {children}
-            <Toaster />
-          </StoreProvider>
-        </ThemeProvider>
+        {/* ♿ reducedMotion="user" => همه انیمیشن‌های motion به
+            prefers-reduced-motion کاربر احترام می‌گذارند. */}
+        <MotionProvider>
+          <ThemeProvider>
+            <StoreProvider initialState={initialState}>
+              {children}
+              <Toaster />
+            </StoreProvider>
+          </ThemeProvider>
+        </MotionProvider>
       </body>
     </html>
   );
