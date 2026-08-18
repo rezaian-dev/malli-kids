@@ -1,4 +1,5 @@
 import { Search } from "lucide-react";
+import { AnimatePresence } from "motion/react";
 import { toFaDigits } from "@/lib/locale/fa";
 import { ProductCard } from "@/components/product";
 import { PRODUCT_GRID } from "@/components/product/card-styles";
@@ -27,21 +28,20 @@ export function ShopResults({
   return (
     <>
       <h2 className="sr-only">نتایج فروشگاه</h2>
-      <div
-        className={
-          view === "list"
-            ? "flex flex-col gap-4"
-            : PRODUCT_GRID
-        }
-      >
-        {items.map((p, index) => (
-          <ProductCard
-            key={p.id}
-            p={p}
-            view={view}
-            aboveFold={index < (view === "list" ? 2 : 4)}
-          />
-        ))}
+      {/* 🎬 با تعویضِ فیلتر/صفحه، کارت‌های خارج‌شده با محو+کوچک‌شدن بیرون
+          می‌روند و بقیه با `layout` نرم در جای خالی می‌نشینند — نه یک
+          رفرشِ خشکِ گرید. */}
+      <div className={view === "list" ? "flex flex-col gap-4" : PRODUCT_GRID}>
+        <AnimatePresence mode="popLayout" initial={false}>
+          {items.map((p, index) => (
+            <ProductCard
+              key={p.id}
+              p={p}
+              view={view}
+              aboveFold={index < (view === "list" ? 2 : 4)}
+            />
+          ))}
+        </AnimatePresence>
       </div>
 
       {items.length === 0 ? (

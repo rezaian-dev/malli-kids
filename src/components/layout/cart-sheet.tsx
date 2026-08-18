@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowLeft, BadgeCheck, ShoppingBag, Trash2, XIcon } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import {
+  ArrowLeft,
+  BadgeCheck,
+  ShoppingBag,
+  Trash2,
+  XIcon,
+} from "lucide-react";
+import { EASE_OUT } from "@/components/motion";
 import { useStore } from "@/providers/store-provider";
 import { resolvePrice } from "@/lib/shop/pricing";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
@@ -55,7 +63,12 @@ export function CartSheet() {
       const product = products.find((p) => p.id === item.id);
       if (!product) return null;
       const resolved = resolvePrice(product, campaign);
-      return { item, product, unitPrice: resolved.price, originalPrice: resolved.original };
+      return {
+        item,
+        product,
+        unitPrice: resolved.price,
+        originalPrice: resolved.original,
+      };
     })
     .filter(
       (
@@ -107,14 +120,23 @@ export function CartSheet() {
           <Badge
             aria-hidden
             className={cn(
-              "pointer-events-none absolute -inset-e-1 -top-1 justify-center rounded-full border-2 p-0 tabular-nums",
+              "pointer-events-none absolute -inset-e-1 -top-1 justify-center overflow-hidden rounded-full border-2 p-0 tabular-nums",
               "border-cream bg-navy text-gold text-[10px] font-black",
               "dark:border-navy-deep dark:bg-navy dark:text-gold-light",
               cartCount > 9 ? "h-5 min-w-5 px-1" : "size-5",
               empty && "hidden",
             )}
           >
-            {cartCount > 99 ? "+۹۹" : toFaDigits(cartCount)}
+            {/* 🎬 هر بار تعدادِ سبد عوض می‌شود، رقمِ جدید با یک فنرِ کوچک
+                از پایین می‌جهد داخل — به جای پرشِ خشکِ متن. */}
+            <motion.span
+              key={cartCount}
+              initial={{ y: 10, opacity: 0, scale: 0.4 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 500, damping: 22 }}
+            >
+              {cartCount > 99 ? "+۹۹" : toFaDigits(cartCount)}
+            </motion.span>
           </Badge>
         </Button>
       </SheetTrigger>
@@ -169,17 +191,29 @@ export function CartSheet() {
             />
 
             <div className="min-h-0 flex-1 scrollbar-thin space-y-2.5 overflow-y-auto px-4 py-4">
-              {rows.map(({ item, product, unitPrice, originalPrice }) => (
-                <CartLineItem
-                  key={`${item.id}-${item.size}`}
-                  item={item}
-                  product={product}
-                  unitPrice={unitPrice}
-                  originalPrice={originalPrice}
-                  onQtyChange={(qty) => setCartQty(item.id, item.size, qty)}
-                  onRemove={() => removeCartItem(item.id, item.size)}
-                />
-              ))}
+              {/* 🎬 حذفِ یک ردیف با سُر خوردن + محو شدن بیرون می‌رود؛ بقیهٔ
+                  ردیف‌ها با `layout` نرم جای خالی را پر می‌کنند. */}
+              <AnimatePresence initial={false} mode="popLayout">
+                {rows.map(({ item, product, unitPrice, originalPrice }) => (
+                  <motion.div
+                    key={`${item.id}-${item.size}`}
+                    layout
+                    initial={{ opacity: 0, y: -14, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: 40, scale: 0.94 }}
+                    transition={{ duration: 0.32, ease: EASE_OUT }}
+                  >
+                    <CartLineItem
+                      item={item}
+                      product={product}
+                      unitPrice={unitPrice}
+                      originalPrice={originalPrice}
+                      onQtyChange={(qty) => setCartQty(item.id, item.size, qty)}
+                      onRemove={() => removeCartItem(item.id, item.size)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
 
             <CartSummary
@@ -196,11 +230,12 @@ export function CartSheet() {
               type="button"
               className={cn(
                 "h-12 w-full rounded-2xl text-sm font-black",
-                "bg-gold text-navy-deep hover:bg-gold-light motion-safe:hover:shadow-lg motion-safe:hover:shadow-gold/30",
+                "bg-gold text-navy-deep hover:bg-gold-light motion-safe:hover:shadow-gold/30 motion-safe:hover:shadow-lg",
               )}
               onClick={() => setCheckoutOpen(true)}
             >
-              <BadgeCheck className="size-4.5" /> تکمیل خرید — {formatToman(subtotal + shipping)} تومان
+              <BadgeCheck className="size-4.5" /> تکمیل خرید —{" "}
+              {formatToman(subtotal + shipping)} تومان
             </Button>
           ) : null}
 
@@ -211,7 +246,7 @@ export function CartSheet() {
                 "h-11 w-full rounded-2xl text-xs font-black",
                 empty
                   ? "bg-navy text-cream hover:bg-navy-mid dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light"
-                  : "border-gold/50 text-gold-deep border bg-transparent hover:bg-gold/10 dark:text-gold-soft",
+                  : "border-gold/50 text-gold-deep hover:bg-gold/10 dark:text-gold-soft border bg-transparent",
               )}
             >
               <Link href="/shop">

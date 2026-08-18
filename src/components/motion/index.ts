@@ -9,4 +9,5 @@ export {
   PageReveal,
   HeaderEnter,
   MotionProvider,
+  TiltCard,
 } from "./primitives";
