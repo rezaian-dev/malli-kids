@@ -1,0 +1,85 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ProductCard } from "@/components/product";
+import { PRODUCT_GRID } from "@/components/product/card-styles";
+import { useFavorites } from "@/lib/favorites";
+import { toFaDigits } from "@/lib/locale/fa";
+import { cn } from "@/lib/utils";
+import type { Product } from "@/types";
+import { getProductsByIdsAction } from "@/lib/shop/products-actions";
+import { PROFILE_CARD } from "./profile-shared";
+
+// 💛 Wishlist panel loads only when the user opens it.
+export function ProfileWishlistPanel() {
+  const { ids } = useFavorites();
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    getProductsByIdsAction(ids).then((list) => {
+      if (active) setProducts(list);
+    });
+    return () => {
+      active = false;
+    };
+  }, [ids]);
+
+  return (
+    <section className={PROFILE_CARD}>
+      <div>
+        <h2
+          className={cn(
+            "flex items-center gap-2 text-lg font-black",
+            "text-navy",
+            "dark:text-linen",
+          )}
+        >
+          <Heart className="fill-rose text-rose size-5" /> علاقه‌مندی‌های من
+        </h2>
+        <p className="text-navy/70 dark:text-wheat mt-1 text-xs leading-6">
+          {toFaDigits(products.length)} محصول نشان کرده‌اید؛ هر وقت خواستید
+          سراغ‌شان برگردید.
+        </p>
+      </div>
+
+      {products.length === 0 ? (
+        <div
+          className={cn(
+            "rounded-2xl border border-dashed px-6 py-10 text-center",
+            "border-navy/15",
+            "dark:border-gold/25",
+          )}
+        >
+          <Heart className="text-rose/70 mx-auto size-9" />
+          <p className="text-navy dark:text-ivory mt-3 font-black">
+            هنوز قلبی نزده‌اید
+          </p>
+          <p
+            className={cn(
+              "mx-auto mt-1 max-w-xs text-xs leading-6",
+              "text-navy/70",
+              "dark:text-wheat",
+            )}
+          >
+            روی قلب هر محصول بزنید تا این‌جا برایتان نگه داشته شود.
+          </p>
+          <Button asChild variant="navy" className="mt-4 h-10 px-6">
+            <Link href="/shop" prefetch={false}>
+              گشتن در کالکشن
+            </Link>
+          </Button>
+        </div>
+      ) : (
+        <div className={cn(PRODUCT_GRID, "sm:grid-cols-3")}>
+          {products.map((product) => (
+            <ProductCard key={product.id} p={product} view="grid" />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
