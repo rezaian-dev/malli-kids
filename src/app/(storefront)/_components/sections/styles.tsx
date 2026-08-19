@@ -1,3 +1,4 @@
+import { AnimatePresence } from "motion/react";
 import { ProductCard } from "@/components/product";
 import { OrnStar } from "../home-ornaments";
 import { getAllProducts } from "@/lib/shop/products";
@@ -68,19 +69,14 @@ export async function Styles() {
               name === "همه" ? catalog : catalog.filter((p) => p.cat === name);
             return (
               <TabsContent key={name} value={name} className="mt-0">
-                {}
+                {/* 🎬 هر بار این تب فعال می‌شود، کارت‌ها با AnimatePresence
+                    آبشاری وارد می‌شوند — همان رفتار فیلترِ صفحهٔ فروشگاه. */}
                 <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] sm:gap-4">
-                  {items.map((p, i) => (
-                    <div
-                      key={p.id}
-                      className="animate-style-in"
-                      style={{ animationDelay: `${i * 72}ms` }}
-                    >
-                      {/* 🎬 اینجا خودِ CSS استگر (animate-style-in) را دارد،
-                          پس انیمیشن motion کارت را خاموش می‌کنیم. */}
-                      <ProductCard p={p} view="grid" animate={false} />
-                    </div>
-                  ))}
+                  <AnimatePresence mode="popLayout">
+                    {items.map((p) => (
+                      <ProductCard key={p.id} p={p} view="grid" />
+                    ))}
+                  </AnimatePresence>
                 </div>
               </TabsContent>
             );

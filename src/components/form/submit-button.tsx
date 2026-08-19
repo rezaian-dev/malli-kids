@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { Button, type buttonVariants } from "@/components/ui/button";
 import type { VariantProps } from "class-variance-authority";
 
-export type SubmitButtonProps = Omit<ComponentProps<"button">, "type"> &
+export type SubmitButtonProps = Omit<ComponentProps<typeof Button>, "type"> &
   VariantProps<typeof buttonVariants> & {
     /** Swapped in for `children` while the form is submitting — omit to
      *  just keep the original label and let the spinner + disabled state

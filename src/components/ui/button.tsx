@@ -1,15 +1,28 @@
+"use client";
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "radix-ui";
+import { motion, type HTMLMotionProps } from "motion/react";
 
 import { cn } from "@/lib/utils";
 
-// 🎬 Interaction is transform + shadow only (composited, no layout/paint
-// thrash): a soft rise on hover, a snappy press-down on click. Scoped under
-// `motion-safe:` so `prefers-reduced-motion` users just get the instant
-// state change with no motion — see `docs` note in theme.css.
+// 🪄 `asChild` needs a motion-capable version of Radix's polymorphic Slot —
+// `motion.create()` wraps any ref-forwarding component so it can drive the
+// SAME spring gestures below on whatever element `asChild` renders as
+// (`<Link>`, `<a>`, …), not just a plain `<button>`.
+const MotionSlot = motion.create(Slot.Root);
+
+// 🎬 Interaction is real spring physics now (whileHover/whileTap below), not
+// CSS transitions — a soft rise on hover, a snappy press-down on click, with
+// actual bounce. `prefers-reduced-motion` is handled once, globally, by
+// `MotionProvider` (`reducedMotion="user"` — see components/motion), so no
+// manual motion-safe:/motion-reduce: transform classes are needed here.
+const HOVER_SPRING = { type: "spring", stiffness: 420, damping: 24 } as const;
+const TAP_SPRING = { type: "spring", stiffness: 500, damping: 30 } as const;
+
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-out outline-none select-none motion-safe:not-aria-expanded:hover:-translate-y-0.5 motion-safe:aria-expanded:translate-y-0 motion-safe:active:not-aria-[haspopup]:translate-y-0 motion-safe:active:not-aria-[haspopup]:scale-[0.97] motion-reduce:active:not-aria-[haspopup]:translate-y-px focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:translate-y-0 disabled:scale-100 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow] duration-200 ease-out outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -54,19 +67,39 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  disabled,
   ...props
-}: React.ComponentProps<"button"> &
+}: HTMLMotionProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
   }) {
-  const Comp = asChild ? Slot.Root : "button";
+  const Comp = asChild ? MotionSlot : motion.button;
+
+  // 🧭 Dropdown/menu triggers (`aria-haspopup`) skip the press-down — that
+  // gesture reads as "activated", which a trigger only is once its panel
+  // opens; while open (`aria-expanded`) the hover-lift also stays off so the
+  // trigger doesn't float above its own open panel.
+  const isPopupTrigger = props["aria-haspopup"] != null;
+  const isExpanded =
+    props["aria-expanded"] === true || props["aria-expanded"] === "true";
 
   return (
     <Comp
       data-slot="button"
       data-variant={variant}
       data-size={size}
+      disabled={disabled}
       className={cn(buttonVariants({ variant, size, className }))}
+      whileHover={
+        !disabled && !isExpanded
+          ? { y: -2, transition: HOVER_SPRING }
+          : undefined
+      }
+      whileTap={
+        !disabled && !isPopupTrigger
+          ? { scale: 0.97, y: 0, transition: TAP_SPRING }
+          : undefined
+      }
       {...props}
     />
   );
