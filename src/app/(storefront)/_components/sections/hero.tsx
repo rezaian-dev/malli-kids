@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, Scissors, ShieldCheck, Sparkles, Star } from "lucide-react";
 import heroDress from "../../../../../public/brand/hero-dress.jpg";
 import { GoldMark, OrnStar } from "../home-ornaments";
+import { MagneticGlow } from "@/components/motion";
 import { wash } from "@/components/shared/section-wash";
 import { cn } from "@/lib/utils";
 
@@ -101,57 +102,61 @@ export function Hero() {
             خاطره‌ها بمانند.
           </p>
           <div className="animate-hero-in mt-8 flex flex-col flex-wrap items-stretch justify-center gap-3 delay-500 min-[420px]:flex-row min-[420px]:items-center sm:mt-9 sm:gap-4 lg:justify-start">
-            <Link
-              href="/#styles"
-              prefetch={false}
-              className={cn(
-                "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-8 py-3.5 text-sm font-black transition-all duration-500 hover:-translate-y-2 hover:scale-[1.05] sm:px-9 sm:py-4 sm:text-base",
-                "from-navy via-navy-mid to-navy text-cream ring-gold/40 hover:ring-gold bg-linear-to-l shadow-[0_12px_28px_-8px_rgba(14,42,71,.45)] ring-2 hover:shadow-[0_18px_40px_-10px_rgba(193,147,87,.6)]",
-              )}
-            >
-              <span
+            <MagneticGlow className="rounded-full">
+              <Link
+                href="/#styles"
+                prefetch={false}
                 className={cn(
-                  "pointer-events-none absolute -inset-2 animate-pulse rounded-full opacity-70 blur-md",
-                  "bg-gold/25",
+                  "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-8 py-3.5 text-sm font-black transition-[box-shadow,color,background-color] duration-500 sm:px-9 sm:py-4 sm:text-base",
+                  "from-navy via-navy-mid to-navy text-cream ring-gold/40 hover:ring-gold bg-linear-to-l shadow-[0_12px_28px_-8px_rgba(14,42,71,.45)] ring-2 hover:shadow-[0_18px_40px_-10px_rgba(193,147,87,.6)]",
                 )}
-                aria-hidden
-              />
-              <span
+              >
+                <span
+                  className={cn(
+                    "pointer-events-none absolute -inset-2 animate-pulse rounded-full opacity-70 blur-md",
+                    "bg-gold/25",
+                  )}
+                  aria-hidden
+                />
+                <span
+                  className={cn(
+                    "animate-shimmer pointer-events-none absolute inset-0",
+                    "bg-[linear-gradient(110deg,transparent_20%,rgba(232,197,122,.55)_48%,transparent_76%)]",
+                  )}
+                  aria-hidden
+                />
+                <Sparkles className="animate-twinkle text-gold relative h-4 w-4" />
+                <span className="relative tracking-wide">مشاهده کالکشن</span>
+                <ArrowLeft className="relative h-5 w-5 transition-transform duration-500 group-hover:-translate-x-2" />
+              </Link>
+            </MagneticGlow>
+            <MagneticGlow className="rounded-full">
+              <Link
+                href="/tryon"
+                prefetch={false}
                 className={cn(
-                  "animate-shimmer pointer-events-none absolute inset-0",
-                  "bg-[linear-gradient(110deg,transparent_20%,rgba(232,197,122,.55)_48%,transparent_76%)]",
+                  "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full border-2 px-8 py-3 text-sm font-black transition-[box-shadow,color,background-color] duration-500 sm:px-9 sm:py-3.75 sm:text-base",
+                  "border-gold bg-gold text-navy-deep hover:bg-gold-light shadow-[0_0_28px_rgba(193,147,87,.45)] hover:shadow-[0_18px_40px_-10px_rgba(193,147,87,.7)]",
                 )}
-                aria-hidden
-              />
-              <Sparkles className="animate-twinkle text-gold relative h-4 w-4" />
-              <span className="relative tracking-wide">مشاهده کالکشن</span>
-              <ArrowLeft className="relative h-5 w-5 transition-transform duration-500 group-hover:-translate-x-2" />
-            </Link>
-            <Link
-              href="/tryon"
-              prefetch={false}
-              className={cn(
-                "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full border-2 px-8 py-3 text-sm font-black transition-all duration-500 hover:-translate-y-2 hover:scale-[1.05] sm:px-9 sm:py-3.75 sm:text-base",
-                "border-gold bg-gold text-navy-deep hover:bg-gold-light shadow-[0_0_28px_rgba(193,147,87,.45)] hover:shadow-[0_18px_40px_-10px_rgba(193,147,87,.7)]",
-              )}
-            >
-              <span
-                className={cn(
-                  "pointer-events-none absolute -inset-1 animate-ping rounded-full border opacity-40",
-                  "border-gold",
-                )}
-                aria-hidden
-              />
-              <span
-                className={cn(
-                  "animate-shimmer pointer-events-none absolute inset-0",
-                  "bg-[linear-gradient(110deg,transparent_20%,rgba(255,255,255,.65)_50%,transparent_76%)]",
-                )}
-                aria-hidden
-              />
-              <Sparkles className="animate-orn-spin relative h-5 w-5" />
-              <span className="relative tracking-wide">پرو مجازی با AI</span>
-            </Link>
+              >
+                <span
+                  className={cn(
+                    "pointer-events-none absolute -inset-1 animate-ping rounded-full border opacity-40",
+                    "border-gold",
+                  )}
+                  aria-hidden
+                />
+                <span
+                  className={cn(
+                    "animate-shimmer pointer-events-none absolute inset-0",
+                    "bg-[linear-gradient(110deg,transparent_20%,rgba(255,255,255,.65)_50%,transparent_76%)]",
+                  )}
+                  aria-hidden
+                />
+                <Sparkles className="animate-orn-spin relative h-5 w-5" />
+                <span className="relative tracking-wide">پرو مجازی با AI</span>
+              </Link>
+            </MagneticGlow>
           </div>
           <div className="mx-auto mt-10 grid max-w-md grid-cols-3 gap-2 min-[420px]:gap-6 sm:mt-12 sm:gap-10 lg:mx-0 lg:flex lg:max-w-none lg:items-center lg:justify-start">
             <div className="animate-hero-in min-w-0 text-center delay-200 lg:text-right">

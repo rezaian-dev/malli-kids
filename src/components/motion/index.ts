@@ -10,4 +10,5 @@ export {
   HeaderEnter,
   MotionProvider,
   TiltCard,
+  MagneticGlow,
 } from "./primitives";
