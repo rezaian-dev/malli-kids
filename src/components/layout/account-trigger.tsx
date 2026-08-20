@@ -71,31 +71,25 @@ export const TRIGGER_SHELL = cn(
 
 // ✨ The trigger's entire content now: a navy medallion behind a plain
 // person-glyph — no avatar photo, no initial, no name, no chevron.
-// 🚫 Deliberately no idle/ambient animation (no "breathing" glow, no
-// mount-in pop): this exact node gets thrown away and recreated once,
-// a beat after first paint, when the Suspense fallback in `user-menu.tsx`
-// swaps for the real (lazy-loaded) button. Any animation that plays
-// automatically on mount would restart from scratch at that swap — a
-// visible twitch/jump on every single refresh. All motion here is
-// hover-triggered instead (scale, icon lift, the ring-pulse halo below),
-// same rule the old avatar's glow followed — see the static box-shadow
-// note on `Face` above.
+// 🚫 Deliberately no transform anywhere here (no scale, no icon lift, no
+// mount-in pop): the cursor is usually still parked on this exact trigger
+// when the page refreshes, and CSS `:hover` matches instantly on load — so
+// any hover transform + transition would visibly "scale" the icon a frame
+// after every refresh (the tick). Hover feedback is only the expanding
+// ring-pulse halo + a deeper shadow below — neither moves the glyph.
 export function AccountIcon() {
   return (
     <span
       className={cn(
         "border-gold from-navy to-navy-mid relative flex size-full items-center justify-center rounded-full border-2 bg-linear-to-br",
-        "shadow-[0_2px_14px_-6px_rgba(193,147,87,.75)] transition-[transform,box-shadow] duration-300",
-        "group-hover:scale-[1.08] group-hover:shadow-[0_4px_20px_-6px_rgba(193,147,87,.9)]",
+        "shadow-[0_2px_14px_-6px_rgba(193,147,87,.75)] transition-[box-shadow] duration-300",
+        "group-hover:shadow-[0_4px_20px_-6px_rgba(193,147,87,.9)]",
         "before:border-gold before:absolute before:inset-0 before:rounded-full before:border-2 before:opacity-0",
         "motion-safe:group-hover:before:animate-ring-pulse",
-        "dark:border-gold-soft dark:from-dusk-alt dark:to-dusk dark:shadow-[0_2px_14px_-6px_rgba(232,197,122,.5)] dark:before:border-gold-soft",
+        "dark:border-gold-soft dark:from-dusk-alt dark:to-dusk dark:before:border-gold-soft dark:shadow-[0_2px_14px_-6px_rgba(232,197,122,.5)]",
       )}
     >
-      <UserRound
-        className="text-gold-soft size-[58%] transition-transform duration-300 group-hover:-translate-y-0.5"
-        strokeWidth={2.25}
-      />
+      <UserRound className="text-gold-soft size-[58%]" strokeWidth={2.25} />
     </span>
   );
 }

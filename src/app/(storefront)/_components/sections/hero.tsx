@@ -181,7 +181,10 @@ export function Hero() {
           </div>
         </div>
         {/* ⚡ No entrance fade here — this frame holds the LCP image, and
-            animating its opacity in delays when Chrome can score the paint. */}
+            animating its opacity in delays when Chrome can score the paint.
+            No Ken Burns either: the infinite transform made the compositor
+            intermittently drop the photo's bitmap (a visible blink/tick,
+            incl. right after refresh), so the photo stays perfectly static. */}
         <div className="group/hero xs:max-w-[20rem] xs:px-4 relative mx-auto w-full max-w-[18rem] px-2 sm:max-w-110 sm:px-0">
           <div
             className={cn(
@@ -199,7 +202,7 @@ export function Hero() {
               fetchPriority="high"
               placeholder="blur"
               sizes="(max-width: 639px) 18rem, (max-width: 1023px) 27.5rem, 45vw"
-              className="animate-hero-ken h-full w-full origin-[58%_38%] object-cover"
+              className="h-full w-full object-cover"
             />
             <div
               className={cn(
