@@ -184,7 +184,9 @@ export function Hero() {
             animating its opacity in delays when Chrome can score the paint.
             No Ken Burns either: the infinite transform made the compositor
             intermittently drop the photo's bitmap (a visible blink/tick,
-            incl. right after refresh), so the photo stays perfectly static. */}
+            incl. right after refresh), so the photo stays perfectly static.
+            No shimmer sweep over the photo either — the only thing covering
+            it now is a static gradient, so nothing can flash across it. */}
         <div className="group/hero xs:max-w-[20rem] xs:px-4 relative mx-auto w-full max-w-[18rem] px-2 sm:max-w-110 sm:px-0">
           <div
             className={cn(
@@ -203,13 +205,6 @@ export function Hero() {
               placeholder="blur"
               sizes="(max-width: 639px) 18rem, (max-width: 1023px) 27.5rem, 45vw"
               className="h-full w-full object-cover"
-            />
-            <div
-              className={cn(
-                "animate-shimmer pointer-events-none absolute inset-0",
-                "bg-[linear-gradient(115deg,transparent_32%,rgba(255,255,255,.38)_48%,transparent_62%)]",
-              )}
-              aria-hidden
             />
             <div className="from-navy/25 absolute inset-0 bg-linear-to-t via-transparent to-transparent" />
           </div>
