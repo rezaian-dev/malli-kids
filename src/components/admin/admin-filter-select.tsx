@@ -8,13 +8,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import { FILTER_LABEL } from "./admin-filter-bar";
 
 export type AdminFilterOption = {
   value: string;
   label: string;
+  // 🔢 دیگر رندر نمی‌شود — Radix، محتوای همین SelectItem را عیناً در دکمهٔ
+  // بستهٔ Select هم نمایش می‌داد، و عدد کنارِ برچسب باعث می‌شد متنِ دکمه در
+  // عرضِ محدودش بشکند. همچنان اختیاری مانده تا صداکنندهٔ فعلی نشکند.
   count?: number;
 };
 
@@ -52,20 +54,7 @@ export function AdminFilterSelect({
         <SelectContent align="start">
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              <span className="flex w-full items-center justify-between gap-4">
-                <span>{option.label}</span>
-                {typeof option.count === "number" ? (
-                  <span
-                    className={cn(
-                      "rounded-md px-1.5 py-0.5 text-[10px]",
-                      "bg-navy/6 text-navy/70",
-                      "dark:text-wheat dark:bg-white/8",
-                    )}
-                  >
-                    {toFaDigits(option.count)}
-                  </span>
-                ) : null}
-              </span>
+              {option.label}
             </SelectItem>
           ))}
         </SelectContent>

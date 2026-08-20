@@ -33,8 +33,10 @@ export function ProductCardList({
     loading?: "eager";
     fetchPriority?: "high";
   };
+  /** نگه‌داشته شده برای سازگاری — کارت همیشه بی‌درنگ رندر می‌شود. */
   animate?: boolean;
 }) {
+  void animate;
   return (
     <motion.div
       layout
@@ -45,14 +47,6 @@ export function ProductCardList({
         scale: 0.95,
         transition: { duration: 0.25, ease: EASE_OUT },
       }}
-      {...(animate
-        ? {
-            initial: { opacity: 0, y: 16 },
-            whileInView: { opacity: 1, y: 0 },
-            viewport: { once: true, margin: "0px 0px -60px 0px" },
-            transition: { duration: 0.45, ease: EASE_OUT },
-          }
-        : {})}
     >
       <TiltCard className="h-full rounded-[20px]" strength={4}>
         <article

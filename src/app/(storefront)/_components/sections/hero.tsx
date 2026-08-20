@@ -57,7 +57,7 @@ export function Hero() {
         <div className="relative z-10 text-center lg:text-right">
           <div
             className={cn(
-              "animate-hero-in mb-6 inline-flex items-center gap-2 rounded-full border-[1.5px] px-3.5 py-1.5 transition-transform delay-75 duration-500 hover:-translate-y-0.5 sm:mb-7 sm:px-4 sm:py-2",
+              "mb-6 inline-flex items-center gap-2 rounded-full border-[1.5px] px-3.5 py-1.5 transition-transform duration-500 hover:-translate-y-0.5 sm:mb-7 sm:px-4 sm:py-2",
               "border-gold text-navy bg-white shadow-[0_8px_24px_-12px_rgba(193,147,87,.7)]",
               "dark:bg-linen dark:text-navy",
             )}
@@ -69,7 +69,6 @@ export function Hero() {
           </div>
           <h1
             className={cn(
-              "animate-hero-in delay-150",
               "text-navy text-[clamp(1.75rem,7vw,4rem)] leading-[1.3] font-black",
               "dark:text-linen",
             )}
@@ -92,7 +91,7 @@ export function Hero() {
           </h1>
           <p
             className={cn(
-              "animate-hero-in mx-auto mt-6 max-w-xl delay-300 sm:mt-7 lg:mx-0",
+              "mx-auto mt-6 max-w-xl sm:mt-7 lg:mx-0",
               "text-navy/70 text-[15px] leading-7 sm:text-lg sm:leading-8",
               "dark:text-khaki",
             )}
@@ -101,7 +100,7 @@ export function Hero() {
             و تجربه پرو مجازی با هوش مصنوعی — برای لحظه‌هایی که قرار است در
             خاطره‌ها بمانند.
           </p>
-          <div className="animate-hero-in mt-8 flex flex-col flex-wrap items-stretch justify-center gap-3 delay-500 min-[420px]:flex-row min-[420px]:items-center sm:mt-9 sm:gap-4 lg:justify-start">
+          <div className="mt-8 flex flex-col flex-wrap items-stretch justify-center gap-3 min-[420px]:flex-row min-[420px]:items-center sm:mt-9 sm:gap-4 lg:justify-start">
             <MagneticGlow className="rounded-full">
               <Link
                 href="/#styles"
@@ -159,15 +158,15 @@ export function Hero() {
             </MagneticGlow>
           </div>
           <div className="mx-auto mt-10 grid max-w-md grid-cols-3 gap-2 min-[420px]:gap-6 sm:mt-12 sm:gap-10 lg:mx-0 lg:flex lg:max-w-none lg:items-center lg:justify-start">
-            <div className="animate-hero-in min-w-0 text-center delay-200 lg:text-right">
+            <div className="min-w-0 text-center lg:text-right">
               <div className={STAT_VALUE}>+۱۲٬۰۰۰</div>
               <div className={STAT_LABEL}>مادر خوشحال</div>
             </div>
-            <div className="animate-hero-in min-w-0 text-center delay-300 lg:text-right">
+            <div className="min-w-0 text-center lg:text-right">
               <div className={STAT_VALUE}>+۳۵۰</div>
               <div className={STAT_LABEL}>مدل اختصاصی</div>
             </div>
-            <div className="animate-hero-in min-w-0 text-center lg:text-right">
+            <div className="min-w-0 text-center lg:text-right">
               <div
                 className={cn(
                   "flex items-center justify-center gap-1 lg:justify-start",

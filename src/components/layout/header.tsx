@@ -10,7 +10,7 @@ import { HeaderNavMount } from "./header-nav-mount";
 export function Header() {
   return (
     <header dir="rtl" aria-label="سربرگ" className="fixed inset-x-0 top-0 z-70">
-      {/* 🎬 یک بار هنگام بارگذاری، سربرگ از بالا سُر می‌خورد پایین. */}
+      {/* ⚡ بدون انیمیشن ورود — سربرگ از همان اول کامل رندر می‌شود تا رفرش/ناوبری فلش نزند. */}
       <HeaderEnter>
         <FestiveBanner />
 
