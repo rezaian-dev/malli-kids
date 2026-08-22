@@ -641,13 +641,20 @@ html:not(.dark) .text-destructive {
     max-width: 100%;
     overflow-x: hidden;
     scroll-behavior: smooth;
-    scroll-padding-top: 110px;
+    /* 📐 Matches the fixed header (festive banner + bar): 112px on mobile,
+       124px from sm up — keep in sync with `HeaderSpacer`. */
+    scroll-padding-top: 112px;
     color-scheme: light;
     background-color: var(--color-atelier);
   }
   html.dark {
     color-scheme: dark;
     background-color: var(--color-navy-deep);
+  }
+  @media (min-width: 640px) {
+    html {
+      scroll-padding-top: 124px;
+    }
   }
   main {
     min-width: 0;
