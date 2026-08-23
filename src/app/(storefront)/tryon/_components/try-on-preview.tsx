@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Download, Loader2, Sparkles, Upload } from "lucide-react";
+import { Download, Loader2, Sparkles, Upload, X } from "lucide-react";
 import { CORE_PRODUCTS } from "@/lib/data/products";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,23 +18,30 @@ function swatchClass(active: boolean) {
 export function TryOnPreview({
   person,
   result,
+  engine,
   phase,
   garment,
   fileRef,
+  compressing,
   onUpload,
   onRunTryOn,
+  onCancel,
   onPickSample,
 }: {
   person: string | null;
   result: string | null;
+  engine: string | null;
   phase: TryOnPhase;
   garment: number;
   fileRef: React.RefObject<HTMLInputElement | null>;
+  compressing: boolean;
   onUpload: (file: File) => void;
   onRunTryOn: () => void;
+  onCancel: () => void;
   onPickSample: (src: string) => void;
 }) {
   const shown = result ?? person;
+  const busy = phase === "running" || compressing;
 
   return (
     <div
@@ -54,7 +61,7 @@ export function TryOnPreview({
               "dark:text-gold-soft",
             )}
           >
-            ساخته‌شده با هوش مصنوعی
+            ساخته‌شده با هوش مصنوعی{engine ? ` · ${engine}` : ""}
           </span>
         ) : null}
       </div>
@@ -64,7 +71,9 @@ export function TryOnPreview({
           // eslint-disable-next-line @next/next/no-img-element -- 🪶 Data URLs need a raw img.
           <img
             src={shown}
-            alt="پیش‌نمایش پرو مجازی"
+            alt={
+              result ? "نتیجه پرو مجازی لباس" : "عکس انتخاب‌شده برای پرو مجازی"
+            }
             className="size-full object-cover"
           />
         ) : (
@@ -81,6 +90,7 @@ export function TryOnPreview({
         {/* ✨ Progress overlay while AI is running. */}
         {phase === "running" ? (
           <div
+            role="status"
             className={cn(
               "absolute inset-0 flex flex-col items-center justify-center gap-3 backdrop-blur-sm",
               "bg-navy-deep/70",
@@ -108,36 +118,61 @@ export function TryOnPreview({
         />
       </div>
 
+      {/* ♿ Screen-reader status: announces compressing/running/done without moving focus. */}
+      <p aria-live="polite" className="sr-only">
+        {compressing
+          ? "در حال آماده‌سازی عکس…"
+          : phase === "running"
+            ? "هوش مصنوعی در حال پرو کردن لباس است…"
+            : phase === "done"
+              ? "پرو مجازی آماده شد."
+              : ""}
+      </p>
+
       <div className="mt-4 flex flex-wrap gap-2">
         <input
           ref={fileRef}
           type="file"
           accept="image/*"
           className="hidden"
+          disabled={busy}
           onChange={(e) => e.target.files?.[0] && onUpload(e.target.files[0])}
         />
         <Button
           type="button"
           variant="secondary"
           className="flex-1 rounded-full"
+          disabled={busy}
           onClick={() => fileRef.current?.click()}
         >
-          <Upload className="size-4" /> آپلود عکس
-        </Button>
-        <Button
-          type="button"
-          className="flex-1 rounded-full"
-          disabled={!person || phase === "running"}
-          onClick={onRunTryOn}
-        >
-          {phase === "running" ? (
+          {compressing ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
-            <Sparkles className="size-4" />
+            <Upload className="size-4" />
           )}
-          پرو با هوش مصنوعی
+          {compressing ? "در حال آماده‌سازی…" : "آپلود عکس"}
         </Button>
-        {result ? (
+        {phase === "running" ? (
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1 rounded-full"
+            onClick={onCancel}
+          >
+            <X className="size-4" /> لغو
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            className="flex-1 rounded-full"
+            disabled={!person || busy}
+            onClick={onRunTryOn}
+          >
+            <Sparkles className="size-4" />
+            پرو با هوش مصنوعی
+          </Button>
+        )}
+        {result && phase !== "running" ? (
           <Button asChild variant="ghost" className="rounded-full">
             <a href={result} download target="_blank" rel="noreferrer">
               <Download className="size-4" /> دانلود
@@ -156,9 +191,10 @@ export function TryOnPreview({
             key={src}
             type="button"
             onClick={() => onPickSample(src)}
+            disabled={busy}
             aria-label={`مدل نمونه ${i + 1}`}
             aria-pressed={person === src}
-            className={swatchClass(person === src)}
+            className={cn(swatchClass(person === src), busy && "opacity-50")}
           >
             {}
             <Image

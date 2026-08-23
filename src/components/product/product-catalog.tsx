@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Stagger, StaggerItem } from "@/components/motion";
+import { Stagger, StaggerItem } from "@/components/motion/static";
 import { cn } from "@/lib/utils";
 
 export type CatalogItem = { tag: string; t: string; d: string; p: string };

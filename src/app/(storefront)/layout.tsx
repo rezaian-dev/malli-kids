@@ -6,7 +6,7 @@ import { HeaderSpacer } from "@/components/layout/header-spacer";
 import { StorefrontEnhancements } from "@/components/layout/storefront-enhancements";
 import { BackgroundScene } from "@/components/shared/background-scene";
 import { SkipLink } from "@/components/shared/skip-link";
-import { PageReveal } from "@/components/motion";
+import { PageReveal } from "@/components/motion/static";
 
 // 🛍️ Shared storefront shell for every public page.
 export default function StorefrontLayout({

@@ -18,47 +18,11 @@ import { cn } from "@/lib/utils";
 // (cubic-bezier(0.22, 1, 0.32, 1)) تا انیمیشن‌ها با حسِ قبلیِ برند یکی باشند.
 export const EASE_OUT: Easing = [0.22, 1, 0.32, 1];
 
-// ⚡ انیمیشن‌های «ورود» (fades/slideهای گِیت‌شده با هایدریشن و اسکرول) عمداً
-// حذف شده‌اند: چون استایلِ اولیه‌ی `opacity: 0` داخل HTML سرور هم رندر
-// می‌شد، با هر رفرش/ناوبری صفحه اول خالی/کم‌رنگ دیده می‌شد و بعد محتوا
-// تکه‌تکه «پاپ» می‌کرد (فلش و پرش). این کامپوننت‌ها حالا فقط یک div ساده‌اند
-// تا همه‌چیز از همان اولِ پینت کامل و بی‌درنگ دیده شود و ناوبری حسِ SPA
-// داشته باشد. انیمیشن‌های تعاملی (TiltCard، MagneticGlow، هاور/تپ دکمه‌ها،
-// AnimatePresence شیت‌ها/منوها/گالری) دست‌نخورده مانده‌اند.
-type StaticProps = React.HTMLAttributes<HTMLDivElement> & {
-  /** نگه‌داشته شده برای سازگاری با فراخوانی‌های قبلی — نادیده گرفته می‌شود. */
-  delay?: number;
-  /** نگه‌داشته شده برای سازگاری با فراخوانی‌های قبلی — نادیده گرفته می‌شود. */
-  y?: number;
-};
-
-/** 🪶 رندرِ بی‌درنگِ محتوا (قبلاً: ورودِ «محو + بالا آمدن» هنگام اسکرول). */
-export function Reveal({
-  children,
-  className,
-  delay,
-  y,
-  ...rest
-}: StaticProps) {
-  void delay;
-  void y;
-  return (
-    <div className={className} {...rest}>
-      {children}
-    </div>
-  );
-}
-
-/** 👁️ رندرِ بی‌درنگِ محتوا (قبلاً: محو شدن هنگام رسیدن به دید کاربر). */
-export function FadeIn({ children, className, delay, ...rest }: StaticProps) {
-  void delay;
-  return (
-    <div className={className} {...rest}>
-      {children}
-    </div>
-  );
-}
-
+// 🪶 The inert reveal helpers (`Reveal`, `FadeIn`, `Stagger`, `StaggerItem`,
+// `PageReveal`, `HeaderEnter`) live in `./static` now — same API, but a
+// server module with zero JS, so pages that only wrap sections in them pay
+// no hydration cost for `motion/react`. Only genuinely interactive springs
+// stay in this client module.
 // 🎼 آبشاری (stagger): پدر با `Stagger` و هر فرزند با `StaggerItem` بسته می‌شود.
 export const staggerContainer: Variants = {
   hidden: {},
@@ -72,60 +36,11 @@ export const staggerItem: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } },
 };
 
-export function Stagger({
-  children,
-  className,
-  ...rest
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div className={className} {...rest}>
-      {children}
-    </div>
-  );
-}
-
-export function StaggerItem({
-  children,
-  className,
-  ...rest
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div className={className} {...rest}>
-      {children}
-    </div>
-  );
-}
-
-/** 🧭 رندرِ بی‌درنگِ محتوای هر صفحه — بدون فیدِ route-change تا تعویض مسیر
- *  فلش نزند و حسِ SPA حفظ شود (قبلاً کل صفحه با `key={pathname}` ری‌ماونت و
- *  از `opacity: 0` فید می‌شد). */
-export function PageReveal({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return <div className={className}>{children}</div>;
-}
-
 /** ♿ Provider سراسری: همه انیمیشن‌های motion به prefers-reduced-motion
  *  کاربر احترام می‌گذارند. چون layout ریشه سمت سرور است، MotionConfig
  *  باید داخل یک کلاینت‌کامپوننت قرار بگیرد. */
 export function MotionProvider({ children }: { children: React.ReactNode }) {
   return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
-}
-
-/** 🧢 سربرگ بی‌درنگ و کامل رندر می‌شود (قبلاً هنگام بارگذاری از بالا سُر
- *  می‌خورد پایین و با PageReveal ترکیب می‌شد تا کل صفحه چشمک بزند). */
-export function HeaderEnter({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return <div className={className}>{children}</div>;
 }
 
 const TILT_SPRING = { stiffness: 300, damping: 22, mass: 0.6 } as const;

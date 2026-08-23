@@ -12,11 +12,14 @@ export function Studio() {
       <TryOnPreview
         person={tryOn.person}
         result={tryOn.result}
+        engine={tryOn.engine}
         phase={tryOn.phase}
         garment={tryOn.garment}
         fileRef={tryOn.fileRef}
+        compressing={tryOn.compressing}
         onUpload={tryOn.onUpload}
         onRunTryOn={tryOn.runTryOn}
+        onCancel={tryOn.cancel}
         onPickSample={tryOn.pickSample}
       />
       <TryOnControls
