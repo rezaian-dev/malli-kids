@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn, shell } from "@/lib/utils";
 import { FestiveBanner } from "@/components/festive/festive-banner";
-import { HeaderEnter } from "@/components/motion";
+import { HeaderEnter } from "@/components/motion/static";
 import { HeaderActions } from "./header-actions";
 import { HeaderNavMount } from "./header-nav-mount";
 
@@ -43,6 +43,8 @@ export function Header() {
                 width={36}
                 height={36}
                 sizes="36px"
+                loading="eager"
+                fetchPriority="high"
                 className="size-8 object-contain sm:size-9 dark:hidden"
               />
               <Image
@@ -52,6 +54,8 @@ export function Header() {
                 width={36}
                 height={36}
                 sizes="36px"
+                loading="eager"
+                fetchPriority="high"
                 className="hidden size-8 object-contain sm:size-9 dark:block"
               />
               <span className="hidden leading-none min-[480px]:block md:hidden lg:block">

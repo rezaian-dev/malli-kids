@@ -27,11 +27,30 @@ async function requireUserId(req: NextRequest) {
   }
 }
 
-// 🔀 Pick the engine with one env var. Default = free Hugging Face Space (no key).
-//   huggingface → free, no signup. ⚠️ shared public demo: often busy/down; NOT for production.
-//   fal         → reliable Kolors try-on ($0.07/img). needs FAL_KEY.
-//   fashn       → reliable, private ($0.075/img). needs FASHN_API_KEY.
-const PROVIDER = (process.env.TRYON_PROVIDER || "huggingface").toLowerCase();
+/* ─── Engine selection ────────────────────────────────────────────
+ * 🥇 `fal` (default when FAL_KEY exists): FASHN TryOn v1.6 served on fal's
+ * infrastructure — the best-tested virtual try-on in 2026 benchmarks for
+ * catalog work (garment text/patterns stay sharp, 864×1296). ~$0.075/img.
+ * 🥈 `fashn`: the same v1.6 model via FASHN's own API. Same quality and
+ * price, needs FASHN_API_KEY instead.
+ * 🥉 `huggingface`: free Kolors demo Space. No key, no bill — but a shared
+ * public queue that is often busy/down. Fallback only, never the default
+ * when a paid key is configured.
+ *
+ * Resolution: an explicit TRYON_PROVIDER wins; otherwise the best engine
+ * whose key is present is picked automatically, so setting FAL_KEY alone
+ * is enough to get the reliable engine.
+ */
+type Provider = "fal" | "fashn" | "huggingface";
+
+function resolveProvider(): Provider {
+  const explicit = (process.env.TRYON_PROVIDER || "").trim().toLowerCase();
+  if (explicit === "fal" || explicit === "fashn" || explicit === "huggingface")
+    return explicit;
+  if (process.env.FAL_KEY) return "fal";
+  if (process.env.FASHN_API_KEY) return "fashn";
+  return "huggingface";
+}
 
 type Img = { buf: Buffer; mime: string };
 
@@ -62,15 +81,194 @@ const dataUri = ({ buf, mime }: Img) =>
   `data:${mime};base64,${buf.toString("base64")}`;
 
 function timeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
-  return Promise.race([
-    p,
-    new Promise<T>((_, rej) =>
-      setTimeout(() => rej(new Error(`${label} بیش از حد طول کشید.`)), ms),
-    ),
-  ]);
+  let id: ReturnType<typeof setTimeout> | undefined;
+  const guard = new Promise<T>((_, rej) => {
+    id = setTimeout(() => rej(new Error(`${label} بیش از حد طول کشید.`)), ms);
+  });
+  return Promise.race([p.finally(() => clearTimeout(id)), guard]);
 }
 
-/* 🆓 ─── Free: Hugging Face (Kolors) — best-effort, unstable public demo ─── */
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/* ─── Result proxy ────────────────────────────────────────────────
+ * The engines return expiring CDN URLs (fal.media / cdn.fashn.ai / hf.space).
+ * Downloading the bytes here and answering with a `data:` URI keeps the
+ * response self-contained (no dead link if the CDN purges it), keeps the
+ * CSP `img-src` strict (no third-party image hosts needed), and lets the
+ * client `<img>` + download button work without any CORS/CSP exception.
+ * If the download itself fails, the remote URL is returned as a fallback
+ * (the CSP in `next.config.ts` allow-lists these hosts for that case).
+ */
+const PROXY_MAX_BYTES = 6_000_000;
+
+async function proxyToDataUri(url: string): Promise<string | null> {
+  try {
+    const ctrl = new AbortController();
+    const id = setTimeout(() => ctrl.abort(), 20_000);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) return null;
+      const type = res.headers.get("content-type") || "";
+      if (!type.startsWith("image/")) return null;
+      const buf = Buffer.from(await res.arrayBuffer());
+      if (!buf.length || buf.length > PROXY_MAX_BYTES) return null;
+      return `data:${type};base64,${buf.toString("base64")}`;
+    } finally {
+      clearTimeout(id);
+    }
+  } catch {
+    return null;
+  }
+}
+
+/* 🥇 ─── fal.ai — FASHN TryOn v1.6 (primary, best-tested) ───
+ *
+ * Why polling manually instead of `fal.subscribe()`? `subscribe` hides its
+ * retry loop inside the client (no documented attempt cap — exactly the
+ * "infinite loop trap" this route must avoid). `queue.submit` + a bounded
+ * `for` loop below is provably finite: MAX_POLLS × POLL_EVERY_MS ≈ 80s,
+ * each status read guarded by its own timeout, then one hard failure.
+ */
+const FAL_MODEL = "fal-ai/fashn/tryon/v1.6";
+const FAL_MAX_POLLS = 40;
+const FAL_POLL_EVERY_MS = 2_000;
+
+export type FalGarmentCategory = "tops" | "bottoms" | "one-pieces" | "auto";
+
+async function tryonFal(
+  person: Img,
+  garment: Img,
+  category: FalGarmentCategory,
+): Promise<string> {
+  const key = process.env.FAL_KEY;
+  if (!key) throw new Error("FAL_KEY تنظیم نشده است.");
+  fal.config({ credentials: key });
+
+  const { request_id } = await timeout(
+    fal.queue.submit(FAL_MODEL, {
+      input: {
+        model_image: dataUri(person),
+        garment_image: dataUri(garment),
+        category,
+        mode: "balanced",
+        garment_photo_type: "auto",
+        // 🛡️ Conservative on purpose: this is a *kids* boutique — also
+        // block underwear/swimwear renders, not just explicit content.
+        moderation_level: "conservative",
+        num_samples: 1,
+        segmentation_free: true,
+        output_format: "jpeg",
+      },
+    }),
+    25_000,
+    "ارسال به موتور پرو",
+  );
+
+  // 🔁 Bounded by construction: a `for` loop with a constant cap can never
+  // spin forever, whatever the queue answers.
+  for (let i = 0; i < FAL_MAX_POLLS; i++) {
+    await sleep(FAL_POLL_EVERY_MS);
+    const status = await timeout(
+      fal.queue.status(FAL_MODEL, { requestId: request_id, logs: false }),
+      15_000,
+      "بررسی وضعیت موتور پرو",
+    );
+    // 🛡️ Compared as a plain string: the client's types only know
+    // IN_QUEUE/IN_PROGRESS/COMPLETED, but the wire can grow new terminal
+    // states — anything that isn't "keep waiting" or "done" must fail loud,
+    // never loop.
+    const state = status.status as string;
+    if (state === "COMPLETED") break;
+    if (state !== "IN_QUEUE" && state !== "IN_PROGRESS") {
+      throw new Error("موتور پرو مجازی تصویر را تولید نکرد.");
+    }
+    if (i === FAL_MAX_POLLS - 1) {
+      throw new Error("پردازش طولانی شد؛ لطفاً دوباره تلاش کنید.");
+    }
+  }
+
+  const result = await timeout(
+    fal.queue.result(FAL_MODEL, { requestId: request_id }),
+    25_000,
+    "دریافت نتیجه موتور پرو",
+  );
+  const url = (result?.data as { images?: { url?: string }[] })?.images?.[0]
+    ?.url;
+  if (!url) throw new Error("سرویس پاسخ معتبری نداد.");
+  return url;
+}
+
+/* 🥈 ─── FASHN direct API (same v1.6 model, own infrastructure) ───
+ * Same bounded-polling contract as the fal path above: polled here on the
+ * server (never by the browser), with a constant attempt cap.
+ */
+const FASHN_URL = "https://api.fashn.ai/v1";
+const FASHN_MAX_POLLS = 40;
+const FASHN_POLL_EVERY_MS = 2_000;
+
+async function tryonFashnDirect(
+  person: Img,
+  garment: Img,
+  category: FalGarmentCategory,
+): Promise<string> {
+  const key = process.env.FASHN_API_KEY;
+  if (!key) throw new Error("FASHN_API_KEY تنظیم نشده است.");
+
+  const run = await fetch(`${FASHN_URL}/run`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${key}`,
+    },
+    body: JSON.stringify({
+      model_name: "tryon-v1.6",
+      inputs: {
+        model_image: dataUri(person),
+        garment_image: dataUri(garment),
+        category: category === "one-pieces" ? "one-piece" : category,
+      },
+    }),
+  });
+  const started = await run.json().catch(() => ({}));
+  if (!run.ok || !started?.id)
+    throw new Error(
+      started?.error?.message || started?.error || "شروع پرو مجازی ناموفق بود.",
+    );
+  const id = started.id as string;
+
+  for (let i = 0; i < FASHN_MAX_POLLS; i++) {
+    await sleep(FASHN_POLL_EVERY_MS);
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 15_000);
+    try {
+      const res = await fetch(`${FASHN_URL}/status/${id}`, {
+        headers: { Authorization: `Bearer ${key}` },
+        signal: ctrl.signal,
+      });
+      const state = await res.json().catch(() => ({}));
+      if (!res.ok)
+        throw new Error(state?.error || "خطا در بررسی وضعیت پرو مجازی.");
+      if (state.status === "completed") {
+        const url = state.output?.[0] as string | undefined;
+        if (!url) throw new Error("سرویس پاسخ معتبری نداد.");
+        return url;
+      }
+      if (state.status === "failed" || state.error) {
+        throw new Error(
+          state.error?.message || state.error || "تولید تصویر ناموفق بود.",
+        );
+      }
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  throw new Error("پردازش طولانی شد؛ لطفاً دوباره تلاش کنید.");
+}
+
+/* 🥉 ─── Free: Hugging Face (Kolors) — best-effort fallback ───
+ * Shared public demo: often busy/down. Single request with timeouts, no
+ * polling at all. Only used when neither paid key is configured.
+ */
 const HF_SPACE =
   process.env.HF_TRYON_SPACE || "Kwai-Kolors/Kolors-Virtual-Try-On";
 
@@ -81,7 +279,7 @@ async function tryonHuggingFace(person: Img, garment: Img): Promise<string> {
       HF_SPACE,
       token ? { hf_token: token as `hf_${string}` } : undefined,
     ),
-    30_000,
+    20_000,
     "اتصال به سرویس رایگان",
   );
   const result = await timeout(
@@ -95,7 +293,7 @@ async function tryonHuggingFace(person: Img, garment: Img): Promise<string> {
       0,
       true,
     ]),
-    100_000,
+    90_000,
     "پردازش سرویس رایگان",
   );
   const out = (result?.data as unknown[])?.[0] as
@@ -105,52 +303,16 @@ async function tryonHuggingFace(person: Img, garment: Img): Promise<string> {
   return url;
 }
 
-/* ⚡ ─── Reliable: fal.ai (Kling Kolors v1.5) ─── */
-async function tryonFal(person: Img, garment: Img): Promise<string> {
-  const key = process.env.FAL_KEY;
-  if (!key) throw new Error("FAL_KEY تنظیم نشده است.");
-  fal.config({ credentials: key });
-  const result = await fal.subscribe(
-    "fal-ai/kling/v1-5/kolors-virtual-try-on",
-    {
-      input: {
-        human_image_url: dataUri(person),
-        garment_image_url: dataUri(garment),
-      },
-    },
-  );
-  const url = (result?.data as { image?: { url?: string } })?.image?.url;
-  if (!url) throw new Error("سرویس پاسخ معتبری نداد.");
-  return url;
-}
+const ENGINE_LABEL: Record<Provider, string> = {
+  fal: "FASHN v1.6",
+  fashn: "FASHN v1.6",
+  huggingface: "Kolors",
+};
 
-/* 🛡️ ─── Reliable: FASHN AI ─── */
-const FASHN_URL = "https://api.fashn.ai/v1";
-
-async function fashnStart(person: Img, garment: Img): Promise<string> {
-  const key = process.env.FASHN_API_KEY;
-  if (!key) throw new Error("FASHN_API_KEY تنظیم نشده است.");
-  const run = await fetch(`${FASHN_URL}/run`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${key}`,
-    },
-    body: JSON.stringify({
-      model_name: "tryon-v1.6",
-      inputs: {
-        model_image: dataUri(person),
-        garment_image: dataUri(garment),
-        category: "auto",
-      },
-    }),
-  });
-  const data = await run.json().catch(() => ({}));
-  if (!run.ok || !data?.id)
-    throw new Error(
-      data?.error?.message || data?.error || "شروع پرو مجازی ناموفق بود.",
-    );
-  return data.id as string;
+function parseCategory(raw: unknown): FalGarmentCategory {
+  return raw === "tops" || raw === "bottoms" || raw === "one-pieces"
+    ? raw
+    : "auto";
 }
 
 export async function POST(req: NextRequest) {
@@ -171,7 +333,7 @@ export async function POST(req: NextRequest) {
       },
     );
 
-  let body: { modelImage?: string; garmentImage?: string };
+  let body: { modelImage?: string; garmentImage?: string; category?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -191,6 +353,7 @@ export async function POST(req: NextRequest) {
       { error: "حجم عکس زیاد است؛ عکس کوچک‌تری انتخاب کنید." },
       { status: 413 },
     );
+  const category = parseCategory(body.category);
 
   let person: Img, garment: Img;
   try {
@@ -202,70 +365,33 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: (e as Error).message }, { status: 502 });
   }
 
+  const provider = resolveProvider();
   try {
-    if (PROVIDER === "fashn") {
-      return NextResponse.json({ id: await fashnStart(person, garment) });
-    }
-    if (PROVIDER === "fal") {
-      return NextResponse.json({
-        status: "completed",
-        image: await tryonFal(person, garment),
-      });
-    }
-    // 🆓 free HF (default)
+    const url =
+      provider === "fal"
+        ? await tryonFal(person, garment, category)
+        : provider === "fashn"
+          ? await tryonFashnDirect(person, garment, category)
+          : await tryonHuggingFace(person, garment);
+
+    // 🖼️ One response shape for every engine: the finished image, inlined
+    // when possible. The browser never polls — a single POST in, a single
+    // image out — so no client loop can ever run away.
+    const image = (await proxyToDataUri(url)) ?? url;
     return NextResponse.json({
-      status: "completed",
-      image: await tryonHuggingFace(person, garment),
+      status: "completed" as const,
+      image,
+      engine: ENGINE_LABEL[provider],
     });
   } catch (e) {
     const raw = (e as Error).message || "";
     // 💬 The free public demo is frequently busy/offline — return a clear, friendly message.
     const friendly =
-      PROVIDER === "huggingface"
-        ? "سرویس رایگانِ پرو مجازی الان شلوغ یا در دسترس نیست. چند لحظه بعد دوباره امتحان کنید، یا برای نتیجهٔ پایدار حالت حرفه‌ای (fal/FASHN) را فعال کنید."
+      provider === "huggingface" && raw !== "FAL_KEY تنظیم نشده است."
+        ? "سرویس رایگانِ پرو مجازی الان شلوغ یا در دسترس نیست. چند لحظه بعد دوباره امتحان کنید؛ برای نتیجهٔ پایدار، مدیر سایت حالت حرفه‌ای (FAL_KEY) را فعال کند."
         : raw || "پرو مجازی ناموفق بود.";
-    return NextResponse.json({ error: friendly }, { status: 502 });
+    const status =
+      raw.includes("تنظیم نشده است") || raw.includes("طولانی شد") ? 503 : 502;
+    return NextResponse.json({ error: friendly }, { status });
   }
-}
-
-// 🔁 FASHN polling only.
-export async function GET(req: NextRequest) {
-  const userId = await requireUserId(req);
-  if (!userId) return NextResponse.json({ error: AUTH_ERROR }, { status: 401 });
-
-  if (PROVIDER !== "fashn")
-    return NextResponse.json(
-      { error: "این provider نیازی به poll ندارد." },
-      { status: 400 },
-    );
-  const key = process.env.FASHN_API_KEY;
-  if (!key)
-    return NextResponse.json(
-      { error: "FASHN_API_KEY تنظیم نشده است." },
-      { status: 503 },
-    );
-  const id = req.nextUrl.searchParams.get("id");
-  if (!id)
-    return NextResponse.json({ error: "شناسه لازم است." }, { status: 400 });
-
-  const res = await fetch(`${FASHN_URL}/status/${id}`, {
-    headers: { Authorization: `Bearer ${key}` },
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok)
-    return NextResponse.json(
-      { error: data?.error || "خطا در بررسی وضعیت." },
-      { status: 502 },
-    );
-  if (data.status === "completed")
-    return NextResponse.json({
-      status: "completed",
-      image: data.output?.[0] ?? null,
-    });
-  if (data.status === "failed" || data.error)
-    return NextResponse.json({
-      status: "failed",
-      error: data.error?.message || data.error || "تولید ناموفق بود.",
-    });
-  return NextResponse.json({ status: data.status || "processing" });
 }

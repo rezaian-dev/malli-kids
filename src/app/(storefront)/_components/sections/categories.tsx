@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowDownLeft } from "lucide-react";
 import { OrnLeaf } from "../home-ornaments";
-import { Stagger, StaggerItem } from "@/components/motion";
+import { Stagger, StaggerItem } from "@/components/motion/static";
 import { wash } from "@/components/shared/section-wash";
 import { cn } from "@/lib/utils";
 
