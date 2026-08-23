@@ -8,15 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import { FILTER_LABEL } from "./admin-filter-bar";
 
 export type AdminFilterOption = {
   value: string;
   label: string;
-  // 🔢 دیگر رندر نمی‌شود — Radix، محتوای همین SelectItem را عیناً در دکمهٔ
-  // بستهٔ Select هم نمایش می‌داد، و عدد کنارِ برچسب باعث می‌شد متنِ دکمه در
-  // عرضِ محدودش بشکند. همچنان اختیاری مانده تا صداکنندهٔ فعلی نشکند.
   count?: number;
 };
 
@@ -37,6 +35,7 @@ export function AdminFilterSelect({
   className?: string;
 }) {
   const id = useId();
+  const selected = options.find((option) => option.value === value);
 
   return (
     <div className={cn("min-w-0 xl:w-44 xl:shrink-0", className)}>
@@ -49,12 +48,31 @@ export function AdminFilterSelect({
           className="dark:bg-navy-deep/45 h-11 rounded-xl bg-white shadow-none"
           aria-label={label}
         >
-          <SelectValue placeholder={placeholder ?? label} />
+          {/* 🔢 Explicit children (label only, no count) instead of letting
+              Radix mirror the selected SelectItem's own content here — that
+              mirrored content used to include the count badge below, which
+              broke the trigger's text onto two lines in its limited width. */}
+          <SelectValue placeholder={placeholder ?? label}>
+            {selected?.label}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent align="start">
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              {option.label}
+              <span className="flex w-full items-center justify-between gap-4">
+                <span>{option.label}</span>
+                {typeof option.count === "number" ? (
+                  <span
+                    className={cn(
+                      "rounded-md px-1.5 py-0.5 text-[10px]",
+                      "bg-navy/6 text-navy/70",
+                      "dark:text-wheat dark:bg-white/8",
+                    )}
+                  >
+                    {toFaDigits(option.count)}
+                  </span>
+                ) : null}
+              </span>
             </SelectItem>
           ))}
         </SelectContent>

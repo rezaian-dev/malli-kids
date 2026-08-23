@@ -33,7 +33,7 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob: https://server.arcgisonline.com https://kimi-web-img.kimi.ai;
+  img-src 'self' data: blob: https://server.arcgisonline.com;
   font-src 'self' data:;
   connect-src 'self';
   frame-src https://www.openstreetmap.org;
@@ -82,7 +82,6 @@ const nextConfig: NextConfig = {
   images: {
     qualities: [75, 85, 90, 95],
     formats: ["image/avif", "image/webp"],
-    remotePatterns: [{ protocol: "https", hostname: "kimi-web-img.kimi.ai" }],
   },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];

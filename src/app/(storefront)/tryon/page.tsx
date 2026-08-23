@@ -2,7 +2,7 @@ import { Intro } from "@/components/shared/intro";
 import { buildMetadata } from "@/lib/seo";
 import { Studio } from "./_components/try-on-studio";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
 export const metadata = buildMetadata({
   title: "پرو مجازی",
