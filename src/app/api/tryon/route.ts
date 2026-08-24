@@ -52,6 +52,20 @@ function resolveProvider(): Provider {
   return "huggingface";
 }
 
+// ⚠️ Boot-time hint (runs once per server start, not per request): Next
+// loads `.env.local` only at boot, so a key added while `next dev` is
+// already running stays invisible until restart — the single most common
+// "it 502s even though my key is valid" cause.
+if (
+  !process.env.FAL_KEY &&
+  !process.env.FASHN_API_KEY &&
+  (process.env.TRYON_PROVIDER || "").trim().toLowerCase() !== "huggingface"
+) {
+  console.warn(
+    "[tryon] no FAL_KEY/FASHN_API_KEY at boot — falling back to the free Hugging Face demo (unstable). Put FAL_KEY in .env.local and restart the server for reliable try-on.",
+  );
+}
+
 type Img = { buf: Buffer; mime: string };
 
 async function toBytes(img: string, origin: string): Promise<Img> {
@@ -135,6 +149,76 @@ const FAL_POLL_EVERY_MS = 2_000;
 
 export type FalGarmentCategory = "tops" | "bottoms" | "one-pieces" | "auto";
 
+/* ─── fal diagnostics ───────────────────────────────────────────
+ * `@fal-ai/client` throws `ApiError { status, body, message }` for HTTP
+ * failures (see its `response.js`): 401/402/403 fail immediately, while
+ * 429/5xx + network errors are retried 3× inside the client before
+ * surfacing. Mapping the status to a precise Persian line tells the
+ * shopper exactly what to do; the raw wire detail still lands in the
+ * server terminal for the developer. Already-curated Persian messages
+ * (our own timeout/poll guards) pass through untouched.
+ */
+function mapFalError(e: unknown): Error {
+  const status =
+    typeof (e as { status?: unknown })?.status === "number"
+      ? (e as { status: number }).status
+      : undefined;
+  const raw = e instanceof Error ? e.message : String(e);
+  const wire =
+    /fetch failed|network|ECONN|ENOTFOUND|ETIMEDOUT|EAI_AGAIN|HTTP \d|balance|credit|payment|insufficient|top ?up/i.test(
+      raw,
+    );
+  if (status === undefined && !wire) {
+    console.error("[tryon/fal] failed:", raw.slice(0, 300));
+    return e instanceof Error ? e : new Error(raw);
+  }
+  const body = (e as { body?: unknown })?.body;
+  console.error("[tryon/fal] engine call failed:", {
+    status,
+    message: raw.slice(0, 300),
+    body: body === undefined ? undefined : JSON.stringify(body).slice(0, 500),
+  });
+  if (status === 401)
+    return new Error(
+      "کلید FAL_KEY نامعتبر است؛ یک کلید تازه بسازید، در .env.local بگذارید و سرور را ری‌استارت کنید.",
+    );
+  if (
+    status === 402 ||
+    /balance|credit|payment|insufficient|top ?up/i.test(raw)
+  )
+    return new Error(
+      "اعتبار حساب fal کافی نیست؛ حساب را در fal.ai شارژ کنید (هر پرو حدود ۷ سنت).",
+    );
+  if (status === 403)
+    return new Error(
+      "دسترسی به fal رد شد؛ کلید و اتصال اینترنت (محدودیت منطقه‌ای/VPN) را بررسی کنید.",
+    );
+  if (status === 422)
+    return new Error(
+      "ورودی موتور پرو پذیرفته نشد؛ یک عکس تمام‌قد واضح‌تر امتحان کنید.",
+    );
+  if (status === 429)
+    return new Error("محدودیت نرخ fal؛ کمی بعد دوباره تلاش کنید.");
+  if (/fetch failed|network|ECONN|ENOTFOUND|ETIMEDOUT|EAI_AGAIN/i.test(raw))
+    return new Error(
+      "ارتباط با fal برقرار نشد؛ اتصال اینترنت و VPN را بررسی کنید.",
+    );
+  return new Error("موتور پرو مجازی خطا داد؛ چند لحظه بعد دوباره تلاش کنید.");
+}
+
+/** 🛡️ One guarded fal call: bounded by `timeout`, wire errors mapped. */
+async function falCall<T>(
+  p: Promise<T>,
+  ms: number,
+  label: string,
+): Promise<T> {
+  try {
+    return await timeout(p, ms, label);
+  } catch (e) {
+    throw mapFalError(e);
+  }
+}
+
 async function tryonFal(
   person: Img,
   garment: Img,
@@ -144,7 +228,7 @@ async function tryonFal(
   if (!key) throw new Error("FAL_KEY تنظیم نشده است.");
   fal.config({ credentials: key });
 
-  const { request_id } = await timeout(
+  const { request_id } = await falCall(
     fal.queue.submit(FAL_MODEL, {
       input: {
         model_image: dataUri(person),
@@ -163,12 +247,14 @@ async function tryonFal(
     25_000,
     "ارسال به موتور پرو",
   );
+  if (typeof request_id !== "string" || !request_id)
+    throw new Error("موتور پرو مجازی پاسخ معتبری نداد.");
 
   // 🔁 Bounded by construction: a `for` loop with a constant cap can never
   // spin forever, whatever the queue answers.
   for (let i = 0; i < FAL_MAX_POLLS; i++) {
     await sleep(FAL_POLL_EVERY_MS);
-    const status = await timeout(
+    const status = await falCall(
       fal.queue.status(FAL_MODEL, { requestId: request_id, logs: false }),
       15_000,
       "بررسی وضعیت موتور پرو",
@@ -187,7 +273,7 @@ async function tryonFal(
     }
   }
 
-  const result = await timeout(
+  const result = await falCall(
     fal.queue.result(FAL_MODEL, { requestId: request_id }),
     25_000,
     "دریافت نتیجه موتور پرو",
