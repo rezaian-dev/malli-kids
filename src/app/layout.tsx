@@ -1,19 +1,12 @@
 import type { ReactNode } from "react";
 import type { Viewport } from "next";
 import { cookies, headers } from "next/headers";
-import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 import NextTopLoader from "nextjs-toploader";
 import { StoreProvider } from "@/providers/store-provider";
 import { MotionProvider } from "@/components/motion";
 import { ThemeProvider } from "@/providers/theme-provider";
-
-// 🍞 Toasts only ever fire on user interaction (long after first paint),
-// so `sonner` rides in its own deferred chunk instead of the initial bundle.
-const Toaster = dynamic(
-  () => import("@/components/ui/sonner").then((m) => m.Toaster),
-  { ssr: false },
-);
+import { ToasterMount } from "@/components/ui/toaster-mount";
 import { JsonLd } from "@/components/shared/json-ld";
 import { getRootMetadata, organizationSchema, websiteSchema } from "@/lib/seo";
 import { readStoreBootstrap } from "@/lib/storefront-state";
@@ -139,7 +132,7 @@ export default async function RootLayout({
           <ThemeProvider>
             <StoreProvider initialState={initialState}>
               {children}
-              <Toaster />
+              <ToasterMount />
             </StoreProvider>
           </ThemeProvider>
         </MotionProvider>

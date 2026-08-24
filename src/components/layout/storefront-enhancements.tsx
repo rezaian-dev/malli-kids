@@ -1,3 +1,5 @@
+"use client";
+
 import dynamic from "next/dynamic";
 
 // 🪶 Every enhancement below is interaction-only (scroll progress, back-to-top,
