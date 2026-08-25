@@ -173,19 +173,24 @@ function mapFalError(e: unknown): Error {
     return e instanceof Error ? e : new Error(raw);
   }
   const body = (e as { body?: unknown })?.body;
+  const bodyText = body === undefined ? "" : JSON.stringify(body);
   console.error("[tryon/fal] engine call failed:", {
     status,
     message: raw.slice(0, 300),
-    body: body === undefined ? undefined : JSON.stringify(body).slice(0, 500),
+    body: body === undefined ? undefined : bodyText.slice(0, 500),
   });
+  // 💳 Billing signals hide in EITHER the message or the body: fal answers
+  // an exhausted balance with `403 Forbidden` + `{"detail":"...Exhausted
+  // balance..."}`, so both are scanned — otherwise this would misreport as
+  // a key/region problem instead of "top up your balance".
+  const billing = /balance|credit|payment|insufficient|top ?up/i.test(
+    `${raw} ${bodyText}`,
+  );
   if (status === 401)
     return new Error(
       "کلید FAL_KEY نامعتبر است؛ یک کلید تازه بسازید، در .env.local بگذارید و سرور را ری‌استارت کنید.",
     );
-  if (
-    status === 402 ||
-    /balance|credit|payment|insufficient|top ?up/i.test(raw)
-  )
+  if (status === 402 || billing)
     return new Error(
       "اعتبار حساب fal کافی نیست؛ حساب را در fal.ai شارژ کنید (هر پرو حدود ۷ سنت).",
     );
