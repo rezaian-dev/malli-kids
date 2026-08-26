@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import type { JournalArticle } from "@/lib/articles";
 import { cn } from "@/lib/utils";
-
-const CRUMB_LINK = "hover:text-gold inline-block py-1.5";
 
 const BODY_HTML = cn(
   "mt-6 text-[0.95rem] leading-[2.1]",
@@ -32,23 +31,15 @@ export function ArticleView({
   return (
     <article className="xs:px-4 container mx-auto w-full max-w-3xl px-3 sm:px-5 lg:px-7">
       <header>
-        <nav aria-label="مسیر مقاله" className="text-muted-foreground text-xs">
-          <ol className="flex flex-wrap items-center gap-1.5">
-            <li>
-              <Link href="/" className={CRUMB_LINK}>
-                خانه
-              </Link>
-            </li>
-            <li aria-hidden>/</li>
-            <li>
-              <Link href="/articles" className={CRUMB_LINK}>
-                مجله
-              </Link>
-            </li>
-            <li aria-hidden>/</li>
-            <li className="text-navy/70 dark:text-ivory/80">{article.title}</li>
-          </ol>
-        </nav>
+        <Breadcrumb
+          items={[
+            { name: "خانه", path: "/" },
+            { name: "مجله", path: "/articles" },
+            { name: article.title, path: `/articles/${article.slug}` },
+          ]}
+          schema={false}
+          className="mb-0"
+        />
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <Badge variant="secondary">{article.tag}</Badge>
           {article.date ? (

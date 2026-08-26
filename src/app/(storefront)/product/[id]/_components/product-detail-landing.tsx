@@ -1,14 +1,14 @@
-import Link from "next/link";
 import { Suspense } from "react";
 
 import { PRODUCT_GRID } from "@/components/product/card-styles";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getSession } from "@/lib/auth/session";
-import { breadcrumbSchema, productSchema } from "@/lib/seo";
+import { productSchema } from "@/lib/seo";
 import { getVisibleReviewsForProduct, hasPurchased } from "@/lib/shop/reviews";
 import { getSubscribedSizes } from "@/lib/shop/back-in-stock";
-import { cn, shell } from "@/lib/utils";
+import { shell } from "@/lib/utils";
 import { wash } from "@/components/shared/section-wash";
 import type { Product } from "@/types";
 import { ProductBuyPanel } from "./product-buy-panel";
@@ -16,8 +16,6 @@ import { ProductDetailsMount } from "./product-details-mount";
 import { ProductCompleteLook } from "./product-complete-look";
 import { ProductRelated } from "./product-related";
 import { pdpCard } from "../_lib/product-chrome";
-
-const CRUMB_LINK = "hover:text-gold inline-block py-1.5";
 
 function RelatedFallback() {
   return (
@@ -54,50 +52,22 @@ export async function ProductDetailLanding({
 
   return (
     <>
-      <JsonLd
-        data={breadcrumbSchema([
-          { name: "خانه", path: "/" },
-          { name: "فروشگاه", path: "/shop" },
-          { name: product.name, path: canonicalPath },
-        ])}
-      />
       <JsonLd data={productSchema(product, reviews)} />
       <div className={`${wash.silk} pb-2`}>
         <div className={shell}>
-          <nav
-            aria-label="مسیر محصول"
-            className={`${pdpCard} mb-4 px-3 py-1.5 sm:mb-8 sm:px-5`}
-          >
-            <ol
-              className={cn(
-                "flex flex-wrap items-center gap-1.5 text-xs font-bold",
-                "text-navy/70",
-                "dark:text-wheat",
-              )}
-            >
-              <li>
-                <Link href="/" className={CRUMB_LINK}>
-                  خانه
-                </Link>
-              </li>
-              <li aria-hidden className="text-gold">
-                /
-              </li>
-              <li>
-                <Link href="/shop" className={CRUMB_LINK}>
-                  فروشگاه
-                </Link>
-              </li>
-              <li aria-hidden className="text-gold">
-                /
-              </li>
-              <li className="text-navy/70 dark:text-ivory/80">
-                {product.name}
-              </li>
-            </ol>
-          </nav>
+          <Breadcrumb
+            items={[
+              { name: "خانه", path: "/" },
+              { name: "فروشگاه", path: "/shop" },
+              { name: product.name, path: canonicalPath },
+            ]}
+            className="mb-4 sm:mb-8"
+          />
 
-          <ProductBuyPanel product={product} subscribedSizes={subscribedSizes} />
+          <ProductBuyPanel
+            product={product}
+            subscribedSizes={subscribedSizes}
+          />
           <ProductDetailsMount
             product={product}
             reviews={reviews}

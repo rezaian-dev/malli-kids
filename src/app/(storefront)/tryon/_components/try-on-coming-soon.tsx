@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Stagger, StaggerItem } from "@/components/motion/static";
-import { breadcrumbSchema, pageSchema } from "@/lib/seo";
+import { pageSchema } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 /* ✨ Coming-soon placeholder for /tryon — a pure Server Component (zero
@@ -63,12 +63,6 @@ export function ComingSoon() {
   return (
     <>
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "خانه", path: "/" },
-          { name: "پرو مجازی", path: "/tryon" },
-        ])}
-      />
-      <JsonLd
         data={pageSchema({
           title: "پرو مجازی (به‌زودی)",
           description:
@@ -79,18 +73,12 @@ export function ComingSoon() {
       />
 
       <div className="xs:px-4 container mx-auto w-full max-w-5xl px-3 sm:px-5 lg:px-7">
-        <nav
-          aria-label="مسیر صفحه"
-          className="text-navy/70 dark:text-wheat mb-5 text-xs font-bold"
-        >
-          <Link href="/" className="hover:text-gold-ink transition-colors">
-            خانه
-          </Link>
-          <span aria-hidden="true" className="text-gold mx-1.5">
-            /
-          </span>
-          <span aria-current="page">پرو مجازی</span>
-        </nav>
+        <Breadcrumb
+          items={[
+            { name: "خانه", path: "/" },
+            { name: "پرو مجازی", path: "/tryon" },
+          ]}
+        />
 
         <Stagger>
           {/* ── Hero panel ─────────────────────────────── */}
