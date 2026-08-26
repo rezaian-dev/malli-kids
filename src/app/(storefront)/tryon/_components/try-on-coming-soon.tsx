@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Stagger, StaggerItem } from "@/components/motion/static";
 import { breadcrumbSchema, pageSchema } from "@/lib/seo";
