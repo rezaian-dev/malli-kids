@@ -17,7 +17,7 @@ export type StoreBootstrap = {
   ready: boolean;
 };
 
-export const COOKIE_AGE = 60 * 60 * 24 * 180;
+const COOKIE_AGE = 60 * 60 * 24 * 180;
 export const NO_CAMPAIGN: StoredCampaign = {
   active: false,
   percent: 0,
@@ -90,7 +90,7 @@ export function sanitizeCart(value: unknown): StoredCartItem[] {
   });
 }
 
-export function sanitizeCampaign(value: unknown): StoredCampaign {
+function sanitizeCampaign(value: unknown): StoredCampaign {
   if (!value || typeof value !== "object") return NO_CAMPAIGN;
 
   const campaign = value as Record<string, unknown>;
@@ -103,7 +103,7 @@ export function sanitizeCampaign(value: unknown): StoredCampaign {
   };
 }
 
-export function sanitizeBanner(value: unknown): BannerItem | null {
+function sanitizeBanner(value: unknown): BannerItem | null {
   if (!value || typeof value !== "object") return null;
 
   const banner = value as Record<string, unknown>;

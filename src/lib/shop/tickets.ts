@@ -10,7 +10,7 @@ import {
 import { faDateTime } from "@/lib/locale/fa";
 
 export type { TicketStatus, TicketCategory, TicketPriority };
-export type TicketReply = {
+type TicketReply = {
   from: "user" | "support";
   text: string;
   at: string;
@@ -33,36 +33,6 @@ export type Ticket = {
   waitingHours: number | null;
   replies: TicketReply[];
 };
-
-export const TICKET_CATEGORIES: { value: TicketCategory; label: string }[] = [
-  { value: "order", label: "پیگیری سفارش" },
-  { value: "return", label: "مرجوعی و تعویض" },
-  { value: "sizing", label: "راهنمای سایز" },
-  { value: "quality", label: "کیفیت محصول" },
-  { value: "other", label: "سایر" },
-];
-
-export const TICKET_PRIORITIES: { value: TicketPriority; label: string }[] = [
-  { value: "normal", label: "عادی" },
-  { value: "high", label: "مهم" },
-  { value: "urgent", label: "فوری" },
-];
-
-export function ticketCategoryLabel(category: TicketCategory): string {
-  return (
-    TICKET_CATEGORIES.find((c) => c.value === category)?.label ?? "سایر"
-  );
-}
-
-export function ticketPriorityLabel(priority: TicketPriority): string {
-  return TICKET_PRIORITIES.find((p) => p.value === priority)?.label ?? "عادی";
-}
-
-/** #️⃣ Stable display number — the serial for new tickets, a short-id
- *  fallback for rows that predate numbering. */
-export function ticketNumber(ticket: { number?: number; id: string }): string {
-  return ticket.number ? `#${ticket.number}` : `#${ticket.id.slice(-6)}`;
-}
 
 function toTicket(
   doc: TicketDoc & {

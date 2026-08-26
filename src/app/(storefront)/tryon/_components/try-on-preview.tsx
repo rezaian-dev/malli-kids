@@ -4,17 +4,9 @@ import { CORE_PRODUCTS } from "@/lib/data/products";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SAMPLE_MODELS, type TryOnPhase } from "../_hooks/use-try-on";
+import { swatchClass } from "../_lib/swatch";
 
-function swatchClass(active: boolean) {
-  return cn(
-    "overflow-hidden rounded-xl border-2 transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95",
-    active
-      ? "border-gold motion-safe:hover:shadow-md motion-safe:hover:shadow-gold/30"
-      : "hover:border-gold/40 border-transparent",
-  );
-}
-
-/** 🖼️ Live preview + photo upload/sample-model picker + run button. */
+/** Live preview with photo upload, sample picker and run button. */
 export function TryOnPreview({
   person,
   result,
@@ -68,7 +60,7 @@ export function TryOnPreview({
 
       <div className="bg-sand relative mt-3 aspect-4/5 overflow-hidden rounded-2xl">
         {shown ? (
-          // eslint-disable-next-line @next/next/no-img-element -- 🪶 Data URLs need a raw img.
+          // eslint-disable-next-line @next/next/no-img-element -- Data URLs need a raw img.
           <img
             src={shown}
             alt={
@@ -87,7 +79,7 @@ export function TryOnPreview({
           </div>
         )}
 
-        {/* ✨ Progress overlay while AI is running. */}
+        {/* Progress overlay while running. */}
         {phase === "running" ? (
           <div
             role="status"
@@ -107,7 +99,6 @@ export function TryOnPreview({
         ) : null}
 
         {/* current garment chip */}
-        {}
         <Image
           src={CORE_PRODUCTS[garment].img}
           alt={CORE_PRODUCTS[garment].name}
@@ -120,7 +111,7 @@ export function TryOnPreview({
         />
       </div>
 
-      {/* ♿ Screen-reader status: announces compressing/running/done without moving focus. */}
+      {/* Screen-reader status, announced without moving focus. */}
       <p aria-live="polite" className="sr-only">
         {compressing
           ? "در حال آماده‌سازی عکس…"
@@ -198,7 +189,6 @@ export function TryOnPreview({
             aria-pressed={person === src}
             className={cn(swatchClass(person === src), busy && "opacity-50")}
           >
-            {}
             <Image
               src={src}
               alt=""

@@ -37,7 +37,10 @@ import { faDate, formatToman, toFaDigits } from "@/lib/locale/fa";
 // low-frequency "download my invoice" click can afford it; a hot path
 // couldn't.
 
-const FONT_PATH = path.join(process.cwd(), "src/fonts/Vazirmatn-Variable.woff2");
+const FONT_PATH = path.join(
+  process.cwd(),
+  "src/fonts/Vazirmatn-Variable.woff2",
+);
 const LOGO_PATH = path.join(process.cwd(), "public/brand/logo-white.png");
 
 // ♻️ Read + base64-encode once per server process, not once per invoice —
@@ -64,12 +67,12 @@ function getLogoDataUri(): string {
 }
 
 const PAY_LABEL: Record<OrderDoc["pay"], string> = {
-  "پرداخت‌شده": "پرداخت‌شده",
+  پرداخت‌شده: "پرداخت‌شده",
   "در انتظار": "در انتظار پرداخت",
   ناموفق: "پرداخت ناموفق",
 };
 const PAY_TONE: Record<OrderDoc["pay"], string> = {
-  "پرداخت‌شده": "#0f7a4d",
+  پرداخت‌شده: "#0f7a4d",
   "در انتظار": "#b8893f",
   ناموفق: "#c22b4d",
 };
@@ -101,7 +104,7 @@ function itemRow(item: OrderDoc["items"][number], index: number): string {
  *  "invoice number" would be one more thing to keep in sync for zero real
  *  benefit; this way it's stable by construction (same input, same output,
  *  every time — including across repeated downloads/refreshes). */
-export function renderInvoiceHtml(order: OrderDoc & { createdAt: Date }): string {
+function renderInvoiceHtml(order: OrderDoc & { createdAt: Date }): string {
   const font = getFontDataUri();
   const logo = getLogoDataUri();
   const payTone = PAY_TONE[order.pay];

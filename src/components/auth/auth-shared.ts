@@ -1,9 +1,5 @@
-import { phoneDigits } from "@/lib/digits";
 import { toEnDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
-
-/** ☎️ Normalize a typed phone/identifier to plain digits. */
-export const digits = (v: string) => phoneDigits(v);
 
 /** 🔢 Strip everything but digits (Latin) from an OTP code field. */
 export const onlyDigits = (v: string) => toEnDigits(v).replace(/\D/g, "");

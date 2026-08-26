@@ -86,6 +86,15 @@ export function JalaliDateField({
         htmlFor={id}
       >
         {label}
+        {required ? (
+          <>
+            <span aria-hidden="true" className="text-gold-deep">
+              {" "}
+              *
+            </span>
+            <span className="sr-only">(ضروری)</span>
+          </>
+        ) : null}
       </label>
       <DatePicker
         ref={pickerRef}
@@ -147,9 +156,7 @@ export function JalaliDateField({
             onClick={() => openCalendar()}
             aria-haspopup="dialog"
             aria-expanded={open}
-            aria-invalid={Boolean(error) || undefined}
             aria-describedby={error ? `${id}-error` : undefined}
-            aria-required={required || undefined}
             className={cn(
               "flex h-11 w-full min-w-0 items-center gap-2.5 rounded-2xl border px-3.5 text-sm",
               "border-navy/12 bg-transparent",
@@ -166,7 +173,10 @@ export function JalaliDateField({
               aria-hidden="true"
               className="text-gold-deep dark:text-gold-soft size-5 shrink-0"
             />
-            <span dir="ltr" className="min-w-0 flex-1 truncate text-left tracking-wide">
+            <span
+              dir="ltr"
+              className="min-w-0 flex-1 truncate text-left tracking-wide"
+            >
               {display || placeholder}
             </span>
           </button>

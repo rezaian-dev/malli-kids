@@ -9,7 +9,7 @@ export type TicketStatus = "open" | "pending" | "answered" | "closed";
 export type TicketCategory =
   "order" | "return" | "sizing" | "quality" | "other";
 export type TicketPriority = "normal" | "high" | "urgent";
-export type TicketReplyDoc = {
+type TicketReplyDoc = {
   from: "user" | "support";
   text: string;
   at: Date;

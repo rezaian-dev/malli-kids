@@ -148,24 +148,3 @@ export function AppForm<T extends FieldValues>({
     </FormProvider>
   );
 }
-
-export function FormHead({
-  title,
-  desc,
-  className,
-}: {
-  title: ReactNode;
-  desc?: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={className}>
-      <h2 className="text-navy dark:text-linen text-lg font-black">{title}</h2>
-      {desc ? (
-        <p className="text-navy/70 dark:text-khaki mt-1 text-sm">{desc}</p>
-      ) : null}
-    </div>
-  );
-}
-
-export { AppForm as Form };
