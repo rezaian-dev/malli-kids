@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Menu } from "lucide-react";
+import { LayoutGrid, Menu, X } from "lucide-react";
 import { CAT_LINKS, NAV_MAIN } from "@/lib/data/nav";
 import { navIcon } from "@/lib/data/nav-icons";
 import { Button } from "@/components/ui/button";
@@ -33,8 +33,22 @@ export function MobileNav() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="منو" className={cn(ICON_BTN, "md:hidden")}>
-          <Menu className="size-5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="منو"
+          // دقت: «relative» لازم است، وگرنه ✕ که absolute inset-0 است به نزدیک‌ترین
+          // والدِ positioned (یعنی خودِ هدر) می‌چسبد و آیکونِ دکمه غیب می‌شود.
+          className={cn(
+            ICON_BTN,
+            "group/menu relative md:hidden hover:bg-gold/15",
+            // نسخهٔ ghostِ شادن روی هر تریگرِ باز، bg-muted می‌گذارد؛ اینجا همان
+            // حالتِ «فعال» را طلایی می‌کنیم تا با بقیهٔ آیکون‌های هدر هم‌زبان باشد.
+            "aria-expanded:bg-gold/25 aria-expanded:text-gold-deep dark:aria-expanded:text-gold-light",
+          )}
+        >
+          <Menu className="size-5 transition-all duration-300 ease-out group-aria-expanded/menu:scale-0 group-aria-expanded/menu:-rotate-90 group-aria-expanded/menu:opacity-0" />
+          <X className="absolute inset-0 m-auto size-5 scale-0 rotate-90 opacity-0 transition-all duration-300 ease-out group-aria-expanded/menu:scale-100 group-aria-expanded/menu:rotate-0 group-aria-expanded/menu:opacity-100" />
         </Button>
       </SheetTrigger>
 

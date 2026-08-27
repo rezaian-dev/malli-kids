@@ -95,11 +95,11 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
             </span>
           </div>
         ) : null}
-        <div className="absolute inset-x-2.5 bottom-2.5 z-4 hidden translate-y-[130%] flex-col gap-1.5 transition-all duration-500 ease-out group-hover:translate-y-0 min-[420px]:flex">
-          <Link href={href} className={`${VIEW} w-full text-xs py-2.5 rounded-[14px] shadow-md`}>
+        <div className="absolute inset-x-2.5 bottom-2.5 z-4 hidden translate-y-[130%] flex-col gap-1.5 transition-all duration-500 ease-out group-hover:translate-y-0 pointer-fine:min-[520px]:flex">
+          <Link href={href} className={`${VIEW} h-10 w-full text-xs rounded-[14px] shadow-md`}>
             <Eye width={16} height={16} /> مشاهده محصول
           </Link>
-          <AddToCart out={out} className={`${CART} w-full text-xs py-2.5 rounded-[14px] shadow-md`}>
+          <AddToCart out={out} className={`${CART} h-10 w-full text-xs rounded-[14px] shadow-md`}>
             {out ? (
               <>
                 <Bell width={16} height={16} /> اطلاع از موجودی
@@ -132,12 +132,13 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
             </>
           )}
         </div>
-        {/* در ستون‌های خیلی باریک دکمه‌ها روی هم می‌روند تا متن بریده نشود */}
-        <div className="mt-2.5 grid grid-cols-1 gap-1.5 @[10rem]:grid-cols-2 min-[420px]:hidden">
-          <Link href={href} className={`${VIEW} min-w-0 py-2 text-[10px]`}>
+        {/* تا ۵۱۹px (حالت تک‌ستونه) ردیف دکمه‌ها همیشه زیر قیمت می‌ماند؛ از ۵۲۰px
+            روی دستگاه ماوس‌دار دکمه‌ها به روی تصویر و با hover می‌آیند. */}
+        <div className="mt-2.5 grid grid-cols-1 gap-1.5 @[10rem]:grid-cols-2 pointer-fine:min-[520px]:hidden">
+          <Link href={href} className={`${VIEW} h-9 min-w-0 text-[10px]`}>
             <Eye width={12} height={12} className="shrink-0" /> <span className="truncate">مشاهده</span>
           </Link>
-          <AddToCart out={out} className={`${out ? "bg-rose-50 text-rose" : CART} min-w-0 rounded-[10px] border-0 py-2 text-[10px] font-black`}>
+          <AddToCart out={out} className={`${out ? "bg-rose-50 text-rose" : CART} h-9 min-w-0 rounded-[10px] border-0 text-[10px] font-black`}>
             {out ? "اطلاع موجودی" : "افزودن به سبد"}
           </AddToCart>
         </div>

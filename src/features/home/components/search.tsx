@@ -1,9 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Baby, Flame, Search as SearchIcon, Shirt, Sparkles, TrendingUp } from "lucide-react";
 import { CORE_PRODUCTS, pdpHref } from "@/lib/data/products";
+import { cn } from "@/lib/utils";
 import { formatToman } from "@/lib/format";
+import { AppForm, ERROR_TEXT, useAppForm } from "@/components/form";
+import { searchDefaults, searchSchema, type SearchValues } from "../schema";
 
 const CHIPS = [
   { q: "پیراهن", Icon: Shirt },
@@ -13,8 +17,12 @@ const CHIPS = [
 ];
 
 export function Search() {
-  const [q, setQ] = useState("");
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const form = useAppForm({ schema: searchSchema, defaultValues: searchDefaults, mode: "onSubmit" });
+  const q = form.watch("q");
+  const errors = form.formState.errors;
+  const qField = form.register("q");
 
   const hits = useMemo(() => {
     const s = q.trim();
@@ -22,43 +30,58 @@ export function Search() {
     return CORE_PRODUCTS.filter((p) => p.name.includes(s) || p.cat.includes(s)).slice(0, 5);
   }, [q]);
 
-  function goShop(value?: string) {
-    const v = (value ?? q).trim();
-    window.location.href = v ? `/shop?q=${encodeURIComponent(v)}` : "/shop";
+  /**Enter» تنها کلیدِ مجاز برایِ رفتن به صفحهٔ نتیجه است؛ نتیجهٔ زنده فقط نمایش داده می‌شود.
+   * اگر عبارت کوتاه یا نامعتبر باشد، اسکیما جلویِ رفتن را می‌گیرد.
+   */
+  function goShop({ q: value }: SearchValues) {
+    const v = value.trim();
+    router.push(v ? `/shop?q=${encodeURIComponent(v)}` : "/shop");
+  }
+
+  function pick(chip: string) {
+    form.setValue("q", chip, { shouldDirty: true });
+    setOpen(true);
+    form.setFocus("q");
   }
 
   return (
     <div className="mt-8 text-right">
       <div className="relative">
-        <form
-          role="search"
-          className="relative z-20 flex items-center gap-1.5 rounded-3xl bg-white p-1.5 shadow-2xl xs:gap-2 xs:p-2 sm:p-2.5"
-          onSubmit={(e) => {
-            e.preventDefault();
-            goShop();
-          }}
-        >
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-gold/15 text-navy">
-            <SearchIcon className="size-5" />
-          </span>
-          <input
-            id="homeSearch"
-            type="search"
-            autoComplete="off"
-            value={q}
-            onChange={(e) => {
-              setQ(e.target.value);
-              setOpen(true);
-            }}
-            onFocus={() => setOpen(true)}
-            onBlur={() => setTimeout(() => setOpen(false), 180)}
-            placeholder="مثلاً پیراهن، سیسمونی، پالتو…"
-            className="min-w-0 flex-1 bg-transparent px-2 py-3 text-sm text-navy outline-none placeholder:text-navy/40 sm:text-base"
-          />
-          <button type="submit" className="shrink-0 rounded-2xl bg-navy px-4 py-3 text-xs font-black text-ivory sm:px-6 sm:text-sm">
-            جستجو
-          </button>
-        </form>
+        <AppForm form={form} onSubmit={goShop} ariaLabel="جستجوی محصولات" role="search" className="relative z-20">
+          <div className="flex items-center gap-1.5 rounded-3xl bg-white p-1.5 shadow-2xl xs:gap-2 xs:p-2 sm:p-2.5">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-gold/15 text-navy">
+              <SearchIcon className="size-5" />
+            </span>
+            <input
+              id="homeSearch"
+              type="search"
+              autoComplete="off"
+              aria-label="جستجوی محصولات"
+              aria-invalid={Boolean(errors.q) || undefined}
+              aria-describedby={errors.q ? "homeSearch-msg" : undefined}
+              placeholder="مثلاً پیراهن، سیسمونی، پالتو…"
+              {...qField}
+              onChange={(e) => {
+                qField.onChange(e);
+                setOpen(true);
+              }}
+              onFocus={() => setOpen(true)}
+              onBlur={(e) => {
+                qField.onBlur(e);
+                window.setTimeout(() => setOpen(false), 180);
+              }}
+              className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-navy outline-none placeholder:text-navy/40 sm:text-base"
+            />
+            <button type="submit" className="shrink-0 rounded-2xl bg-navy px-4 py-3 text-xs font-black text-ivory sm:px-6 sm:text-sm">
+              جستجو
+            </button>
+          </div>
+          {errors.q ? (
+            <p id="homeSearch-msg" role="alert" className={cn(ERROR_TEXT, "text-ivory/90 dark:text-ivory")}>
+              {errors.q.message}
+            </p>
+          ) : null}
+        </AppForm>
 
         <div
           className={`absolute inset-x-0 top-full z-30 mt-2 rounded-2xl border border-gold/35 bg-paper shadow-xl dark:border-gold/40 dark:bg-dusk ${
@@ -76,10 +99,7 @@ export function Search() {
                     key={chip}
                     type="button"
                     className="inline-flex items-center gap-1.5 rounded-full bg-sand px-3.5 py-2 text-xs font-extrabold text-navy dark:bg-dusk-mid dark:text-linen"
-                    onMouseDown={() => {
-                      setQ(chip);
-                      setOpen(true);
-                    }}
+                    onMouseDown={() => pick(chip)}
                   >
                     <Icon className="size-3.5 text-gold" />
                     {chip}
@@ -115,10 +135,7 @@ export function Search() {
             key={chip}
             type="button"
             className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-white/20 px-3.5 py-1.5 text-xs font-bold text-ivory hover:bg-gold hover:text-navy-deep"
-            onClick={() => {
-              setQ(chip);
-              setOpen(true);
-            }}
+            onClick={() => pick(chip)}
           >
             <Icon className="size-3.5" />
             {chip}

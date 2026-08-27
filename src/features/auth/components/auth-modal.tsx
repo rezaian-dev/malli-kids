@@ -3,18 +3,16 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail, Phone, User, X } from "lucide-react";
 import { useStore } from "@/lib/store";
-import { toEnDigits } from "@/lib/format";
+import { RE, phoneDigits, toLatinDigits } from "@/lib/forms";
+import { AppForm, Field, InsetField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { cn } from "@/lib/utils";
 import { AuthAside } from "./auth-aside";
 import { TrustNote } from "./trust-note";
-
-const OTP_LEN = 5;
+import { OTP_LEN, loginDefaults, loginSchema, registerDefaults, registerSchema, smsAccount, smsCodeDefaults, smsCodeSchema, smsStartDefaults, smsStartSchema, type LoginValues, type RegisterValues, type SmsCodeValues, type SmsStartValues } from "../schema";
 
 const TAB_TRIGGER = cn(
   "min-w-0 rounded-xl py-2.5 text-[13px] font-extrabold transition-colors",
@@ -31,208 +29,346 @@ const SUBMIT_GOLD =
 const TITLES = { login: "ورود به حساب", otp: "ورود با پیامک", register: "ساخت حساب" } as const;
 type Tab = keyof typeof TITLES;
 
-function normalizePhone(raw: string) {
-  return toEnDigits(raw).replace(/\s/g, "");
-}
+/** «۰۹۱۲ ۳۴۵ ۶۷۸۹» و «+۹۸۹۱۲…» → «09123456789» */
+const digits = (v: string) => phoneDigits(v);
+/** فقط رقم‌ها — برایِ کدِ پیامکی */
+const onlyDigits = (v: string) => toLatinDigits(v).replace(/\D/g, "");
 
-/** فیلد فرم با آیکون — Input و Label از shadcn. */
-function Field({
-  label,
-  icon,
-  extra,
-  children,
-  bad = false,
-  shake = 0,
-}: {
-  label: string;
-  icon: ReactNode;
-  extra?: ReactNode;
-  children: ReactNode;
-  bad?: boolean;
-  shake?: number;
-}) {
-  return (
-    <div className="min-w-0 space-y-1.5">
-      <Label className="text-xs font-bold text-navy/80 dark:text-linen">{label}</Label>
-      <div
-        key={`${label}-${shake}`}
-        className={cn(
-          "flex h-12 items-center rounded-xl border bg-white transition-colors",
-          "focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/25",
-          "dark:bg-navy-deep/60",
-          bad ? "animate-shake border-rose dark:border-rose" : "border-tan dark:border-white/12",
-        )}
-      >
-        <span className="flex w-10 shrink-0 items-center justify-center text-gold dark:text-gold-light">{icon}</span>
-        {children}
-        {extra}
-      </div>
-    </div>
-  );
-}
-
-const FIELD_INPUT =
-  "h-full flex-1 border-0 bg-transparent px-0 pe-3 shadow-none focus-visible:ring-0 dark:bg-transparent";
-
-/**
- * دیالوگ ورود / ثبت‌نام.
- *
- * ساختار مودال، فوکوس‌تراپ، Escape و قفل اسکرول همه با Dialog shadcn است؛
- * تب‌ها با Tabs و کد یکبارمصرف با InputOTP. state باقی‌مانده فقط منطق فرم است.
- */
-export function Modal() {
-  const { authOpen, setAuthOpen, login, showToast } = useStore();
-
-  const [tab, setTab] = useState<Tab>("login");
-  const [show, setShow] = useState(false);
-  const [err, setErr] = useState("");
-  const [bad, setBad] = useState<string[]>([]);
-  const [shake, setShake] = useState(0);
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [sent, setSent] = useState(false);
+/** شمارشِ معکوسِ «ارسالِ مجددِ کد» */
+function useCooldown() {
   const [sec, setSec] = useState(0);
-  const [regName, setRegName] = useState("");
-
   useEffect(() => {
     if (sec <= 0) return;
     const t = window.setTimeout(() => setSec((s) => s - 1), 1000);
     return () => window.clearTimeout(t);
   }, [sec]);
+  return { sec, restart: (n = 90) => setSec(n), stop: () => setSec(0) };
+}
 
-  function reset() {
-    setErr("");
-    setBad([]);
-    setSent(false);
-    setOtp("");
-  }
+/**
+ * وضعیتِ مشترکِ دو تبِ پیامکی: شمارهٔ قفل‌شده، نام، کد و تایمر.
+ * فرمِ کد اینجا ساخته می‌شود تا هر دو تب از یک اسکیما استفاده کنند.
+ */
+function useSmsFlow() {
+  const code = useAppForm({ schema: smsCodeSchema, defaultValues: smsCodeDefaults });
+  const cd = useCooldown();
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
 
-  function fail(fields: string[], message: string) {
-    setBad(fields);
-    setShake((n) => n + 1);
-    setErr(message);
-  }
+  return {
+    code,
+    cd,
+    phone,
+    name,
+    sent: phone !== "",
+    send(p: string, n = "") {
+      setPhone(p);
+      setName(n);
+      cd.restart();
+      code.reset({ ...smsCodeDefaults });
+      code.setFocus("code");
+    },
+    back() {
+      setPhone("");
+      setName("");
+      cd.stop();
+      code.reset({ ...smsCodeDefaults });
+    },
+  };
+}
 
-  function onLogin(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const email = String(fd.get("email") || "").trim();
-    const pass = String(fd.get("password") || "");
-    const f: string[] = [];
-    if (!email || (!email.includes("@") && !/^09\d{9}$/.test(normalizePhone(email)))) f.push("email");
-    if (pass.length < 6) f.push("password");
-    if (f.length) return fail(f, "ایمیل/موبایل و رمز (حداقل ۶ حرف) را درست وارد کنید");
+type SmsFlow = ReturnType<typeof useSmsFlow>;
 
-    setBad([]);
-    login({ firstName: email.split("@")[0] || "کاربر", email, phone: email.startsWith("09") ? email : undefined });
-    showToast("خوش آمدید");
-  }
-
-  function startRegister(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const firstName = String(fd.get("firstName") || "").trim();
-    const mobile = normalizePhone(String(fd.get("phone") || ""));
-    const f: string[] = [];
-    if (firstName.length < 3) f.push("firstName");
-    if (!/^09\d{9}$/.test(mobile)) f.push("phone");
-    if (f.length) return fail(f, "نام و شمارهٔ موبایل را درست وارد کنید");
-
-    setBad([]);
-    setErr("");
-    setRegName(firstName);
-    setPhone(mobile);
-    // TODO: کد را از پنل پیامکی/سرور ارسال کنید.
-    setSent(true);
-    setSec(90);
-    setOtp("");
-    showToast("کد ۵ رقمی به موبایل شما پیامک شد");
-  }
-
-  function sendOtp() {
-    const p = normalizePhone(phone);
-    if (!/^09\d{9}$/.test(p)) return fail(["otpPhone"], "شماره را به‌صورت 0912 345 6789 وارد کنید");
-
-    setBad([]);
-    setErr("");
-    setSent(true);
-    setSec(90);
-    setOtp("");
-    showToast("کد ۵ رقمی به شمارهٔ شما پیامک شد");
-  }
-
-  function verifyOtp(e: React.FormEvent) {
-    e.preventDefault();
-    if (otp.length !== OTP_LEN) return fail(["otp"], "۵ رقم کد را کامل وارد کنید");
-
-    // TODO: کد را برای اعتبارسنجی به پنل پیامکی/سرور بفرستید.
-    setBad([]);
-    const p = normalizePhone(phone);
-    login({ firstName: tab === "register" ? regName || "کاربر" : "کاربر", email: `${p}@sms.mallikids.ir`, phone: p });
-    showToast(tab === "register" ? "حساب شما ساخته شد ✨" : "با پیامک وارد شدید");
-    setRegName("");
-  }
-
-  /** بلوک کد یکبارمصرف — مشترک بین تب پیامک و ثبت‌نام. */
-  const otpBlock = (submitLabel: string) => (
-    <>
-      <div>
-        <p className="mb-2 text-xs font-bold text-navy dark:text-ivory">کد ۵ رقمی پیامک‌شده</p>
-        <div key={shake} className={cn("flex justify-center", bad.includes("otp") && "animate-shake")}>
-          <InputOTP maxLength={OTP_LEN} value={otp} onChange={setOtp} containerClassName="gap-1.5" autoFocus>
-            <InputOTPGroup className="gap-1.5">
-              {Array.from({ length: OTP_LEN }, (_, i) => (
-                <InputOTPSlot
-                  key={i}
-                  index={i}
-                  className={cn(
-                    "size-12 rounded-xl border bg-white text-lg font-black text-navy transition-colors first:rounded-s-xl last:rounded-e-xl",
-                    "data-[active=true]:border-gold data-[active=true]:ring-2 data-[active=true]:ring-gold/25",
-                    "dark:bg-navy-deep/60 dark:text-ivory",
-                    bad.includes("otp") ? "border-rose" : "border-tan dark:border-white/12",
-                  )}
-                />
-              ))}
-            </InputOTPGroup>
-          </InputOTP>
-        </div>
-      </div>
+/** کد ۵ رقمی + ارسالِ مجدد + تغییرِ شماره */
+function CodeStep({ flow, submitLabel, onVerify }: { flow: SmsFlow; submitLabel: string; onVerify: (v: SmsCodeValues) => void }) {
+  return (
+    <AppForm form={flow.code} onSubmit={onVerify} ariaLabel="تأیید کد پیامکی" className="space-y-4" notify>
+      <Field name="code" label={`کد ${OTP_LEN} رقمی پیامک‌شده`} skin="inset" noShell>
+        {({ field, invalid }) => (
+          <div className={cn("flex justify-center", invalid && "animate-shake")}>
+            <InputOTP
+              maxLength={OTP_LEN}
+              value={String(field.value ?? "")}
+              onChange={(v) => field.onChange(v)}
+              containerClassName="gap-1.5"
+              autoFocus
+            >
+              <InputOTPGroup className="gap-1.5">
+                {Array.from({ length: OTP_LEN }, (_, i) => (
+                  <InputOTPSlot
+                    key={i}
+                    index={i}
+                    className={cn(
+                      "size-12 rounded-xl border bg-white text-lg font-black text-navy transition-[border-color,box-shadow] duration-200 first:rounded-s-xl last:rounded-e-xl",
+                      "dark:bg-navy-deep/60 dark:text-ivory",
+                      invalid
+                        ? "border-rose data-[active=true]:border-rose data-[active=true]:ring-2 data-[active=true]:ring-rose/20 dark:border-rose"
+                        : "border-tan dark:border-white/12 data-[active=true]:border-gold data-[active=true]:ring-2 data-[active=true]:ring-gold/25",
+                    )}
+                  />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+          </div>
+        )}
+      </Field>
 
       <div className="flex items-center justify-between text-[11px] font-bold">
-        {sec > 0 ? (
-          <span className="text-navy/50 dark:text-linen/60">ارسال مجدد تا {sec} ثانیه</span>
+        {flow.cd.sec > 0 ? (
+          <span className="text-navy/50 dark:text-linen/60">
+            ارسالِ مجدد تا {flow.cd.sec} ثانیه
+          </span>
         ) : (
-          <Button type="button" variant="link" className="h-auto p-0 text-[11px] font-bold text-gold" onClick={sendOtp}>
-            ارسال دوباره کد
+          <Button
+            type="button"
+            variant="link"
+            className="h-auto p-0 text-[11px] font-bold text-gold"
+            onClick={() => flow.cd.restart()}
+          >
+            ارسالِ دوبارهٔ کد
           </Button>
         )}
         <Button
           type="button"
           variant="link"
           className="h-auto p-0 text-[11px] font-bold text-navy/50 dark:text-linen/60"
-          onClick={() => {
-            setSent(false);
-            setOtp("");
-          }}
+          onClick={flow.back}
         >
-          تغییر شماره
+          تغییرِ شماره
         </Button>
       </div>
 
       <Button type="submit" className={SUBMIT_NAVY}>
         {submitLabel}
       </Button>
-    </>
+    </AppForm>
   );
+}
+
+/** کارتِ «شماره قفل شد» */
+function LockedCard({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-gold/30 bg-sand/80 px-3.5 py-3 dark:border-gold/25 dark:bg-navy-deep/60">
+      <p className="text-[11px] font-black text-gold">{title}</p>
+      <div className="mt-1 text-sm font-black text-navy dark:text-ivory">{children}</div>
+    </div>
+  );
+}
+
+/* ─────────────── تبِ اول: ورود با رمز ─────────────── */
+
+function LoginPanel({ onOtp }: { onOtp: () => void }) {
+  const { login, showToast } = useStore();
+  const [show, setShow] = useState(false);
+  const form = useAppForm({ schema: loginSchema, defaultValues: loginDefaults });
+
+  function onValid({ identifier }: LoginValues) {
+    const id = identifier.trim();
+    const tel = digits(id);
+    const isMobile = RE.mobile.test(tel);
+    login({
+      firstName: isMobile ? "کاربر" : id.split("@")[0],
+      email: isMobile ? smsAccount(tel).email : id,
+      phone: isMobile ? tel : undefined,
+    });
+    showToast("خوش آمدید ✨");
+    form.reset();
+    // رمزِ عبور فقط برایِ احرازِ هویت خوانده می‌شود؛ در اسکیما حداقل ۶ نویسه است و هیچ‌جا ذخیره نمی‌شود.
+  }
 
   return (
-    <Dialog
-      open={authOpen}
-      onOpenChange={(v) => {
-        setAuthOpen(v);
-        if (!v) reset();
-      }}
-    >
+    <AppForm form={form} onSubmit={onValid} ariaLabel="ورود با رمز عبور" className="space-y-3.5" notify>
+      <InsetField
+        name="identifier"
+        label="ایمیل یا موبایل"
+        icon={<Mail className="size-4" />}
+        dir="ltr"
+        autoComplete="username"
+        placeholder="name@mail.com / 09123456789"
+        required
+      />
+
+      <InsetField
+        name="password"
+        label="رمز عبور"
+        icon={<Lock className="size-4" />}
+        type={show ? "text" : "password"}
+        autoComplete="current-password"
+        placeholder="••••••"
+        required
+        hint="حداقل ۶ نویسه"
+        trailing={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="me-1 size-8 shrink-0 text-gold hover:bg-gold/10 hover:text-gold"
+            onClick={() => setShow((s) => !s)}
+            aria-label={show ? "پنهان کردنِ رمز" : "نمایشِ رمز"}
+          >
+            {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          </Button>
+        }
+      />
+
+      <Button type="submit" className={SUBMIT_NAVY}>
+        ورود به حساب <ArrowLeft className="size-4" />
+      </Button>
+
+      <Button type="button" variant="link" className="w-full text-xs font-bold text-gold" onClick={onOtp}>
+        ورود بدونِ رمز، با پیامک
+      </Button>
+
+      <TrustNote />
+    </AppForm>
+  );
+}
+
+/* ─────────────── تبِ دوم: ورود با پیامک ─────────────── */
+
+function OtpPanel() {
+  const { login, showToast } = useStore();
+  const flow = useSmsFlow();
+  const start = useAppForm({ schema: smsStartSchema, defaultValues: smsStartDefaults });
+
+  function send(v: SmsStartValues) {
+    flow.send(digits(v.phone));
+    // TODO: ارسالِ کد از سمتِ سرور (پنلِ پیامکی)
+    showToast("کد ۵ رقمی به شمارهٔ شما پیامک شد");
+  }
+
+  function verify(v: SmsCodeValues) {
+    const code = onlyDigits(v.code);
+    // TODO: اعتبارسنجیِ کد سمتِ سرور؛ فعلاً هر کدِ ۵ رقمی می‌پذیریم.
+    if (code.length !== OTP_LEN) return;
+    login({ firstName: "کاربر", ...smsAccount(flow.phone) });
+    showToast("با پیامک وارد شدید ✨");
+    flow.back();
+  }
+
+  return (
+    <div className="space-y-4">
+      {flow.sent ? (
+        <>
+          <LockedCard title="شمارهٔ قفل‌شده">
+            <p className="font-black tracking-wide" dir="ltr">
+              {flow.phone}
+            </p>
+            <p className="mt-1 text-[11px] font-bold text-navy/45 dark:text-linen/55">
+              برای عوض کردنِ شماره، اول «تغییرِ شماره» را بزنید.
+            </p>
+          </LockedCard>
+          <CodeStep flow={flow} submitLabel="تأیید و ورود" onVerify={verify} />
+        </>
+      ) : (
+        <>
+          <AppForm form={start} onSubmit={send} ariaLabel="درخواستِ کد پیامکی" className="space-y-4" notify>
+            <InsetField
+              name="phone"
+              label="شمارهٔ موبایل"
+              icon={<Phone className="size-4" />}
+              dir="ltr"
+              inputMode="tel"
+              autoComplete="tel-national"
+              placeholder="0912 345 6789"
+              required
+            />
+            <Button type="submit" className={SUBMIT_GOLD}>
+              دریافتِ کد پیامک <ArrowLeft className="size-4" />
+            </Button>
+          </AppForm>
+          <p className="text-center text-[11px] font-bold text-navy/50 dark:text-linen/60">
+            یک کد ۵ رقمی برای شما پیامک می‌شود. بدونِ نیاز به رمز عبور.
+          </p>
+          <TrustNote />
+        </>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────── تبِ سوم: ثبت‌نام ─────────────── */
+
+function RegisterPanel() {
+  const { login, showToast } = useStore();
+  const flow = useSmsFlow();
+  const start = useAppForm({ schema: registerSchema, defaultValues: registerDefaults });
+
+  function send(v: RegisterValues) {
+    flow.send(digits(v.phone), v.name.trim());
+    // TODO: ارسالِ کد از سمتِ سرور (پنلِ پیامکی)
+    showToast("کد ۵ رقمی به موبایل شما پیامک شد");
+  }
+
+  function verify() {
+    // TODO: ساختِ حساب سمتِ سرور و اعتبارسنجیِ کد (کد از فرمِ flow.code خوانده می‌شود)
+    login({ firstName: flow.name || "کاربر", ...smsAccount(flow.phone) });
+    showToast(`حسابِ «${flow.name || "کاربر"}» ساخته شد ✨`);
+    flow.back();
+    start.reset({ ...registerDefaults });
+  }
+
+  return (
+    <div className="space-y-3">
+      {flow.sent ? (
+        <>
+          <LockedCard title="ساختِ حساب برای">
+            <p className="font-black">
+              {flow.name}{" "}
+              <span className="font-bold text-navy/45 dark:text-linen/55" dir="ltr">
+                — {flow.phone}
+              </span>
+            </p>
+          </LockedCard>
+          <CodeStep flow={flow} submitLabel="تأیید و ساختِ حساب" onVerify={verify} />
+        </>
+      ) : (
+        <>
+          <AppForm form={start} onSubmit={send} ariaLabel="ثبت‌نام" className="space-y-3.5" notify>
+            <InsetField
+              name="name"
+              label="نام و نام خانوادگی"
+              icon={<User className="size-4" />}
+              autoComplete="name"
+              placeholder="سارا محمدی"
+              required
+            />
+            <InsetField
+              name="phone"
+              label="شمارهٔ موبایل"
+              icon={<Phone className="size-4" />}
+              dir="ltr"
+              inputMode="tel"
+              autoComplete="tel-national"
+              placeholder="0912 345 6789"
+              required
+            />
+            <Button type="submit" className={SUBMIT_GOLD}>
+              دریافتِ کد تأیید <ArrowLeft className="size-4" />
+            </Button>
+          </AppForm>
+          <p className="text-center text-[11px] font-bold text-navy/50 dark:text-linen/60">
+            یک کد ۵ رقمی برای تأیید به موبایل شما پیامک می‌شود.
+          </p>
+          <TrustNote />
+        </>
+      )}
+    </div>
+  );
+}
+
+/**
+ * دیالوگِ ورود / ثبت‌نام.
+ *
+ * ساختارِ مودال، فوکوس‌تراپ، Escape و قفلِ اسکرول با Dialog shadcn است؛ تب‌ها با Tabs.
+ * هر تب یک فرمِ مستقلِ react-hook-form + zod دارد و منطقِ فرم فقط در همین فایل است.
+ */
+export function Modal() {
+  const { authOpen, setAuthOpen } = useStore();
+  const [tab, setTab] = useState<Tab>("login");
+
+  return (
+    <Dialog open={authOpen} onOpenChange={setAuthOpen}>
       <DialogContent
         dir="rtl"
         showCloseButton={false}
@@ -266,16 +402,7 @@ export function Modal() {
             <DialogTitle className="mt-1 text-lg font-black">{TITLES[tab]}</DialogTitle>
           </div>
 
-          <Tabs
-            value={tab}
-            onValueChange={(v) => {
-              setTab(v as Tab);
-              reset();
-              setRegName("");
-            }}
-            dir="rtl"
-            className="min-h-0 flex-1 gap-0"
-          >
+          <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} dir="rtl" className="min-h-0 flex-1 gap-0">
             <TabsList className="grid h-auto w-full min-w-0 shrink-0 grid-cols-3 gap-1 rounded-2xl bg-sand p-1 ring-1 ring-navy/5 dark:bg-navy-deep/70 dark:ring-white/10">
               <TabsTrigger value="login" className={TAB_TRIGGER}>
                 ورود
@@ -288,154 +415,15 @@ export function Modal() {
               </TabsTrigger>
             </TabsList>
 
-            {err ? <p className="mt-3 shrink-0 text-xs font-bold text-rose">{err}</p> : null}
-
             <div className="-mx-2 min-h-0 flex-1 overflow-y-auto overflow-x-clip px-2 [scrollbar-width:thin]">
-              {/* ─── ورود با رمز ─── */}
-              <TabsContent value="login">
-                <form onSubmit={onLogin} className="mt-5 space-y-3.5" noValidate>
-                  <Field label="ایمیل یا موبایل" icon={<Mail className="size-4" />} bad={bad.includes("email")} shake={shake}>
-                    <Input name="email" dir="ltr" autoComplete="username" placeholder="0912 345 6789" className={FIELD_INPUT} />
-                  </Field>
-
-                  <Field
-                    label="رمز عبور"
-                    icon={<Lock className="size-4" />}
-                    bad={bad.includes("password")}
-                    shake={shake}
-                    extra={
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="me-1 size-8 shrink-0 text-gold hover:bg-gold/10 hover:text-gold"
-                        onClick={() => setShow((s) => !s)}
-                        aria-label="نمایش رمز"
-                      >
-                        {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                      </Button>
-                    }
-                  >
-                    <Input
-                      name="password"
-                      type={show ? "text" : "password"}
-                      autoComplete="current-password"
-                      placeholder="••••••••"
-                      className={FIELD_INPUT}
-                    />
-                  </Field>
-
-                  <Button type="submit" className={SUBMIT_NAVY}>
-                    ورود به حساب <ArrowLeft className="size-4" />
-                  </Button>
-
-                  <Button
-                    type="button"
-                    variant="link"
-                    className="w-full text-xs font-bold text-gold"
-                    onClick={() => {
-                      setTab("otp");
-                      reset();
-                    }}
-                  >
-                    ورود بدون رمز، با پیامک
-                  </Button>
-
-                  <TrustNote />
-                </form>
+              <TabsContent value="login" className="mt-5">
+                <LoginPanel onOtp={() => setTab("otp")} />
               </TabsContent>
-
-              {/* ─── ورود با پیامک ─── */}
-              <TabsContent value="otp">
-                <form
-                  onSubmit={
-                    sent
-                      ? verifyOtp
-                      : (e) => {
-                          e.preventDefault();
-                          sendOtp();
-                        }
-                  }
-                  className="mt-5 space-y-4"
-                  noValidate
-                >
-                  {!sent ? (
-                    <Field label="شماره موبایل" icon={<Phone className="size-4" />} bad={bad.includes("otpPhone")} shake={shake}>
-                      <Input
-                        dir="ltr"
-                        inputMode="tel"
-                        placeholder="0912 345 6789"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className={FIELD_INPUT}
-                      />
-                    </Field>
-                  ) : (
-                    <div className="rounded-2xl border border-gold/30 bg-sand/80 px-3.5 py-3 dark:border-gold/25 dark:bg-navy-deep/60">
-                      <p className="text-[11px] font-black text-gold">شماره قفل‌شده</p>
-                      <p className="mt-1 font-black tracking-wide text-navy dark:text-ivory" dir="ltr">
-                        {phone}
-                      </p>
-                      <p className="mt-1 text-[11px] text-navy/45 dark:text-linen/55">
-                        برای عوض کردن شماره، اول «تغییر شماره» را بزنید.
-                      </p>
-                    </div>
-                  )}
-
-                  {sent ? (
-                    otpBlock("تأیید و ورود")
-                  ) : (
-                    <>
-                      <Button type="submit" className={SUBMIT_GOLD}>
-                        دریافت کد پیامک <ArrowLeft className="size-4" />
-                      </Button>
-                      <p className="text-center text-[11px] font-bold text-navy/50 dark:text-linen/60">
-                        یک کد ۵ رقمی برای شما پیامک می‌شود. بدون نیاز به رمز عبور.
-                      </p>
-                      <TrustNote />
-                    </>
-                  )}
-                </form>
+              <TabsContent value="otp" className="mt-5">
+                <OtpPanel />
               </TabsContent>
-
-              {/* ─── ثبت‌نام ─── */}
-              <TabsContent value="register">
-                <form onSubmit={sent ? verifyOtp : startRegister} className="mt-4 space-y-3" autoComplete="off" noValidate>
-                  {!sent ? (
-                    <>
-                      <Field label="نام و نام خانوادگی" icon={<User className="size-4" />} bad={bad.includes("firstName")} shake={shake}>
-                        <Input name="firstName" defaultValue={regName} placeholder="سارا محمدی" className={FIELD_INPUT} />
-                      </Field>
-
-                      <Field label="شماره موبایل" icon={<Phone className="size-4" />} bad={bad.includes("phone")} shake={shake}>
-                        <Input name="phone" type="tel" dir="ltr" defaultValue={phone} placeholder="0912 345 6789" className={FIELD_INPUT} />
-                      </Field>
-
-                      <Button type="submit" className={SUBMIT_GOLD}>
-                        دریافت کد تأیید <ArrowLeft className="size-4" />
-                      </Button>
-
-                      <p className="text-center text-[11px] font-bold text-navy/50 dark:text-linen/60">
-                        یک کد ۵ رقمی برای تأیید به موبایل شما پیامک می‌شود.
-                      </p>
-
-                      <TrustNote />
-                    </>
-                  ) : (
-                    <>
-                      <div className="rounded-2xl border border-gold/30 bg-sand/80 px-3.5 py-3 dark:border-gold/25 dark:bg-navy-deep/60">
-                        <p className="text-[11px] font-black text-gold">ساخت حساب برای</p>
-                        <p className="mt-1 font-black text-navy dark:text-ivory">
-                          {regName}{" "}
-                          <span className="font-bold text-navy/45 dark:text-linen/55" dir="ltr">
-                            — {phone}
-                          </span>
-                        </p>
-                      </div>
-                      {otpBlock("تأیید و ساخت حساب")}
-                    </>
-                  )}
-                </form>
+              <TabsContent value="register" className="mt-4">
+                <RegisterPanel />
               </TabsContent>
             </div>
           </Tabs>

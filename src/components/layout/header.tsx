@@ -36,8 +36,9 @@ export function Header() {
 
       <div
         className={cn(
-          "border-b border-navy/10 bg-cream shadow-[0_8px_24px_-16px_rgba(14,42,71,.2)]",
-          "dark:border-gold/20 dark:bg-navy-deep/55 dark:backdrop-blur-xl",
+          "border-b border-navy/10 bg-cream/80 shadow-[0_8px_24px_-16px_rgba(14,42,71,.2)]",
+          "backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-cream/65",
+          "dark:border-gold/20 dark:bg-navy-deep/55 dark:backdrop-blur-xl dark:supports-[backdrop-filter]:bg-navy-deep/50",
         )}
       >
         <div className={cn(shell, "flex h-14 items-center gap-1 sm:h-16 sm:gap-2")}>
@@ -91,12 +92,12 @@ export function Header() {
           </NavigationMenu>
 
           {/* خوشهٔ اکشن‌ها */}
-          <div className="ms-auto flex shrink-0 items-center gap-0.5 sm:gap-1 md:gap-0.5 lg:gap-1">
+          <div className="ms-auto flex shrink-0 items-center gap-1.5 min-[360px]:gap-2 md:gap-1.5 lg:gap-2">
             <UserMenu />
 
             <Separator
               orientation="vertical"
-              className="mx-0.5 hidden !h-6 bg-navy/10 min-[400px]:block md:hidden lg:block dark:bg-gold/20"
+              className="mx-1 hidden !h-5 w-px data-vertical:self-center bg-navy/15 min-[400px]:block md:hidden lg:block dark:bg-gold/25"
             />
 
             <ModeToggle className={ICON_BTN} />

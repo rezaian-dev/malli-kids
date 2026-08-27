@@ -24,7 +24,7 @@ export function View({ product }: { product: Product }) {
         {related.length ? (
           <section className="mt-16">
             <h2 className="mb-6 text-xl font-black text-navy dark:text-ivory">مدل‌های مشابه</h2>
-            <div className="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 sm:gap-5 lg:grid-cols-4">
               {related.map((p) => (
                 <Card key={p.id} p={p} view="grid" />
               ))}

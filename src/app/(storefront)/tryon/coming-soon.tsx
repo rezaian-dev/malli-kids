@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { ArrowLeft, Camera, Ruler, Shirt, Sparkles, Wand2 } from "lucide-react";
 import { toast } from "sonner";
+import { AppForm, Field, useAppForm } from "@/components/form";
+import { notifyDefaults, notifySchema, type NotifyValues } from "@/lib/forms";
+import { cn } from "@/lib/utils";
 
 const STEPS = [
   { icon: Camera, t: "عکس کوچولو", d: "یک عکس تمام‌قد آپلود می‌کنید یا از مدل‌های نمونه انتخاب می‌کنید." },
@@ -11,13 +13,12 @@ const STEPS = [
 ];
 
 export function TryOnComingSoon() {
-  const [email, setEmail] = useState("");
+  const form = useAppForm({ schema: notifySchema, defaultValues: notifyDefaults });
 
-  function notify(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email.includes("@")) return toast("ایمیل معتبر وارد کنید");
-    setEmail("");
-    toast("ثبت شد ✨ به‌محض آماده شدن، خبرتان می‌کنیم");
+  function notify({ email }: NotifyValues) {
+    // TODO: عضویتِ «خبرم کن» را به سرویسِ پیامک/ایمیل وصل کنید.
+    toast.success(`ثبت شد ✨ به‌محض آماده شدن، به ${email} خبر می‌دهیم`);
+    form.reset();
   }
 
   return (
@@ -46,18 +47,37 @@ export function TryOnComingSoon() {
           </p>
 
           {/* notify */}
-          <form onSubmit={notify} className="mx-auto mt-7 flex w-full max-w-md items-center gap-1.5 rounded-full border border-white/20 bg-white/5 p-1.5">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="ایمیل شما برای اطلاع‌رسانی…"
-              className="h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-sm text-cream outline-none placeholder:text-taupe"
-            />
-            <button type="submit" className="group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-gold px-4 text-xs font-black text-navy-deep transition hover:scale-[1.03]">
-              خبرم کن <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
-            </button>
-          </form>
+          <AppForm form={form} onSubmit={notify} ariaLabel="خبرم کن" className="mx-auto mt-7 w-full max-w-md" notify>
+            <Field name="email" label="ایمیل شما برای اطلاع‌رسانی" labelClassName="sr-only" skin="inset" noShell>
+              {({ field, invalid, id, describedBy }) => (
+                <span
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full border bg-white/5 p-1.5 transition-colors",
+                    invalid ? "border-rose" : "border-white/20 focus-within:border-gold/60",
+                  )}
+                >
+                  <input
+                    id={id}
+                    type="email"
+                    dir="ltr"
+                    autoComplete="email"
+                    placeholder="ایمیل شما برای اطلاع‌رسانی…"
+                    aria-invalid={invalid || undefined}
+                    aria-describedby={describedBy}
+                    value={(field.value as string) ?? ""}
+                    name={field.name}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                    className="h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-right text-sm text-cream outline-none placeholder:text-taupe"
+                  />
+                  <button type="submit" className="group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-gold px-4 text-xs font-black text-navy-deep transition hover:scale-[1.03]">
+                    خبرم کن <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
+                  </button>
+                </span>
+              )}
+            </Field>
+          </AppForm>
         </div>
       </div>
 

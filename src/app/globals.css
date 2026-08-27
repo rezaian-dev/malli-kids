@@ -12,6 +12,16 @@
  * `flex-row` می‌ماند و TabsContent در کنار TabsList فشرده و صفر-عرض
  * می‌شود (کارت‌ها رندر می‌شدند ولی دیده نمی‌شدند).
  */
+/**
+ * واریانت‌های وضعیتِ کامپوننت‌های رادیکس (Sheet، Dialog، Accordion، Popover،
+ * Select، DropdownMenu). رادیکس وضعیت را با data-state="open|closed" اعلام
+ * می‌کند، ولی سبکِ shadcn این پروژه («radix-nova») در ۵۴ جا data-open: و
+ * data-closed: را نوشته؛ بدون تعریف این دو، هیچ‌یک از آن‌ها ساخته نمی‌شد و
+ * پنل‌ها و آکاردئون‌ها «بی‌انیمیشن» باز می‌شدند (همان مشکلی که گزارش شده بود).
+ */
+@custom-variant data-open (&[data-state="open"]);
+@custom-variant data-closed (&[data-state="closed"]);
+
 @custom-variant data-horizontal (&[data-orientation="horizontal"]);
 @custom-variant data-vertical (&[data-orientation="vertical"]);
 
