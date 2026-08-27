@@ -4,11 +4,11 @@ import { useMemo, useState } from "react";
 import { Ban, Mail, Phone, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { formatToman, toFaDigits } from "@/lib/format";
-import { useAdmin } from "@/lib/admin-store";
+import { useAdmin } from "@/features/admin";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { usePagination } from "@/lib/use-pagination";
-import { PageHead } from "@/components/admin/shell";
+import { usePagination } from "@/hooks/use-pagination";
+import { PageHead } from "@/features/admin";
 
 const PER_PAGE = 8;
 const SOON = () => toast("این بخش با راه‌اندازی backend فعال می‌شود");
@@ -92,14 +92,14 @@ export default function AdminCustomers() {
                 <button
                   type="button"
                   onClick={SOON}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-navy/12 px-3 py-1.5 text-[11px] font-black text-navy/70 transition hover:border-amber-400 hover:text-amber-600 dark:border-gold/25 dark:text-wheat dark:hover:text-amber-400"
+                  className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-navy/12 px-3.5 py-1.5 text-[11px] font-black text-navy/70 transition hover:border-amber-400 hover:text-amber-600 dark:border-gold/25 dark:text-wheat dark:hover:text-amber-400"
                 >
                   <Ban className="size-3.5" /> مسدود
                 </button>
                 <button
                   type="button"
                   onClick={SOON}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-rose-pale px-3 py-1.5 text-[11px] font-black text-rose transition hover:bg-rose/15 dark:bg-rose/15"
+                  className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-rose-pale px-3.5 py-1.5 text-[11px] font-black text-rose transition hover:bg-rose/15 dark:bg-rose/15"
                 >
                   <Trash2 className="size-3.5" /> حذف
                 </button>

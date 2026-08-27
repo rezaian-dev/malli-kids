@@ -1,4 +1,4 @@
-import { Intro } from "@/components/common/intro";
+import { Intro } from "@/components/shared/intro";
 import { Lock, Share2, UserRound } from "lucide-react";
 
 

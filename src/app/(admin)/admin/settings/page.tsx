@@ -1,12 +1,12 @@
 "use client";
 
-import { useAdmin } from "@/lib/admin-store";
+import { useAdmin } from "@/features/admin";
 import { formatToman } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { PageHead } from "@/components/admin/shell";
+import { PageHead } from "@/features/admin";
 
 export default function AdminSettings() {
   const { db, saveSettings, resetDb } = useAdmin();

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Intro } from "@/components/common/intro";
+import { Intro } from "@/components/shared/intro";
 import { Button } from "@/components/ui/button";
 
 

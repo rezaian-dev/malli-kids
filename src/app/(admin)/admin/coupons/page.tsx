@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { useAdmin } from "@/lib/admin-store";
+import { useAdmin } from "@/features/admin";
 import { formatToman, toFaDigits } from "@/lib/format";
 import type { AdminCoupon } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -10,8 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Pagination } from "@/components/ui/pagination";
-import { usePagination } from "@/lib/use-pagination";
-import { PageHead } from "@/components/admin/shell";
+import { usePagination } from "@/hooks/use-pagination";
+import { PageHead } from "@/features/admin";
 
 const PER_PAGE = 8;
 

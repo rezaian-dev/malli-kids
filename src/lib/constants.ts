@@ -21,10 +21,7 @@ export const SORTS: Record<string, string> = {
 
 export const STORAGE = {
   user: "malli_user",
-  cart: "malli_cart",
-  favs: "malli_favs",
   purchases: "malli_purchases",
-  theme: "malli_theme",
   admin: "malli_admin",
   adminDb: "malli_admin_db",
 };

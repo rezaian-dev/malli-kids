@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Intro } from "@/components/common/intro";
+import { Intro } from "@/components/shared/intro";
 import { ARTICLES } from "@/lib/data/pages";
 import { Badge } from "@/components/ui/badge";
 

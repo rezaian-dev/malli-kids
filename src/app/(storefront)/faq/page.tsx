@@ -1,5 +1,5 @@
-import { Intro } from "@/components/common/intro";
-import { Faq } from "@/components/common/faq";
+import { Intro } from "@/components/shared/intro";
+import { Faq } from "@/components/shared/faq";
 import Link from "next/link";
 
 

@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { Mail, Phone, Reply, Send } from "lucide-react";
 import { toast } from "sonner";
-import { useAdmin } from "@/lib/admin-store";
+import { useAdmin } from "@/features/admin";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
-import { usePagination } from "@/lib/use-pagination";
-import { PageHead } from "@/components/admin/shell";
+import { usePagination } from "@/hooks/use-pagination";
+import { PageHead } from "@/features/admin";
 
 const PER_PAGE = 6;
 
@@ -55,7 +55,7 @@ export default function AdminMessages() {
                 <p className="mt-3 rounded-2xl bg-navy/[0.03] px-4 py-3 text-sm leading-7 text-navy/80 dark:bg-white/[0.03] dark:text-ivory/80">{m.text}</p>
 
                 <div className="mt-3 flex justify-end">
-                  <Button type="button" variant={open ? "outline" : "navy"} size="sm" className="rounded-full" onClick={() => setOpenId(open ? null : m.id)}>
+                  <Button type="button" variant={open ? "outline" : "navy"} size="sm" className="min-h-9 rounded-full" onClick={() => setOpenId(open ? null : m.id)}>
                     <Reply className="size-4" /> {open ? "بستن" : "پاسخ"}
                   </Button>
                 </div>
@@ -68,7 +68,7 @@ export default function AdminMessages() {
                   </label>
                   <Textarea value={reply} onChange={(e) => setReply(e.target.value)} placeholder="پاسخ خود را بنویسید…" className="min-h-24 rounded-2xl" />
                   <div className="mt-2 flex justify-end">
-                    <Button type="button" variant="navy" size="sm" className="rounded-full" onClick={send}>
+                    <Button type="button" variant="navy" size="sm" className="min-h-9 rounded-full" onClick={send}>
                       <Send className="size-4" /> ارسال پاسخ
                     </Button>
                   </div>

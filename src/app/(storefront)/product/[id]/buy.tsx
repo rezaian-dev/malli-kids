@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Heart, Minus, Plus, RotateCcw, Ruler, ShieldCheck, ShoppingBag, Sparkles, Star, Truck } from "lucide-react";
+import { ChevronLeft, ChevronRight, Minus, Plus, RotateCcw, Ruler, ShieldCheck, ShoppingBag, Sparkles, Star, Truck } from "lucide-react";
 import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { useStore } from "@/lib/store";
@@ -12,11 +12,10 @@ import { Button } from "@/components/ui/button";
 const SIZES = ["۸۰", "۸۶", "۹۲", "۹۸", "۱۰۴", "۱۱۰", "۱۱۶", "۱۲۲"];
 
 export function Buy({ product }: { product: Product }) {
-  const { addToCart, favs, toggleFav } = useStore();
+  const { addToCart, showToast } = useStore();
   const [size, setSize] = useState("۹۸");
   const [qty, setQty] = useState(1);
   const [slide, setSlide] = useState(0);
-  const liked = favs.includes(product.name);
 
   const gallery = useMemo(() => {
     const imgs = [product.img];
@@ -30,7 +29,8 @@ export function Buy({ product }: { product: Product }) {
 
   return (
     <div className="grid items-start gap-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
-      <div className="lg:sticky lg:top-24">
+      {/* min-w-0 لازم است وگرنه آیتم گرید کوچک‌تر از محتوایش نمی‌شود و بیرون می‌زند */}
+      <div className="min-w-0 lg:sticky lg:top-24">
         <div
           className="relative aspect-4/5 select-none overflow-hidden rounded-[28px] bg-sand shadow-2xl shadow-navy/15 sm:rounded-[36px]"
           onTouchStart={(e) => {
@@ -118,14 +118,21 @@ export function Buy({ product }: { product: Product }) {
               </button>
             </div>
           </div>
-          <div className="mt-7 flex gap-2.5">
-            <Button type="button" variant="navy" disabled={!product.stock} className="h-12 flex-1 rounded-2xl font-black" onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, img: product.img, size }, qty)}>
+          <div className="mt-7">
+            <Button
+              type="button"
+              variant="navy"
+              disabled={!product.stock}
+              className="h-12 w-full rounded-2xl font-black"
+              onClick={() => {
+                if (!product.stock) return showToast("به محض موجود شدن خبرتان می‌کنیم");
+                addToCart(qty);
+                showToast(`${toFaDigits(qty)} عدد سایز ${size} به سبد اضافه شد`);
+              }}
+            >
               <ShoppingBag className="size-4" />
-              {product.stock ? "افزودن به سبد" : "ناموجود"}
+              {product.stock ? `افزودن به سبد — سایز ${size} × ${toFaDigits(qty)}` : "ناموجود"}
             </Button>
-            <button type="button" className={`flex w-14 items-center justify-center rounded-2xl border-2 text-rose ${liked ? "border-rose bg-rose-pale" : "border-navy/12 bg-white"}`} onClick={() => toggleFav(product.name)} aria-label="علاقه‌مندی">
-              <Heart className="size-5" fill={liked ? "currentColor" : "none"} />
-            </button>
           </div>
           <Button asChild variant="outline" className="mt-2.5 h-12 w-full rounded-2xl border-2 border-gold font-black text-gold hover:bg-gold hover:text-navy-deep">
             <Link href="/tryon"><Sparkles className="size-4" /> پرو مجازی این لباس</Link>

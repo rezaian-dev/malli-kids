@@ -11,6 +11,10 @@ const PERKS = [
 
 const soc = "size-11 rounded-full bg-white/10 text-gold-light inline-flex items-center justify-center hover:-translate-y-0.5 transition-transform";
 
+/** لینک‌های ستونی فوتر: ارتفاع لمسیِ ۴۴px روی موبایل، جمع‌تر روی دسکتاپ. */
+const FOOT_LINK =
+  "inline-flex min-h-11 items-center py-1 transition-colors hover:text-gold md:min-h-9";
+
 export function Footer() {
   return (
     <footer dir="rtl" className="relative bg-navy-deep text-cream-mute">
@@ -73,22 +77,22 @@ export function Footer() {
         </div>
         <div>
           <h5 className="mb-4 text-[15px] font-black text-white">دسته‌بندی‌ها</h5>
-          <ul className="m-0 grid list-none gap-2.5 p-0 text-sm">
-            <li><Link href="/shop?cat=دخترانه" className="hover:text-gold">دخترانه</Link></li>
-            <li><Link href="/shop?cat=پسرانه" className="hover:text-gold">پسرانه</Link></li>
-            <li><Link href="/shop?cat=سیسمونی" className="hover:text-gold">سیسمونی</Link></li>
-            <li><Link href="/shop?cat=دستدوز" className="hover:text-gold">دستدوز خاص</Link></li>
-            <li><Link href="/shop" className="hover:text-gold">همه محصولات</Link></li>
+          <ul className="m-0 grid list-none gap-0.5 p-0 text-sm">
+            <li><Link href="/shop?cat=دخترانه" className={FOOT_LINK}>دخترانه</Link></li>
+            <li><Link href="/shop?cat=پسرانه" className={FOOT_LINK}>پسرانه</Link></li>
+            <li><Link href="/shop?cat=سیسمونی" className={FOOT_LINK}>سیسمونی</Link></li>
+            <li><Link href="/shop?cat=دستدوز" className={FOOT_LINK}>دستدوز خاص</Link></li>
+            <li><Link href="/shop" className={FOOT_LINK}>همه محصولات</Link></li>
           </ul>
         </div>
         <div>
           <h5 className="mb-4 text-[15px] font-black text-white">دسترسی سریع</h5>
-          <ul className="m-0 grid list-none gap-2.5 p-0 text-sm">
-            <li><Link href="/tryon" className="hover:text-gold">پرو مجازی</Link></li>
-            <li><Link href="/size-guide" className="hover:text-gold">راهنمای سایز</Link></li>
-            <li><Link href="/shipping" className="hover:text-gold">ارسال و بازگشت</Link></li>
-            <li><Link href="/faq" className="hover:text-gold">سوالات متداول</Link></li>
-            <li><Link href="/about" className="hover:text-gold">درباره ما</Link></li>
+          <ul className="m-0 grid list-none gap-0.5 p-0 text-sm">
+            <li><Link href="/tryon" className={FOOT_LINK}>پرو مجازی</Link></li>
+            <li><Link href="/size-guide" className={FOOT_LINK}>راهنمای سایز</Link></li>
+            <li><Link href="/shipping" className={FOOT_LINK}>ارسال و بازگشت</Link></li>
+            <li><Link href="/faq" className={FOOT_LINK}>سوالات متداول</Link></li>
+            <li><Link href="/about" className={FOOT_LINK}>درباره ما</Link></li>
           </ul>
         </div>
         <div>
@@ -141,7 +145,7 @@ export function Footer() {
 
       <div className="border-t border-white/10">
         <div className={`${shell} flex flex-wrap items-center justify-between gap-2.5 py-5 text-center text-xs text-cream/40`}>
-          <span>© ۱۴۰۴ ملی‌کیدز — تمامی حقوق محفوظ است. <Link href="/terms" className="hover:text-gold">قوانین</Link> · <Link href="/privacy" className="hover:text-gold">حریم خصوصی</Link></span>
+          <span>© ۱۴۰۴ ملی‌کیدز — تمامی حقوق محفوظ است. <Link href="/terms" className="py-1 hover:text-gold">قوانین</Link> · <Link href="/privacy" className="py-1 hover:text-gold">حریم خصوصی</Link></span>
           <span className="font-display tracking-[0.28em] text-gold/50">MALLI KIDS</span>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Intro } from "@/components/common/intro";
+import { Intro } from "@/components/shared/intro";
 import { Map } from "./map";
 import { Form } from "./form";
 import { BRAND } from "@/lib/constants";

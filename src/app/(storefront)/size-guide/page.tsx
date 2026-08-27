@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { Intro } from "@/components/common/intro";
+import { Intro } from "@/components/shared/intro";
 import { SIZE_ROWS } from "@/lib/data/pages";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 
 export default function SizeGuidePage() {
@@ -9,28 +11,31 @@ export default function SizeGuidePage() {
 <Intro crumb="راهنمای سایز" kicker="FIT GUIDE" title="راهنمای سایز" lead="قد را بدون کفش بگیرید. عددها به سانتی‌متر است. اگر بین دو سایز بودید، برای لباس رویی سایز بزرگ‌تر را بردارید." />
         <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7 max-w-4xl">
           <div className="overflow-x-auto rounded-3xl border border-navy/10 dark:border-gold/35 bg-white dark:bg-dusk shadow-sm">
-            <table className="w-full text-sm min-w-130">
-              <thead>
-                <tr className="bg-navy text-cream">
+            <Table className="min-w-130 text-sm">
+              <TableHeader>
+                <TableRow className="border-0 bg-navy hover:bg-navy">
                   {["سایز", "قد", "سن تقریبی", "سینه", "کمر"].map((h) => (
-                    <th key={h} className="p-3.5 text-start font-black">
+                    <TableHead key={h} className="h-auto p-3.5 text-start font-black text-cream">
                       {h}
-                    </th>
+                    </TableHead>
                   ))}
-                </tr>
-              </thead>
-              <tbody>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {SIZE_ROWS.map((r, i) => (
-                  <tr key={r[0]} className={i % 2 ? "bg-sand dark:bg-dusk-mid" : "bg-white dark:bg-slate"}>
+                  <TableRow key={r[0]} className={cn("border-0", i % 2 ? "bg-sand dark:bg-dusk-mid" : "bg-white dark:bg-slate")}>
                     {r.map((c, j) => (
-                      <td key={c} className={`p-3.5 ${j === 0 ? "font-black text-navy dark:text-linen" : "text-navy/70 dark:text-khaki"}`}>
+                      <TableCell
+                        key={c}
+                        className={cn("p-3.5", j === 0 ? "font-black text-navy dark:text-linen" : "text-navy/70 dark:text-khaki")}
+                      >
                         {c}
-                      </td>
+                      </TableCell>
                     ))}
-                  </tr>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
           <div className="grid sm:grid-cols-3 gap-3 mt-6">
             {[

@@ -2,11 +2,11 @@
 
 import { Check, CircleDot, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { useAdmin } from "@/lib/admin-store";
+import { useAdmin } from "@/features/admin";
 import { toFaDigits } from "@/lib/format";
 import { Pagination } from "@/components/ui/pagination";
-import { usePagination } from "@/lib/use-pagination";
-import { PageHead } from "@/components/admin/shell";
+import { usePagination } from "@/hooks/use-pagination";
+import { PageHead } from "@/features/admin";
 
 const PER_PAGE = 5;
 const SOON = () => toast("این بخش با راه‌اندازی backend فعال می‌شود");

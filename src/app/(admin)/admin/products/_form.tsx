@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Save } from "lucide-react";
-import { useAdmin } from "@/lib/admin-store";
+import { useAdmin } from "@/features/admin";
 import { CATS } from "@/lib/constants";
 import type { Product } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PageHead } from "@/components/admin/shell";
+import { PageHead } from "@/features/admin";
 import { toast } from "sonner";
 
 const CAT_OPTIONS = CATS.filter((c) => c !== "همه");

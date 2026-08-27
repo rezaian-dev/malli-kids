@@ -1,15 +1,15 @@
 "use client";
 
-import { useAdmin } from "@/lib/admin-store";
-import { pickBanner, toJalali } from "@/lib/occasions";
-import { PageHead } from "@/components/admin/shell";
+import { useAdmin } from "@/features/admin";
+import { pickBanner, toJalali } from "@/features/festive/lib/occasions";
+import { PageHead } from "@/features/admin";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Pagination } from "@/components/ui/pagination";
-import { usePagination } from "@/lib/use-pagination";
+import { usePagination } from "@/hooks/use-pagination";
 import { toFaDigits } from "@/lib/format";
 
 const PER_PAGE = 6;

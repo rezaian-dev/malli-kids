@@ -1,18 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useAdmin } from "@/lib/admin-store";
-import { ORDER_FLOW, statusTone } from "@/lib/admin-data";
+import { useAdmin } from "@/features/admin";
+import { ORDER_FLOW, statusTone } from "@/features/admin/lib/admin-data";
 import type { AdminOrder, OrderStatus } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/format";
-import { PageHead } from "@/components/admin/shell";
+import { PageHead } from "@/features/admin";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Pagination } from "@/components/ui/pagination";
-import { usePagination } from "@/lib/use-pagination";
+import { usePagination } from "@/hooks/use-pagination";
 
 const PER_PAGE = 4;
 

@@ -16,7 +16,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   return (
     <article className="container mx-auto w-full px-4 sm:px-5 lg:px-7 max-w-3xl">
       <p className="text-xs text-muted-foreground">
-        <Link href="/">خانه</Link> / <Link href="/articles">مجله</Link> / {a.title}
+        <Link href="/" className="inline-block py-1.5">خانه</Link> / <Link href="/articles" className="inline-block py-1.5">مجله</Link> / {a.title}
       </p>
       <Badge variant="secondary" className="mt-4">
         {a.tag}

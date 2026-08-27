@@ -3,13 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Lock, Moon, ShieldCheck, Sparkles, Sun, User } from "lucide-react";
-import { useAdmin } from "@/lib/admin-store";
-import { useStore } from "@/lib/store";
+import { ArrowLeft, Lock, ShieldCheck, Sparkles, User } from "lucide-react";
+import { useAdmin } from "@/features/admin";
+import { ModeToggle } from "@/components/shared/mode-toggle";
 
 export default function AdminLogin() {
   const { login } = useAdmin();
-  const { theme, toggleTheme } = useStore();
   const router = useRouter();
   const [err, setErr] = useState("");
   const [shake, setShake] = useState(0);
@@ -38,15 +37,8 @@ export default function AdminLogin() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="grid size-10 place-items-center rounded-full border border-navy/12 bg-white text-navy transition hover:border-gold/50 dark:border-gold/25 dark:bg-navy-mid dark:text-gold-soft"
-              aria-label={theme === "dark" ? "روشن" : "تیره"}
-            >
-              {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
-            </button>
-            <Link href="/" className="text-xs font-black text-navy/50 hover:text-gold dark:text-ivory/45">
+            <ModeToggle className="size-10 rounded-full border border-navy/12 bg-white text-navy hover:border-gold/50 dark:border-gold/25 dark:bg-navy-mid dark:text-gold-soft" />
+            <Link href="/" className="inline-flex min-h-11 items-center text-xs font-black text-navy/50 hover:text-gold dark:text-ivory/45">
               بازگشت به فروشگاه
             </Link>
           </div>

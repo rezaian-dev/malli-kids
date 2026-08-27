@@ -3,6 +3,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/**
+ * واریانت‌های جهت‌گیری برای Tabs shadcn.
+ *
+ * کامپوننت `tabs.tsx` از کلاس‌هایی مثل `data-horizontal:flex-col` و
+ * `group-data-horizontal/tabs:h-8` استفاده می‌کند، ولی این واریانت‌ها
+ * جزو پیش‌فرض‌های تیلویند نیستند. بدون تعریف‌شان ریشهٔ Tabs روی
+ * `flex-row` می‌ماند و TabsContent در کنار TabsList فشرده و صفر-عرض
+ * می‌شود (کارت‌ها رندر می‌شدند ولی دیده نمی‌شدند).
+ */
+@custom-variant data-horizontal (&[data-orientation="horizontal"]);
+@custom-variant data-vertical (&[data-orientation="vertical"]);
+
 @theme inline {
   --breakpoint-xs: 20rem;
   --font-vazir: "Vazirmatn", sans-serif;
@@ -145,6 +157,20 @@
   --border: rgba(232, 197, 122, 0.42);
   --input: rgba(255, 248, 236, 0.18);
   --ring: #e8c57a;
+}
+
+/**
+ * بازتعریف `container`.
+ *
+ * تیلویند به ازای هر بریک‌پوینت یک max-width برای container می‌سازد. چون
+ * بریک‌پوینت سفارشی `xs = 20rem` داریم، container از ۳۲۰px به بعد عرض را روی
+ * همان ۳۲۰px قفل می‌کرد و کل صفحه در موبایل باریک و وسط‌چین می‌شد.
+ * این نسخه فقط یک سقف ۸۰rem می‌گذارد و در عرض‌های کوچک تمام‌عرض می‌ماند.
+ */
+@utility container {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 80rem;
 }
 
 @layer base {

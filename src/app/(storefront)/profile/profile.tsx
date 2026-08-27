@@ -1,25 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Camera, Heart, LogOut, Mail, MapPin, Package, Pencil, Phone, UserRound } from "lucide-react";
+import { Camera, LogOut, Mail, MapPin, Package, Pencil, Phone, UserRound } from "lucide-react";
 import { useStore } from "@/lib/store";
-import { CATALOG } from "@/lib/data/products";
-import { Card } from "@/components/product/product-card";
 import { fullName, givenName } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import { compressToDataUrl } from "@/components/ui/image-upload";
 
-type Tab = "info" | "orders" | "favs";
+type Tab = "info" | "orders";
 
 const IN = "h-[46px] rounded-2xl border-gold/40 bg-white px-4 text-sm font-semibold dark:bg-dusk-mid dark:text-linen";
 const CARD = "mt-5 rounded-[24px] border border-navy/10 bg-white p-5 space-y-5 dark:border-gold/35 dark:bg-dusk sm:p-7";
 
 export function Profile() {
-  const { user, favs, setAuthOpen, updateUser, logout, showToast } = useStore();
-  const liked = useMemo(() => CATALOG.filter((p) => favs.includes(p.name)), [favs]);
+  const { user, setAuthOpen, updateUser, logout, showToast } = useStore();
   const [tab, setTab] = useState<Tab>("info");
   const [form, setForm] = useState({
     firstName: "", lastName: "", nationalId: "", city: "", address: "", phone: "", email: "",
@@ -38,7 +37,7 @@ export function Profile() {
   useEffect(() => {
     const apply = () => {
       const h = window.location.hash.replace("#", "");
-      if (h === "orders" || h === "favs" || h === "info") setTab(h);
+      if (h === "orders" || h === "info") setTab(h);
     };
     apply();
     window.addEventListener("hashchange", apply);
@@ -50,7 +49,7 @@ export function Profile() {
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
         <UserRound className="mx-auto mb-4 h-10 w-10 text-gold" />
         <h1 className="mb-3 text-2xl font-black text-navy dark:text-linen">حساب کاربری</h1>
-        <p className="mb-6 text-navy/60">برای دیدن سفارش‌ها و علاقه‌مندی‌ها وارد شوید.</p>
+        <p className="mb-6 text-navy/60">برای دیدن سفارش‌ها و اطلاعات حساب وارد شوید.</p>
         <Button type="button" variant="navy" size="pill" onClick={() => setAuthOpen(true)}>ورود | ثبت‌نام</Button>
       </div>
     );
@@ -128,21 +127,24 @@ export function Profile() {
         </div>
       </section>
 
-      <div className="mt-6 flex gap-1.5 overflow-x-auto rounded-[18px] bg-sand p-1.5 dark:bg-dusk-mid" role="tablist">
-        {([["info", "اطلاعات", Pencil], ["orders", "سفارش‌ها", Package], ["favs", "علاقه‌مندی‌ها", Heart]] as const).map(([id, label, Icon]) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => go(id)}
-            className={`inline-flex h-10 items-center gap-1.5 rounded-xl px-3.5 text-[13px] font-extrabold ${tab === id ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep" : "text-navy dark:text-linen"}`}
-          >
-            <Icon className="h-4 w-4" /> {label}
-          </button>
-        ))}
-      </div>
+      <Tabs value={tab} onValueChange={(v) => go(v as Tab)} dir="rtl" className="mt-6 gap-0">
+        <TabsList className="h-auto w-full justify-start gap-1.5 overflow-x-auto rounded-[18px] bg-sand p-1.5 dark:bg-dusk-mid">
+          {([["info", "اطلاعات", Pencil], ["orders", "سفارش‌ها", Package]] as const).map(([id, label, Icon]) => (
+            <TabsTrigger
+              key={id}
+              value={id}
+              className={cn(
+                "inline-flex h-10 items-center gap-1.5 rounded-xl px-3.5 text-[13px] font-extrabold text-navy dark:text-linen",
+                "data-[state=active]:bg-navy data-[state=active]:text-ivory",
+                "dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep",
+              )}
+            >
+              <Icon className="h-4 w-4" /> {label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-      {tab === "info" ? (
-        <>
+        <TabsContent value="info">
           <form onSubmit={save} className={CARD}>
             <h2 className="text-lg font-black text-navy dark:text-linen">ویرایش حساب</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -165,22 +167,12 @@ export function Profile() {
             </div>
             <Button type="submit" variant="gold" className="h-11 px-7">ذخیره اطلاعات کودک</Button>
           </form>
-        </>
-      ) : null}
+        </TabsContent>
 
-      {tab === "orders" ? (
-        <Empty icon={<MapPin className="mx-auto mb-3 h-10 w-10 text-gold" />} title="هنوز سفارشی نیست" desc="پس از خرید، پیگیری سفارش اینجا دیده می‌شود." href="/shop" cta="رفتن به فروشگاه" gold />
-      ) : null}
-
-      {tab === "favs" ? (
-        liked.length === 0 ? (
-          <Empty icon={<Heart className="mx-auto mb-3 h-10 w-10 text-gold" />} title="لیست علاقه‌مندی خالی است" desc="قلب روی کارت محصول را بزنید تا اینجا جمع شود." href="/shop" cta="کالکشن" />
-        ) : (
-          <div className="mt-5 grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 lg:grid-cols-3">
-            {liked.map((p) => <Card key={p.id} p={p} view="grid" />)}
-          </div>
-        )
-      ) : null}
+        <TabsContent value="orders">
+          <Empty icon={<MapPin className="mx-auto mb-3 h-10 w-10 text-gold" />} title="هنوز سفارشی نیست" desc="پس از خرید، پیگیری سفارش اینجا دیده می‌شود." href="/shop" cta="رفتن به فروشگاه" gold />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

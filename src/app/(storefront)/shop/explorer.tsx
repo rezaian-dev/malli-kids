@@ -19,7 +19,7 @@ import {
 import { CATALOG, SEASONS } from "@/lib/data/products";
 import { CATS, PER_PAGE, PRICE_CAP, SORTS } from "@/lib/constants";
 import { formatToman, toFaDigits } from "@/lib/format";
-import { Card } from "@/components/product/product-card";
+import { Card } from "@/features/product";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +28,8 @@ import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { cn } from "@/lib/utils";
 
 const PRICE_PRESETS = [
   { label: "هر قیمتی", hint: "بدون محدودیت", min: 0, max: PRICE_CAP },
@@ -159,41 +161,40 @@ export function Explorer() {
 
   /* ---------- Sort options list (shared by Popover + mobile Sheet) ---------- */
   const sortOptions = (onPick?: () => void) => (
-    <div className="flex flex-col gap-1.5" role="listbox" aria-label="مرتب‌سازی">
-      {SORT_META.map((s) => {
-        const on = state.sort === s.k;
-        return (
-          <button
-            key={s.k}
-            type="button"
-            role="option"
-            aria-selected={on}
-            onClick={() => {
-              push({ sort: s.k, page: 1 });
-              onPick?.();
-            }}
-            className={`flex w-full items-center gap-3 rounded-2xl border px-3 py-2.5 text-right transition ${
-              on
-                ? "border-gold bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep"
-                : "border-transparent bg-cream text-navy hover:border-gold/40 hover:bg-sand dark:bg-navy-mid dark:text-ivory dark:hover:bg-slate"
-            }`}
-          >
-            <span
-              className={`grid size-9 shrink-0 place-items-center rounded-xl ${
-                on ? "bg-gold-light text-navy dark:bg-navy dark:text-gold-light" : "bg-sand text-navy dark:bg-dusk-soft dark:text-gold-light"
-              }`}
-            >
-              <s.Icon className="size-4" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-sm font-black">{s.label}</span>
-              <span className={`mt-0.5 block text-[11px] font-bold ${on ? "opacity-70" : "opacity-55"}`}>{s.hint}</span>
-            </span>
-            <Check className={`size-4 shrink-0 transition ${on ? "opacity-100" : "opacity-0"}`} />
-          </button>
-        );
-      })}
-    </div>
+    <ToggleGroup
+      type="single"
+      value={state.sort}
+      onValueChange={(k) => {
+        if (!k) return;
+        push({ sort: k, page: 1 });
+        onPick?.();
+      }}
+      className="flex flex-col gap-1.5"
+      aria-label="مرتب‌سازی"
+    >
+      {SORT_META.map((s) => (
+        <ToggleGroupItem
+          key={s.k}
+          value={s.k}
+          className={cn(
+            "h-auto w-full justify-start gap-3 rounded-2xl border border-transparent bg-cream px-3 py-2.5 text-right text-navy hover:border-gold/40 hover:bg-sand",
+            "dark:bg-navy-mid dark:text-ivory dark:hover:bg-slate",
+            "data-[state=on]:border-gold data-[state=on]:bg-navy data-[state=on]:text-ivory",
+            "dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep",
+            "group",
+          )}
+        >
+          <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-sand text-navy group-data-[state=on]:bg-gold-light dark:bg-dusk-soft dark:text-gold-light dark:group-data-[state=on]:bg-navy dark:group-data-[state=on]:text-gold-light">
+            <s.Icon className="size-4" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-black">{s.label}</span>
+            <span className="mt-0.5 block text-[11px] font-bold opacity-55 group-data-[state=on]:opacity-70">{s.hint}</span>
+          </span>
+          <Check className="size-4 shrink-0 opacity-0 transition group-data-[state=on]:opacity-100" />
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
   );
 
   /* ---------- Filter body (shared by desktop sidebar + mobile Sheet) ---------- */
@@ -222,25 +223,23 @@ export function Explorer() {
         <p className={SECTION_LABEL}>
           <Tag className="size-3.5" /> دسته‌بندی
         </p>
-        <div className="flex flex-wrap gap-1.5">
-          {CATS.map((c) => {
-            const on = state.cat === c;
-            return (
-              <button
-                key={c}
-                type="button"
-                onClick={() => push({ cat: c, page: 1 })}
-                className={`rounded-full px-3.5 py-1.5 text-[12px] font-black transition ${
-                  on
-                    ? "bg-navy text-ivory shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] dark:bg-gold dark:text-navy-deep"
-                    : "border border-navy/12 bg-white text-navy/70 hover:border-gold/50 hover:text-navy dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50"
-                }`}
-              >
-                {c}
-              </button>
-            );
-          })}
-        </div>
+        <ToggleGroup
+          type="single"
+          value={state.cat}
+          onValueChange={(c) => c && push({ cat: c, page: 1 })}
+          className="flex flex-wrap justify-start gap-1.5"
+        >
+          {CATS.map((c) => (
+            <ToggleGroupItem key={c} value={c} className={cn(
+                  "h-auto rounded-full border border-navy/12 bg-white px-3.5 py-1.5 text-[12px] font-black text-navy/70 hover:border-gold/50 hover:text-navy",
+                  "dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50",
+                  "data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)]",
+                  "dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep",
+                )}>
+              {c}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </div>
 
       {/* Season */}
@@ -248,25 +247,23 @@ export function Explorer() {
         <p className={SECTION_LABEL}>
           <Tag className="size-3.5" /> فصل
         </p>
-        <div className="flex flex-wrap gap-1.5">
-          {["همه", ...SEASONS].map((sn) => {
-            const on = state.season === sn;
-            return (
-              <button
-                key={sn}
-                type="button"
-                onClick={() => push({ season: sn, page: 1 })}
-                className={`rounded-full px-3.5 py-1.5 text-[12px] font-black transition ${
-                  on
-                    ? "bg-navy text-ivory shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] dark:bg-gold dark:text-navy-deep"
-                    : "border border-navy/12 bg-white text-navy/70 hover:border-gold/50 hover:text-navy dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50"
-                }`}
-              >
-                {sn}
-              </button>
-            );
-          })}
-        </div>
+        <ToggleGroup
+          type="single"
+          value={state.season}
+          onValueChange={(sn) => sn && push({ season: sn, page: 1 })}
+          className="flex flex-wrap justify-start gap-1.5"
+        >
+          {["همه", ...SEASONS].map((sn) => (
+            <ToggleGroupItem key={sn} value={sn} className={cn(
+                  "h-auto rounded-full border border-navy/12 bg-white px-3.5 py-1.5 text-[12px] font-black text-navy/70 hover:border-gold/50 hover:text-navy",
+                  "dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50",
+                  "data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)]",
+                  "dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep",
+                )}>
+              {sn}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </div>
 
       {/* Status toggles */}
@@ -317,26 +314,35 @@ export function Explorer() {
             aria-label="بازه قیمت"
           />
         </div>
-        <div className="grid grid-cols-2 gap-1.5">
-          {PRICE_PRESETS.map((p) => {
-            const on = p.min === state.min && p.max === state.max;
-            return (
-              <button
-                key={p.label}
-                type="button"
-                onClick={() => push({ min: p.min, max: p.max, page: 1 })}
-                className={`${p.label === "هر قیمتی" ? "col-span-2 " : ""}rounded-2xl border px-3 py-2.5 text-right transition ${
-                  on
-                    ? "border-gold bg-navy text-ivory dark:bg-gold dark:text-navy-deep"
-                    : "border-navy/8 bg-white text-navy hover:border-gold/45 dark:border-gold/20 dark:bg-navy-mid dark:text-ivory"
-                }`}
-              >
-                <span className="block text-[12px] font-black">{p.label}</span>
-                <span className={`mt-0.5 block text-[10px] font-bold ${on ? "text-gold-soft dark:text-navy/70" : "text-navy/40 dark:text-wheat"}`}>{p.hint}</span>
-              </button>
-            );
-          })}
-        </div>
+        <ToggleGroup
+          type="single"
+          value={PRICE_PRESETS.some((p) => p.min === state.min && p.max === state.max) ? `${state.min}-${state.max}` : ""}
+          onValueChange={(v) => {
+            if (!v) return;
+            const [min, max] = v.split("-").map(Number);
+            push({ min, max, page: 1 });
+          }}
+          className="grid grid-cols-2 gap-1.5"
+        >
+          {PRICE_PRESETS.map((p) => (
+            <ToggleGroupItem
+              key={p.label}
+              value={`${p.min}-${p.max}`}
+              className={cn(
+                "group h-auto flex-col items-start rounded-2xl border border-navy/8 bg-white px-3 py-2.5 text-right text-navy hover:border-gold/45",
+                "dark:border-gold/20 dark:bg-navy-mid dark:text-ivory",
+                "data-[state=on]:border-gold data-[state=on]:bg-navy data-[state=on]:text-ivory",
+                "dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep",
+                p.label === "هر قیمتی" && "col-span-2",
+              )}
+            >
+              <span className="block text-[12px] font-black">{p.label}</span>
+              <span className="mt-0.5 block text-[10px] font-bold text-navy/40 group-data-[state=on]:text-gold-soft dark:text-wheat dark:group-data-[state=on]:text-navy/70">
+                {p.hint}
+              </span>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </div>
     </form>
   );
@@ -427,14 +433,27 @@ export function Explorer() {
               </button>
 
               {/* View toggle */}
-              <div className="inline-flex rounded-full border border-navy/10 bg-sand p-0.5 dark:border-gold/30 dark:bg-dusk-mid">
-                <button type="button" className={`grid size-9 place-items-center rounded-full transition ${state.view === "grid" ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep" : "text-navy/50 dark:text-wheat"}`} onClick={() => push({ view: "grid" })} aria-label="نمای شبکه" aria-pressed={state.view === "grid"}>
-                  <LayoutGrid className="size-4" />
-                </button>
-                <button type="button" className={`grid size-9 place-items-center rounded-full transition ${state.view === "list" ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep" : "text-navy/50 dark:text-wheat"}`} onClick={() => push({ view: "list" })} aria-label="نمای فهرست" aria-pressed={state.view === "list"}>
-                  <List className="size-4" />
-                </button>
-              </div>
+              <ToggleGroup
+                type="single"
+                value={state.view}
+                onValueChange={(v) => v && push({ view: v as "grid" | "list" })}
+                className="inline-flex rounded-full border border-navy/10 bg-sand p-0.5 dark:border-gold/30 dark:bg-dusk-mid"
+              >
+                {([["grid", LayoutGrid, "نمای شبکه"], ["list", List, "نمای فهرست"]] as const).map(([v, Icon, label]) => (
+                  <ToggleGroupItem
+                    key={v}
+                    value={v}
+                    aria-label={label}
+                    className={cn(
+                      "size-9 rounded-full border-0 text-navy/50 dark:text-wheat",
+                      "data-[state=on]:bg-navy data-[state=on]:text-ivory",
+                      "dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep",
+                    )}
+                  >
+                    <Icon className="size-4" />
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
             </div>
           </div>
 
@@ -463,17 +482,21 @@ export function Explorer() {
           {pages > 1 ? (
             <nav className="mt-7 flex flex-wrap justify-center gap-1.5" aria-label="صفحه‌بندی">
               {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
-                <button
+                <Button
                   key={n}
                   type="button"
+                  variant={n === page ? "default" : "outline"}
                   onClick={() => push({ page: n })}
                   aria-current={n === page ? "page" : undefined}
-                  className={`h-11 min-w-11 rounded-full px-3 text-sm font-black transition ${
-                    n === page ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep" : "border border-navy/10 bg-white text-navy hover:border-gold/50 dark:border-gold/30 dark:bg-slate dark:text-ivory"
-                  }`}
+                  className={cn(
+                    "h-11 min-w-11 rounded-full px-3 text-sm font-black",
+                    n === page
+                      ? "bg-navy text-ivory hover:bg-navy-mid dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light"
+                      : "border-navy/10 bg-white text-navy hover:border-gold/50 dark:border-gold/30 dark:bg-slate dark:text-ivory",
+                  )}
                 >
                   {toFaDigits(n)}
-                </button>
+                </Button>
               ))}
             </nav>
           ) : null}

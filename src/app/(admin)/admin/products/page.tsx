@@ -3,14 +3,14 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Pencil, Plus, Search, X } from "lucide-react";
-import { useAdmin } from "@/lib/admin-store";
+import { useAdmin } from "@/features/admin";
 import { CATS } from "@/lib/constants";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { usePagination } from "@/lib/use-pagination";
-import { PageHead } from "@/components/admin/shell";
+import { usePagination } from "@/hooks/use-pagination";
+import { PageHead } from "@/features/admin";
 
 const PER_PAGE = 6;
 

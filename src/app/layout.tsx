@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import { Store } from "@/lib/store";
+import { ThemeProvider } from "@/components/shared/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -39,10 +40,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fa" dir="rtl" className={`${vazir.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body className={`${vazir.className} min-h-dvh text-navy antialiased dark:text-ivory`} suppressHydrationWarning>
-        <Store>
-          {children}
-          <Toaster />
-        </Store>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <Store>
+            {children}
+            <Toaster />
+          </Store>
+        </ThemeProvider>
       </body>
     </html>
   );

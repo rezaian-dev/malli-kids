@@ -1,5 +1,5 @@
-import { Intro } from "@/components/common/intro";
-import { Catalog } from "@/components/common/catalog";
+import { Intro } from "@/components/shared/intro";
+import { Catalog } from "@/features/product";
 import { FABRICS } from "@/lib/data/pages";
 
 

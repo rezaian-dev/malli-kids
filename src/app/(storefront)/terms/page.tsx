@@ -1,4 +1,4 @@
-import { Intro } from "@/components/common/intro";
+import { Intro } from "@/components/shared/intro";
 
 
 export default function TermsPage() {

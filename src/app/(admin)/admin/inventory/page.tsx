@@ -1,11 +1,12 @@
 "use client";
 
-import { useAdmin } from "@/lib/admin-store";
+import { useAdmin } from "@/features/admin";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { Switch } from "@/components/ui/switch";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination } from "@/components/ui/pagination";
-import { usePagination } from "@/lib/use-pagination";
-import { PageHead } from "@/components/admin/shell";
+import { usePagination } from "@/hooks/use-pagination";
+import { PageHead } from "@/features/admin";
 
 const PER_PAGE = 6;
 
@@ -23,35 +24,36 @@ export default function AdminInventory() {
         </p>
       ) : null}
       <div className="overflow-x-auto lux-card">
-        <table className="w-full min-w-[40rem] text-sm">
-          <thead className="bg-sand text-[11px] font-black text-navy/50 dark:bg-navy-mid dark:text-wheat">
-            <tr>
-              <th className="px-4 py-3 text-right">کالا</th>
-              <th className="px-4 py-3 text-right">دسته</th>
-              <th className="px-4 py-3 text-right">فروش</th>
-              <th className="px-4 py-3 text-right">قیمت</th>
-              <th className="px-4 py-3 text-right">موجودی</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table className="min-w-[40rem] text-sm">
+          <TableHeader className="bg-sand text-[11px] dark:bg-navy-mid">
+            <TableRow className="border-0 hover:bg-transparent">
+              {["کالا", "دسته", "فروش", "قیمت", "موجودی"].map((h) => (
+                <TableHead key={h} className="h-auto px-4 py-3 text-right font-black text-navy/50 dark:text-wheat">
+                  {h}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {pg.pageItems.map((p) => (
-              <tr key={p.id} className="border-t border-navy/5 dark:border-gold/15">
-                <td className="px-4 py-3">
+              <TableRow key={p.id} className="border-navy/5 dark:border-gold/15">
+                <TableCell className="px-4 py-3">
                   <div className="flex items-center gap-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.img} alt="" className="size-10 rounded-xl object-cover" />
                     <span className="max-w-48 truncate font-bold">{p.name}</span>
                   </div>
-                </td>
-                <td className="px-4 py-3">{p.cat}</td>
-                <td className="px-4 py-3">{toFaDigits(p.sold)}</td>
-                <td className="px-4 py-3 font-black">{formatToman(p.price)}</td>
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell className="px-4 py-3">{p.cat}</TableCell>
+                <TableCell className="px-4 py-3">{toFaDigits(p.sold)}</TableCell>
+                <TableCell className="px-4 py-3 font-black">{formatToman(p.price)}</TableCell>
+                <TableCell className="px-4 py-3">
                   <Switch checked={p.stock} onCheckedChange={(v) => upsertProduct({ ...p, stock: v })} />
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       <Pagination pg={pg} unit="کالا" />
     </div>

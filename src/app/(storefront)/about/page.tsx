@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Heart, ScanFace, Scissors, ShieldCheck } from "lucide-react";
-import { Intro } from "@/components/common/intro";
+import { Intro } from "@/components/shared/intro";
 import { ABOUT } from "@/lib/data/pages";
 import { BRAND } from "@/lib/constants";
 

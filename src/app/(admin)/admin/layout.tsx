@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { AdminGate, AdminStore } from "@/lib/admin-store";
-import { AdminShell } from "@/components/admin/shell";
+import { AdminGate, AdminStore } from "@/features/admin";
+import { AdminShell } from "@/features/admin";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (

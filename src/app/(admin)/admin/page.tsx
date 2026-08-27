@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, Shirt, Truck, Users } from "lucide-react";
-import { useAdmin } from "@/lib/admin-store";
+import { useAdmin } from "@/features/admin";
 import { formatToman, toFaDigits } from "@/lib/format";
-import { statusTone } from "@/lib/admin-data";
-import { PageHead } from "@/components/admin/shell";
-import { SalesChart } from "@/components/admin/sales-chart";
+import { statusTone } from "@/features/admin/lib/admin-data";
+import { PageHead } from "@/features/admin";
+import { SalesChart } from "@/features/admin";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -80,28 +82,29 @@ export default function AdminHome() {
         </div>
         <Separator className="bg-navy/8 dark:bg-gold/15" />
         <ScrollArea className="w-full">
-          <table className="w-full min-w-[36rem] text-sm">
-            <thead className="bg-sand text-[11px] font-black text-navy/55 dark:bg-navy-deep/50 dark:text-wheat">
-              <tr>
-                <th className="px-4 py-3 text-right">کد</th>
-                <th className="px-4 py-3 text-right">مشتری</th>
-                <th className="px-4 py-3 text-right">مبلغ</th>
-                <th className="px-4 py-3 text-right">وضعیت</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table className="min-w-[36rem] text-sm">
+            <TableHeader className="bg-sand text-[11px] dark:bg-navy-deep/50">
+              <TableRow className="border-0 hover:bg-transparent">
+                {["کد", "مشتری", "مبلغ", "وضعیت"].map((h) => (
+                  <TableHead key={h} className="h-auto px-4 py-3 text-right font-black text-navy/55 dark:text-wheat">
+                    {h}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {db.orders.slice(0, 5).map((o) => (
-                <tr key={o.id} className="border-t border-navy/6 dark:border-gold/10">
-                  <td className="px-4 py-3 font-black text-navy dark:text-ivory">{o.id}</td>
-                  <td className="px-4 py-3 text-navy/70 dark:text-wheat">{o.customer}</td>
-                  <td className="px-4 py-3 font-bold text-gold-deep dark:text-gold-soft">{formatToman(o.total)}</td>
-                  <td className="px-4 py-3">
-                    <Badge className={`rounded-full border-0 ${statusTone(o.status)}`}>{o.status}</Badge>
-                  </td>
-                </tr>
+                <TableRow key={o.id} className="border-navy/6 dark:border-gold/10">
+                  <TableCell className="px-4 py-3 font-black text-navy dark:text-ivory">{o.id}</TableCell>
+                  <TableCell className="px-4 py-3 text-navy/70 dark:text-wheat">{o.customer}</TableCell>
+                  <TableCell className="px-4 py-3 font-bold text-gold-deep dark:text-gold-soft">{formatToman(o.total)}</TableCell>
+                  <TableCell className="px-4 py-3">
+                    <Badge className={cn("rounded-full border-0", statusTone(o.status))}>{o.status}</Badge>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </ScrollArea>
       </section>
     </div>

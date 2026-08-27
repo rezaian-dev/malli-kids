@@ -1,4 +1,4 @@
-import { Intro } from "@/components/common/intro";
+import { Intro } from "@/components/shared/intro";
 import { TryOnComingSoon } from "./coming-soon";
 
 // The live AI studio lives in ./studio (<Studio />) and its API in app/api/tryon/route.ts.
