@@ -1,5 +1,6 @@
 export const NAV_MAIN = [
   { href: "/shop", label: "دسته‌بندی", icon: "layout-grid" },
+  { href: "/tryon", label: "پرو مجازی", icon: "scan-face" },
   { href: "/faq", label: "سوالات متداول", icon: "help-circle" },
   { href: "/about", label: "درباره ما", icon: "info" },
   { href: "/contact", label: "تماس با ما", icon: "phone" },
