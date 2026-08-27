@@ -1,0 +1,167 @@
+"use client";
+
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, BadgeCheck, Quote, Star, ThumbsUp } from "lucide-react";
+
+const REVIEWS = [
+  {
+    featured: true,
+    name: "سارا محمدی",
+    initial: "س",
+    product: "پیراهن مجلسی الماسِ طلایی",
+    date: "۳ مرداد ۱۴۰۵",
+    rate: 5,
+    img: "/brand/look-party.jpg",
+    text: "برای جشن تولد دخترم سفارشش دادم؛ کیفیت دوخت و پارچه از عکس‌ها هم بهتر بود. پرو مجازی دقیقاً همان سایزی را پیشنهاد داد که تنش شد.",
+    helpful: 148,
+  },
+  {
+    name: "نگار احمدی",
+    initial: "ن",
+    product: "ست سیسمونی مریم (۷ تکه)",
+    date: "۲۷ تیر ۱۴۰۵",
+    rate: 5,
+    img: "/brand/cat-baby.jpg",
+    text: "هر هفت تکه‌اش را برای نوزادی‌ام گرفتم؛ پارچه فوق‌العاده لطیف است و بعد از چند بار شست‌وشو هم رنگش نرفت.",
+    helpful: 96,
+  },
+  {
+    name: "مریم رضایی",
+    initial: "م",
+    product: "ژاکت بافت رُز · دستدوز",
+    date: "۱۸ تیر ۱۴۰۵",
+    rate: 4,
+    img: "/brand/look-knit.jpg",
+    text: "قلاب‌بافی‌اش واقعاً دست‌دوز است و تک‌نسخه بودنش برایم ارزشمند بود؛ همه سراغش را می‌گیرند.",
+    helpful: 57,
+  },
+  {
+    name: "آرش توکلی",
+    initial: "آ",
+    product: "ست پیراهن و بند شلوار کلاسیک",
+    date: "۱۲ تیر ۱۴۰۵",
+    rate: 5,
+    img: "/brand/cat-boy.jpg",
+    text: "برای پسرم که همیشه از لباس‌های سفت فرار می‌کرد عالی بود؛ الگویش آزاد است و دوختش تمیز.",
+    helpful: 41,
+  },
+  {
+    name: "لیلا حسینی",
+    initial: "ل",
+    product: "پالتو پاییزه مخمل",
+    date: "۵ تیر ۱۴۰۵",
+    rate: 5,
+    img: "/brand/look-party.jpg",
+    text: "گرم است ولی سنگین نیست. آستر نرم و دکمه‌ها محکم دوخته شده‌اند. سایز راهنما دقیق بود.",
+    helpful: 33,
+  },
+];
+
+function Stars({ n }: { n: number }) {
+  return (
+    <div className="flex shrink-0 gap-0.5" aria-label={`${n} از ۵`}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Star key={i} className={`size-3.5 ${i < n ? "fill-gold text-gold" : "text-ivory/25"}`} />
+      ))}
+    </div>
+  );
+}
+
+export function Quotes() {
+  const autoplay = useRef(Autoplay({ delay: 5600, stopOnInteraction: false, stopOnMouseEnter: true }));
+  const [emblaRef, embla] = useEmblaCarousel(
+    { loop: true, align: "center", direction: "rtl", containScroll: false },
+    [autoplay.current],
+  );
+  const [i, setI] = useState(0);
+  const [n, setN] = useState(0);
+  const [liked, setLiked] = useState<Record<string, boolean>>({});
+
+  const onSelect = useCallback(() => {
+    if (!embla) return;
+    setI(embla.selectedScrollSnap());
+    setN(embla.scrollSnapList().length);
+  }, [embla]);
+
+  useEffect(() => {
+    if (!embla) return;
+    onSelect();
+    embla.on("select", onSelect);
+    embla.on("reInit", onSelect);
+  }, [embla, onSelect]);
+
+  return (
+    <div className="relative min-w-0">
+      <div className="overflow-hidden" ref={emblaRef} dir="rtl">
+        <div className="flex items-stretch">
+          {REVIEWS.map((r, idx) => {
+            const on = idx === i;
+            const thanks = liked[r.name];
+            const count = r.helpful + (thanks ? 1 : 0);
+            return (
+              <div key={r.name} className="box-border flex min-w-0 shrink-0 basis-[min(100%,22rem)] px-1.5 sm:basis-[78%] sm:px-2.5 lg:basis-[62%]">
+                <article
+                  className={`relative flex h-full w-full flex-col overflow-hidden rounded-[22px] bg-navy p-4 text-ivory shadow-lg transition-opacity duration-500 sm:rounded-[28px] sm:p-6 dark:bg-dusk-deep dark:ring-1 dark:ring-gold/30 ${on ? "opacity-100" : "opacity-55"}`}
+                >
+                  <Quote className="pointer-events-none absolute top-3 end-3 size-12 text-gold/15 sm:size-16" strokeWidth={1.15} />
+                  <div className="relative flex min-h-0 flex-1 flex-col gap-4 sm:flex-row">
+                    <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-2xl sm:h-auto sm:w-28">
+                      <img src={r.img} alt="" className="size-full object-cover" />
+                      <div className="absolute inset-0 bg-linear-to-t from-navy/55 to-transparent" />
+                    </div>
+                    <div className="relative flex min-w-0 flex-1 flex-col">
+                      <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                        {r.featured ? <span className="rounded-full bg-gold px-2 py-0.5 text-[10px] font-black text-navy-deep">نظر منتخب</span> : null}
+                        <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 text-[10px] font-bold text-gold-glow">
+                          <BadgeCheck className="size-3.5" /> تأییدشده
+                        </span>
+                        <Stars n={r.rate} />
+                      </div>
+                      <p className="line-clamp-3 min-h-[4.5rem] text-sm leading-6 font-medium text-ivory sm:min-h-[5.25rem] sm:leading-7">«{r.text}»</p>
+                      <div className="mt-auto flex flex-col gap-3 border-t border-white/10 pt-3 min-[420px]:flex-row min-[420px]:items-center min-[420px]:justify-between">
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gold text-sm font-black text-navy-deep">{r.initial}</span>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-black text-white">{r.name}</p>
+                            <p className="mt-0.5 truncate text-[11px] text-wheat">{r.product}</p>
+                            <p className="mt-0.5 text-[10px] text-taupe">{r.date}</p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setLiked((s) => ({ ...s, [r.name]: !s[r.name] }))}
+                          className={`inline-flex w-max shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold ${thanks ? "border-gold bg-gold text-navy-deep" : "border-white/20 bg-white/10 text-ivory"}`}
+                        >
+                          <ThumbsUp className="size-3.5" />
+                          {thanks ? "مفید بود" : "مفید"} ({count})
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex max-w-full flex-wrap items-center gap-1.5">
+          {Array.from({ length: n }).map((_, k) => (
+            <button key={k} type="button" aria-label={`نظر ${k + 1}`} onClick={() => embla?.scrollTo(k)} className={`rounded-full ${k === i ? "h-1.5 w-8 bg-gold" : "h-1.5 w-2 bg-navy/20 dark:bg-gold-glow/35"}`} />
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <button type="button" className="inline-flex size-10 items-center justify-center rounded-full border border-navy/10 bg-white text-navy dark:border-gold/40 dark:bg-dusk-mid dark:text-ivory" aria-label="نظر قبلی" onClick={() => embla?.scrollPrev()}>
+            <ArrowRight className="size-4" />
+          </button>
+          <button type="button" className="inline-flex size-10 items-center justify-center rounded-full bg-navy text-ivory dark:bg-gold-glow dark:text-navy-deep" aria-label="نظر بعدی" onClick={() => embla?.scrollNext()}>
+            <ArrowLeft className="size-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

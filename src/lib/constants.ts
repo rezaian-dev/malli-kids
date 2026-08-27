@@ -1,0 +1,33 @@
+export const BRAND = {
+  nameFa: "ملی‌کیدز",
+  nameEn: "MALLI KIDS",
+  phone: "+982126401234",
+  phoneFa: "۰۲۱ — ۲۶۴۰ ۱۲۳۴",
+  address: "تهران، ولیعصر، گالری ملی‌کیدز",
+  map: { lat: 35.7575, lng: 51.40995 },
+  coupon: "MALLI10",
+  couponRate: 0.1,
+  freeShipFrom: 1_500_000,
+};
+
+export const CATS = ["همه", "دخترانه", "پسرانه", "سیسمونی", "لباس مشاغل", "اکسسوری", "دستدوز"] as const;
+
+export const SORTS: Record<string, string> = {
+  new: "جدیدترین",
+  "price-asc": "ارزان‌ترین",
+  "price-desc": "گران‌ترین",
+  rate: "بیشترین امتیاز",
+};
+
+export const STORAGE = {
+  user: "malli_user",
+  cart: "malli_cart",
+  favs: "malli_favs",
+  purchases: "malli_purchases",
+  theme: "malli_theme",
+  admin: "malli_admin",
+  adminDb: "malli_admin_db",
+};
+
+export const PRICE_CAP = 4_000_000;
+export const PER_PAGE = 9;

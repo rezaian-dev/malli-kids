@@ -1,0 +1,374 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --breakpoint-xs: 20rem;
+  --font-vazir: "Vazirmatn", sans-serif;
+  --font-display: "Playfair Display", serif;
+  --font-sans: "Vazirmatn", sans-serif;
+
+  --color-navy: #0e2a47;
+  --color-navy-dark: #071c33;
+  --color-navy-deep: #041427;
+  --color-navy-mid: #16385a;
+  --color-navy-light: #1d4568;
+  --color-navy-soft: #2c5680;
+  --color-ink: #0a1628;
+  --color-ink-alt: #0a1c30;
+  --color-night: #1e2a3a;
+  --color-night-deep: #1a2636;
+  --color-dusk: #243044;
+  --color-dusk-alt: #243447;
+  --color-dusk-mid: #31465e;
+  --color-dusk-soft: #2a3b50;
+  --color-dusk-deep: #2c3e54;
+  --color-slate: #3d536c;
+  --color-sort-sheet: #3c5670;
+  --color-sort-opt: #4a6580;
+  --color-filter-night: #152238;
+  --color-gold: #c19357;
+  --color-gold-light: #d9b77f;
+  --color-gold-soft: #e8c57a;
+  --color-gold-glow: #f0c878;
+  --color-gold-deep: #b8893f;
+  --color-gold-pale: #f0e2cc;
+  --color-cream: #faf6ef;
+  --color-ivory: #fff8ec;
+  --color-linen: #f7f4ee;
+  --color-fog: #f4efe6;
+  --color-paper: #fffefb;
+  --color-paper-soft: #fffdf8;
+  --color-paper-warm: #fff8ee;
+  --color-paper-tan: #f6f0e4;
+  --color-sand: #f3ecdf;
+  --color-sand-deep: #efe6d4;
+  --color-wheat: #ecd9b0;
+  --color-wheat-pale: #e8d9b8;
+  --color-khaki: #d9c9a8;
+  --color-taupe: #c9b89a;
+  --color-cream-mute: #e8dcc4;
+  --color-tan: #d9cbb3;
+  --color-brown: #8a7a62;
+  --color-brown-mid: #6b5a42;
+  --color-brown-deep: #5a4a32;
+  --color-silver: #9aa6b2;
+  --color-rose: #e11d48;
+  --color-rose-light: #fb7185;
+  --color-rose-pale: #fff1f2;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-user-menu: userMenuIn 0.42s cubic-bezier(0.22, 1, 0.32, 1);
+  --animate-st-pulse: stPulse 2.2s ease-in-out infinite;
+  --animate-st-bob: stBob 1.8s ease-in-out infinite;
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-floaty: floaty 5s ease-in-out infinite;
+  --animate-floaty-slow: floaty 7s ease-in-out infinite;
+  --animate-scan: scanline 3.2s ease-in-out infinite;
+  --animate-hero-in: heroIn 0.8s cubic-bezier(0.22, 1, 0.32, 1) both;
+  --animate-hero-ken: heroKen 18s ease-in-out infinite alternate;
+  --animate-orn-spin: ornSpin 12s linear infinite;
+  --animate-orn-sway: ornSway 3.6s ease-in-out infinite;
+  --animate-orn-pulse: ornPulse 2.8s ease-in-out infinite;
+  --animate-style-in: styleCardIn 0.7s cubic-bezier(0.22, 1, 0.32, 1) both;
+  --animate-gold-draw: goldDraw 1.15s cubic-bezier(0.22, 1, 0.32, 1) 0.2s forwards;
+  --animate-shimmer: shimmer 3.6s ease-in-out infinite;
+  --animate-fade-up: fadeUp 0.55s cubic-bezier(0.22, 1, 0.32, 1) both;
+  --animate-twinkle: twinkle 2.4s ease-in-out infinite;
+  --animate-shake: shake 0.5s ease both;
+  --animate-accordion-down: accordionDown 0.3s cubic-bezier(0.22, 1, 0.32, 1);
+  --animate-accordion-up: accordionUp 0.3s cubic-bezier(0.22, 1, 0.32, 1);
+  --animate-drawer-in: drawerIn 0.34s cubic-bezier(0.22, 1, 0.32, 1);
+  --animate-overlay-in: overlayIn 0.3s ease both;
+}
+
+:root {
+  --background: #faf6ef;
+  --foreground: #0e2a47;
+  --card: #fffefb;
+  --card-foreground: #0e2a47;
+  --popover: #fffefb;
+  --popover-foreground: #0e2a47;
+  --primary: #0e2a47;
+  --primary-foreground: #faf6ef;
+  --secondary: #f3ecdf;
+  --secondary-foreground: #0e2a47;
+  --muted: #f3ecdf;
+  --muted-foreground: #2c5680;
+  --accent: #f0e2cc;
+  --accent-foreground: #0e2a47;
+  --destructive: #e11d48;
+  --border: rgba(14, 42, 71, 0.12);
+  --input: rgba(14, 42, 71, 0.14);
+  --ring: #c19357;
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: #041427;
+  --foreground: #fff8ec;
+  --card: #3d536c;
+  --card-foreground: #fff8ec;
+  --popover: #2c3e54;
+  --popover-foreground: #fff8ec;
+  --primary: #e8c57a;
+  --primary-foreground: #0a1628;
+  --secondary: #31465e;
+  --secondary-foreground: #fff8ec;
+  --muted: #31465e;
+  --muted-foreground: #ecd9b0;
+  --accent: #3d536c;
+  --accent-foreground: #fff8ec;
+  --destructive: #fb7185;
+  --border: rgba(232, 197, 122, 0.42);
+  --input: rgba(255, 248, 236, 0.18);
+  --ring: #e8c57a;
+}
+
+@layer base {
+  html {
+    @apply max-w-full overflow-x-hidden scroll-smooth;
+    scroll-padding-top: 110px;
+    scrollbar-gutter: stable;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--color-gold) 55%, transparent);
+    color: var(--color-navy-deep);
+  }
+  .dark ::selection {
+    background: color-mix(in srgb, var(--color-gold-glow) 45%, transparent);
+    color: var(--color-ivory);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+  body {
+    @apply min-h-dvh max-w-full overflow-x-hidden text-navy antialiased dark:text-ivory;
+    font-family: var(--font-vazir), Vazirmatn, Tahoma, sans-serif;
+    background-color: var(--color-cream);
+    background-image: none;
+  }
+  .dark body {
+    background-color: var(--color-navy-deep);
+    background-image: none;
+  }
+  body::before {
+    content: "";
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  body::after {
+    content: "";
+    pointer-events: none;
+    position: fixed;
+    inset: -8%;
+    z-index: 0;
+    background:
+      radial-gradient(42% 36% at 88% 8%, color-mix(in srgb, var(--color-gold) 16%, transparent), transparent 70%),
+      radial-gradient(38% 32% at 8% 92%, color-mix(in srgb, var(--color-navy) 8%, transparent), transparent 72%);
+    filter: blur(28px);
+    opacity: 0.55;
+  }
+  .dark body::before {
+    opacity: 0.14;
+  }
+  .dark body::after {
+    content: none;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-gold) 70%, var(--color-navy));
+    border-radius: 99px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  main {
+    @apply min-w-0 overflow-x-clip;
+  }
+
+  /* Newsletter field sits on the dark footer with a transparent background.
+     Browser autofill otherwise paints an opaque square that breaks the pill's
+     rounded corners — keep it transparent, cream-texted and rounded. */
+  .newsletter-field:-webkit-autofill,
+  .newsletter-field:-webkit-autofill:hover,
+  .newsletter-field:-webkit-autofill:focus,
+  .newsletter-field:-webkit-autofill:active,
+  .newsletter-field:autofill {
+    -webkit-text-fill-color: var(--color-cream);
+    caret-color: var(--color-cream);
+    border-radius: 9999px;
+    transition: background-color 9999s ease-in-out 0s;
+  }
+  * {
+    @apply border-border;
+  }
+  .font-display,
+  .font-display * {
+    font-family: var(--font-display), "Playfair Display", Georgia, serif;
+  }
+  .field {
+    @apply h-11 min-w-0 flex-1 border-0 bg-transparent px-1 text-sm text-navy outline-none placeholder:text-navy/40 dark:text-ivory dark:placeholder:text-wheat;
+  }
+  .lux-card {
+    @apply rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60;
+  }
+  .lux-kicker {
+    @apply text-[11px] font-black tracking-[0.22em] text-gold;
+  }
+  .lux-title {
+    @apply font-black leading-snug text-navy dark:text-ivory;
+  }
+  .lux-muted {
+    @apply text-navy/55 dark:text-wheat;
+  }
+}
+
+/* Admin console surfaces — theme-aware (light + dark). */
+.admin-root {
+  min-height: 100dvh;
+  color: var(--color-navy);
+  background-color: var(--color-fog);
+  background-image:
+    radial-gradient(46% 34% at 100% 0%, color-mix(in srgb, var(--color-gold) 12%, transparent), transparent 62%),
+    radial-gradient(40% 30% at 0% 100%, color-mix(in srgb, var(--color-gold) 8%, transparent), transparent 70%);
+}
+.dark .admin-root {
+  color: var(--color-ivory);
+  background-color: var(--color-navy-deep);
+  background-image:
+    radial-gradient(48% 36% at 100% 0%, color-mix(in srgb, var(--color-gold) 18%, transparent), transparent 62%),
+    radial-gradient(40% 30% at 0% 100%, color-mix(in srgb, var(--color-navy-soft) 35%, transparent), transparent 70%);
+}
+.admin-card {
+  border: 1px solid color-mix(in srgb, var(--color-navy) 10%, transparent);
+  background: var(--color-paper);
+  border-radius: 26px;
+  box-shadow: 0 20px 46px -30px rgba(14, 42, 71, 0.35);
+}
+.dark .admin-card {
+  border: 1px solid color-mix(in srgb, var(--color-gold) 22%, transparent);
+  background: var(--color-navy-mid);
+  box-shadow:
+    0 22px 50px -28px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 6%, transparent);
+}
+
+@keyframes userMenuIn {
+  from { opacity: 0; transform: translateY(-12px) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes stPulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.08); opacity: 0.15; }
+}
+@keyframes stBob {
+  0%, 100% { transform: translateY(2px); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes goldDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes scanline {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+@keyframes heroKen {
+  from { transform: scale(1); }
+  to { transform: scale(1.1) translate3d(-2%, 1.5%, 0); }
+}
+@keyframes ornSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes ornSway {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
+}
+@keyframes ornPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.12); opacity: 0.7; }
+}
+@keyframes styleCardIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes shimmer {
+  0%, 58% { transform: translateX(120%); }
+  82%, 100% { transform: translateX(-120%); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes twinkle {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.4); opacity: 0.3; }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+@keyframes accordionDown {
+  from { height: 0; opacity: 0.4; }
+  to { height: var(--radix-accordion-content-height); opacity: 1; }
+}
+@keyframes accordionUp {
+  from { height: var(--radix-accordion-content-height); opacity: 1; }
+  to { height: 0; opacity: 0.4; }
+}
+@keyframes drawerIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
