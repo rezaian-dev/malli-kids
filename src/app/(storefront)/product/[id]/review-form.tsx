@@ -1,20 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Star } from "lucide-react";
+import { toast } from "sonner";
 import { useStore } from "@/lib/store";
 import { STORAGE } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import type { Product } from "@/types";
+import { AppForm, Field, TextField, TextareaField, useAppForm } from "@/components/form";
+import { cn } from "@/lib/utils";
+import { Product } from "@/types";
+import { RATING_STARS, reviewDefaults, reviewSchema } from "./schema";
 
 /**
- * فرم ثبت نظر — تنها بخش تعاملی تب «نظر خریداران».
- * client چون به وضعیت ورود و localStorage خریدها نیاز دارد.
+ * فرم ثبت نظر — react-hook-form + zod.
+ * اعتبارسنجی: امتیاز (۱ تا ۵) الزامی، نظر ۲۰ تا ۵۰۰ حرف.
  */
 export function ReviewForm({ product }: { product: Pick<Product, "id" | "name"> }) {
-  const { user, showToast } = useStore();
-  const [review, setReview] = useState("");
+  const { user } = useStore();
   const [purchased, setPurchased] = useState(false);
+  const form = useAppForm({ schema: reviewSchema, defaultValues: reviewDefaults });
 
   useEffect(() => {
     try {
@@ -34,25 +38,61 @@ export function ReviewForm({ product }: { product: Pick<Product, "id" | "name"> 
     );
   }
 
+  function onValid({ rating, title }: typeof reviewDefaults) {
+    // TODO: ثبتِ نظر سمتِ سرور (امتیاز و عنوان و متن از همانِ values خوانده می‌شود)
+    toast.success(`نظرِ ${rating} ستاره‌تان ثبت شد — ممنونیم ✨`);
+    form.reset({ ...reviewDefaults, title });
+  }
+
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        showToast("نظر ثبت شد (دمو)");
-        setReview("");
-      }}
-      className="space-y-3 rounded-3xl border border-navy/8 bg-white p-5 dark:border-gold/30 dark:bg-slate"
-    >
-      <p className="font-black text-navy dark:text-ivory">تجربه‌تان از این خرید</p>
-      <Textarea
-        value={review}
-        onChange={(e) => setReview(e.target.value)}
+    <AppForm form={form} onSubmit={onValid} ariaLabel="ثبت نظر" className="space-y-4 rounded-3xl border border-navy/8 bg-white p-5 dark:border-gold/30 dark:bg-slate">
+      <p className="text-sm font-black text-navy dark:text-ivory">تجربه‌تان از این خرید</p>
+
+      <Field name="rating" label="امتیاز" skin="soft" required noShell>
+        {({ field, invalid }) => (
+          <div className={cn("flex items-center gap-1", invalid && "animate-shake")} role="radiogroup" aria-label="امتیاز به این محصول">
+            {RATING_STARS.map((n, i) => {
+              const on = i < Number(field.value || 0);
+              return (
+                <button
+                  key={n}
+                  type="button"
+                  role="radio"
+                  aria-checked={field.value === n}
+                  aria-label={`${n} ستاره`}
+                  onClick={() => {
+                    field.onChange(n);
+                    field.onBlur();
+                  }}
+                  className={cn(
+                    "inline-flex size-11 items-center justify-center rounded-xl transition-all",
+                    "hover:bg-gold/10 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
+                    on ? "scale-105 text-gold" : "text-navy/25 dark:text-ivory/25",
+                  )}
+                >
+                  <Star className={cn("size-6", on && "fill-gold")} />
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </Field>
+
+      <TextField name="title" label="عنوانِ نظر (اختیاری)" skin="soft" placeholder="مثلاً «سایزش دقیقاً مطابقِ جدول»" maxLength={60} />
+
+      <TextareaField
+        name="body"
+        label="نظرِ شما"
+        skin="soft"
         placeholder="کیفیت دوخت، سایز و بسته‌بندی را بنویسید…"
-        className="min-h-27.5 rounded-2xl border-gold/40"
+        min={20}
+        maxLength={500}
+        required
       />
+
       <Button type="submit" variant="navy" className="h-11 px-6">
         ثبت نظر
       </Button>
-    </form>
+    </AppForm>
   );
 }

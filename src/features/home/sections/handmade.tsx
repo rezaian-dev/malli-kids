@@ -30,7 +30,7 @@ export function Handmade() {
             <ArrowLeft className="h-4 w-4" />
           </a>
         </div>
-        <div id="handmadeGrid" className="grid grid-cols-1 gap-3 transition-all duration-700 ease-out min-[360px]:grid-cols-2 min-[420px]:gap-4 sm:gap-6 lg:grid-cols-4">
+        <div id="handmadeGrid" className="grid grid-cols-1 gap-3 transition-all duration-700 ease-out min-[520px]:grid-cols-2 min-[520px]:gap-4 sm:gap-6 lg:grid-cols-4">
           {CORE_PRODUCTS.slice(0, 4).map((p) => (
             <Card key={p.id} p={p} view="grid" />
           ))}

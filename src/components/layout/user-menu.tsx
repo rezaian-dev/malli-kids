@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { CLUSTER_H } from "./header-styles";
 
 function Face({ src, letter, className }: { src?: string; letter: string; className?: string }) {
   return (
@@ -35,7 +36,8 @@ export function UserMenu() {
       <Button
         onClick={() => setAuthOpen(true)}
         className={cn(
-          "h-9 shrink-0 gap-1.5 rounded-full border-2 border-gold bg-gold font-extrabold text-navy-deep hover:bg-gold-light sm:h-10",
+          CLUSTER_H,
+          "shrink-0 gap-1.5 rounded-full border-2 border-gold bg-gold font-extrabold text-navy-deep hover:bg-gold-light",
           "px-2.5 text-[11px] min-[400px]:px-3 min-[400px]:text-xs md:px-2.5 lg:px-4",
           "focus-visible:ring-2 focus-visible:ring-gold/60",
         )}
@@ -55,7 +57,8 @@ export function UserMenu() {
         <Button
           variant="outline"
           className={cn(
-            "group h-9 shrink-0 gap-1.5 rounded-full px-1 sm:h-10 sm:pe-3 md:pe-1 lg:pe-3",
+            CLUSTER_H,
+            "group shrink-0 gap-1.5 rounded-full px-1 sm:pe-3 md:pe-1 lg:pe-3",
             "border-gold/55 bg-white hover:border-gold hover:bg-white",
             "focus-visible:ring-2 focus-visible:ring-gold/60",
             "dark:border-gold/45 dark:bg-dusk dark:hover:border-gold dark:hover:bg-dusk",

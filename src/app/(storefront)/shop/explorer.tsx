@@ -2,27 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  ArrowDownNarrowWide,
-  ArrowUpDown,
-  ArrowUpNarrowWide,
-  Check,
-  LayoutGrid,
-  List,
-  Search,
-  SlidersHorizontal,
-  Sparkles,
-  Star,
-  Tag,
-  X,
-} from "lucide-react";
+import { ArrowDownNarrowWide, ArrowUpDown, ArrowUpNarrowWide, Check, LayoutGrid, List, Search, SlidersHorizontal, Sparkles, Star, Tag, X } from "lucide-react";
 import { CATALOG, SEASONS } from "@/lib/data/products";
 import { CATS, PER_PAGE, PRICE_CAP, SORTS } from "@/lib/constants";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { Card } from "@/features/product";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { AppForm, Field, useAppForm } from "@/components/form";
+import { shopFiltersSchema, type ShopFiltersValues } from "./schema";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
@@ -98,6 +86,14 @@ export function Explorer() {
   const [range, setRange] = useState<[number, number]>([state.min, state.max]);
   useEffect(() => setRange([state.min, state.max]), [state.min, state.max]);
 
+  // فرمِ «جستجو»: مقدارِ URL داخلِ فرم می‌نشیند و هر عبارتِ معتبر بی‌درنگ به URL برمی‌گردد
+  const filters = useAppForm({
+    schema: shopFiltersSchema,
+    defaultValues: { q: state.q },
+    mode: "onSubmit",
+  });
+  const typedQ = (filters.watch("q") || "").trim();
+
   function push(next: Partial<State>) {
     const s = { ...state, ...next };
     const usp = new URLSearchParams();
@@ -153,6 +149,24 @@ export function Explorer() {
 
   const activeN = activeChips.length;
 
+  /** «Enter» یعنی ثبتِ فیلترِ جستجو: به صفحهٔ اول می‌رویم و پنلِ موبایل بسته می‌شود */
+  function commitFilters(v: ShopFiltersValues) {
+    push({ q: v.q.trim(), page: 1 });
+    setFilterOpen(false);
+  }
+
+  /** آدرس از بیرون عوض شد (لینک، دکمهٔ «پاک کردن»، بازگشت) → فرم هم‌راستا می‌شود */
+  useEffect(() => {
+    if (state.q !== filters.getValues("q")) filters.reset({ q: state.q });
+  }, [state.q, filters]);
+
+  /** تایپِ معتبر → URL. یک‌حرفی هنوز معتبر نیست، پس آدرس دست‌نخورده می‌ماند. */
+  useEffect(() => {
+    if (typedQ.length === 1) return;
+    if (typedQ !== state.q) push({ q: typedQ, page: 1 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typedQ]);
+
   function reset() {
     push({ cat: "همه", season: "همه", q: "", stock: false, disc: false, hot: false, onlyNew: false, min: 0, max: PRICE_CAP, page: 1 });
   }
@@ -199,23 +213,43 @@ export function Explorer() {
 
   /* ---------- Filter body (shared by desktop sidebar + mobile Sheet) ---------- */
   const filterBody = (
-    <form className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-5" onSubmit={(e) => e.preventDefault()}>
+    <AppForm
+      form={filters}
+      onSubmit={commitFilters}
+      ariaLabel="فیلتر محصولات"
+      className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-5"
+    >
       {/* Search */}
       <div className="space-y-2.5">
-        <Label htmlFor="shopSearch" className={SECTION_LABEL}>
-          جستجو
-        </Label>
-        <div className="relative">
-          <Search className="pointer-events-none absolute end-3.5 top-1/2 size-4 -translate-y-1/2 text-gold" />
-          <Input
-            id="shopSearch"
-            type="search"
-            defaultValue={state.q}
-            onChange={(e) => push({ q: e.target.value, page: 1 })}
-            placeholder="پیراهن، سیسمونی…"
-            className="h-12 rounded-2xl border-navy/12 bg-white pe-11 text-sm font-bold text-navy shadow-inner placeholder:text-navy/35 dark:border-gold/30 dark:bg-navy-mid dark:text-ivory dark:placeholder:text-wheat"
-          />
-        </div>
+        <Field name="q" skin="soft" noShell label={<><Search className="size-3.5" /> جستجو</>} labelClassName={SECTION_LABEL}>
+          {({ field, invalid, id, describedBy }) => (
+            <span className="relative block">
+              <Search className="pointer-events-none absolute end-3.5 top-1/2 size-4 -translate-y-1/2 text-gold" />
+              <Input
+                id={id}
+                type="search"
+                inputMode="search"
+                autoComplete="off"
+                placeholder="پیراهن، سیسمونی…"
+                aria-invalid={invalid || undefined}
+                aria-describedby={describedBy}
+                name={field.name}
+                value={(field.value as string) ?? ""}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                onKeyDown={(e) => {
+                  // فرمِ فیلترها دکمهٔ submit ندارد، پس «Enter» را خودکار می‌فرستیم
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    void filters.handleSubmit(commitFilters)();
+                  }
+                }}
+                ref={field.ref}
+                className="h-12 rounded-2xl border-navy/12 bg-white pe-11 ps-4 text-sm font-bold text-navy shadow-inner placeholder:text-navy/35 dark:border-gold/30 dark:bg-navy-mid dark:text-ivory dark:placeholder:text-wheat"
+              />
+            </span>
+          )}
+        </Field>
       </div>
 
       {/* Category */}
@@ -344,7 +378,7 @@ export function Explorer() {
           ))}
         </ToggleGroup>
       </div>
-    </form>
+    </AppForm>
   );
 
   const filterHead = (

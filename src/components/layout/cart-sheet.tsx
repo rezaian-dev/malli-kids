@@ -18,7 +18,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { PANEL, PANEL_HEAD } from "./header-styles";
+import { ICON_BTN, PANEL, PANEL_HEAD } from "./header-styles";
 
 /**
  * سبد خرید — پوستهٔ UI با شمارندهٔ نمایشی.
@@ -35,13 +35,13 @@ export function CartSheet() {
           size="icon"
           aria-label={empty ? "سبد خرید (خالی)" : `سبد خرید (${toFaDigits(cartCount)} قلم)`}
           className={cn(
-            "group relative size-9 shrink-0 rounded-full border-2 transition-colors sm:size-10 md:size-9 lg:size-10",
-            "border-gold/70 bg-gold/12 text-navy hover:border-gold hover:bg-gold hover:text-navy-deep",
-            "focus-visible:ring-2 focus-visible:ring-gold/60",
-            "dark:border-gold/60 dark:bg-gold/15 dark:text-gold-soft dark:hover:bg-gold dark:hover:text-navy-deep",
+            ICON_BTN,
+            "group relative border-2 transition-colors",
+            "border-gold/70 bg-gold/12 hover:border-gold hover:bg-gold hover:text-navy-deep",
+            "dark:border-gold/60 dark:bg-gold/15 dark:hover:bg-gold dark:hover:text-navy-deep",
           )}
         >
-          <ShoppingBag className="size-4.5 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110" />
+          <ShoppingBag className="size-5 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110" />
 
           {/* بج تعداد — عدد فارسی، +۹۹ برای مقادیر بزرگ */}
           <Badge
@@ -108,7 +108,7 @@ export function CartSheet() {
               <Button
                 variant="ghost"
                 onClick={clearCart}
-                className="h-10 w-full rounded-2xl text-xs font-bold text-rose hover:bg-rose/10 hover:text-rose"
+                className="h-11 w-full rounded-2xl text-xs font-bold text-rose hover:bg-rose/10 hover:text-rose"
               >
                 <Trash2 className="size-4" /> خالی کردن سبد
               </Button>
@@ -120,7 +120,7 @@ export function CartSheet() {
             <Button
               asChild
               className={cn(
-                "h-12 w-full rounded-2xl text-xs font-black",
+                "h-11 w-full rounded-2xl text-xs font-black",
                 "bg-navy text-cream hover:bg-navy-mid",
                 "dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light",
               )}

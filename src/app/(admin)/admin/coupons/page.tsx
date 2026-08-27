@@ -4,14 +4,15 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useAdmin } from "@/features/admin";
 import { formatToman, toFaDigits } from "@/lib/format";
+import { parseFaNumber } from "@/lib/forms";
 import type { AdminCoupon } from "@/types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/use-pagination";
 import { PageHead } from "@/features/admin";
+import { AppForm, MoneyField, TextField, useAppForm } from "@/components/form";
+import { couponDefaults, couponSchema, type CouponValues } from "./schema";
 
 const PER_PAGE = 8;
 
@@ -19,23 +20,31 @@ export default function AdminCoupons() {
   const { db, saveCoupons } = useAdmin();
   const [open, setOpen] = useState(false);
   const pg = usePagination(db.coupons, PER_PAGE);
+  const form = useAppForm({ schema: couponSchema, defaultValues: couponDefaults });
 
-  function add(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+  function add(v: CouponValues) {
     const next: AdminCoupon = {
-      code: String(fd.get("code") || "").toUpperCase().trim(),
-      title: String(fd.get("title") || ""),
-      rate: Number(fd.get("rate") || 10) / 100,
+      code: v.code.toUpperCase(),
+      title: v.title.trim(),
+      rate: parseFaNumber(v.rate) / 100,
       used: 0,
-      cap: Number(fd.get("cap") || 100),
+      cap: parseFaNumber(v.cap),
       active: true,
-      min: Number(fd.get("min") || 0),
-      until: String(fd.get("until") || "۱۴۰۵/۱۲/۲۹"),
+      min: parseFaNumber(v.min) || 0,
+      until: v.until,
     };
-    if (!next.code) return;
+    if (db.coupons.some((c) => c.code === next.code)) {
+      // تکرارِ کد خطایِ «سمتِ سرور» است؛ رویِ همانِ فیلد نشان داده می‌شود
+      form.setError("code", { message: "این کد از قبل در فهرست است" });
+      return;
+    }
     saveCoupons([next, ...db.coupons]);
+    close();
+  }
+
+  function close() {
     setOpen(false);
+    form.reset({ ...couponDefaults });
   }
 
   return (
@@ -70,32 +79,32 @@ export default function AdminCoupons() {
       <Pagination pg={pg} unit="کد" />
       {open ? (
         <div className="fixed inset-0 z-[90] grid place-items-center p-4">
-          <button type="button" className="absolute inset-0 bg-navy-deep/55" onClick={() => setOpen(false)} aria-label="بستن" />
-          <form onSubmit={add} className="relative z-10 w-full max-w-md space-y-3 rounded-[28px] bg-paper p-6 dark:bg-dusk">
+          <button type="button" className="absolute inset-0 bg-navy-deep/55" onClick={close} aria-label="بستن" />
+          <AppForm form={form} onSubmit={add} ariaLabel="کد تخفیف جدید" className="relative z-10 w-full max-w-md space-y-3 rounded-[28px] bg-paper p-6 dark:bg-dusk" notify>
             <h3 className="text-lg font-black">کد جدید</h3>
-            <Field name="code" label="کد" placeholder="MALLI10" />
-            <Field name="title" label="عنوان" placeholder="تخفیف عضویت" />
+            <TextField
+              name="code"
+              label="کد"
+              placeholder="MALLI10"
+              dir="ltr"
+              maxLength={16}
+              inputClassName="uppercase tracking-[0.12em]"
+              hint="لاتین، ۴ تا ۱۶ نویسه؛ خودکار بزرگ‌نویسی می‌شود"
+              required
+            />
+            <TextField name="title" label="عنوان" placeholder="تخفیف عضویت" maxLength={60} required />
             <div className="grid grid-cols-2 gap-3">
-              <Field name="rate" label="درصد" type="number" placeholder="10" />
-              <Field name="cap" label="سقف استفاده" type="number" placeholder="200" />
+              <TextField name="rate" label="درصد تخفیف" inputMode="numeric" placeholder="10" hint="۱ تا ۹۰" required />
+              <TextField name="cap" label="سقف استفاده" inputMode="numeric" placeholder="200" hint="حداکثر ۱۰۰٬۰۰۰" required />
             </div>
-            <Field name="min" label="حداقل خرید (تومان)" type="number" placeholder="0" />
-            <Field name="until" label="انقضا" placeholder="۱۴۰۵/۱۲/۲۹" />
+            <MoneyField name="min" label="حداقل خرید (تومان)" hint="خالی بگذارید تا بدونِ حداقل باشد" />
+            <TextField name="until" label="انقضا" dir="ltr" placeholder="1405/12/29" hint="شمسی و بعد ازِ امروز" required />
             <Button type="submit" variant="navy" className="h-11 w-full rounded-2xl">
               ذخیره
             </Button>
-          </form>
+          </AppForm>
         </div>
       ) : null}
-    </div>
-  );
-}
-
-function Field({ name, label, placeholder, type = "text" }: { name: string; label: string; placeholder?: string; type?: string }) {
-  return (
-    <div>
-      <Label className="text-xs font-black">{label}</Label>
-      <Input name={name} type={type} placeholder={placeholder} className="mt-1.5 h-11 rounded-2xl" />
     </div>
   );
 }

@@ -6,22 +6,24 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Lock, ShieldCheck, Sparkles, User } from "lucide-react";
 import { useAdmin } from "@/features/admin";
 import { ModeToggle } from "@/components/shared/mode-toggle";
+import { AppForm, TextField, useAppForm } from "@/components/form";
+import { adminLoginDefaults, adminLoginSchema, type AdminLoginValues } from "./schema";
 
 export default function AdminLogin() {
   const { login } = useAdmin();
   const router = useRouter();
-  const [err, setErr] = useState("");
   const [shake, setShake] = useState(0);
+  const form = useAppForm({ schema: adminLoginSchema, defaultValues: adminLoginDefaults });
+  const err = form.formState.errors.root?.message;
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const ok = login(String(fd.get("user") || ""), String(fd.get("pass") || ""));
-    if (!ok) {
-      setErr("نام کاربری یا رمز نادرست است");
+  function onSubmit({ user, pass }: AdminLoginValues) {
+    if (!login(user.trim(), pass)) {
+      // خطایِ سمتِ سرور: رویِ ریشهٔ فرم می‌نشیند و فرم را می‌لرزاند
+      form.setError("root", { message: "نام کاربری یا رمز نادرست است" });
       setShake((n) => n + 1);
       return;
     }
+    form.clearErrors("root");
     router.replace("/admin");
   }
 
@@ -54,29 +56,46 @@ export default function AdminLogin() {
             پنل سفارش، موجودی و مجله — فقط برای همکاران ملی‌کیدز.
           </p>
 
-          <form key={shake} onSubmit={onSubmit} className={`mt-9 space-y-6 ${err ? "animate-shake" : ""}`} noValidate>
-            {err ? <p className="text-sm font-bold text-rose">{err}</p> : null}
-            <label className="block">
-              <span className="text-[11px] font-black tracking-[0.16em] text-gold">شناسه</span>
-              <span className={`mt-2 flex items-center gap-3 border-b-2 pb-2 ${err ? "border-rose" : "border-navy/15 focus-within:border-gold dark:border-gold/25"}`}>
-                <User className="size-4 text-gold" />
-                <input name="user" autoComplete="username" placeholder="شناسه همکار" className="h-11 w-full bg-transparent text-base font-bold text-navy outline-none placeholder:text-navy/30 dark:text-ivory dark:placeholder:text-ivory/30" />
-              </span>
-            </label>
-            <label className="block">
-              <span className="text-[11px] font-black tracking-[0.16em] text-gold">کلید دسترسی</span>
-              <span className={`mt-2 flex items-center gap-3 border-b-2 pb-2 ${err ? "border-rose" : "border-navy/15 focus-within:border-gold dark:border-gold/25"}`}>
-                <Lock className="size-4 text-gold" />
-                <input name="pass" type="password" autoComplete="current-password" placeholder="رمز اختصاصی پنل" className="h-11 w-full bg-transparent text-base font-bold text-navy outline-none placeholder:text-navy/30 dark:text-ivory dark:placeholder:text-ivory/30" />
-              </span>
-            </label>
+          <AppForm
+            form={form}
+            onSubmit={onSubmit}
+            ariaLabel="ورود به پنل مدیریت"
+            shakeSignal={shake}
+            className="mt-9 space-y-6"
+          >
+            {err ? (
+              <p role="alert" className="text-sm font-bold text-rose">
+                {err}
+              </p>
+            ) : null}
+
+            <TextField
+              name="user"
+              label="شناسه"
+              icon={<User className="size-4" />}
+              placeholder="شناسه همکار"
+              autoComplete="username"
+              skin="bare"
+              required
+            />
+            <TextField
+              name="pass"
+              label="کلید دسترسی"
+              icon={<Lock className="size-4" />}
+              type="password"
+              placeholder="رمز اختصاصی پنل"
+              autoComplete="current-password"
+              skin="bare"
+              required
+            />
+
             <button type="submit" className="group flex h-14 w-full items-center justify-between rounded-full bg-navy px-6 text-sm font-black text-ivory shadow-[0_16px_32px_-16px_rgba(14,42,71,.55)] transition hover:bg-navy-mid dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light">
               ورود به کنسول
               <span className="grid size-9 place-items-center rounded-full bg-navy-deep text-gold transition-transform group-hover:-translate-x-1 dark:bg-navy-deep/30 dark:text-navy-deep">
                 <ArrowLeft className="size-4" />
               </span>
             </button>
-          </form>
+          </AppForm>
         </div>
 
         <ul className="grid max-w-md grid-cols-3 gap-3 text-[11px] font-bold text-navy/60 dark:text-wheat">

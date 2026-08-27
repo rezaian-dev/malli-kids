@@ -38,8 +38,27 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fa" dir="rtl" className={`${vazir.variable} ${playfair.variable}`} suppressHydrationWarning>
-      <body className={`${vazir.className} min-h-dvh text-navy antialiased dark:text-ivory`} suppressHydrationWarning>
+    <html
+      lang="fa"
+      dir="rtl"
+      className={`${vazir.variable} ${playfair.variable}`}
+      suppressHydrationWarning
+    >
+      {/*
+        `data-[scroll-locked]:mr-0!` — پچِ جابه‌جایی صفحه:
+        قفلِ اسکرولِ رادیکس (react-remove-scroll-bar) روی body این را می‌نویسد:
+            body[data-scroll-locked]{ …margin-right: ۱۵px !important }
+        آن ۱۵px جبرانیِ عرضِ اسکرول‌بارِ Viewport است، ولی در این پروژه اسکرول‌بار
+        هرگز حذف نمی‌شود (قفل روی body است و اسکرول‌کنندهٔ واقعی، viewport با
+        html{overflow-x:hidden}) و در RTL هم margin-right سمتِ اشتباهی است
+        → پس کل صفحه چند پیکسل «می‌پرد». این کلاسِ Tailwind با ویژگیِ بالاتر
+        (کلاس + صفت، به‌همراه !important) همان مقدار را صفر می‌کند؛
+        یعنی هیچ CSS دست‌نویسی لازم نشده است.
+      */}
+      <body
+        className={`${vazir.className} min-h-dvh text-navy antialiased dark:text-ivory data-[scroll-locked]:mr-0!`}
+        suppressHydrationWarning
+      >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <Store>
             {children}

@@ -3,36 +3,54 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Camera, LogOut, Mail, MapPin, Package, Pencil, Phone, UserRound } from "lucide-react";
+import { toast } from "sonner";
 import { useStore } from "@/lib/store";
 import { fullName, givenName } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AppForm, SelectField, TextField, useAppForm } from "@/components/form";
+import { phoneDigits } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 import { compressToDataUrl } from "@/components/ui/image-upload";
+import { accountDefaults, accountSchema, childDefaults, childSchema, type AccountValues, type ChildValues } from "./schema";
 
 type Tab = "info" | "orders";
 
-const IN = "h-[46px] rounded-2xl border-gold/40 bg-white px-4 text-sm font-semibold dark:bg-dusk-mid dark:text-linen";
 const CARD = "mt-5 rounded-[24px] border border-navy/10 bg-white p-5 space-y-5 dark:border-gold/35 dark:bg-dusk sm:p-7";
 
+/**
+ * بخش «ویرایش حساب» و «اطلاعات کوچولو» — دو فرمِ مستقل با react-hook-form + zod.
+ * اعتبارسنجی: نام و ایمیل الزامی، کد ملی با کنترل‌شماره، موبایل ۰۹، و
+ * قاعدهٔ «آدرس بدونِ شهر» مجاز نیست.
+ */
 export function Profile() {
-  const { user, setAuthOpen, updateUser, logout, showToast } = useStore();
+  const { user, setAuthOpen, updateUser, logout } = useStore();
   const [tab, setTab] = useState<Tab>("info");
-  const [form, setForm] = useState({
-    firstName: "", lastName: "", nationalId: "", city: "", address: "", phone: "", email: "",
-    childName: "", childAge: "", childGender: "",
-  });
+  const [avatarBusy, setAvatarBusy] = useState(false);
 
+  const account = useAppForm({ schema: accountSchema, defaultValues: accountDefaults });
+  const child = useAppForm({ schema: childSchema, defaultValues: childDefaults });
+
+  // مقدارها از حسابِ کاربر پر می‌شوند (یک‌بار به‌ازایِ هر تغییرِ user)
   useEffect(() => {
     if (!user) return;
-    setForm({
-      firstName: user.firstName || "", lastName: user.lastName || "", nationalId: user.nationalId || "",
-      city: user.city || "", address: user.address || "", phone: user.phone || "", email: user.email || "",
-      childName: user.childName || "", childAge: user.childAge || "", childGender: user.childGender || "",
+    account.reset({
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      nationalId: user.nationalId || "",
+      city: user.city || "",
+      address: user.address || "",
+      phone: user.phone || "",
+      email: user.email || "",
     });
-  }, [user]);
+    const gender = user.childGender?.trim();
+    child.reset({
+      childName: user.childName || "",
+      childAge: user.childAge || "",
+      // مقدارهای قدیمیِ ذخیره‌شده که درِ لیست نیستند، خالی خوانده می‌شوند
+      childGender: gender === "دختر" || gender === "پسر" ? gender : "",
+    });
+  }, [user, account, child]);
 
   useEffect(() => {
     const apply = () => {
@@ -50,7 +68,9 @@ export function Profile() {
         <UserRound className="mx-auto mb-4 h-10 w-10 text-gold" />
         <h1 className="mb-3 text-2xl font-black text-navy dark:text-linen">حساب کاربری</h1>
         <p className="mb-6 text-navy/60">برای دیدن سفارش‌ها و اطلاعات حساب وارد شوید.</p>
-        <Button type="button" variant="navy" size="pill" onClick={() => setAuthOpen(true)}>ورود | ثبت‌نام</Button>
+        <Button type="button" variant="navy" size="pill" onClick={() => setAuthOpen(true)}>
+          ورود | ثبت‌نام
+        </Button>
       </div>
     );
   }
@@ -58,45 +78,45 @@ export function Profile() {
   const nick = givenName(user.firstName);
   const name = fullName(user.firstName, user.lastName);
 
-  function set<K extends keyof typeof form>(key: K, v: string) {
-    setForm((s) => ({ ...s, [key]: v }));
-  }
-
   function go(next: Tab) {
     setTab(next);
     window.history.replaceState(null, "", next === "info" ? "/profile" : `/profile#${next}`);
   }
 
-  function save(e: React.FormEvent) {
-    e.preventDefault();
-    if (!form.firstName.trim() || !form.email.trim()) return showToast("نام و ایمیل لازم است");
+  function saveAccount(v: AccountValues) {
     updateUser({
-      firstName: form.firstName.trim(), lastName: form.lastName.trim() || undefined,
-      nationalId: form.nationalId.trim() || undefined, city: form.city.trim() || undefined,
-      address: form.address.trim() || undefined, phone: form.phone.trim() || undefined, email: form.email.trim(),
+      firstName: v.firstName.trim(),
+      lastName: v.lastName.trim() || undefined,
+      nationalId: v.nationalId.trim() || undefined,
+      city: v.city.trim() || undefined,
+      address: v.address.trim() || undefined,
+      phone: (phoneDigits(v.phone) || "").trim() || undefined,
+      email: v.email.trim(),
     });
-    showToast("اطلاعات حساب ذخیره شد");
+    toast.success("اطلاعات حساب ذخیره شد ✅");
   }
 
-  function saveChild(e: React.FormEvent) {
-    e.preventDefault();
+  function saveChild(v: ChildValues) {
     updateUser({
-      childName: form.childName.trim() || undefined,
-      childAge: form.childAge.trim() || undefined,
-      childGender: form.childGender.trim() || undefined,
+      childName: v.childName.trim() || undefined,
+      childAge: v.childAge.trim() || undefined,
+      childGender: v.childGender.trim() || undefined,
     });
-    showToast("اطلاعات کوچولو ذخیره شد");
+    toast.success("اطلاعات کوچولو ذخیره شد ✅");
   }
 
   async function onAvatar(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    setAvatarBusy(true);
     try {
       const url = await compressToDataUrl(file, { maxSizeMB: 0.3, maxWidthOrHeight: 512 });
       updateUser({ avatar: url });
-      showToast("عکس پروفایل به‌روز شد");
+      toast.success("عکس پروفایل به‌روز شد ✅");
     } catch {
-      showToast("پردازش عکس ناموفق بود");
+      toast.error("پردازش عکس ناموفق بود");
+    } finally {
+      setAvatarBusy(false);
     }
   }
 
@@ -108,8 +128,9 @@ export function Profile() {
             <span className="inline-flex size-19 items-center justify-center overflow-hidden rounded-full bg-navy text-[28px] font-black text-gold-soft ring-[3px] ring-gold/45 sm:size-24 sm:text-[34px]">
               {user.avatar ? <img src={user.avatar} alt="" className="size-full object-cover" /> : nick.charAt(0)}
             </span>
-            <label className="absolute -bottom-1 -left-1 flex size-9 cursor-pointer items-center justify-center rounded-full bg-gold text-navy-deep">
+            <label className={cn("absolute -bottom-1 -left-1 flex size-9 cursor-pointer items-center justify-center rounded-full bg-gold text-navy-deep", avatarBusy && "animate-pulse opacity-70")}>
               <Camera className="h-4 w-4" />
+              <span className="sr-only">تغییر عکس پروفایل</span>
               <input type="file" accept="image/*" className="sr-only" onChange={onAvatar} />
             </label>
           </div>
@@ -129,7 +150,12 @@ export function Profile() {
 
       <Tabs value={tab} onValueChange={(v) => go(v as Tab)} dir="rtl" className="mt-6 gap-0">
         <TabsList className="h-auto w-full justify-start gap-1.5 overflow-x-auto rounded-[18px] bg-sand p-1.5 dark:bg-dusk-mid">
-          {([["info", "اطلاعات", Pencil], ["orders", "سفارش‌ها", Package]] as const).map(([id, label, Icon]) => (
+          {(
+            [
+              ["info", "اطلاعات", Pencil],
+              ["orders", "سفارش‌ها", Package],
+            ] as const
+          ).map(([id, label, Icon]) => (
             <TabsTrigger
               key={id}
               value={id}
@@ -145,44 +171,58 @@ export function Profile() {
         </TabsList>
 
         <TabsContent value="info">
-          <form onSubmit={save} className={CARD}>
+          <AppForm form={account} onSubmit={saveAccount} ariaLabel="ویرایش حساب" className={CARD} notify>
             <h2 className="text-lg font-black text-navy dark:text-linen">ویرایش حساب</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="نام"><Input value={form.firstName} onChange={(e) => set("firstName", e.target.value)} className={IN} required /></Field>
-              <Field label="نام خانوادگی"><Input value={form.lastName} onChange={(e) => set("lastName", e.target.value)} className={IN} /></Field>
-              <Field label="کد ملی"><Input inputMode="numeric" dir="ltr" maxLength={10} placeholder="0123456789" value={form.nationalId} onChange={(e) => set("nationalId", e.target.value.replace(/\D/g, "").slice(0, 10))} className={`${IN} text-left`} /></Field>
-              <Field label="شهر"><Input value={form.city} onChange={(e) => set("city", e.target.value)} className={IN} placeholder="تهران" /></Field>
-              <div className="sm:col-span-2"><Field label="آدرس"><Input value={form.address} onChange={(e) => set("address", e.target.value)} className={IN} /></Field></div>
-              <Field label="شماره موبایل"><Input type="tel" dir="ltr" placeholder="0912 345 6789" value={form.phone} onChange={(e) => set("phone", e.target.value)} className={`${IN} text-left`} /></Field>
-              <Field label="ایمیل"><Input type="email" dir="ltr" value={form.email} onChange={(e) => set("email", e.target.value)} className={`${IN} text-left`} required /></Field>
+              <TextField name="firstName" label="نام" skin="soft" maxLength={40} required autoComplete="given-name" />
+              <TextField name="lastName" label="نام خانوادگی" skin="soft" maxLength={40} autoComplete="family-name" />
+              <TextField
+                name="nationalId"
+                label="کد ملی"
+                skin="soft"
+                dir="ltr"
+                inputMode="numeric"
+                maxLength={10}
+                placeholder="0123456789"
+                inputClassName="tabular-nums"
+                hint="۱۰ رقم؛ سالم بودنِ رقمِ کنترل هم بررسی می‌شود"
+              />
+              <TextField name="city" label="شهر" skin="soft" maxLength={40} placeholder="تهران" autoComplete="address-level2" />
+              <TextField name="address" label="آدرس" skin="soft" className="sm:col-span-2" maxLength={160} autoComplete="street-address" />
+              <TextField name="phone" label="شماره موبایل" skin="soft" type="tel" dir="ltr" inputMode="tel" placeholder="0912 345 6789" autoComplete="tel-national" />
+              <TextField name="email" label="ایمیل" skin="soft" type="email" dir="ltr" autoComplete="email" required />
             </div>
-            <Button type="submit" variant="navy" className="h-11 px-7">ذخیره حساب</Button>
-          </form>
-          <form onSubmit={saveChild} className={CARD}>
+            <Button type="submit" variant="navy" className="h-11 px-7">
+              ذخیره حساب
+            </Button>
+          </AppForm>
+
+          <AppForm form={child} onSubmit={saveChild} ariaLabel="اطلاعات کوچولو" className={CARD} notify>
             <h2 className="text-lg font-black text-navy dark:text-linen">اطلاعات کوچولو</h2>
+            <p className="-mt-3 text-xs text-navy/50 dark:text-wheat">اختیاری است؛ اگر پرش کنید، ما سایزِ دقیق‌تری پیشنهاد می‌دهیم.</p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Field label="نام کوچولو"><Input value={form.childName} onChange={(e) => set("childName", e.target.value)} className={IN} /></Field>
-              <Field label="سن تقریبی"><Input value={form.childAge} onChange={(e) => set("childAge", e.target.value)} className={IN} placeholder="مثلاً ۳ سال" /></Field>
-              <Field label="جنسیت"><Input value={form.childGender} onChange={(e) => set("childGender", e.target.value)} className={IN} placeholder="دختر / پسر" /></Field>
+              <TextField name="childName" label="نام کوچولو" skin="soft" maxLength={40} placeholder="نیلو" />
+              <TextField name="childAge" label="سن تقریبی" skin="soft" placeholder="مثلاً ۳ سال" hint="عدد + «سال» یا «ماه»" />
+              <SelectField name="childGender" label="جنسیت" skin="soft" options={["دختر", "پسر"]} placeholder="انتخاب کنید" />
             </div>
-            <Button type="submit" variant="gold" className="h-11 px-7">ذخیره اطلاعات کودک</Button>
-          </form>
+            <Button type="submit" variant="gold" className="h-11 px-7">
+              ذخیره اطلاعات کودک
+            </Button>
+          </AppForm>
         </TabsContent>
 
         <TabsContent value="orders">
-          <Empty icon={<MapPin className="mx-auto mb-3 h-10 w-10 text-gold" />} title="هنوز سفارشی نیست" desc="پس از خرید، پیگیری سفارش اینجا دیده می‌شود." href="/shop" cta="رفتن به فروشگاه" gold />
+          <Empty
+            icon={<MapPin className="mx-auto mb-3 h-10 w-10 text-gold" />}
+            title="هنوز سفارشی نیست"
+            desc="پس از خرید، پیگیری سفارش اینجا دیده می‌شود."
+            href="/shop"
+            cta="رفتن به فروشگاه"
+            gold
+          />
         </TabsContent>
       </Tabs>
     </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block min-w-0 space-y-1.5">
-      <Label className="text-sm font-bold text-navy dark:text-linen">{label}</Label>
-      {children}
-    </label>
   );
 }
 

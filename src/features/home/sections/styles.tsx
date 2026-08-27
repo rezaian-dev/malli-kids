@@ -49,8 +49,9 @@ export function Styles() {
             const items = name === "همه" ? CORE_PRODUCTS : CORE_PRODUCTS.filter((p) => p.cat === name);
             return (
               <TabsContent key={name} value={name} className="mt-0">
-                {/* زیر ۳۶۰px تک‌ستونه تا کارت‌ها له نشوند */}
-                <div className="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 min-[420px]:gap-4 sm:gap-6 lg:grid-cols-4">
+                {/* تک‌ستونه تا ۵۱۹px (همان مرزِ گریدِ /shop)؛ از ۵۲۰px دو ستونه.
+                   با این کار پهنای هر کارت در دو‌ستونه هیچ‌وقت زیر ~۲۳۸px نمی‌آید. */}
+                <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 min-[520px]:gap-4 sm:gap-6 lg:grid-cols-4">
                   {items.map((p, i) => (
                     <div key={p.id} className="animate-style-in" style={{ animationDelay: `${i * 72}ms` }}>
                       <Card p={p} view="grid" />
