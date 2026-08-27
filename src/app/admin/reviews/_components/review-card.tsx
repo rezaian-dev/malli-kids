@@ -75,7 +75,7 @@ export function ReviewCard({
               <span
                 className={cn(
                   "grid size-9 shrink-0 place-items-center rounded-xl text-xs font-black",
-                  "bg-navy text-gold",
+                  "bg-navy text-gold-soft",
                   "dark:bg-gold/15 dark:text-gold-soft",
                 )}
               >

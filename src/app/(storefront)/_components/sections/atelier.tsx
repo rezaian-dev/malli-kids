@@ -105,7 +105,7 @@ export function Atelier() {
               "bg-navy text-cream",
             )}
           >
-            <Scissors className="text-gold h-4 w-4 shrink-0" />
+            <Scissors className="text-gold-light h-4 w-4 shrink-0" />
             <span className="text-xs font-bold whitespace-nowrap sm:text-sm">
               +۲۰۰ الگوی اختصاصی
             </span>

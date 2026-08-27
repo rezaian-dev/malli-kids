@@ -93,7 +93,7 @@ export function Studio() {
           )}
         >
           <div className="flex items-center gap-1.5">
-            <Scissors className="text-gold size-4" />
+            <Scissors className="text-gold-light size-4" />
             <span className="text-xs font-bold">دوخت دستی ایرانی</span>
           </div>
         </div>

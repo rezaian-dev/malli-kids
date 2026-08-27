@@ -66,7 +66,7 @@ export function CategoryMenu() {
             <p className="text-cream m-0 text-sm font-black">
               دسته‌بندی کالکشن
             </p>
-            <Badge className="bg-gold/20 text-gold rounded-full border-0 text-[10px] font-bold">
+            <Badge className="bg-gold/20 text-gold-soft rounded-full border-0 text-[10px] font-bold">
               {CAT_LINKS.length.toLocaleString("fa-IR")} دسته فعال
             </Badge>
           </div>
