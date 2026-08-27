@@ -7,9 +7,6 @@ export function ArticleActions() {
       <Button asChild className="rounded-full">
         <Link href="/shop">فروشگاه</Link>
       </Button>
-      <Button asChild variant="secondary" className="rounded-full">
-        <Link href="/tryon">پرو مجازی</Link>
-      </Button>
       <Button asChild variant="ghost" className="rounded-full">
         <Link href="/articles">بازگشت به مجله</Link>
       </Button>

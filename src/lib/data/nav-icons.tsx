@@ -10,7 +10,6 @@ import {
   Info,
   LayoutGrid,
   Phone,
-  ScanFace,
   Shirt,
   Sparkles,
 } from "lucide-react";
@@ -25,7 +24,6 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   handshake: Handshake,
   "layout-grid": LayoutGrid,
   sparkles: Sparkles,
-  "scan-face": ScanFace,
   "help-circle": HelpCircle,
   info: Info,
   phone: Phone,

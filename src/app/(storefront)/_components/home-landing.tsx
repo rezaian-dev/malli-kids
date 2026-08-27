@@ -12,7 +12,6 @@ import { RecentlyViewed } from "./sections/recently-viewed";
 import { Styles } from "./sections/styles";
 import { Reviews } from "./sections/reviews";
 import { Collab } from "./sections/collab";
-import { TryOn } from "./sections/try-on";
 
 export function HomeLanding() {
   return (
@@ -38,9 +37,6 @@ export function HomeLanding() {
         <Suspense fallback={null}>
           <RecentlyViewed />
         </Suspense>
-      </Reveal>
-      <Reveal>
-        <TryOn />
       </Reveal>
       <Reveal>
         <Atelier />

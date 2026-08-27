@@ -1,4 +1,4 @@
-import { CircleDot, Ellipsis, Gift, Leaf, Minus, Star } from "lucide-react";
+import { Ellipsis, Gift, Leaf, Minus, Star } from "lucide-react";
 
 export function GoldMark({ className = "" }: { className?: string }) {
   return (
@@ -10,16 +10,6 @@ export function OrnStar({ className = "" }: { className?: string }) {
   return (
     <Star
       className={`animate-orn-spin fill-gold text-gold ${className}`}
-      aria-hidden
-    />
-  );
-}
-
-export function OrnRing({ className = "" }: { className?: string }) {
-  return (
-    <CircleDot
-      className={`animate-orn-pulse text-gold ${className}`}
-      strokeWidth={1.6}
       aria-hidden
     />
   );

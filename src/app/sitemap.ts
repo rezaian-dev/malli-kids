@@ -4,10 +4,7 @@ import { CATS } from "@/lib/constants";
 import { pdpHref, SEASONS } from "@/lib/data/products";
 import { getAllProducts } from "@/lib/shop/products";
 import { absoluteUrl } from "@/lib/seo";
-import {
-  defaultShopState,
-  toShopHref,
-} from "@/lib/shop/shop-state";
+import { defaultShopState, toShopHref } from "@/lib/shop/shop-state";
 
 const now = new Date();
 
@@ -66,12 +63,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
-    },
-    {
-      url: absoluteUrl("/tryon"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
     },
     {
       url: absoluteUrl("/fabrics"),

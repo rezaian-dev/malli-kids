@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   BadgeCheck,
@@ -10,7 +9,6 @@ import {
   Ruler,
   ShieldCheck,
   ShoppingBag,
-  Sparkles,
   Star,
   Truck,
 } from "lucide-react";
@@ -27,7 +25,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { QtyStepper } from "@/components/shared/qty-stepper";
 import { CheckoutMount } from "@/components/product";
-import { pdpCard, pdpCtaButton, pdpKicker, pdpWell } from "../_lib/product-chrome";
+import {
+  pdpCard,
+  pdpCtaButton,
+  pdpKicker,
+  pdpWell,
+} from "../_lib/product-chrome";
 import { ProductReadMore } from "./product-read-more";
 import { ProductGallery } from "./product-gallery";
 import { ProductSizeTable } from "./product-size-table";
@@ -86,7 +89,9 @@ export function ProductBuyPanel({
   // size it maps to — as long as this product actually offers it — instead
   // of just falling back to the first in-stock size. See `sizing.ts`. (The
   // React Compiler handles memoizing this itself — no manual `useMemo`.)
-  const heightCm = user?.childHeightCm ? parseFaNumber(user.childHeightCm) : NaN;
+  const heightCm = user?.childHeightCm
+    ? parseFaNumber(user.childHeightCm)
+    : NaN;
   const sizeSuggestion = Number.isFinite(heightCm)
     ? sizeForHeightCm(heightCm)
     : null;
@@ -136,7 +141,10 @@ export function ProductBuyPanel({
     if (missing.length) {
       toast.error("لطفاً پروفایل خود را تکمیل کنید", {
         description: `${missing.join("، ")} در پروفایل‌تان ثبت نشده.`,
-        action: { label: "تکمیل پروفایل", onClick: () => router.push("/profile") },
+        action: {
+          label: "تکمیل پروفایل",
+          onClick: () => router.push("/profile"),
+        },
       });
       return;
     }
@@ -287,7 +295,7 @@ export function ProductBuyPanel({
                 onClick={() => setSize(s)}
                 className={cn(
                   "relative min-h-10 min-w-10 rounded-xl border-2 px-2.5 py-2 text-[11px] font-bold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95 sm:px-3.5 sm:text-xs",
-                  !available && "cursor-not-allowed opacity-40 line-through",
+                  !available && "cursor-not-allowed line-through opacity-40",
                   size === s
                     ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep motion-safe:hover:shadow-md"
                     : "border-navy/10 text-navy/70 hover:border-navy/30 dark:border-gold/30 dark:text-ivory dark:hover:border-gold/60",
@@ -346,19 +354,6 @@ export function ProductBuyPanel({
               />
             </div>
           )}
-          <Button
-            asChild
-            variant="outline"
-            className={cn(
-              "mt-2.5 border-2",
-              CTA_BUTTON,
-              "border-gold text-gold hover:bg-gold hover:text-navy-deep",
-            )}
-          >
-            <Link href="/tryon">
-              <Sparkles className="size-4" /> پرو مجازی این لباس
-            </Link>
-          </Button>
         </div>
 
         <CheckoutMount
@@ -385,7 +380,9 @@ export function ProductBuyPanel({
             </DialogTitle>
             <ProductSizeTable
               highlightSize={recommendedSize ?? "۹۸"}
-              highlightLabel={recommendedSize ? "پیشنهادی برای شما" : "پیشنهادی"}
+              highlightLabel={
+                recommendedSize ? "پیشنهادی برای شما" : "پیشنهادی"
+              }
             />
           </DialogContent>
         </Dialog>
