@@ -1,4 +1,4 @@
-import { STORAGE } from "@/lib/constants";
+import { isRetiredCategory, STORAGE } from "@/lib/constants";
 import { seedAdminDb } from "@/features/admin/lib/admin-data";
 import { CATALOG } from "@/lib/data/products";
 import type { AdminCoupon, AdminReview, FestiveBanner, Product } from "@/types";
@@ -17,8 +17,9 @@ function read(): Saved | null {
 
 /** کاتالوگِ زنده: اگر ادمین محصولی اضافه/ویرایش کرده باشد همان، وگرنه دانه */
 export function loadCatalog(): Product[] {
-  const s = read();
-  return s?.products?.length ? s.products : CATALOG;
+  const saved = read()?.products;
+  const source = saved?.length ? saved : CATALOG;
+  return source.filter((product) => !isRetiredCategory(product.cat));
 }
 
 export function findCatalogProduct(id: number): Product | undefined {

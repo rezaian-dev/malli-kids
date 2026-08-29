@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Baby, Flame, Search as SearchIcon, Shirt, Sparkles, TrendingUp } from "lucide-react";
-import { CORE_PRODUCTS, pdpHref } from "@/lib/data/products";
+import { CORE_PRODUCTS } from "@/lib/data/products";
 import { cn } from "@/lib/utils";
 import { formatToman } from "@/lib/format";
 import { AppForm, ERROR_TEXT, useAppForm } from "@/components/form";
@@ -32,18 +32,20 @@ export function Search() {
     return CORE_PRODUCTS.filter((p) => p.name.includes(s) || p.cat.includes(s)).slice(0, 5);
   }, [q]);
 
-  /**Enter» تنها کلیدِ مجاز برایِ رفتن به صفحهٔ نتیجه است؛ نتیجهٔ زنده فقط نمایش داده می‌شود.
-   * اگر عبارت کوتاه یا نامعتبر باشد، اسکیما جلویِ رفتن را می‌گیرد.
-   */
+  /** جست‌وجوی دستی با Enter یا دکمه؛ اعتبارسنجی فرم برای عبارت تایپ‌شده حفظ می‌شود. */
   function goShop({ q: value }: SearchValues) {
     const v = value.trim();
     router.push(v ? `/shop?q=${encodeURIComponent(v)}` : "/shop");
   }
 
-  function pick(chip: string) {
-    form.setValue("q", chip, { shouldDirty: true });
-    setOpen(true);
-    form.setFocus("q");
+  /** انتخاب پیشنهاد یک اقدام قطعی است و بدون Submit دوم مستقیماً نتایج را باز می‌کند. */
+  function selectSuggestion(value: string) {
+    const v = value.trim();
+    if (!v) return;
+    form.setValue("q", v, { shouldDirty: true });
+    form.clearErrors("q");
+    setOpen(false);
+    router.push(`/shop?q=${encodeURIComponent(v)}`);
   }
 
   return (
@@ -101,7 +103,8 @@ export function Search() {
                     key={chip}
                     type="button"
                     className="inline-flex items-center gap-1.5 rounded-full bg-sand px-3.5 py-2 text-xs font-extrabold text-navy dark:bg-dusk-mid dark:text-linen"
-                    onMouseDown={() => pick(chip)}
+                    onPointerDown={(event) => event.preventDefault()}
+                    onClick={() => selectSuggestion(chip)}
                   >
                     <Icon className="size-3.5 text-gold" />
                     {chip}
@@ -115,14 +118,19 @@ export function Search() {
             <ul className="max-h-72 overflow-y-auto py-1">
               {hits.map((p) => (
                 <li key={p.id}>
-                  <a href={pdpHref(p.id)} className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-gold/10">
+                  <button
+                    type="button"
+                    onPointerDown={(event) => event.preventDefault()}
+                    onClick={() => selectSuggestion(p.name)}
+                    className="flex w-full items-center gap-3 px-3.5 py-2.5 text-start hover:bg-gold/10 focus-visible:bg-gold/10"
+                  >
                     <Image src={p.img} alt="" width={40} height={48} className="h-12 w-10 shrink-0 rounded-lg object-cover" />
                     <span className="min-w-0 flex-1 text-start">
                       <span className="block truncate text-sm font-black text-navy dark:text-ivory">{p.name}</span>
                       <span className="block text-[11px] text-navy/45 dark:text-wheat">{p.cat}</span>
                     </span>
                     <span className="text-xs font-black text-gold">{formatToman(p.price)}</span>
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -137,7 +145,7 @@ export function Search() {
             key={chip}
             type="button"
             className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-white/20 px-3.5 py-1.5 text-xs font-bold text-ivory hover:bg-gold hover:text-navy-deep"
-            onClick={() => pick(chip)}
+            onClick={() => selectSuggestion(chip)}
           >
             <Icon className="size-3.5" />
             {chip}

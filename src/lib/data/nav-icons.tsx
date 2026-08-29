@@ -12,7 +12,6 @@ import {
   Phone,
   ScanFace,
   Shirt,
-  Sofa,
   Sparkles,
 } from "lucide-react";
 
@@ -20,7 +19,6 @@ import {
 export const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   crown: Crown,
   shirt: Shirt,
-  sofa: Sofa,
   baby: Baby,
   briefcase: Briefcase,
   gem: Gem,

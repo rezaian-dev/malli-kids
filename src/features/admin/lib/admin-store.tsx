@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { STORAGE } from "@/lib/constants";
+import { isRetiredCategory, STORAGE } from "@/lib/constants";
 import type {
   AdminArticle,
   AdminCoupon,
@@ -16,14 +16,25 @@ import type {
   OrderStatus,
   Product,
 } from "@/types";
-import { seedAdminDb } from "./admin-data";
+import { ADMIN_CREDS, seedAdminDb } from "./admin-data";
 
 // دیتابیسِ پنل روی localStorage زنده می‌ماند (کلیدِ malli_admin_db) تا هر تغییرِ
 // ادمین — از مقاله و بنر تا موجودی و جشنواره — بعد از refresh هم بماند.
-// API هوک دست‌نخورده است؛ هیچ صفحه‌ای نیاز به ویرایش ندارد.
+export type AdminIdentity = {
+  username: string;
+  name: string;
+  avatar?: string;
+};
+
+type AdminSession = {
+  username: string;
+  loggedAt: string | null;
+};
+
 type AdminCtx = {
   ready: boolean;
   logged: boolean;
+  profile: AdminIdentity;
   db: AdminDb;
   login: (user: string, pass: string) => boolean;
   logout: () => void;
@@ -53,6 +64,23 @@ type AdminCtx = {
 
 const Ctx = createContext<AdminCtx | null>(null);
 const KEY = STORAGE.adminDb;
+const SESSION_KEY = STORAGE.admin;
+const DEFAULT_SESSION: AdminSession = { username: ADMIN_CREDS.user, loggedAt: null };
+
+function loadSession(): AdminSession {
+  try {
+    const raw = window.localStorage.getItem(SESSION_KEY);
+    if (!raw) return DEFAULT_SESSION;
+    const saved = JSON.parse(raw) as Partial<AdminSession> | string;
+    if (typeof saved === "string") return { username: saved, loggedAt: null };
+    return {
+      username: saved.username?.trim() || ADMIN_CREDS.user,
+      loggedAt: saved.loggedAt ?? null,
+    };
+  } catch {
+    return DEFAULT_SESSION;
+  }
+}
 
 /** خواندنِ دیتابیسِ پنل: دادهٔ ذخیره‌شده با دانهٔ نمونه ادغام می‌شود */
 function loadDb(): AdminDb {
@@ -61,10 +89,20 @@ function loadDb(): AdminDb {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return seed;
     const saved = JSON.parse(raw) as Partial<AdminDb>;
+    const legacyCustomers = (saved.customers ?? seed.customers).map((customer) => ({
+      ...customer,
+      role: customer.role ?? ("user" as const),
+    }));
+    // نسخه‌های قدیمی localStorage نقش نداشتند؛ حساب مدیریت نمونه را بدون حذف
+    // کاربران موجود به دادهٔ مهاجرت‌یافته اضافه می‌کنیم.
+    const adminSeed = seed.customers.find((customer) => customer.role === "admin");
+    const customers = legacyCustomers.some((customer) => customer.role === "admin") || !adminSeed
+      ? legacyCustomers
+      : [adminSeed, ...legacyCustomers];
     return {
-      products: saved.products?.length ? saved.products : seed.products,
+      products: (saved.products?.length ? saved.products : seed.products).filter((product) => !isRetiredCategory(product.cat)),
       orders: saved.orders ?? seed.orders,
-      customers: saved.customers ?? seed.customers,
+      customers,
       coupons: saved.coupons ?? seed.coupons,
       reviews: saved.reviews ?? seed.reviews,
       articles: saved.articles ?? seed.articles,
@@ -81,11 +119,13 @@ function loadDb(): AdminDb {
 export function AdminStore({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [db, setDb] = useState<AdminDb>(() => seedAdminDb());
+  const [session, setSession] = useState<AdminSession>(DEFAULT_SESSION);
   const [hydrated, setHydrated] = useState(false);
 
   // هیدریت از localStorage (فقط در مرورگر — رندرِ سرور با دانه یکسان می‌ماند)
   useEffect(() => {
     setDb(loadDb());
+    setSession(loadSession());
     setHydrated(true);
   }, []);
 
@@ -99,18 +139,51 @@ export function AdminStore({ children }: { children: ReactNode }) {
     }
   }, [db, hydrated]);
 
-  const value = useMemo<AdminCtx>(
-    () => ({
+  const value = useMemo<AdminCtx>(() => {
+    const admins = db.customers.filter((customer) => customer.role === "admin");
+    const account = admins.find((customer) => customer.email?.split("@")[0]?.toLocaleLowerCase("en") === session.username.toLocaleLowerCase("en")) ?? admins[0];
+    const name = account ? `${account.firstName} ${account.lastName}`.trim() : session.username;
+    const profile: AdminIdentity = {
+      username: session.username,
+      name,
+      avatar: account?.avatar,
+    };
+
+    return {
       ready: hydrated,
       logged: true,
+      profile,
       db,
-      login: () => true,
-      logout: () => router.push("/"),
+      login: (user, pass) => {
+        const username = user.trim();
+        if (username.toLocaleLowerCase("en") !== ADMIN_CREDS.user.toLocaleLowerCase("en") || pass !== ADMIN_CREDS.pass) return false;
+        const nextSession = { username, loggedAt: new Date().toISOString() };
+        setSession(nextSession);
+        try {
+          window.localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
+        } catch {
+          /* حافظهٔ مرورگر در دسترس نیست */
+        }
+        return true;
+      },
+      logout: () => {
+        try {
+          window.localStorage.removeItem(SESSION_KEY);
+        } catch {
+          /* noop */
+        }
+        setSession(DEFAULT_SESSION);
+        router.push("/admin/login");
+      },
       saveProducts: (list) => {
-        setDb((d) => ({ ...d, products: list }));
+        setDb((d) => ({ ...d, products: list.filter((product) => !isRetiredCategory(product.cat)) }));
         toast("محصولات ذخیره شد");
       },
       upsertProduct: (p) => {
+        if (isRetiredCategory(p.cat)) {
+          toast.error("این دسته‌بندی دیگر فعال نیست");
+          return;
+        }
         setDb((d) => ({
           ...d,
           products: d.products.some((x) => x.id === p.id) ? d.products.map((x) => (x.id === p.id ? p : x)) : [p, ...d.products],
@@ -217,9 +290,8 @@ export function AdminStore({ children }: { children: ReactNode }) {
         setDb(seedAdminDb());
         toast("داده‌ها بازنشانی شد", { description: "همه‌چیز به حالت اولیه برگشت." });
       },
-    }),
-    [db, hydrated, router],
-  );
+    };
+  }, [db, hydrated, router, session]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

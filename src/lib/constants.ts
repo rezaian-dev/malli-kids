@@ -10,7 +10,14 @@ export const BRAND = {
   freeShipFrom: 1_500_000,
 };
 
-export const CATS = ["همه", "دخترانه", "پسرانه", "سیسمونی", "راحتی و خانگی", "بیرونی و مجلسی", "لباس مشاغل", "اکسسوری", "دستدوز"] as const;
+/** دسته‌های منسوخ فقط برای پاک‌سازی داده‌های قدیمی localStorage نگه داشته می‌شوند. */
+export const RETIRED_CATS = ["راحتی و خانگی", "بیرونی و مجلسی"] as const;
+
+export function isRetiredCategory(category: string) {
+  return (RETIRED_CATS as readonly string[]).includes(category);
+}
+
+export const CATS = ["همه", "دخترانه", "پسرانه", "سیسمونی", "لباس مشاغل", "اکسسوری", "دستدوز"] as const;
 
 /** زیرشاخه‌های هر دسته = فصل‌ها؛ ادمین و فروشگاه هر دو از همین درخت استفاده می‌کنند. */
 export { SEASONS } from "@/lib/data/products";

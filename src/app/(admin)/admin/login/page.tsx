@@ -115,7 +115,7 @@ export default function AdminLogin() {
 
       {/* Image panel — intentionally rich in both themes */}
       <aside className="relative hidden min-h-[18rem] overflow-hidden bg-navy lg:block">
-        <Image src="/brand/hero-dress.jpg" alt="" width={900} height={1200} className="absolute inset-0 size-full object-cover object-[center_15%]" />
+        <Image src="/brand/hero-dress.jpg" alt="" width={900} height={1200} priority className="absolute inset-0 size-full object-cover object-[center_15%]" />
         <div className="absolute inset-0 bg-linear-to-t from-navy-deep via-navy-deep/35 to-transparent" />
         <div className="absolute inset-5 rounded-[28px] border border-gold/40" />
         <div className="absolute inset-x-10 bottom-10 text-ivory">

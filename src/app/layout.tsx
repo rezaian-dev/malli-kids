@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import NextTopLoader from "nextjs-toploader";
-import Script from "next/script";
 import { Store } from "@/lib/store";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -73,10 +72,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           shadow="0 0 14px rgba(217,183,127,.85), 0 0 6px rgba(193,147,87,.9)"
           zIndex={9999}
         />
-        {/* کلاسِ تم پیش از اولین paint اعمال می‌شود — بدونِ FOUC و بدونِ تگِ script داخلِ درختِ React */}
-        <Script id="theme-init" strategy="beforeInteractive">
-          {`(function(){try{var t=localStorage.getItem("theme");var d=t==="dark"||((!t||t==="system")&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);}catch(e){}})();`}
-        </Script>
+        {/* تم اولیه در instrumentation-client و پیش از Hydration اعمال می‌شود؛
+            بنابراین هیچ تگ script داخل درخت React رندر نمی‌شود. */}
         <ThemeProvider>
           <Store>
             {children}

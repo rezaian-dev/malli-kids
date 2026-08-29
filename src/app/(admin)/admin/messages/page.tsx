@@ -1,152 +1,183 @@
 "use client";
 
-import { useState } from "react";
-import { Headphones, Mail, Reply, Send, TicketCheck } from "lucide-react";
+import { useMemo, useState } from "react";
+import { CheckCheck, CircleAlert, Headphones, LockKeyhole, Mail, MessagesSquare, Reply, Send, TicketCheck } from "lucide-react";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
+
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { Textarea } from "@/components/ui/textarea";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead } from "@/features/admin";
 import { usePagination } from "@/hooks/use-pagination";
-import { PageHead } from "@/features/admin";
-import { replyTicket, setTicketStatus, useTickets, type Ticket, type TicketStatus } from "@/lib/tickets";
+import { replyTicket, setTicketStatus, useTickets, type TicketStatus } from "@/lib/tickets";
 import { cn } from "@/lib/utils";
 
 const PER_PAGE = 6;
+type StatusFilter = "all" | TicketStatus;
+type SortFilter = "newest" | "oldest" | "most-replies";
 
-const STATUS: Record<TicketStatus, { label: string; cls: string }> = {
-  open: { label: "باز", cls: "bg-gold/15 text-gold" },
-  answered: { label: "پاسخ‌داده‌شده", cls: "bg-emerald-500/10 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-300" },
-  closed: { label: "بسته", cls: "bg-navy/8 text-navy/55 dark:bg-white/10 dark:text-ivory/55" },
+const STATUS: Record<TicketStatus, { label: string; cls: string; dot: string }> = {
+  open: { label: "در انتظار پاسخ", cls: "bg-rose/10 text-rose dark:bg-rose/15", dot: "bg-rose" },
+  answered: { label: "پاسخ داده شده", cls: "bg-emerald-500/10 text-emerald-700 dark:bg-emerald-400/12 dark:text-emerald-300", dot: "bg-emerald-500" },
+  closed: { label: "بسته شده", cls: "bg-navy/7 text-navy/55 dark:bg-white/7 dark:text-ivory/60", dot: "bg-navy/35 dark:bg-white/35" },
 };
 
-/**
- * تیکت‌های پشتیبانی — همان‌هایی که کاربر در پنلِ خودش ثبت کرده.
- * پاسخِ شما این‌جا ثبت می‌شود و کاربر آن را در پنلِ کاربریِ خودش می‌بیند.
- */
 export default function AdminMessages() {
   const tickets = useTickets();
-  const pg = usePagination(tickets, PER_PAGE);
+  const [q, setQ] = useState("");
+  const [status, setStatus] = useState<StatusFilter>("all");
+  const [sort, setSort] = useState<SortFilter>("newest");
   const [openId, setOpenId] = useState<string | null>(null);
   const [reply, setReply] = useState("");
+
+  const list = useMemo(() => {
+    const term = q.trim().toLocaleLowerCase("fa");
+    return tickets
+      .filter((ticket) => {
+        const haystack = `${ticket.name} ${ticket.owner} ${ticket.subject} ${ticket.replies.map((item) => item.text).join(" ")}`.toLocaleLowerCase("fa");
+        return (!term || haystack.includes(term)) && (status === "all" || ticket.status === status);
+      })
+      .sort((a, b) => {
+        if (sort === "oldest") return a.createdAt.localeCompare(b.createdAt, "fa");
+        if (sort === "most-replies") return b.replies.length - a.replies.length;
+        return b.createdAt.localeCompare(a.createdAt, "fa");
+      });
+  }, [q, sort, status, tickets]);
+
+  const pg = usePagination(list, PER_PAGE, `${q}|${status}|${sort}`);
+  const unanswered = tickets.filter((ticket) => ticket.status === "open").length;
+  const answered = tickets.filter((ticket) => ticket.status === "answered").length;
+  const closed = tickets.filter((ticket) => ticket.status === "closed").length;
+  const activeFilters = Number(!!q.trim()) + Number(status !== "all") + Number(sort !== "newest");
 
   function send(id: string) {
     if (reply.trim().length < 2) return toast("متن پاسخ را بنویسید");
     replyTicket(id, "support", reply);
     setReply("");
     setOpenId(null);
-    toast.success("پاسخ ثبت شد — کاربر آن را در پنل خودش می‌بیند");
+    toast.success("پاسخ ارسال و وضعیت تیکت به‌روزرسانی شد");
   }
 
-  function close(id: string, status: TicketStatus) {
-    setTicketStatus(id, status);
-    toast.success(status === "closed" ? "تیکت بسته شد" : "تیکت باز شد");
+  function changeStatus(id: string, nextStatus: TicketStatus) {
+    setTicketStatus(id, nextStatus);
+    toast.success(nextStatus === "closed" ? "تیکت بسته شد" : "تیکت دوباره باز شد");
   }
 
   return (
     <div>
-      <PageHead kicker="INBOX" title="تیکت‌های پشتیبانی" />
-      <p className="mb-4 text-sm text-navy/50 dark:text-wheat">
-        تیکت‌های ثبت‌شدهٔ کاربران در پنلِ کاربری؛ پاسخِ شما همین‌جا ذخیره و در پنلِ خودِ کاربر نمایش داده می‌شود.
-      </p>
+      <PageHead kicker="SUPPORT CENTER" title="تیکت‌های پشتیبانی" description="رسیدگی متمرکز به درخواست‌ها و پایش سرعت پاسخ‌گویی تیم پشتیبانی." />
 
-      {pg.pageItems.length === 0 ? (
-        <div className="admin-card px-6 py-14 text-center">
-          <Headphones className="mx-auto size-10 text-gold" />
-          <p className="mt-3 font-black text-navy dark:text-ivory">هنوز تیکتی ثبت نشده</p>
-          <p className="mx-auto mt-1 max-w-xs text-xs leading-6 text-navy/50 dark:text-wheat">
-            وقتی کاربری از پنلِ کاربری‌اش تیکت بسازد، همین‌جا دیده می‌شود.
-          </p>
+      <AdminStatStrip items={[
+        { label: "کل تیکت‌ها", value: tickets.length, Icon: Headphones, tone: "blue" },
+        { label: "بدون پاسخ", value: unanswered, hint: unanswered ? "نیازمند رسیدگی" : "همه پاسخ گرفته‌اند", Icon: CircleAlert, tone: "rose" },
+        { label: "پاسخ‌داده‌شده", value: answered, Icon: CheckCheck, tone: "emerald" },
+        { label: "بسته‌شده", value: closed, Icon: LockKeyhole, tone: "gold" },
+      ]} />
+
+      <AdminFilterBar
+        search={q}
+        onSearchChange={setQ}
+        searchPlaceholder="نام کاربر، موضوع یا متن پیام…"
+        resultCount={list.length}
+        resultLabel="تیکت"
+        activeCount={activeFilters}
+        onReset={() => { setQ(""); setStatus("all"); setSort("newest"); }}
+      >
+        <AdminFilterSelect
+          label="وضعیت پاسخ"
+          value={status}
+          onValueChange={(value) => setStatus(value as StatusFilter)}
+          options={[
+            { value: "all", label: "همه تیکت‌ها", count: tickets.length },
+            { value: "open", label: "بدون پاسخ", count: unanswered },
+            { value: "answered", label: "پاسخ‌داده‌شده", count: answered },
+            { value: "closed", label: "بسته‌شده", count: closed },
+          ]}
+        />
+        <AdminFilterSelect
+          label="مرتب‌سازی"
+          value={sort}
+          onValueChange={(value) => setSort(value as SortFilter)}
+          options={[
+            { value: "newest", label: "جدیدترین فعالیت" },
+            { value: "oldest", label: "قدیمی‌ترین" },
+            { value: "most-replies", label: "بیشترین پاسخ" },
+          ]}
+        />
+      </AdminFilterBar>
+
+      {list.length === 0 ? (
+        <div className="admin-card px-5 py-14 text-center">
+          <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-gold/12 text-gold"><MessagesSquare className="size-6" /></span>
+          <p className="mt-4 font-black text-navy dark:text-ivory">{tickets.length === 0 ? "هنوز تیکتی ثبت نشده" : "تیکتی مطابق فیلترها پیدا نشد"}</p>
+          <p className="mx-auto mt-1 max-w-sm text-xs leading-6 text-navy/50 dark:text-wheat">{tickets.length === 0 ? "تیکت‌های ساخته‌شده در پنل کاربران، همراه با وضعیت پاسخ، اینجا نمایش داده می‌شوند." : "فیلتر وضعیت یا عبارت جستجو را تغییر دهید."}</p>
         </div>
       ) : (
         <div className="grid gap-3">
-          {pg.pageItems.map((m) => {
-            const open = openId === m.id;
-            const st = STATUS[m.status];
+          {pg.pageItems.map((ticket, index) => {
+            const replying = openId === ticket.id;
+            const meta = STATUS[ticket.status];
+            const lastReply = ticket.replies.at(-1);
             return (
-              <article key={m.id} className="admin-card overflow-hidden">
-                <div className="p-4 sm:p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-navy font-black text-gold dark:bg-gold dark:text-navy-deep">
-                        {m.name.charAt(0)}
+              <article key={ticket.id} className={cn("admin-card overflow-hidden", ticket.status === "open" && "border-rose/20 dark:border-rose/25")} style={{ animationDelay: `${index * 45}ms` }}>
+                <div className="p-3.5 sm:p-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <span className="relative grid size-10 shrink-0 place-items-center rounded-xl bg-navy font-black text-gold dark:bg-gold/15 dark:text-gold-soft">
+                        {ticket.name.charAt(0)}
+                        <span className={cn("absolute -end-0.5 -top-0.5 size-2.5 rounded-full border-2 border-white dark:border-navy-mid", meta.dot)} />
                       </span>
                       <div className="min-w-0">
-                        <p className="flex items-center gap-2 font-black text-navy dark:text-ivory">
-                          <span className="truncate">{m.name}</span>
-                          <span className={cn("shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-black", st.cls)}>{st.label}</span>
-                        </p>
-                        <p className="truncate text-sm font-bold text-navy/70 dark:text-ivory/70">{m.subject}</p>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <p className="font-black text-navy dark:text-ivory">{ticket.name}</p>
+                          <span className={cn("inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black", meta.cls)}>{ticket.status === "open" ? <CircleAlert className="size-3" /> : ticket.status === "answered" ? <CheckCheck className="size-3" /> : <LockKeyhole className="size-3" />}{meta.label}</span>
+                        </div>
+                        <h2 className="mt-1 text-sm font-black text-navy/78 dark:text-ivory/78">{ticket.subject}</h2>
+                        <p className="mt-1 truncate text-[10px] font-bold text-navy/40 dark:text-wheat" dir="ltr">{ticket.owner}</p>
                       </div>
                     </div>
-                    <span className="shrink-0 text-[11px] font-bold text-navy/40 dark:text-wheat">{m.createdAt}</span>
+                    <div className="flex shrink-0 items-center justify-between gap-3 sm:block sm:text-end">
+                      <p className="text-[10px] font-bold text-navy/40 dark:text-wheat">{ticket.createdAt}</p>
+                      <p className="mt-1 text-[9px] font-black text-navy/35 dark:text-wheat/55">{ticket.replies.length} پیام</p>
+                    </div>
                   </div>
 
-                  <div className="mt-3 space-y-2">
-                    {m.replies.map((r, i) => (
-                      <p
-                        key={i}
-                        className={cn(
-                          "rounded-2xl px-4 py-3 text-sm leading-7",
-                          r.from === "support"
-                            ? "border border-gold/30 bg-gold/10 text-navy/90 dark:text-ivory/90"
-                            : "bg-navy/[0.03] text-navy/80 dark:bg-white/[0.03] dark:text-ivory/80",
-                        )}
-                      >
-                        <span className="mb-0.5 block text-[10px] font-black text-gold">{r.from === "support" ? "پشتیبانی" : "کاربر"}</span>
-                        {r.text}
-                      </p>
+                  <div className="mt-4 space-y-2">
+                    {ticket.replies.map((item, replyIndex) => (
+                      <div key={`${item.at}-${replyIndex}`} className={cn("max-w-[92%] rounded-2xl px-3.5 py-2.5 text-xs leading-6 sm:max-w-[82%]", item.from === "support" ? "ms-auto border border-gold/18 bg-gold/8 text-navy dark:text-ivory" : "me-auto bg-navy/[0.045] text-navy/80 dark:bg-white/[0.04] dark:text-ivory/80")}>
+                        <div className="mb-0.5 flex items-center justify-between gap-4 text-[9px] font-black">
+                          <span className={item.from === "support" ? "text-gold-deep dark:text-gold-soft" : "text-navy/45 dark:text-wheat"}>{item.from === "support" ? "پشتیبانی مالی" : "کاربر"}</span>
+                          <span className="font-bold text-navy/30 dark:text-wheat/45">{item.at}</span>
+                        </div>
+                        <p>{item.text}</p>
+                      </div>
                     ))}
                   </div>
 
-                  <div className="mt-3 flex justify-end gap-2">
-                    {m.status === "closed" ? (
-                      <Button type="button" variant="outline" size="sm" className="min-h-9 rounded-full" onClick={() => close(m.id, "open")}>
-                        باز کردنِ دوباره
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-navy/6 pt-3 dark:border-gold/12">
+                    <p className="hidden text-[9px] font-bold text-navy/35 sm:block dark:text-wheat/55">آخرین پیام: {lastReply?.from === "support" ? "پشتیبانی" : "کاربر"}</p>
+                    <div className="ms-auto flex w-full gap-2 sm:w-auto">
+                      <Button type="button" variant="outline" size="sm" className="min-h-9 flex-1 rounded-xl text-[10px] sm:flex-none" onClick={() => changeStatus(ticket.id, ticket.status === "closed" ? "open" : "closed")}>
+                        <TicketCheck className="size-3.5" /> {ticket.status === "closed" ? "بازکردن" : "بستن"}
                       </Button>
-                    ) : (
-                      <Button type="button" variant="outline" size="sm" className="min-h-9 rounded-full" onClick={() => close(m.id, "closed")}>
-                        <TicketCheck className="size-4" /> بستنِ تیکت
+                      <Button type="button" variant={replying ? "outline" : "navy"} size="sm" className="min-h-9 flex-1 rounded-xl text-[10px] sm:flex-none" onClick={() => { setOpenId(replying ? null : ticket.id); setReply(""); }}>
+                        <Reply className="size-3.5" /> {replying ? "انصراف" : "ثبت پاسخ"}
                       </Button>
-                    )}
-                    <Button
-                      type="button"
-                      variant={open ? "outline" : "navy"}
-                      size="sm"
-                      className="min-h-9 rounded-full"
-                      onClick={() => setOpenId(open ? null : m.id)}
-                    >
-                      <Reply className="size-4" /> {open ? "بستن" : "پاسخ"}
-                    </Button>
+                    </div>
                   </div>
                 </div>
 
-                {open ? (
-                  <div className="border-t border-navy/8 bg-navy/[0.02] p-4 dark:border-gold/15 dark:bg-white/[0.02] sm:p-5">
-                    <label className="mb-2 flex items-center gap-1.5 text-xs font-black text-gold">
-                      <Mail className="size-3.5" /> پاسخ به {m.name}
-                    </label>
-                    <div className="mb-2 flex flex-wrap gap-1.5">
-                      {[
-                        "سلام، ممنون از پیامتون 🙏",
-                        "سفارش شما ارسال شد؛ کد رهگیری با پیامک براتون می‌آید.",
-                        "این مدل موجود است و می‌تونید از فروشگاه ثبت سفارش کنید.",
-                        "شمارهٔ سفارش‌تون را بفرستید تا بررسی کنم.",
-                      ].map((t) => (
-                        <button
-                          key={t}
-                          type="button"
-                          onClick={() => setReply((r) => (r ? `${r}\n${t}` : t))}
-                          className="rounded-full border border-navy/10 bg-white px-3 py-1.5 text-[11px] font-bold text-navy/65 transition hover:border-gold/50 hover:text-gold-deep dark:border-gold/20 dark:bg-navy-mid dark:text-wheat dark:hover:text-gold-soft"
-                        >
-                          {t}
-                        </button>
+                {replying ? (
+                  <div className="border-t border-navy/7 bg-navy/[0.02] p-3.5 dark:border-gold/12 dark:bg-white/[0.02] sm:p-5">
+                    <label className="mb-2 flex items-center gap-1.5 text-[11px] font-black text-gold" htmlFor={`reply-${ticket.id}`}><Mail className="size-3.5" /> پاسخ به {ticket.name}</label>
+                    <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+                      {["سلام، ممنون از پیام شما.", "شماره سفارش را لطفاً ارسال کنید.", "موضوع در حال بررسی است و به‌زودی اطلاع می‌دهیم."].map((text) => (
+                        <button key={text} type="button" onClick={() => setReply((current) => current ? `${current}\n${text}` : text)} className="shrink-0 rounded-xl border border-navy/8 bg-white/70 px-3 py-1.5 text-[10px] font-bold text-navy/60 transition hover:border-gold/40 dark:border-gold/14 dark:bg-navy-deep/35 dark:text-wheat">{text}</button>
                       ))}
                     </div>
-                    <Textarea value={reply} onChange={(e) => setReply(e.target.value)} placeholder="پاسخ… (با کلیک روی پیشنهادها پر می‌شود)" className="min-h-24 rounded-2xl" />
+                    <Textarea id={`reply-${ticket.id}`} value={reply} onChange={(event) => setReply(event.target.value)} placeholder="پاسخ کامل و شفاف خود را بنویسید…" className="min-h-28 resize-y rounded-xl bg-white/80 dark:bg-navy-deep/40" />
                     <div className="mt-2 flex justify-end">
-                      <Button type="button" variant="navy" size="sm" className="min-h-9 rounded-full" onClick={() => send(m.id)}>
-                        <Send className="size-4" /> ارسال پاسخ
-                      </Button>
+                      <Button type="button" variant="navy" size="sm" className="min-h-10 w-full rounded-xl sm:w-auto" onClick={() => send(ticket.id)}><Send className="size-4" /> ارسال پاسخ</Button>
                     </div>
                   </div>
                 ) : null}
@@ -156,7 +187,7 @@ export default function AdminMessages() {
         </div>
       )}
 
-      <Pagination pg={pg} unit="تیکت" />
+      {list.length > 0 ? <Pagination pg={pg} unit="تیکت" /> : null}
     </div>
   );
 }

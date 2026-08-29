@@ -1,40 +1,65 @@
 "use client";
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
-import { useAdmin } from "@/features/admin";
+import { useMemo, useState } from "react";
+import { CircleCheck, CircleOff, Gauge, Percent, Plus, TicketPercent, X } from "lucide-react";
+
+import { AppForm, MoneyField, TextField, useAppForm } from "@/components/form";
+import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
+import { Switch } from "@/components/ui/switch";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead, useAdmin } from "@/features/admin";
+import { usePagination } from "@/hooks/use-pagination";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { parseFaNumber } from "@/lib/forms";
 import type { AdminCoupon } from "@/types";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Pagination } from "@/components/ui/pagination";
-import { usePagination } from "@/hooks/use-pagination";
-import { PageHead } from "@/features/admin";
-import { AppForm, MoneyField, TextField, useAppForm } from "@/components/form";
 import { couponDefaults, couponSchema, type CouponValues } from "./schema";
 
 const PER_PAGE = 8;
+type StatusFilter = "all" | "active" | "inactive" | "full";
+type SortFilter = "default" | "usage" | "discount" | "expiry";
 
 export default function AdminCoupons() {
   const { db, saveCoupons } = useAdmin();
   const [open, setOpen] = useState(false);
-  const pg = usePagination(db.coupons, PER_PAGE);
+  const [q, setQ] = useState("");
+  const [status, setStatus] = useState<StatusFilter>("all");
+  const [sort, setSort] = useState<SortFilter>("default");
   const form = useAppForm({ schema: couponSchema, defaultValues: couponDefaults });
 
-  function add(v: CouponValues) {
+  const list = useMemo(() => {
+    const term = q.trim().toLocaleLowerCase("fa");
+    return db.coupons
+      .filter((coupon) => {
+        const matchesSearch = !term || `${coupon.code} ${coupon.title}`.toLocaleLowerCase("fa").includes(term);
+        const matchesStatus = status === "all" || (status === "active" ? coupon.active && coupon.used < coupon.cap : status === "inactive" ? !coupon.active : coupon.used >= coupon.cap);
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => {
+        if (sort === "usage") return b.used / Math.max(1, b.cap) - a.used / Math.max(1, a.cap);
+        if (sort === "discount") return b.rate - a.rate;
+        if (sort === "expiry") return a.until.localeCompare(b.until, "fa");
+        return db.coupons.indexOf(a) - db.coupons.indexOf(b);
+      });
+  }, [db.coupons, q, sort, status]);
+
+  const pg = usePagination(list, PER_PAGE, `${q}|${status}|${sort}`);
+  const active = db.coupons.filter((coupon) => coupon.active && coupon.used < coupon.cap).length;
+  const inactive = db.coupons.filter((coupon) => !coupon.active).length;
+  const totalUsed = db.coupons.reduce((sum, coupon) => sum + coupon.used, 0);
+  const activeFilters = Number(!!q.trim()) + Number(status !== "all") + Number(sort !== "default");
+
+  function add(values: CouponValues) {
     const next: AdminCoupon = {
-      code: v.code.toUpperCase(),
-      title: v.title.trim(),
-      rate: parseFaNumber(v.rate) / 100,
+      code: values.code.toUpperCase(),
+      title: values.title.trim(),
+      rate: parseFaNumber(values.rate) / 100,
       used: 0,
-      cap: parseFaNumber(v.cap),
+      cap: parseFaNumber(values.cap),
       active: true,
-      min: parseFaNumber(v.min) || 0,
-      until: v.until,
+      min: parseFaNumber(values.min) || 0,
+      until: values.until,
     };
-    if (db.coupons.some((c) => c.code === next.code)) {
-      // تکرارِ کد خطایِ «سمتِ سرور» است؛ رویِ همانِ فیلد نشان داده می‌شود
+    if (db.coupons.some((coupon) => coupon.code === next.code)) {
       form.setError("code", { message: "این کد از قبل در فهرست است" });
       return;
     }
@@ -50,58 +75,92 @@ export default function AdminCoupons() {
   return (
     <div>
       <PageHead
-        kicker="PROMOS"
+        kicker="PROMOTIONS"
         title="کدهای تخفیف"
-        action={
-          <Button type="button" variant="navy" onClick={() => setOpen(true)}>
-            <Plus className="size-4" /> کد جدید
-          </Button>
-        }
+        description="طراحی، فعال‌سازی و تحلیل کمپین‌های تخفیفی و میزان استفاده مشتریان."
+        action={<Button type="button" variant="navy" className="h-11 rounded-xl" onClick={() => setOpen(true)}><Plus className="size-4" /> کد جدید</Button>}
       />
-      <div className="grid gap-3 md:grid-cols-2">
-        {pg.pageItems.map((c) => (
-          <article key={c.code} className="lux-card p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-display text-xl tracking-[0.12em] text-navy dark:text-gold-soft">{c.code}</p>
-                <p className="mt-1 text-sm font-bold">{c.title}</p>
-              </div>
-              <Switch checked={c.active} onCheckedChange={(v) => saveCoupons(db.coupons.map((x) => (x.code === c.code ? { ...x, active: v } : x)))} />
-            </div>
-            <p className="mt-3 text-2xl font-black text-gold">{toFaDigits(Math.round(c.rate * 100))}٪</p>
-            <p className="mt-2 text-xs text-navy/45 dark:text-wheat">
-              مصرف {toFaDigits(c.used)} از {toFaDigits(c.cap)} · حداقل خرید {c.min ? `${formatToman(c.min)} ت` : "ندارد"}
-            </p>
-            <p className="mt-1 text-[11px] font-bold">تا {c.until}</p>
-          </article>
-        ))}
-      </div>
-      <Pagination pg={pg} unit="کد" />
+
+      <AdminStatStrip items={[
+        { label: "کل کدها", value: db.coupons.length, Icon: TicketPercent, tone: "blue" },
+        { label: "فعال", value: active, Icon: CircleCheck, tone: "emerald" },
+        { label: "غیرفعال", value: inactive, Icon: CircleOff, tone: "rose" },
+        { label: "دفعات استفاده", value: totalUsed, Icon: Gauge, tone: "gold" },
+      ]} />
+
+      <AdminFilterBar
+        search={q}
+        onSearchChange={setQ}
+        searchPlaceholder="کد یا عنوان کمپین…"
+        resultCount={list.length}
+        resultLabel="کد"
+        activeCount={activeFilters}
+        onReset={() => { setQ(""); setStatus("all"); setSort("default"); }}
+      >
+        <AdminFilterSelect label="وضعیت کد" value={status} onValueChange={(value) => setStatus(value as StatusFilter)} options={[
+          { value: "all", label: "همه کدها", count: db.coupons.length },
+          { value: "active", label: "فعال", count: active },
+          { value: "inactive", label: "غیرفعال", count: inactive },
+          { value: "full", label: "سقف تکمیل‌شده", count: db.coupons.filter((coupon) => coupon.used >= coupon.cap).length },
+        ]} />
+        <AdminFilterSelect label="مرتب‌سازی" value={sort} onValueChange={(value) => setSort(value as SortFilter)} options={[
+          { value: "default", label: "ترتیب پیش‌فرض" },
+          { value: "usage", label: "بیشترین مصرف" },
+          { value: "discount", label: "بیشترین تخفیف" },
+          { value: "expiry", label: "نزدیک‌ترین انقضا" },
+        ]} />
+      </AdminFilterBar>
+
+      {list.length > 0 ? (
+        <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
+          {pg.pageItems.map((coupon, index) => {
+            const usage = Math.min(100, Math.round((coupon.used / Math.max(1, coupon.cap)) * 100));
+            const usable = coupon.active && coupon.used < coupon.cap;
+            return (
+              <article key={coupon.code} className="admin-card group overflow-hidden" style={{ animationDelay: `${index * 45}ms` }}>
+                <div className="p-4 sm:p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate font-display text-lg font-bold tracking-[0.1em] text-navy dark:text-gold-soft" dir="ltr">{coupon.code}</p>
+                        <span className={`rounded-lg px-2 py-1 text-[9px] font-black ${usable ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "bg-rose/10 text-rose"}`}>{usable ? "قابل استفاده" : coupon.used >= coupon.cap ? "سقف تکمیل" : "غیرفعال"}</span>
+                      </div>
+                      <p className="mt-1 truncate text-xs font-bold text-navy/65 dark:text-wheat">{coupon.title}</p>
+                    </div>
+                    <Switch checked={coupon.active} onCheckedChange={(value) => saveCoupons(db.coupons.map((item) => item.code === coupon.code ? { ...item, active: value } : item))} aria-label={`فعال بودن ${coupon.code}`} />
+                  </div>
+
+                  <div className="mt-5 flex items-end justify-between gap-3">
+                    <div><p className="text-[9px] font-black text-navy/40 dark:text-wheat">میزان تخفیف</p><p className="mt-0.5 text-3xl font-black text-gold-deep dark:text-gold-soft">{toFaDigits(Math.round(coupon.rate * 100))}<span className="text-base">٪</span></p></div>
+                    <div className="text-end"><p className="text-[9px] font-black text-navy/40 dark:text-wheat">حداقل خرید</p><p className="mt-1 text-xs font-black text-navy dark:text-ivory">{coupon.min ? `${formatToman(coupon.min)} ت` : "بدون محدودیت"}</p></div>
+                  </div>
+
+                  <div className="mt-4">
+                    <div className="mb-1.5 flex items-center justify-between text-[9px] font-bold text-navy/45 dark:text-wheat"><span>مصرف {toFaDigits(coupon.used)} از {toFaDigits(coupon.cap)}</span><span>{toFaDigits(usage)}٪</span></div>
+                    <div className="h-1.5 overflow-hidden rounded-full bg-navy/7 dark:bg-navy-deep"><div className={`h-full rounded-full transition-all duration-700 ${usage >= 90 ? "bg-rose" : "bg-linear-to-l from-gold to-gold-light"}`} style={{ width: `${usage}%` }} /></div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between border-t border-navy/6 bg-navy/[0.015] px-4 py-2.5 text-[10px] dark:border-gold/12 dark:bg-white/[0.015]"><span className="font-bold text-navy/40 dark:text-wheat">تاریخ انقضا</span><span className="font-black text-navy dark:text-ivory">{coupon.until}</span></div>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="admin-card px-5 py-14 text-center"><TicketPercent className="mx-auto size-10 text-gold" /><p className="mt-3 text-sm font-black">کد تخفیفی مطابق فیلترها نیست</p></div>
+      )}
+      {list.length > 0 ? <Pagination pg={pg} unit="کد" /> : null}
+
       {open ? (
-        <div className="fixed inset-0 z-[90] grid place-items-center p-4">
-          <button type="button" className="absolute inset-0 bg-navy-deep/55" onClick={close} aria-label="بستن" />
-          <AppForm form={form} onSubmit={add} ariaLabel="کد تخفیف جدید" className="relative z-10 w-full max-w-md space-y-3 rounded-[28px] bg-paper p-6 dark:bg-dusk" notify>
-            <h3 className="text-lg font-black">کد جدید</h3>
-            <TextField
-              name="code"
-              label="کد"
-              placeholder="MALLI10"
-              dir="ltr"
-              maxLength={16}
-              inputClassName="uppercase tracking-[0.12em]"
-              hint="لاتین، ۴ تا ۱۶ نویسه؛ خودکار بزرگ‌نویسی می‌شود"
-              required
-            />
+        <div className="fixed inset-0 z-[90] grid place-items-center overflow-y-auto p-3 sm:p-4">
+          <button type="button" className="fixed inset-0 bg-navy-deep/65 backdrop-blur-sm" onClick={close} aria-label="بستن" />
+          <AppForm form={form} onSubmit={add} ariaLabel="کد تخفیف جدید" className="relative z-10 my-auto w-full max-w-md space-y-3 rounded-[24px] border border-gold/18 bg-paper p-4 shadow-2xl dark:bg-navy-mid sm:p-6" notify>
+            <div className="mb-4 flex items-center justify-between"><div><p className="text-[9px] font-black tracking-[.2em] text-gold">NEW PROMO</p><h3 className="mt-1 text-lg font-black">کد تخفیف جدید</h3></div><button type="button" onClick={close} className="grid size-9 place-items-center rounded-xl bg-navy/5 text-navy dark:bg-white/7 dark:text-ivory" aria-label="بستن"><X className="size-4" /></button></div>
+            <TextField name="code" label="کد" placeholder="MALLI10" dir="ltr" maxLength={16} inputClassName="uppercase tracking-[0.12em]" hint="لاتین، ۴ تا ۱۶ نویسه" required />
             <TextField name="title" label="عنوان" placeholder="تخفیف عضویت" maxLength={60} required />
-            <div className="grid grid-cols-2 gap-3">
-              <TextField name="rate" label="درصد تخفیف" inputMode="numeric" placeholder="10" hint="۱ تا ۹۰" required />
-              <TextField name="cap" label="سقف استفاده" inputMode="numeric" placeholder="200" hint="حداکثر ۱۰۰٬۰۰۰" required />
-            </div>
-            <MoneyField name="min" label="حداقل خرید (تومان)" hint="خالی بگذارید تا بدونِ حداقل باشد" />
-            <TextField name="until" label="انقضا" dir="ltr" placeholder="1405/12/29" hint="شمسی و بعد ازِ امروز" required />
-            <Button type="submit" variant="navy" className="h-11 w-full rounded-2xl">
-              ذخیره
-            </Button>
+            <div className="grid grid-cols-2 gap-3"><TextField name="rate" label="درصد تخفیف" inputMode="numeric" placeholder="10" hint="۱ تا ۹۰" required /><TextField name="cap" label="سقف استفاده" inputMode="numeric" placeholder="200" hint="حداکثر ۱۰۰٬۰۰۰" required /></div>
+            <MoneyField name="min" label="حداقل خرید (تومان)" hint="خالی = بدون حداقل" />
+            <TextField name="until" label="انقضا" dir="ltr" placeholder="1405/12/29" hint="تاریخ شمسی" required />
+            <Button type="submit" variant="navy" className="h-11 w-full rounded-xl"><Percent className="size-4" /> ذخیره کد</Button>
           </AppForm>
         </div>
       ) : null}

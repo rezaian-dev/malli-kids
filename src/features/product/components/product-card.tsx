@@ -21,7 +21,7 @@ const CART =
 
 // Server Component: pure markup. Interactivity lives in the <FavButton> and
 // <AddToCart> client leaves, so the card ships almost no JavaScript.
-export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
+export function Card({ p, view, priority = false }: { p: Product; view: "grid" | "list"; priority?: boolean }) {
   const href = pdpHref(p.id);
   const out = !p.stock;
   const badge = p.badge ? BADGE[p.badge] || "bg-navy text-gold-light" : null;
@@ -44,7 +44,7 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
       <article className="group flex min-w-0 flex-row overflow-hidden rounded-[20px] border border-navy/10 bg-white/94 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-gold/55 hover:shadow-[0_18px_36px_-16px_rgba(14,42,71,.28)] dark:border-gold-soft/35 dark:bg-slate/60">
         <Link href={href} className="relative block h-auto min-h-[7.5rem] w-[6.5rem] shrink-0 overflow-hidden bg-sand">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <Image src={p.img} alt="" width={600} height={800} className={`absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${out ? "grayscale opacity-75" : ""}`} />
+          <Image src={p.img} alt="" width={600} height={800} priority={priority} className={`absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${out ? "grayscale opacity-75" : ""}`} />
           <FavButton id={p.id} name={p.name} className="absolute right-1.5 top-1.5 size-8 shadow" />
         </Link>
         <div className="flex-1 min-w-0 p-3 flex flex-col gap-2">
@@ -82,6 +82,7 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
           alt={p.name}
           width={600}
           height={800}
+          priority={priority}
           className={`absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out ${out ? "grayscale opacity-75" : "group-hover:scale-110"}`}
         />
         {badge ? (

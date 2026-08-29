@@ -1,14 +1,16 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
-import { ArrowRight, FilePenLine, ImagePlus, PenLine, Plus, Trash2 } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { ArrowRight, Eye, EyeOff, FilePenLine, ImagePlus, LibraryBig, PenLine, Plus, Trash2 } from "lucide-react";
 
-import { PageHead, useAdmin } from "@/features/admin";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead, useAdmin } from "@/features/admin";
 import { fileToDataUrl } from "@/features/admin/components/rich-editor";
 import { toFaDigits } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
+import { usePagination } from "@/hooks/use-pagination";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -24,6 +26,9 @@ const RichEditor = dynamic(() => import("@/features/admin/components/rich-editor
 });
 
 const TAGS = ["راهنمای خرید", "نگهداری لباس", "استایل کودک", "سلامت کودک", "مجله"];
+const PER_PAGE = 6;
+type PublishFilter = "all" | "published" | "draft";
+type ArticleSort = "newest" | "oldest" | "title";
 
 type Draft = {
   slug: string | null;
@@ -81,8 +86,33 @@ function jalaliToday(): string {
 export default function AdminArticles() {
   const { db, upsertArticle, removeArticle } = useAdmin();
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [q, setQ] = useState("");
+  const [publish, setPublish] = useState<PublishFilter>("all");
+  const [tag, setTag] = useState("all");
+  const [sort, setSort] = useState<ArticleSort>("newest");
   const coverRef = useRef<HTMLInputElement>(null);
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setDraft((d) => (d ? { ...d, [k]: v } : d));
+
+  const articleTags = useMemo(() => Array.from(new Set(db.articles.map((article) => article.tag))).sort((a, b) => a.localeCompare(b, "fa")), [db.articles]);
+  const filteredArticles = useMemo(() => {
+    const term = q.trim().toLocaleLowerCase("fa");
+    return db.articles
+      .filter((article) => {
+        const matchesSearch = !term || `${article.title} ${article.excerpt} ${article.tag}`.toLocaleLowerCase("fa").includes(term);
+        const matchesPublish = publish === "all" || (publish === "published" ? article.published : !article.published);
+        const matchesTag = tag === "all" || article.tag === tag;
+        return matchesSearch && matchesPublish && matchesTag;
+      })
+      .sort((a, b) => {
+        if (sort === "oldest") return a.date.localeCompare(b.date, "fa");
+        if (sort === "title") return a.title.localeCompare(b.title, "fa");
+        return b.date.localeCompare(a.date, "fa");
+      });
+  }, [db.articles, publish, q, sort, tag]);
+  const pg = usePagination(filteredArticles, PER_PAGE, `${q}|${publish}|${tag}|${sort}`);
+  const publishedCount = db.articles.filter((article) => article.published).length;
+  const draftCount = db.articles.length - publishedCount;
+  const activeFilters = Number(!!q.trim()) + Number(publish !== "all") + Number(tag !== "all") + Number(sort !== "newest");
 
   function onSave() {
     if (!draft) return;
@@ -122,6 +152,7 @@ export default function AdminArticles() {
         <PageHead
           kicker="JOURNAL"
           title={draft.slug ? "ویرایش مقاله" : "مقالهٔ جدید"}
+          description="محتوا، تصویر شاخص و وضعیت انتشار مقاله را در یک فضای ویرایش متمرکز مدیریت کنید."
           action={
             <Button variant="outline" className="rounded-full" onClick={() => setDraft(null)}>
               <ArrowRight className="size-4" /> بازگشت
@@ -200,55 +231,70 @@ export default function AdminArticles() {
       <PageHead
         kicker="JOURNAL"
         title="مقاله‌ها"
+        description="مدیریت تقویم محتوایی، پیش‌نویس‌ها و انتشار مطالب مجله مالی کیدز."
         action={
           <Button variant="navy" onClick={() => setDraft(EMPTY)}>
             <Plus className="size-4" /> مقاله جدید
           </Button>
         }
       />
-      <p className="mb-4 text-sm text-navy/50 dark:text-wheat">مقاله‌های منتشرشده در «مجله» فروشگاه نمایش داده می‌شوند؛ پیش‌نویس‌ها فقط اینجا می‌مانند.</p>
+      <AdminStatStrip items={[
+        { label: "کل مقاله‌ها", value: db.articles.length, Icon: LibraryBig, tone: "blue" },
+        { label: "منتشرشده", value: publishedCount, Icon: Eye, tone: "emerald" },
+        { label: "پیش‌نویس", value: draftCount, Icon: EyeOff, tone: "rose" },
+        { label: "موضوع فعال", value: articleTags.length, Icon: FilePenLine, tone: "gold" },
+      ]} />
+
+      <AdminFilterBar
+        search={q}
+        onSearchChange={setQ}
+        searchPlaceholder="عنوان، خلاصه یا موضوع مقاله…"
+        resultCount={filteredArticles.length}
+        resultLabel="مقاله"
+        activeCount={activeFilters}
+        onReset={() => { setQ(""); setPublish("all"); setTag("all"); setSort("newest"); }}
+      >
+        <AdminFilterSelect label="وضعیت انتشار" value={publish} onValueChange={(value) => setPublish(value as PublishFilter)} options={[
+          { value: "all", label: "همه مقاله‌ها", count: db.articles.length },
+          { value: "published", label: "منتشرشده", count: publishedCount },
+          { value: "draft", label: "پیش‌نویس", count: draftCount },
+        ]} />
+        <AdminFilterSelect label="موضوع" value={tag} onValueChange={setTag} options={[
+          { value: "all", label: "همه موضوع‌ها" }, ...articleTags.map((item) => ({ value: item, label: item })),
+        ]} />
+        <AdminFilterSelect label="مرتب‌سازی" value={sort} onValueChange={(value) => setSort(value as ArticleSort)} options={[
+          { value: "newest", label: "جدیدترین" }, { value: "oldest", label: "قدیمی‌ترین" }, { value: "title", label: "ترتیب عنوان" },
+        ]} />
+      </AdminFilterBar>
+
       <div className="grid gap-3">
-        {db.articles.map((a) => (
-          <article key={a.slug} className="lux-card flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4">
-            {a.cover ? (
+        {pg.pageItems.map((article, index) => (
+          <article key={article.slug} className="admin-card group flex flex-col gap-3 overflow-hidden p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4" style={{ animationDelay: `${index * 45}ms` }}>
+            {article.cover ? (
               /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={a.cover} alt="" className="h-28 w-full rounded-2xl object-cover sm:h-20 sm:w-28" />
+              <img src={article.cover} alt="" className="h-32 w-full rounded-2xl object-cover transition-transform duration-500 group-hover:scale-[1.02] sm:h-24 sm:w-32" />
             ) : (
-              <div className="grid h-28 w-full place-items-center rounded-2xl bg-gradient-to-br from-sand to-gold/25 text-gold-deep dark:from-navy-mid dark:to-gold/15 sm:h-20 sm:w-28">
-                <FilePenLine className="size-6" />
-              </div>
+              <div className="grid h-32 w-full shrink-0 place-items-center rounded-2xl bg-linear-to-br from-sand to-gold/25 text-gold-deep dark:from-navy-deep dark:to-gold/12 dark:text-gold-soft sm:h-24 sm:w-32"><FilePenLine className="size-6" /></div>
             )}
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-gold/15 px-2.5 py-0.5 text-[10px] font-black text-gold-deep dark:text-gold-soft">{a.tag}</span>
-                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-black ${a.published ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300" : "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"}`}>
-                  {a.published ? "منتشرشده" : "پیش‌نویس"}
-                </span>
-                <span className="text-[10px] font-bold text-navy/40 dark:text-wheat">{a.date}</span>
+                <span className="rounded-lg bg-gold/12 px-2 py-1 text-[9px] font-black text-gold-deep dark:text-gold-soft">{article.tag}</span>
+                <span className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black ${article.published ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "bg-amber-500/12 text-amber-700 dark:text-amber-300"}`}>{article.published ? <Eye className="size-3" /> : <EyeOff className="size-3" />}{article.published ? "منتشرشده" : "پیش‌نویس"}</span>
+                <span className="text-[9px] font-bold text-navy/35 dark:text-wheat">{article.date}</span>
               </div>
-              <h2 className="mt-1.5 truncate text-sm font-black text-navy dark:text-ivory">{a.title}</h2>
-              <p className="mt-1 line-clamp-2 text-xs text-navy/50 dark:text-wheat">{a.excerpt}</p>
+              <h2 className="mt-2 truncate text-sm font-black text-navy dark:text-ivory">{article.title}</h2>
+              <p className="mt-1 line-clamp-2 text-xs leading-6 text-navy/50 dark:text-wheat">{article.excerpt}</p>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
-              <label className="hidden items-center gap-1.5 text-[11px] font-black text-navy/50 sm:flex dark:text-wheat">
-                <Switch
-                  checked={a.published}
-                  onCheckedChange={(v) => upsertArticle({ ...a, published: v })}
-                />
-                انتشار
-              </label>
-              <Button variant="outline" className="h-9 rounded-xl" onClick={() => setDraft({ slug: a.slug, title: a.title, tag: a.tag, excerpt: a.excerpt, body: a.body ?? "", cover: a.cover ?? "", published: a.published, date: a.date })}>
-                <PenLine className="size-4" /> ویرایش
-              </Button>
-              <button type="button" onClick={() => removeArticle(a.slug)} className="grid size-9 place-items-center rounded-xl bg-rose-pale text-rose dark:bg-rose/15" aria-label={`حذف ${a.title}`}>
-                <Trash2 className="size-4" />
-              </button>
+            <div className="flex shrink-0 items-center gap-2 sm:flex-col lg:flex-row">
+              <label className="flex min-h-9 flex-1 items-center justify-center gap-2 rounded-xl border border-navy/8 px-3 text-[10px] font-black text-navy/55 sm:flex-none dark:border-gold/14 dark:text-wheat"><Switch checked={article.published} onCheckedChange={(value) => upsertArticle({ ...article, published: value })} /> انتشار</label>
+              <Button variant="outline" className="h-9 flex-1 rounded-xl text-[10px] sm:flex-none" onClick={() => setDraft({ slug: article.slug, title: article.title, tag: article.tag, excerpt: article.excerpt, body: article.body ?? "", cover: article.cover ?? "", published: article.published, date: article.date })}><PenLine className="size-3.5" /> ویرایش</Button>
+              <button type="button" onClick={() => removeArticle(article.slug)} className="grid size-9 shrink-0 place-items-center rounded-xl bg-rose/10 text-rose transition hover:bg-rose/15" aria-label={`حذف ${article.title}`}><Trash2 className="size-4" /></button>
             </div>
           </article>
         ))}
-        {db.articles.length === 0 ? <p className="lux-card p-10 text-center text-sm font-bold text-navy/45 dark:text-wheat">هنوز مقاله‌ای ننوشته‌اید.</p> : null}
+        {filteredArticles.length === 0 ? <div className="admin-card p-12 text-center"><FilePenLine className="mx-auto size-10 text-gold" /><p className="mt-3 text-sm font-black text-navy dark:text-ivory">{db.articles.length === 0 ? "هنوز مقاله‌ای نوشته نشده" : "مقاله‌ای مطابق فیلترها نیست"}</p></div> : null}
       </div>
-      <p className="mt-4 text-center text-[11px] font-bold text-navy/40 dark:text-wheat">مجموع: {toFaDigits(db.articles.length)} مقاله</p>
+      {filteredArticles.length > 0 ? <Pagination pg={pg} unit="مقاله" /> : null}
     </div>
   );
 }

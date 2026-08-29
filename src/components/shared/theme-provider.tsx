@@ -43,6 +43,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             : "light"
           : theme;
       document.documentElement.classList.toggle("dark", r === "dark");
+      document.documentElement.style.colorScheme = r;
       setResolved(r);
     };
     apply();

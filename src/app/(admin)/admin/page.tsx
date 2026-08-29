@@ -10,11 +10,9 @@ import { statusTone } from "@/features/admin/lib/admin-data";
 import { PageHead } from "@/features/admin";
 import { SalesChart } from "@/features/admin";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { AdminTable } from "@/features/admin/components/admin-table";
+import type { AdminOrder } from "@/types";
 
 export default function AdminHome() {
   const { db } = useAdmin();
@@ -27,6 +25,7 @@ export default function AdminHome() {
       <PageHead
         kicker="ATELIER"
         title="داشبورد گالری"
+        description="نمای اجرایی فروش، رفتار مشتریان و سلامت موجودی برای تصمیم‌گیری سریع‌تر."
         action={
           <Button asChild variant="gold" className="h-11 px-5">
             <Link href="/admin/orders">
@@ -38,12 +37,12 @@ export default function AdminHome() {
 
       {/* KPI hero — intentionally rich navy in both themes */}
       <div className="relative mb-6 overflow-hidden rounded-[28px] border border-gold/25">
-        <Image src="/brand/look-party.jpg" alt="" width={800} height={600} className="absolute inset-0 size-full object-cover opacity-20" />
+        <Image src="/brand/look-party.jpg" alt="" width={800} height={600} priority className="absolute inset-0 size-full object-cover opacity-20" />
         <div className="absolute inset-0 bg-linear-to-l from-navy-deep via-navy-deep/90 to-navy/75" />
         <div className="relative grid gap-4 p-5 sm:grid-cols-2 sm:p-7 xl:grid-cols-4">
           <Stat t="فروش این ماه" v={`${formatToman(sales)} ت`} d="سفارش‌های پرداخت‌شده" Icon={ShoppingBag} />
           <Stat t="میانگین سبد" v={`${formatToman(avg)} ت`} d="به ازای هر سفارش" Icon={Truck} />
-          <Stat t="مشتری فعال" v={toFaDigits(db.customers.length)} d="مادران عضو" Icon={Users} />
+          <Stat t="مشتری فعال" v={toFaDigits(db.customers.filter((customer) => (customer.role ?? "user") === "user" && customer.status !== "مسدود").length)} d="کاربران فروشگاه" Icon={Users} />
           <Stat t="ناموجود" v={toFaDigits(low)} d="نیازمند تکمیل انبار" Icon={Shirt} warn={low > 0} />
         </div>
       </div>
@@ -72,43 +71,25 @@ export default function AdminHome() {
         </section>
       </div>
 
-      {/* Latest orders */}
-      <section className="admin-card mt-6 overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4">
-          <h2 className="font-black text-navy dark:text-ivory">آخرین سفارش‌ها</h2>
-          <Button asChild variant="ghost" className="h-8 text-xs font-black text-gold hover:bg-gold/10 hover:text-gold-deep dark:hover:text-gold-soft">
-            <Link href="/admin/orders">
-              همه <ArrowLeft className="size-3.5" />
-            </Link>
-          </Button>
-        </div>
-        <Separator className="bg-navy/8 dark:bg-gold/15" />
-        <ScrollArea className="w-full">
-          <Table className="min-w-[36rem] text-sm">
-            <TableHeader className="bg-sand text-[11px] dark:bg-navy-deep/50">
-              <TableRow className="border-0 hover:bg-transparent">
-                {["کد", "مشتری", "مبلغ", "وضعیت"].map((h) => (
-                  <TableHead key={h} className="h-auto px-4 py-3 text-right font-black text-navy/55 dark:text-wheat">
-                    {h}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {db.orders.slice(0, 5).map((o) => (
-                <TableRow key={o.id} className="border-navy/6 dark:border-gold/10">
-                  <TableCell className="px-4 py-3 font-black text-navy dark:text-ivory">{o.id}</TableCell>
-                  <TableCell className="px-4 py-3 text-navy/70 dark:text-wheat">{o.customer}</TableCell>
-                  <TableCell className="px-4 py-3 font-bold text-gold-deep dark:text-gold-soft">{formatToman(o.total)}</TableCell>
-                  <TableCell className="px-4 py-3">
-                    <Badge className={cn("rounded-full border-0", statusTone(o.status))}>{o.status}</Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </ScrollArea>
-      </section>
+      {/* Latest orders — same responsive data-card system as the management pages. */}
+      <AdminTable<AdminOrder>
+        className="mt-6"
+        header={
+          <div className="flex items-center justify-between gap-3">
+            <div><h2 className="text-sm font-black text-navy dark:text-ivory">آخرین سفارش‌ها</h2><p className="mt-0.5 text-[9px] font-bold text-navy/40 dark:text-wheat">آخرین فعالیت‌های فروشگاه</p></div>
+            <Button asChild variant="ghost" className="h-8 rounded-xl text-[10px] font-black text-gold hover:bg-gold/10 hover:text-gold-deep dark:hover:text-gold-soft"><Link href="/admin/orders">همه سفارش‌ها <ArrowLeft className="size-3.5" /></Link></Button>
+          </div>
+        }
+        cols={[
+          { key: "id", title: "شناسه", width: "9rem", render: (order) => <span className="font-black text-gold-deep dark:text-gold-soft" dir="ltr">{order.id}</span> },
+          { key: "customer", title: "مشتری", width: "1.3fr", render: (order) => <div><p>{order.customer}</p><p className="mt-0.5 text-[9px] font-bold text-navy/40 dark:text-wheat">{order.city}</p></div> },
+          { key: "date", title: "تاریخ", width: "7rem", align: "center", hideTablet: true, render: (order) => <span className="text-navy/55 dark:text-wheat">{order.date}</span> },
+          { key: "total", title: "مبلغ", width: "9rem", align: "center", render: (order) => <span className="font-black text-gold-deep dark:text-gold-soft">{formatToman(order.total)} ت</span> },
+          { key: "status", title: "وضعیت", width: "8rem", align: "center", render: (order) => <Badge className={`rounded-lg border-0 ${statusTone(order.status)}`}>{order.status}</Badge> },
+        ]}
+        rows={db.orders.slice(0, 5)}
+        minWidth="45rem"
+      />
     </div>
   );
 }

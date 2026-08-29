@@ -59,11 +59,12 @@ export function seedAdminDb(): AdminDb {
       { id: "MK-1405-1760", date: "۱۴۰۵/۰۵/۲۰", customer: "هستی نادری", phone: "09106667788", city: "تبریز", address: "ولیعصر تبریز", items: o6, ...m6, status: "تحویل‌شده", pay: "پرداخت‌شده" },
     ],
     customers: [
-      { id: "c1", firstName: "سارا", lastName: "محمدی", phone: "09121234567", email: "sara@mail.com", city: "تهران", orders: 4, spent: 8120000, childName: "آوا", joined: "۱۴۰۴/۱۱/۰۲" },
-      { id: "c2", firstName: "نگار", lastName: "احمدی", phone: "09125551212", email: "negar@mail.com", city: "اصفهان", orders: 2, spent: 3240000, childName: "رادین", joined: "۱۴۰۵/۰۱/۱۸" },
-      { id: "c3", firstName: "مریم", lastName: "رضایی", phone: "09351230011", email: "maryam@mail.com", city: "شیراز", orders: 3, spent: 5460000, childName: "کیان", joined: "۱۴۰۴/۰۸/۰۹" },
-      { id: "c4", firstName: "الهام", lastName: "کریمی", phone: "09197778899", email: "elham@mail.com", city: "مشهد", orders: 1, spent: 1782000, childName: "نیکا", joined: "۱۴۰۵/۰۵/۱۲" },
-      { id: "c5", firstName: "نیلوفر", lastName: "حسینی", phone: "09212223344", email: "nilou@mail.com", city: "کرج", orders: 2, spent: 2150000, childName: "رستا", joined: "۱۴۰۵/۰۳/۰۴" },
+      { id: "admin-1", firstName: "مدیر", lastName: "گالری", phone: "02126401234", email: "admin@mallikids.ir", city: "تهران", orders: 0, spent: 0, joined: "۱۴۰۴/۰۱/۰۱", role: "admin", status: "فعال" },
+      { id: "c1", firstName: "سارا", lastName: "محمدی", phone: "09121234567", email: "sara@mail.com", city: "تهران", orders: 4, spent: 8120000, childName: "آوا", joined: "۱۴۰۴/۱۱/۰۲", role: "user" },
+      { id: "c2", firstName: "نگار", lastName: "احمدی", phone: "09125551212", email: "negar@mail.com", city: "اصفهان", orders: 2, spent: 3240000, childName: "رادین", joined: "۱۴۰۵/۰۱/۱۸", role: "user" },
+      { id: "c3", firstName: "مریم", lastName: "رضایی", phone: "09351230011", email: "maryam@mail.com", city: "شیراز", orders: 3, spent: 5460000, childName: "کیان", joined: "۱۴۰۴/۰۸/۰۹", role: "user" },
+      { id: "c4", firstName: "الهام", lastName: "کریمی", phone: "09197778899", email: "elham@mail.com", city: "مشهد", orders: 1, spent: 1782000, childName: "نیکا", joined: "۱۴۰۵/۰۵/۱۲", role: "user" },
+      { id: "c5", firstName: "نیلوفر", lastName: "حسینی", phone: "09212223344", email: "nilou@mail.com", city: "کرج", orders: 2, spent: 2150000, childName: "رستا", joined: "۱۴۰۵/۰۳/۰۴", role: "user" },
     ],
     coupons: [
       { code: "MALLI10", title: "تخفیف عضویت", rate: 0.1, used: 186, cap: 1000, active: true, min: 0, until: "۱۴۰۵/۱۲/۲۹" },

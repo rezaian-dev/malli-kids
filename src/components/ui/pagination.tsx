@@ -1,23 +1,27 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { toFaDigits } from "@/lib/format";
+
 import { pageWindow } from "@/hooks/use-pagination";
+import { toFaDigits } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { Paged } from "@/types";
 
 type PaginationProps = {
-  /** The object returned by usePagination. */
+  /** خروجی usePagination */
   pg: Paged<unknown>;
-  /** Noun for the summary line ("نمایش ۱–۹ از ۲۴ مدل"). */
+  /** واحد رکورد در خلاصه؛ مانند «حساب» یا «سفارش». */
   unit?: string;
+  /** تعداد همسایه‌های صفحهٔ جاری؛ برای حفظ کارایی حداکثر ۲ در نظر گرفته می‌شود. */
   siblings?: number;
   className?: string;
 };
 
 /**
- * Client-side pagination control. RTL-aware: in a `dir="rtl"` context "previous"
- * sits on the right and points right (ChevronRight), "next" points left.
+ * صفحه‌بندی مقیاس‌پذیر و RTL:
+ * - دسکتاپ: ابتدا/انتها + همسایه‌های صفحهٔ جاری + فاصلهٔ هوشمند
+ * - موبایل: فقط قبلی، «صفحه X از Y» و بعدی
+ * تعداد کنترل‌ها با افزایش رکوردها ثابت می‌ماند و هرگز به‌اندازهٔ pageCount رشد نمی‌کند.
  */
 export function Pagination({ pg, unit = "مورد", siblings = 1, className }: PaginationProps) {
   const { page, pageCount, setPage: onPage, total, from, to } = pg;
@@ -28,72 +32,90 @@ export function Pagination({ pg, unit = "مورد", siblings = 1, className }: P
 
   return (
     <nav
-      aria-label="صفحه‌بندی"
-      className={cn("mt-5 flex flex-col items-center justify-between gap-3 sm:flex-row", className)}
+      aria-label="صفحه‌بندی نتایج"
+      className={cn(
+        "admin-pagination mt-5 flex flex-col items-center justify-between gap-3 rounded-2xl border border-navy/8 bg-white/55 px-3 py-3 sm:flex-row sm:px-4 dark:border-gold/14 dark:bg-white/[0.025]",
+        className,
+      )}
     >
       {hasSummary ? (
-        <p className="text-xs font-bold text-navy/50 dark:text-wheat">
-          نمایش {toFaDigits(from)}–{toFaDigits(to)} از {toFaDigits(total)} {unit}
+        <p className="text-[11px] font-bold text-navy/55 dark:text-wheat" aria-live="polite">
+          نمایش {toFaDigits(from)} تا {toFaDigits(to)} از {toFaDigits(total)} {unit}
         </p>
       ) : (
         <span />
       )}
 
       {pageCount > 1 ? (
-        <ul className="flex items-center gap-1.5" data-slot="pagination">
-          <li>
-            <PageButton
-              aria-label="صفحه قبل"
-              disabled={page <= 1}
-              onClick={() => onPage(page - 1)}
-            >
-              <ChevronRight className="size-4" />
-            </PageButton>
-          </li>
+        <>
+          {/* موبایل: سه کنترل ثابت، مستقل از تعداد کل صفحات. */}
+          <ul className="flex w-full items-center justify-center gap-2 sm:hidden" data-slot="pagination-mobile">
+            <li>
+              <PageButton aria-label="صفحه قبل" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+                <ChevronRight className="size-4" />
+              </PageButton>
+            </li>
+            <li>
+              <span className="flex h-9 min-w-28 items-center justify-center rounded-xl border border-navy/10 bg-white px-3 text-[10px] font-black text-navy dark:border-gold/18 dark:bg-navy-mid/70 dark:text-ivory">
+                صفحه {toFaDigits(page)} از {toFaDigits(pageCount)}
+              </span>
+            </li>
+            <li>
+              <PageButton aria-label="صفحه بعد" disabled={page >= pageCount} onClick={() => onPage(page + 1)}>
+                <ChevronLeft className="size-4" />
+              </PageButton>
+            </li>
+          </ul>
 
-          {tokens.map((t, i) =>
-            t === "…" ? (
-              <li key={`gap-${i}`} aria-hidden className="grid size-9 place-items-center text-navy/40 dark:text-wheat">
-                <MoreHorizontal className="size-4" />
-              </li>
-            ) : (
-              <li key={t}>
-                <PageButton active={t === page} aria-current={t === page ? "page" : undefined} onClick={() => onPage(t)}>
-                  {toFaDigits(t)}
-                </PageButton>
-              </li>
-            ),
-          )}
+          {/* تبلت و دسکتاپ: حداکثر ۹ توکن، حتی با میلیون‌ها رکورد. */}
+          <ul className="hidden items-center gap-1.5 sm:flex" data-slot="pagination-desktop">
+            <li>
+              <PageButton aria-label="صفحه قبل" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+                <ChevronRight className="size-4" />
+              </PageButton>
+            </li>
 
-          <li>
-            <PageButton
-              aria-label="صفحه بعد"
-              disabled={page >= pageCount}
-              onClick={() => onPage(page + 1)}
-            >
-              <ChevronLeft className="size-4" />
-            </PageButton>
-          </li>
-        </ul>
+            {tokens.map((token, index) =>
+              token === "…" ? (
+                <li key={`gap-${index}`} aria-hidden="true" className="grid size-9 place-items-center text-navy/38 dark:text-wheat/60">
+                  <MoreHorizontal className="size-4" />
+                </li>
+              ) : (
+                <li key={token}>
+                  <PageButton
+                    active={token === page}
+                    aria-label={`صفحه ${toFaDigits(token)}`}
+                    aria-current={token === page ? "page" : undefined}
+                    onClick={() => onPage(token)}
+                  >
+                    {toFaDigits(token)}
+                  </PageButton>
+                </li>
+              ),
+            )}
+
+            <li>
+              <PageButton aria-label="صفحه بعد" disabled={page >= pageCount} onClick={() => onPage(page + 1)}>
+                <ChevronLeft className="size-4" />
+              </PageButton>
+            </li>
+          </ul>
+        </>
       ) : (
-        <span />
+        <span className="text-[10px] font-bold text-navy/35 dark:text-wheat/45">تنها صفحه</span>
       )}
     </nav>
   );
 }
 
-function PageButton({
-  active,
-  className,
-  ...props
-}: React.ComponentProps<"button"> & { active?: boolean }) {
+function PageButton({ active, className, ...props }: React.ComponentProps<"button"> & { active?: boolean }) {
   return (
     <button
       type="button"
       className={cn(
-        "grid size-9 select-none place-items-center rounded-xl border text-sm font-black transition",
+        "grid size-9 select-none place-items-center rounded-xl border text-xs font-black transition",
         "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gold/50",
-        "disabled:pointer-events-none disabled:opacity-40",
+        "disabled:pointer-events-none disabled:opacity-35",
         active
           ? "border-transparent bg-navy text-ivory shadow-sm dark:bg-gold dark:text-navy-deep"
           : "border-navy/12 bg-white text-navy hover:border-gold/40 hover:text-gold-deep dark:border-gold/20 dark:bg-navy-mid/70 dark:text-ivory dark:hover:border-gold/50 dark:hover:text-gold-soft",

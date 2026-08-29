@@ -1,164 +1,144 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Ban, CircleCheckBig, Mail, Phone, Search, Trash2 } from "lucide-react";
-import { formatToman, toFaDigits } from "@/lib/format";
-import { useAdmin } from "@/features/admin";
+import { Ban, CircleCheckBig, Mail, Phone, ShieldCheck, Trash2, UserRound, UsersRound, UserX } from "lucide-react";
+import { toast } from "sonner";
+
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead, useAdmin } from "@/features/admin";
 import { AdminTable, type AdminCol } from "@/features/admin/components/admin-table";
-import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/use-pagination";
-import { PageHead } from "@/features/admin";
-import { toast } from "sonner";
+import { formatToman, toFaDigits } from "@/lib/format";
 import type { AdminCustomer } from "@/types";
 
 const PER_PAGE = 8;
 
+type RoleFilter = "all" | "user" | "admin";
+type StatusFilter = "all" | "active" | "blocked";
+
 export default function AdminCustomers() {
   const { db, saveCustomer, removeCustomer } = useAdmin();
   const [q, setQ] = useState("");
+  const [role, setRole] = useState<RoleFilter>("all");
+  const [status, setStatus] = useState<StatusFilter>("all");
+  const [city, setCity] = useState("all");
+
+  const cities = useMemo(
+    () => Array.from(new Set(db.customers.map((customer) => customer.city).filter(Boolean))).sort((a, b) => a.localeCompare(b, "fa")),
+    [db.customers],
+  );
 
   const list = useMemo(() => {
-    const t = q.trim();
-    if (!t) return db.customers;
-    return db.customers.filter(
-      (c) => `${c.firstName} ${c.lastName}`.includes(t) || c.phone.includes(t) || c.email.includes(t) || (c.city || "").includes(t),
-    );
-  }, [db.customers, q]);
+    const term = q.trim().toLocaleLowerCase("fa");
+    return db.customers.filter((customer) => {
+      const customerRole = customer.role ?? "user";
+      const customerStatus = customer.status ?? "فعال";
+      const matchesSearch = !term || `${customer.firstName} ${customer.lastName} ${customer.phone} ${customer.email} ${customer.city}`.toLocaleLowerCase("fa").includes(term);
+      const matchesRole = role === "all" || customerRole === role;
+      const matchesStatus = status === "all" || (status === "active" ? customerStatus === "فعال" : customerStatus === "مسدود");
+      const matchesCity = city === "all" || customer.city === city;
+      return matchesSearch && matchesRole && matchesStatus && matchesCity;
+    });
+  }, [city, db.customers, q, role, status]);
 
-  const pg = usePagination(list, PER_PAGE, q);
+  const resetKey = `${q}|${role}|${status}|${city}`;
+  const pg = usePagination(list, PER_PAGE, resetKey);
+  const activeFilters = Number(!!q.trim()) + Number(role !== "all") + Number(status !== "all") + Number(city !== "all");
+  const userCount = db.customers.filter((customer) => (customer.role ?? "user") === "user").length;
+  const adminCount = db.customers.filter((customer) => customer.role === "admin").length;
+  const blockedCount = db.customers.filter((customer) => customer.status === "مسدود").length;
+
+  function toggleStatus(customer: AdminCustomer) {
+    if (customer.role === "admin") return toast.info("حساب مدیر اصلی محافظت‌شده است");
+    const next = (customer.status ?? "فعال") === "فعال" ? "مسدود" : "فعال";
+    saveCustomer({ ...customer, status: next });
+    toast(next === "مسدود" ? "حساب کاربر مسدود شد" : "مسدودی حساب رفع شد", {
+      description: `${customer.firstName} ${customer.lastName}`,
+    });
+  }
 
   const cols: AdminCol<AdminCustomer>[] = [
     {
       key: "name",
-      title: "مشتری",
-      width: "1.6fr",
-      render: (c) => (
-        <div className="flex items-center gap-3">
-          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-navy font-black text-gold dark:bg-gold dark:text-navy-deep">
-            {c.firstName.charAt(0)}
+      title: "کاربر",
+      width: "1.55fr",
+      render: (customer) => (
+        <div className="flex min-w-0 items-center gap-3">
+          <span className={`grid size-10 shrink-0 place-items-center rounded-xl font-black ${customer.role === "admin" ? "bg-gold text-navy-deep" : "bg-navy text-gold dark:bg-gold/15 dark:text-gold-soft"}`}>
+            {customer.role === "admin" ? <ShieldCheck className="size-4" /> : customer.firstName.charAt(0)}
           </span>
           <div className="min-w-0">
-            <p className="truncate" title={`${c.firstName} ${c.lastName}`}>
-              {c.firstName} {c.lastName}
-            </p>
-            <p className="text-[11px] font-bold text-navy/40 dark:text-wheat">{c.city}</p>
+            <p className="truncate" title={`${customer.firstName} ${customer.lastName}`}>{customer.firstName} {customer.lastName}</p>
+            <p className="mt-0.5 truncate text-[10px] font-bold text-navy/40 dark:text-wheat">{customer.city} · عضویت {customer.joined}</p>
           </div>
         </div>
       ),
     },
     {
-      key: "phone",
-      title: "موبایل",
-      width: "9.5rem",
-      render: (c) => (
-        <span className="inline-flex items-center gap-1.5 whitespace-nowrap" dir="ltr">
-          <Phone className="size-3.5 shrink-0 text-gold lg:hidden" /> {c.phone}
-        </span>
+      key: "role",
+      title: "نقش",
+      width: "6.5rem",
+      align: "center",
+      render: (customer) => customer.role === "admin" ? (
+        <span className="inline-flex items-center gap-1 rounded-lg bg-gold/15 px-2 py-1 text-[10px] font-black text-gold-deep dark:text-gold-soft"><ShieldCheck className="size-3" /> ادمین</span>
+      ) : (
+        <span className="inline-flex items-center gap-1 rounded-lg bg-sky-500/10 px-2 py-1 text-[10px] font-black text-sky-700 dark:text-sky-300"><UserRound className="size-3" /> کاربر</span>
       ),
     },
     {
-      key: "email",
-      title: "ایمیل",
-      width: "1.5fr",
-      render: (c) => (
-        <span className="inline-flex max-w-full items-center gap-1.5 truncate" dir="ltr">
-          <Mail className="size-3.5 shrink-0 text-gold lg:hidden" />
-          <span className="truncate font-semibold text-navy/60 dark:text-wheat" title={c.email}>{c.email || "—"}</span>
-        </span>
+      key: "contact",
+      title: "اطلاعات تماس",
+      width: "1.45fr",
+      render: (customer) => (
+        <div className="min-w-0 space-y-1.5 text-start">
+          <span className="flex w-max max-w-full items-center gap-1.5 whitespace-nowrap text-[12px] font-extrabold" dir="ltr"><Phone className="size-3.5 shrink-0 text-gold" /> {customer.phone}</span>
+          <span className="flex w-max max-w-full items-center gap-1.5 text-[11px] font-bold text-navy/65 dark:text-wheat" dir="ltr"><Mail className="size-3.5 shrink-0 text-gold" /><span className="truncate" title={customer.email}>{customer.email || "—"}</span></span>
+        </div>
       ),
     },
-    { key: "orders", title: "سفارش‌ها", width: "5.5rem", align: "center", render: (c) => toFaDigits(c.orders) },
+    { key: "orders", title: "سفارش", width: "4.5rem", align: "center", hideTablet: true, render: (customer) => customer.role === "admin" ? "—" : toFaDigits(customer.orders) },
     {
       key: "spent",
       title: "مجموع خرید",
-      width: "8.5rem",
+      width: "8rem",
+      hideTablet: true,
       align: "center",
-      render: (c) => <span className="whitespace-nowrap font-black text-gold-deep dark:text-gold-soft">{formatToman(c.spent)}</span>,
+      render: (customer) => <span className="whitespace-nowrap font-black text-gold-deep dark:text-gold-soft">{customer.role === "admin" ? "—" : formatToman(customer.spent)}</span>,
     },
     {
       key: "status",
       title: "وضعیت",
-      width: "6.5rem",
+      width: "6rem",
       align: "center",
-      render: (c) =>
-        (c.status ?? "فعال") === "فعال" ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-black text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
-            <CircleCheckBig className="size-3" /> فعال
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 rounded-full bg-rose-pale px-2.5 py-1 text-[10px] font-black text-rose dark:bg-rose/15">
-            <Ban className="size-3" /> مسدود
-          </span>
-        ),
+      render: (customer) => (customer.status ?? "فعال") === "فعال" ? (
+        <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2 py-1 text-[10px] font-black text-emerald-700 dark:text-emerald-300"><CircleCheckBig className="size-3" /> فعال</span>
+      ) : (
+        <span className="inline-flex items-center gap-1 rounded-lg bg-rose/10 px-2 py-1 text-[10px] font-black text-rose"><Ban className="size-3" /> مسدود</span>
+      ),
     },
     {
       key: "actions",
-      title: "اقدام",
+      title: "عملیات",
       width: "6.5rem",
       align: "end",
-      renderMobile: (c) => (
-        <div className="flex items-center justify-end gap-2 whitespace-nowrap">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              const next = (c.status ?? "فعال") === "فعال" ? "مسدود" : "فعال";
-              saveCustomer({ ...c, status: next });
-              toast(next === "مسدود" ? "مشتری مسدود شد" : "مسدودی رفع شد", { description: `${c.firstName} ${c.lastName}` });
-            }}
-            className={`inline-flex min-h-9 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-black transition ${
-              (c.status ?? "فعال") === "فعال"
-                ? "border-navy/12 text-navy/70 hover:border-amber-400 hover:text-amber-600 dark:border-gold/25 dark:text-wheat dark:hover:text-amber-400"
-                : "border-emerald-400/50 text-emerald-600 hover:bg-emerald-50 dark:text-emerald-300"
-            }`}
-          >
-            <Ban className="size-3.5" /> {(c.status ?? "فعال") === "فعال" ? "مسدود" : "رفع مسدودی"}
+      renderMobile: (customer) => customer.role === "admin" ? (
+        <div className="flex items-center gap-2 rounded-xl bg-gold/8 px-3 py-2 text-[10px] font-black text-gold-deep dark:text-gold-soft"><ShieldCheck className="size-3.5" /> حساب مدیر محافظت‌شده</div>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          <button type="button" onClick={(event) => { event.stopPropagation(); toggleStatus(customer); }} className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl border border-navy/10 px-2 text-[10px] font-black text-navy transition hover:border-gold dark:border-gold/20 dark:text-wheat">
+            <Ban className="size-3.5" /> {(customer.status ?? "فعال") === "فعال" ? "مسدودکردن" : "رفع مسدودی"}
           </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              removeCustomer(c.id);
-            }}
-            className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-rose-pale px-3.5 py-1.5 text-[11px] font-black text-rose transition hover:bg-rose/15 dark:bg-rose/15"
-          >
-            <Trash2 className="size-3.5" /> حذف
+          <button type="button" onClick={(event) => { event.stopPropagation(); removeCustomer(customer.id); }} className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-rose/10 px-2 text-[10px] font-black text-rose transition hover:bg-rose/15">
+            <Trash2 className="size-3.5" /> حذف کاربر
           </button>
         </div>
       ),
-      render: (c) => (
+      render: (customer) => customer.role === "admin" ? (
+        <span title="حساب مدیر محافظت‌شده" className="ms-auto grid size-9 place-items-center rounded-xl bg-gold/10 text-gold"><ShieldCheck className="size-4" /></span>
+      ) : (
         <div className="flex items-center justify-end gap-1.5">
-          <button
-            type="button"
-            title={(c.status ?? "فعال") === "فعال" ? "مسدود کردن" : "رفع مسدودی"}
-            aria-label={(c.status ?? "فعال") === "فعال" ? "مسدود کردن" : "رفع مسدودی"}
-            onClick={(e) => {
-              e.stopPropagation();
-              const next = (c.status ?? "فعال") === "فعال" ? "مسدود" : "فعال";
-              saveCustomer({ ...c, status: next });
-              toast(next === "مسدود" ? "مشتری مسدود شد" : "مسدودی رفع شد", { description: `${c.firstName} ${c.lastName}` });
-            }}
-            className={`grid size-9 shrink-0 place-items-center rounded-xl border transition ${
-              (c.status ?? "فعال") === "فعال"
-                ? "border-navy/12 text-navy/60 hover:border-amber-400 hover:text-amber-600 dark:border-gold/25 dark:text-wheat dark:hover:text-amber-400"
-                : "border-emerald-400/50 text-emerald-600 hover:bg-emerald-50 dark:text-emerald-300"
-            }`}
-          >
-            <Ban className="size-4" />
-          </button>
-          <button
-            type="button"
-            title="حذف مشتری"
-            aria-label="حذف مشتری"
-            onClick={(e) => {
-              e.stopPropagation();
-              removeCustomer(c.id);
-            }}
-            className="grid size-9 shrink-0 place-items-center rounded-xl bg-rose-pale text-rose transition hover:bg-rose/15 dark:bg-rose/15"
-          >
-            <Trash2 className="size-4" />
-          </button>
+          <button type="button" title={(customer.status ?? "فعال") === "فعال" ? "مسدودکردن" : "رفع مسدودی"} aria-label={(customer.status ?? "فعال") === "فعال" ? "مسدودکردن" : "رفع مسدودی"} onClick={(event) => { event.stopPropagation(); toggleStatus(customer); }} className="grid size-9 shrink-0 place-items-center rounded-xl border border-navy/10 text-navy/60 transition hover:border-gold hover:text-gold-deep dark:border-gold/20 dark:text-wheat"><Ban className="size-4" /></button>
+          <button type="button" title="حذف کاربر" aria-label="حذف کاربر" onClick={(event) => { event.stopPropagation(); removeCustomer(customer.id); }} className="grid size-9 shrink-0 place-items-center rounded-xl bg-rose/10 text-rose transition hover:bg-rose/15"><Trash2 className="size-4" /></button>
         </div>
       ),
     },
@@ -166,17 +146,54 @@ export default function AdminCustomers() {
 
   return (
     <div>
-      <PageHead kicker="MOTHERS" title="مشتریان" />
+      <PageHead kicker="AUDIENCE" title="کاربران و مشتریان" description="مدیریت مشتریان، وضعیت حساب‌ها و سطح دسترسی اعضای تیم مدیریت." />
 
-      <div className="relative mb-4 max-w-md">
-        <Search className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-gold" />
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="جستجوی نام، موبایل یا ایمیل…" className="h-11 rounded-2xl pe-10" />
-      </div>
-      <p className="mb-3 text-xs font-bold text-navy/45 dark:text-wheat">{toFaDigits(list.length)} مشتری</p>
+      <AdminStatStrip items={[
+        { label: "کاربران فروشگاه", value: userCount, hint: "حساب مشتری", Icon: UsersRound, tone: "blue" },
+        { label: "مدیران", value: adminCount, hint: "دسترسی کنسول", Icon: ShieldCheck, tone: "gold" },
+        { label: "حساب‌های فعال", value: db.customers.length - blockedCount, Icon: CircleCheckBig, tone: "emerald" },
+        { label: "مسدودشده", value: blockedCount, Icon: UserX, tone: "rose" },
+      ]} />
 
-      <AdminTable cols={cols} rows={pg.pageItems} empty="مشتری‌ای مطابق جستجو یافت نشد." minWidth="56rem" />
+      <AdminFilterBar
+        search={q}
+        onSearchChange={setQ}
+        searchPlaceholder="نام، موبایل، ایمیل یا شهر…"
+        resultCount={list.length}
+        resultLabel="حساب"
+        activeCount={activeFilters}
+        onReset={() => { setQ(""); setRole("all"); setStatus("all"); setCity("all"); }}
+      >
+        <AdminFilterSelect
+          label="نوع حساب"
+          value={role}
+          onValueChange={(value) => setRole(value as RoleFilter)}
+          options={[
+            { value: "all", label: "همه حساب‌ها", count: db.customers.length },
+            { value: "user", label: "کاربران", count: userCount },
+            { value: "admin", label: "ادمین‌ها", count: adminCount },
+          ]}
+        />
+        <AdminFilterSelect
+          label="وضعیت حساب"
+          value={status}
+          onValueChange={(value) => setStatus(value as StatusFilter)}
+          options={[
+            { value: "all", label: "همه وضعیت‌ها" },
+            { value: "active", label: "فعال" },
+            { value: "blocked", label: "مسدود" },
+          ]}
+        />
+        <AdminFilterSelect
+          label="شهر"
+          value={city}
+          onValueChange={setCity}
+          options={[{ value: "all", label: "همه شهرها" }, ...cities.map((item) => ({ value: item, label: item }))]}
+        />
+      </AdminFilterBar>
 
-      {list.length > 0 ? <Pagination pg={pg} unit="مشتری" /> : null}
+      <AdminTable cols={cols} rows={pg.pageItems} empty="کاربری مطابق فیلترهای انتخابی پیدا نشد." minWidth="62rem" />
+      {list.length > 0 ? <Pagination pg={pg} unit="حساب" /> : null}
     </div>
   );
 }

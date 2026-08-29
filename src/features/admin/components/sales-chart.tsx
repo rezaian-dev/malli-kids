@@ -5,6 +5,7 @@ import { ArrowDownRight, ArrowUpRight, TrendingUp } from "lucide-react";
 import type { AdminOrder } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { dailySeries, monthlySeries, type SalesPoint } from "@/features/admin/lib/sales";
 
 type Range = "month" | "week";
@@ -130,23 +131,15 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
             <p className="text-[10px] font-bold text-navy/45 dark:text-wheat">مجموع بازه</p>
             <p className="text-sm font-black text-gold-deep dark:text-gold-soft">{formatToman(total)} ت</p>
           </div>
-          <div className="flex rounded-full border border-navy/10 bg-white p-0.5 dark:border-gold/25 dark:bg-navy-mid/80">
-            {(["month", "week"] as const).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRange(r)}
-                className={cn(
-                  "inline-flex min-h-9 items-center rounded-full px-3.5 py-1 text-[11px] font-black transition",
-                  range === r
-                    ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep"
-                    : "text-navy/60 hover:text-navy dark:text-wheat dark:hover:text-ivory",
-                )}
-              >
-                {r === "month" ? "ماهانه" : "روزانه"}
-              </button>
-            ))}
-          </div>
+          <Select value={range} onValueChange={(value) => setRange(value as Range)} dir="rtl">
+            <SelectTrigger className="h-9 w-28 rounded-xl bg-white text-[10px] shadow-none dark:bg-navy-deep/45" aria-label="بازه نمودار فروش">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="month">نمای ماهانه</SelectItem>
+              <SelectItem value="week">نمای روزانه</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

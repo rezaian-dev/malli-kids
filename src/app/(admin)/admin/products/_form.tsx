@@ -48,14 +48,18 @@ export function ProductForm({ product }: { product?: Product }) {
 
   return (
     <AppForm form={form} onSubmit={submit} ariaLabel={isNew ? "محصول جدید" : "ویرایش محصول"} className="pb-24" notify>
-      <div className="mb-6 flex items-center gap-3">
-        <Button asChild variant="outline" size="icon" className="size-10 shrink-0 rounded-full">
-          <Link href="/admin/products" aria-label="بازگشت">
-            <ArrowRight className="size-4" />
-          </Link>
-        </Button>
-        <PageHead kicker={isNew ? "NEW PRODUCT" : "EDIT PRODUCT"} title={isNew ? "محصول جدید" : "ویرایش محصول"} />
-      </div>
+      <PageHead
+        kicker={isNew ? "NEW PRODUCT" : "EDIT PRODUCT"}
+        title={isNew ? "محصول جدید" : "ویرایش محصول"}
+        description={isNew ? "مشخصات، قیمت، تصاویر و تنوع‌های محصول جدید را با دقت تکمیل کنید." : "اطلاعات محصول را ویرایش کنید؛ تغییرات پس از ذخیره در کاتالوگ اعمال می‌شوند."}
+        action={
+          <Button asChild variant="outline" className="h-11 rounded-xl px-4">
+            <Link href="/admin/products" aria-label="بازگشت به محصولات">
+              <ArrowRight className="size-4" /> بازگشت به محصولات
+            </Link>
+          </Button>
+        }
+      />
 
       <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
         {/* مشخصات */}

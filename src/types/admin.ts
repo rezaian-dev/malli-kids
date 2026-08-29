@@ -37,7 +37,11 @@ export type AdminCustomer = {
   orders: number;
   spent: number;
   childName?: string;
+  /** تصویر پروفایل؛ فقط در صورت ثبت‌شدن در هدر مدیریت نمایش داده می‌شود. */
+  avatar?: string;
   joined: string;
+  /** نقش حساب برای تفکیک کاربران فروشگاه و مدیران در کنسول. */
+  role?: "user" | "admin";
   /** وضعیتِ حساب — مسدود یعنی اجازهٔ ثبت سفارش ندارد */
   status?: "فعال" | "مسدود";
 };

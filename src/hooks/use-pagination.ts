@@ -54,23 +54,33 @@ export function usePagination<T>(items: T[], pageSize: number, resetKey?: unknow
 }
 
 /**
- * Compact page tokens with ellipses, e.g. [1, "…", 4, 5, 6, "…", 20].
- * `siblings` controls how many neighbours of the current page are shown.
+ * پنجرهٔ صفحه‌بندی با تعداد خروجی ثابت و مستقل از تعداد کل صفحات.
+ * با مقدار پیش‌فرض، حتی برای یک میلیون صفحه حداکثر ۷ توکن برمی‌گرداند:
+ * [1, "…", 499, 500, 501, "…", 1000]
  */
 export function pageWindow(page: number, pageCount: number, siblings = 1): (number | "…")[] {
-  if (pageCount <= 1) return [1];
-  const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+  const totalPages = Number.isFinite(pageCount) ? Math.max(1, Math.floor(pageCount)) : 1;
+  const currentPage = Number.isFinite(page) ? Math.min(totalPages, Math.max(1, Math.floor(page))) : 1;
+  // جلوگیری از تولید ناخواستهٔ صدها دکمه در صورت ارسال مقدار نامعتبر از مصرف‌کننده.
+  const siblingCount = Number.isFinite(siblings) ? Math.min(2, Math.max(0, Math.floor(siblings))) : 1;
+  const range = (start: number, end: number) => Array.from({ length: Math.max(0, end - start + 1) }, (_, index) => start + index);
+  const maxTokens = siblingCount * 2 + 5;
 
-  // Show every page when the count is small enough to fit without ellipses.
-  const slots = siblings * 2 + 5; // first + last + current + 2*siblings + 2 ellipses
-  if (pageCount <= slots) return range(1, pageCount);
+  if (totalPages <= maxTokens) return range(1, totalPages);
 
-  const start = Math.max(2, page - siblings);
-  const end = Math.min(pageCount - 1, page + siblings);
-  const tokens: (number | "…")[] = [1];
-  if (start > 2) tokens.push("…");
-  tokens.push(...range(start, end));
-  if (end < pageCount - 1) tokens.push("…");
-  tokens.push(pageCount);
-  return tokens;
+  const leftSibling = Math.max(currentPage - siblingCount, 1);
+  const rightSibling = Math.min(currentPage + siblingCount, totalPages);
+  const showLeftEllipsis = leftSibling > 3;
+  const showRightEllipsis = rightSibling < totalPages - 2;
+  const edgeWindow = 3 + siblingCount * 2;
+
+  if (!showLeftEllipsis && showRightEllipsis) {
+    return [...range(1, edgeWindow), "…", totalPages];
+  }
+
+  if (showLeftEllipsis && !showRightEllipsis) {
+    return [1, "…", ...range(totalPages - edgeWindow + 1, totalPages)];
+  }
+
+  return [1, "…", ...range(leftSibling, rightSibling), "…", totalPages];
 }

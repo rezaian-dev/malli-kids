@@ -1,156 +1,174 @@
 "use client";
 
 import Image from "next/image";
-
 import { useMemo, useState } from "react";
-import { ORDER_FLOW, statusTone } from "@/features/admin/lib/admin-data";
-import type { OrderStatus } from "@/types";
-import { setOrderStatus, useOrders, type Order } from "@/lib/orders";
-import { formatToman, toFaDigits } from "@/lib/format";
-import { PageHead } from "@/features/admin";
+import { Banknote, Clock3, PackageCheck, RotateCcw, ShoppingBag } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Pagination } from "@/components/ui/pagination";
-import { usePagination } from "@/hooks/use-pagination";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead } from "@/features/admin";
 import { AdminTable } from "@/features/admin/components/admin-table";
+import { ORDER_FLOW, statusTone } from "@/features/admin/lib/admin-data";
+import { usePagination } from "@/hooks/use-pagination";
+import { setOrderStatus, useOrders, type Order } from "@/lib/orders";
+import { formatToman, toFaDigits } from "@/lib/format";
+import type { OrderStatus } from "@/types";
 
-const PER_PAGE = 4;
+const PER_PAGE = 6;
+type StatusFilter = "all" | OrderStatus;
+type SortFilter = "newest" | "amount-desc" | "amount-asc" | "items";
 
 export default function AdminOrders() {
   const all = useOrders();
-  const [tab, setTab] = useState<"همه" | OrderStatus>("همه");
+  const [q, setQ] = useState("");
+  const [status, setStatus] = useState<StatusFilter>("all");
+  const [city, setCity] = useState("all");
+  const [sort, setSort] = useState<SortFilter>("newest");
   const [open, setOpen] = useState<Order | null>(null);
-  const list = useMemo(() => all.filter((o) => tab === "همه" || o.status === tab), [all, tab]);
-  const pg = usePagination(list, PER_PAGE, tab);
+
+  const cities = useMemo(() => Array.from(new Set(all.map((order) => order.city).filter(Boolean))).sort((a, b) => a.localeCompare(b, "fa")), [all]);
+  const list = useMemo(() => {
+    const term = q.trim().toLocaleLowerCase("fa");
+    return all
+      .filter((order) => {
+        const matchesSearch = !term || `${order.id} ${order.customer} ${order.phone} ${order.city}`.toLocaleLowerCase("fa").includes(term);
+        const matchesStatus = status === "all" || order.status === status;
+        const matchesCity = city === "all" || order.city === city;
+        return matchesSearch && matchesStatus && matchesCity;
+      })
+      .sort((a, b) => {
+        if (sort === "amount-desc") return b.total - a.total;
+        if (sort === "amount-asc") return a.total - b.total;
+        if (sort === "items") return b.items.reduce((sum, item) => sum + item.qty, 0) - a.items.reduce((sum, item) => sum + item.qty, 0);
+        return b.id.localeCompare(a.id, "fa");
+      });
+  }, [all, city, q, sort, status]);
+
+  const pg = usePagination(list, PER_PAGE, `${q}|${status}|${city}|${sort}`);
+  const activeFilters = Number(!!q.trim()) + Number(status !== "all") + Number(city !== "all") + Number(sort !== "newest");
+  const totalSales = all.filter((order) => order.status !== "مرجوعی").reduce((sum, order) => sum + order.total, 0);
+  const newCount = all.filter((order) => order.status === "جدید").length;
+  const inProgress = all.filter((order) => order.status === "در حال آماده‌سازی" || order.status === "ارسال‌شده").length;
+  const completed = all.filter((order) => order.status === "تحویل‌شده").length;
 
   return (
     <div>
-      <PageHead kicker="ORDERS" title="سفارش‌ها" />
-      <p className="mb-4 text-sm text-navy/50 dark:text-wheat">سفارش‌های واقعیِ کاربران؛ با هر تغییرِ وضعیت، کاربر هم در پنل و هم با اعلان باخبر می‌شود.</p>
+      <PageHead kicker="ORDERS" title="مدیریت سفارش‌ها" description="پیگیری یکپارچه سفارش‌ها از لحظه ثبت تا پردازش، ارسال و تحویل نهایی." />
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="mb-5">
-        <TabsList className="h-auto flex-wrap rounded-full border border-navy/10 bg-white p-1 dark:border-gold/25 dark:bg-navy-mid/80">
-          {(["همه", ...ORDER_FLOW] as const).map((t) => (
-            <TabsTrigger
-              key={t}
-              value={t}
-              className="rounded-full px-3.5 py-1.5 text-[11px] font-black text-navy/60 transition-all data-[state=active]:bg-navy data-[state=active]:text-ivory data-[state=active]:shadow-[0_6px_16px_-6px_rgba(14,42,71,.5)] dark:text-wheat dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep"
-            >
-              {t}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      <AdminStatStrip items={[
+        { label: "سفارش جدید", value: newCount, Icon: Clock3, tone: "rose" },
+        { label: "در حال پردازش", value: inProgress, Icon: ShoppingBag, tone: "gold" },
+        { label: "تحویل‌شده", value: completed, Icon: PackageCheck, tone: "emerald" },
+        { label: "ارزش سفارش‌ها", value: `${formatToman(totalSales)} ت`, Icon: Banknote, tone: "blue" },
+      ]} />
+
+      <AdminFilterBar
+        search={q}
+        onSearchChange={setQ}
+        searchPlaceholder="شناسه، مشتری، موبایل یا شهر…"
+        resultCount={list.length}
+        resultLabel="سفارش"
+        activeCount={activeFilters}
+        onReset={() => { setQ(""); setStatus("all"); setCity("all"); setSort("newest"); }}
+      >
+        <AdminFilterSelect
+          label="وضعیت سفارش"
+          value={status}
+          onValueChange={(value) => setStatus(value as StatusFilter)}
+          options={[
+            { value: "all", label: "همه وضعیت‌ها", count: all.length },
+            ...ORDER_FLOW.map((item) => ({ value: item, label: item, count: all.filter((order) => order.status === item).length })),
+          ]}
+        />
+        <AdminFilterSelect
+          label="شهر مقصد"
+          value={city}
+          onValueChange={setCity}
+          options={[{ value: "all", label: "همه شهرها" }, ...cities.map((item) => ({ value: item, label: item }))]}
+        />
+        <AdminFilterSelect
+          label="مرتب‌سازی"
+          value={sort}
+          onValueChange={(value) => setSort(value as SortFilter)}
+          options={[
+            { value: "newest", label: "جدیدترین" },
+            { value: "amount-desc", label: "بیشترین مبلغ" },
+            { value: "amount-asc", label: "کمترین مبلغ" },
+            { value: "items", label: "بیشترین اقلام" },
+          ]}
+        />
+      </AdminFilterBar>
 
       <AdminTable<Order>
         cols={[
+          { key: "id", title: "شناسه سفارش", width: "8.5rem", render: (order) => <span className="font-black text-gold-deep dark:text-gold-soft" dir="ltr">{order.id}</span> },
           {
-            key: "id",
-            title: "شناسه",
-            width: "8rem",
-            render: (o) => <span className="font-black text-gold-deep dark:text-gold-soft">{o.id}</span>,
-          },
-          {
-            key: "customer",
-            title: "مشتری",
-            width: "1.4fr",
-            render: (o) => (
-              <div className="min-w-0">
-                <p className="truncate">{o.customer}</p>
-                <p className="text-[11px] font-bold text-navy/40 dark:text-wheat" dir="ltr">
-                  {o.phone}
-                </p>
-              </div>
+            key: "customer", title: "مشتری", width: "1.35fr", render: (order) => (
+              <div className="min-w-0"><p className="truncate">{order.customer}</p><p className="mt-0.5 text-[10px] font-bold text-navy/40 dark:text-wheat" dir="ltr">{order.phone}</p></div>
             ),
           },
-          {
-            key: "meta",
-            title: "شهر و تاریخ",
-            width: "1.5fr",
-            render: (o) => (
-              <span className="font-semibold text-navy/60 dark:text-wheat">
-                {o.city} · {o.date} · {toFaDigits(o.items.length)} قلم
-              </span>
-            ),
-          },
-          {
-            key: "total",
-            title: "مبلغ",
-            width: "9.5rem",
-            align: "center",
-            render: (o) => <span className="whitespace-nowrap font-black text-gold-deep dark:text-gold-soft">{formatToman(o.total)} تومان</span>,
-          },
-          {
-            key: "status",
-            title: "وضعیت",
-            width: "8rem",
-            align: "center",
-            render: (o) => <Badge className={`w-max rounded-full border-0 ${statusTone(o.status)}`}>{o.status}</Badge>,
-          },
+          { key: "city", title: "مقصد", width: "6rem", align: "center", hideTablet: true, render: (order) => order.city },
+          { key: "date", title: "تاریخ", width: "7rem", align: "center", hideTablet: true, render: (order) => <span className="whitespace-nowrap text-navy/55 dark:text-wheat">{order.date}</span> },
+          { key: "items", title: "اقلام", width: "4rem", align: "center", hideTablet: true, render: (order) => `${toFaDigits(order.items.reduce((sum, item) => sum + item.qty, 0))} قلم` },
+          { key: "total", title: "مبلغ نهایی", width: "9rem", align: "center", render: (order) => <span className="whitespace-nowrap font-black text-gold-deep dark:text-gold-soft">{formatToman(order.total)} ت</span> },
+          { key: "status", title: "وضعیت", width: "8rem", align: "center", render: (order) => <Badge className={`w-max rounded-lg border-0 ${statusTone(order.status)}`}>{order.status}</Badge> },
         ]}
         rows={pg.pageItems}
-        empty="سفارشی در این وضعیت وجود ندارد."
-        onRowClick={(o) => setOpen(o)}
-        minWidth="52rem"
+        empty="سفارشی مطابق فیلترهای انتخابی وجود ندارد."
+        onRowClick={setOpen}
+        minWidth="59rem"
       />
-
       {list.length > 0 ? <Pagination pg={pg} unit="سفارش" /> : null}
 
-      <Sheet open={!!open} onOpenChange={(v) => !v && setOpen(null)}>
-        <SheetContent side="right" className="w-[min(88vw,420px)] gap-3 overflow-y-auto border-navy/10 bg-fog text-navy sm:max-w-[420px] dark:border-gold/25 dark:bg-navy-deep dark:text-ivory">
+      <Sheet open={!!open} onOpenChange={(value) => !value && setOpen(null)}>
+        <SheetContent side="right" className="w-full max-w-full gap-3 overflow-y-auto border-navy/10 bg-fog text-navy sm:w-[26rem] sm:max-w-[26rem] dark:border-gold/20 dark:bg-navy-deep dark:text-ivory">
           {open ? (
             <>
-              <SheetHeader>
-                <SheetTitle className="text-navy dark:text-ivory">{open.customer}</SheetTitle>
-                <SheetDescription className="text-navy/50 dark:text-wheat">{open.id}</SheetDescription>
+              <SheetHeader className="text-start">
+                <SheetTitle className="text-navy dark:text-ivory">جزئیات سفارش</SheetTitle>
+                <SheetDescription className="text-navy/50 dark:text-wheat" dir="ltr">{open.id}</SheetDescription>
               </SheetHeader>
-              <p className="px-4 text-sm" dir="ltr">
-                {open.phone}
-              </p>
-              <p className="px-4 text-sm text-navy/55 dark:text-wheat">
-                {open.city} — {open.address}
-              </p>
-              <Separator className="bg-navy/8 dark:bg-gold/20" />
+
+              <div className="mx-4 rounded-2xl border border-navy/8 bg-white/70 p-3 dark:border-gold/14 dark:bg-white/[0.035]">
+                <p className="font-black">{open.customer}</p>
+                <p className="mt-1 text-xs text-navy/55 dark:text-wheat" dir="ltr">{open.phone}</p>
+                <p className="mt-1 text-xs leading-6 text-navy/55 dark:text-wheat">{open.city} — {open.address}</p>
+              </div>
+
+              <Separator className="bg-navy/8 dark:bg-gold/15" />
               <ul className="space-y-2 px-4">
-                {open.items.map((it) => (
-                  <li key={`${it.id}-${it.size}`} className="flex items-center gap-3 rounded-2xl bg-white p-2 dark:bg-navy-mid">
-                    <Image src={it.img} alt="" width={48} height={48} className="size-12 rounded-xl object-cover" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-black text-navy dark:text-ivory">{it.name}</p>
-                      <p className="text-[11px] text-navy/50 dark:text-wheat">
-                        سایز {it.size} × {toFaDigits(it.qty)}
-                      </p>
-                    </div>
-                    <span className="text-xs font-black text-gold-deep dark:text-gold-soft">{formatToman(it.price)}</span>
+                {open.items.map((item) => (
+                  <li key={`${item.id}-${item.size}`} className="flex items-center gap-3 rounded-2xl border border-navy/7 bg-white/70 p-2 dark:border-gold/12 dark:bg-white/[0.035]">
+                    <Image src={item.img} alt="" width={48} height={48} className="size-12 shrink-0 rounded-xl object-cover" />
+                    <div className="min-w-0 flex-1"><p className="truncate text-xs font-black">{item.name}</p><p className="mt-1 text-[10px] text-navy/50 dark:text-wheat">سایز {item.size} × {toFaDigits(item.qty)}</p></div>
+                    <span className="shrink-0 text-[10px] font-black text-gold-deep dark:text-gold-soft">{formatToman(item.price)}</span>
                   </li>
                 ))}
               </ul>
-              <div className="space-y-1 px-4 text-sm">
+
+              <div className="mx-4 space-y-2 rounded-2xl bg-navy/[0.035] p-4 text-xs dark:bg-white/[0.035]">
                 <Row k="جمع کالا" v={formatToman(open.subtotal)} />
                 <Row k="تخفیف" v={open.discount ? formatToman(open.discount) : "—"} />
                 <Row k="ارسال" v={open.shipping ? formatToman(open.shipping) : "رایگان"} />
-                <Row k="قابل پرداخت" v={formatToman(open.total)} strong />
+                <Separator className="my-2 bg-navy/8 dark:bg-gold/15" />
+                <Row k="قابل پرداخت" v={`${formatToman(open.total)} تومان`} strong />
               </div>
-              <p className="px-4 text-xs font-black text-gold">تغییر وضعیت</p>
-              <div className="flex flex-wrap gap-1.5 px-4 pb-4">
-                {ORDER_FLOW.map((s) => (
-                  <Button
-                    key={s}
-                    type="button"
-                    size="sm"
-                    variant={open.status === s ? "gold" : "outline"}
-                    className="h-8 rounded-full text-[11px]"
-                    onClick={() => {
-                      setOrderStatus(open.id, s);
-                      setOpen({ ...open, status: s });
-                    }}
-                  >
-                    {s}
-                  </Button>
-                ))}
+
+              <div className="px-4 pb-5">
+                <AdminFilterSelect
+                  label="تغییر وضعیت سفارش"
+                  value={open.status}
+                  onValueChange={(value) => {
+                    const next = value as OrderStatus;
+                    setOrderStatus(open.id, next);
+                    setOpen({ ...open, status: next });
+                  }}
+                  options={ORDER_FLOW.map((item) => ({ value: item, label: item }))}
+                  className="w-full xl:w-full"
+                />
+                {open.status === "مرجوعی" ? <p className="mt-2 flex items-center gap-1.5 text-[10px] font-bold text-rose"><RotateCcw className="size-3" /> این سفارش در وضعیت مرجوعی قرار دارد.</p> : null}
               </div>
             </>
           ) : null}
@@ -161,10 +179,5 @@ export default function AdminOrders() {
 }
 
 function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }) {
-  return (
-    <div className="flex justify-between font-bold">
-      <span className="text-navy/55 dark:text-wheat">{k}</span>
-      <span className={strong ? "font-black text-navy dark:text-ivory" : "text-navy dark:text-ivory"}>{v}</span>
-    </div>
-  );
+  return <div className="flex items-center justify-between gap-3 font-bold"><span className="text-navy/55 dark:text-wheat">{k}</span><span className={strong ? "font-black text-navy dark:text-ivory" : "text-navy dark:text-ivory"}>{v}</span></div>;
 }

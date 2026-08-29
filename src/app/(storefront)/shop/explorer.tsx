@@ -69,9 +69,11 @@ export function Explorer() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [sortPopOpen, setSortPopOpen] = useState(false);
+  const requestedCategory = params.get("cat");
+  const activeCategory = requestedCategory && CATS.some((category) => category === requestedCategory) ? requestedCategory : "همه";
 
   const state: State = {
-    cat: params.get("cat") || "همه",
+    cat: activeCategory,
     season: params.get("season") || "همه",
     page: parseInt(params.get("page") || "1", 10) || 1,
     sort: params.get("sort") || "new",
@@ -505,7 +507,7 @@ export function Explorer() {
           {/* Grid / List */}
           <div className={state.view === "list" ? "flex flex-col gap-4" : "grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 sm:gap-4 min-[900px]:grid-cols-3 min-[1500px]:grid-cols-4"}>
             {slice.map((p) => (
-              <Card key={p.id} p={p} view={state.view} />
+              <Card key={p.id} p={p} view={state.view} priority={slice.slice(0, 4).some((aboveFold) => aboveFold.img === p.img)} />
             ))}
           </div>
 
