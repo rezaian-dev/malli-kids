@@ -38,6 +38,8 @@ export type AdminCustomer = {
   spent: number;
   childName?: string;
   joined: string;
+  /** وضعیتِ حساب — مسدود یعنی اجازهٔ ثبت سفارش ندارد */
+  status?: "فعال" | "مسدود";
 };
 
 export type AdminCoupon = {
@@ -66,6 +68,10 @@ export type AdminArticle = {
   tag: string;
   title: string;
   excerpt: string;
+  /** بدنهٔ مقاله — متنِ ساده (دانه) یا HTML خروجیِ ویرایشگرِ ادمین */
+  body?: string;
+  /** تصویرِ شاخص — مسیرِ فایل یا dataURL آپلودِ ادمین */
+  cover?: string;
   published: boolean;
   date: string;
 };
@@ -79,12 +85,22 @@ export type AdminMessage = {
   read: boolean;
 };
 
+export type AdminCampaign = {
+  /** جشنوارهٔ تخفیفِ سراسری روی همهٔ محصولات */
+  active: boolean;
+  /** درصدِ تخفیفِ سراسری (۰ تا ۹۰) */
+  percent: number;
+  /** عنوانِ جشنواره — در نوارِ بالایِ فروشگاه و برچسبِ قیمت نمایش داده می‌شود */
+  title: string;
+};
+
 export type AdminSettings = {
   freeShipFrom: number;
   phoneFa: string;
   address: string;
   otpDemo: string;
   storeOpen: boolean;
+  campaign: AdminCampaign;
 };
 
 export type AdminDb = {

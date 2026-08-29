@@ -9,6 +9,7 @@ import {
   Find,
   Styles,
   Reviews,
+  Collab,
   TryOn,
 } from "@/features/home/sections";
 
@@ -25,6 +26,7 @@ export function Landing() {
       <Handmade />
       <Styles />
       <Reviews />
+      <Collab />
       <Stories />
     </>
   );

@@ -1,39 +1,105 @@
+import Link from "next/link";
+import { ArrowLeft, Clock, Handshake, Headphones, MapPin, Phone } from "lucide-react";
 import { Intro } from "@/components/shared/intro";
-import { Map } from "./map";
-import { Form } from "./form";
+import { Button } from "@/components/ui/button";
 import { BRAND } from "@/lib/constants";
-import { Clock, MapPin, Phone } from "lucide-react";
+import { Map } from "./map";
 
-
+/**
+ * صفحهٔ تماس — بدونِ فرم.
+ *
+ * فلسفهٔ پشتیبانیِ مالی‌کیدز: هر سوالی فقط از طریقِ خودِ سایت و در پنلِ کاربری
+ * پاسخ داده می‌شود؛ پس این صفحه به‌جای فرم، مسیرِ «تیکت در پنل» را نشان می‌دهد
+ * و کنارش راه‌های ارتباطی و نقشهٔ گالری را نگه می‌دارد.
+ */
 export default function ContactPage() {
   return (
     <>
-<Intro crumb="تماس با ما" kicker="گالری و پشتیبانی" title="کنارتان هستیم" lead="برای سایز، سفارش و استایل پیام بدهید یا به گالری ولیعصر سر بزنید." />
-        <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7 max-w-5xl grid lg:grid-cols-2 gap-8">
-          <div className="space-y-4">
-            <Info ico={MapPin} k="آدرس" v={BRAND.address} />
-            <Info ico={Phone} k="تلفن" v={BRAND.phoneFa} ltr />
-            <Info ico={Clock} k="ساعت" v="شنبه تا پنجشنبه، ۹ صبح تا ۹ شب" />
-            <Map />
+      <Intro
+        crumb="تماس با ما"
+        kicker="گالری و پشتیبانی"
+        title="کنارتان هستیم"
+        lead="پشتیبانی ما فقط از طریقِ سایت است؛ هر سوالی بپرسید، پاسخش را در پنلِ کاربریِ خودتان می‌بینید. برای دیدنِ لباس‌ها از نزدیک هم گالریِ ولیعصر میزبانِ شماست."
+      />
+
+      <div className="container mx-auto w-full max-w-5xl space-y-9 px-4 sm:px-5 lg:px-7">
+        {/* ── پشتیبانی در پنل ─────────────────────────────── */}
+        <section className="overflow-hidden rounded-[28px] bg-linear-to-br from-navy via-navy-mid to-navy-light px-6 py-8 shadow-[0_24px_60px_-30px_rgba(4,20,39,.6)] sm:px-10 sm:py-10">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
+            <div className="min-w-0 flex-1">
+              <p className="flex items-center gap-2 text-[11px] font-black tracking-[0.22em] text-gold">
+                <Headphones className="size-4" /> SUPPORT
+              </p>
+              <h2 className="mt-2 text-xl font-black text-white sm:text-2xl">پشتیبانی، در پنلِ خودتان</h2>
+              <p className="mt-3 max-w-xl text-sm leading-8 text-white/75">
+                سوالِ سایز، پیگیریِ سفارش یا هر چیزِ دیگر — به‌جای فرم و ایمیل، تیکت ثبت کنید؛
+                پاسخِ ما فقط و فقط در پنلِ کاربریِ خودتان ثبت می‌شود، همیشه در دسترس و هرگز گم‌نشده.
+              </p>
+
+              <ol className="mt-7 grid gap-4 sm:grid-cols-3">
+                {[
+                  ["۱", "وارد شوید", "با موبایل یا ایمیل، چند ثانیه"],
+                  ["۲", "تیکت بزنید", "در تبِ «پشتیبانی» پنلِ کاربری"],
+                  ["۳", "پاسخ بگیرید", "همان‌جا، در پنلِ خودتان"],
+                ].map(([n, t, d]) => (
+                  <li key={n} className="rounded-2xl border border-white/12 bg-white/[0.06] px-4 py-4">
+                    <span className="grid size-8 place-items-center rounded-full bg-gold font-black text-navy-deep">{n}</span>
+                    <p className="mt-3 text-sm font-black text-white">{t}</p>
+                    <p className="mt-1 text-[11px] font-bold leading-5 text-white/60">{d}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row lg:flex-col">
+              <Button asChild variant="gold" size="pill" className="h-12 px-7">
+                <Link href="/profile#support">
+                  ورود و ثبتِ تیکت <ArrowLeft className="size-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="h-12 rounded-full border-white/30 bg-white/10 px-7 text-white hover:bg-white/15">
+                <Link href="/faq">سوالاتِ پرتکرار</Link>
+              </Button>
+            </div>
           </div>
-          <Form />
-        </div>
+        </section>
+
+        {/* ── راه‌های ارتباطی ─────────────────────────────── */}
+        <section>
+          <h2 className="lux-kicker">راه‌های ارتباطی</h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <Info ico={Phone} k="تلفن" v={BRAND.phoneFa} href={`tel:${BRAND.phone}`} ltr />
+            <Info ico={MapPin} k="نشانیِ گالری" v={BRAND.address} />
+            <Info ico={Clock} k="ساعتِ پاسخگویی" v="شنبه تا پنجشنبه، ۹ صبح تا ۹ شب" />
+          </div>
+        </section>
+
+        <Map />
+      </div>
     </>
-        );
+  );
 }
 
-function Info({ ico: Icon, k, v, ltr }: { ico: typeof MapPin; k: string; v: string; ltr?: boolean }) {
-  return (
-    <div className="lux-card flex items-start gap-3 p-4 hover:translate-y-0">
-      <span className="w-10 h-10 rounded-xl bg-gold/15 text-gold flex items-center justify-center shrink-0">
-        <Icon className="w-5 h-5" />
+function Info({ ico: Icon, k, v, href, ltr }: { ico: typeof MapPin; k: string; v: string; href?: string; ltr?: boolean }) {
+  const body = (
+    <>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-gold">
+        <Icon className="h-5 w-5" />
       </span>
-      <div>
-        <p className="text-xs font-black text-gold dark:text-gold-glow">{k}</p>
-        <p className="mt-1 font-bold text-navy dark:text-ivory" dir={ltr ? "ltr" : undefined}>
+      <span className="min-w-0">
+        <span className="block text-xs font-black text-gold dark:text-gold-glow">{k}</span>
+        <span className="mt-1 block font-bold text-navy dark:text-ivory" dir={ltr ? "ltr" : undefined}>
           {v}
-        </p>
-      </div>
-    </div>
+        </span>
+      </span>
+    </>
+  );
+  const cls = "lux-card flex items-start gap-3 p-4";
+  return href ? (
+    <a href={href} className={cls}>
+      {body}
+    </a>
+  ) : (
+    <div className={`${cls} hover:translate-y-0`}>{body}</div>
   );
 }

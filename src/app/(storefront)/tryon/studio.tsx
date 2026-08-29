@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { useMemo, useRef, useState } from "react";
 import { Download, Loader2, Shirt, Sparkles, Upload } from "lucide-react";
 import { CORE_PRODUCTS } from "@/lib/data/products";
@@ -119,7 +121,7 @@ export function Studio() {
 
           {/* current garment chip */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={CORE_PRODUCTS[garment].img} alt="" className="absolute bottom-3 end-3 h-24 w-20 rounded-xl border-2 border-white object-cover shadow-lg" />
+          <Image src={CORE_PRODUCTS[garment].img} alt="" width={80} height={96} className="absolute bottom-3 end-3 h-24 w-20 rounded-xl border-2 border-white object-cover shadow-lg" />
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
@@ -155,7 +157,7 @@ export function Studio() {
               className={`overflow-hidden rounded-xl border-2 transition ${person === src ? "border-gold" : "border-transparent hover:border-gold/40"}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="مدل نمونه" className="h-18 w-14 object-cover" />
+              <Image src={src} alt="مدل نمونه" width={56} height={72} className="h-18 w-14 object-cover" />
             </button>
           ))}
         </div>
@@ -179,7 +181,7 @@ export function Studio() {
               className={`overflow-hidden rounded-xl border-2 transition ${garment === i ? "border-gold" : "border-transparent hover:border-gold/40"}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p.img} alt={p.name} className="aspect-3/4 w-full object-cover" />
+              <Image src={p.img} alt={p.name} width={60} height={80} className="aspect-3/4 w-full object-cover" />
             </button>
           ))}
         </div>

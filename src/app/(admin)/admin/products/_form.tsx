@@ -11,12 +11,13 @@ import { ImageUpload } from "@/components/ui/image-upload";
 import { PageHead } from "@/features/admin";
 import { AppForm, Field, MoneyField, SelectField, SwitchField, TextareaField, TextField, useAppForm } from "@/components/form";
 import { parseFaNumber } from "@/lib/forms";
+import { SEASONS } from "@/lib/constants";
 import { CAT_OPTIONS, productDefaults, productSchema, productValues, type ProductValues } from "./schema";
 
 const DEFAULT_IMG = "/brand/look-party.jpg";
 
 export function ProductForm({ product }: { product?: Product }) {
-  const { upsertProduct } = useAdmin();
+  const { upsertProduct, db } = useAdmin();
   const router = useRouter();
   const isNew = !product;
 
@@ -28,11 +29,12 @@ export function ProductForm({ product }: { product?: Product }) {
 
   function submit(v: ProductValues) {
     upsertProduct({
-      id: product?.id ?? -1,
+      id: product?.id ?? Math.max(999, ...db.products.map((x) => x.id)) + 1,
       rate: product?.rate ?? 4.8,
       sold: product?.sold ?? 0,
       name: v.name.trim(),
       cat: v.cat,
+      season: v.season,
       price: parseFaNumber(v.price),
       old: v.old ? parseFaNumber(v.old) : undefined,
       disc: v.disc.trim() || undefined,
@@ -61,7 +63,10 @@ export function ProductForm({ product }: { product?: Product }) {
           <h2 className="text-sm font-black text-gold">مشخصات</h2>
 
           <TextField name="name" label="نام محصول" placeholder="مثلاً: پیراهن مجلسی الماس طلایی" maxLength={80} required />
-          <SelectField name="cat" label="دسته‌بندی" options={CAT_OPTIONS} required />
+          <div className="grid grid-cols-2 gap-3">
+            <SelectField name="cat" label="دسته‌بندی" options={CAT_OPTIONS} required />
+            <SelectField name="season" label="زیرشاخه (فصل)" options={[...SEASONS]} required />
+          </div>
 
           <div className="grid grid-cols-2 gap-3">
             <MoneyField name="price" label="قیمت (تومان)" hint="حداقل ۱٬۰۰۰ تومان" required />

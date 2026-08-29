@@ -5,6 +5,7 @@ import { Star } from "lucide-react";
 import { toast } from "sonner";
 import { useStore } from "@/lib/store";
 import { STORAGE } from "@/lib/constants";
+import { faNow } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { AppForm, Field, TextField, TextareaField, useAppForm } from "@/components/form";
 import { cn } from "@/lib/utils";
@@ -23,8 +24,10 @@ export function ReviewForm({ product }: { product: Pick<Product, "id" | "name"> 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE.purchases);
-      const list: (number | string)[] = raw ? JSON.parse(raw) : [];
-      setPurchased(list.includes(product.id % 8) || list.includes(product.name));
+      const orders: { items?: { id?: number; name?: string }[] }[] = raw ? JSON.parse(raw) : [];
+      setPurchased(
+        orders.some((o) => Array.isArray(o?.items) && o.items.some((it) => it.id === product.id || it.name === product.name)),
+      );
     } catch {
       setPurchased(false);
     }
@@ -38,10 +41,28 @@ export function ReviewForm({ product }: { product: Pick<Product, "id" | "name"> 
     );
   }
 
-  function onValid({ rating, title }: typeof reviewDefaults) {
-    // TODO: ثبتِ نظر سمتِ سرور (امتیاز و عنوان و متن از همانِ values خوانده می‌شود)
-    toast.success(`نظرِ ${rating} ستاره‌تان ثبت شد — ممنونیم ✨`);
-    form.reset({ ...reviewDefaults, title });
+  function onValid({ rating, body }: typeof reviewDefaults) {
+    // نظر در دیتابیسِ پنل می‌نشیند و پس از تأییدِ ادمین در ویترین دیده می‌شود
+    try {
+      const raw = window.localStorage.getItem(STORAGE.adminDb);
+      const db = raw ? (JSON.parse(raw) as { reviews?: unknown[] }) : {};
+      const reviews = Array.isArray(db.reviews) ? db.reviews : [];
+      reviews.unshift({
+        id: `ur-${Date.now().toString(36)}`,
+        product: product.name,
+        author: user ? `${user.firstName} ${user.lastName ?? ""}`.trim() : "کاربر",
+        rate: Number(rating),
+        text: body.trim(),
+        date: faNow(),
+        visible: false,
+      });
+      db.reviews = reviews;
+      window.localStorage.setItem(STORAGE.adminDb, JSON.stringify(db));
+    } catch {
+      /* حافظه در دسترس نیست */
+    }
+    toast.success(`نظرِ ${rating} ستاره‌تان ثبت شد — پس از تأیید ادمین نمایش داده می‌شود ✨`);
+    form.reset({ ...reviewDefaults });
   }
 
   return (
@@ -78,13 +99,13 @@ export function ReviewForm({ product }: { product: Pick<Product, "id" | "name"> 
         )}
       </Field>
 
-      <TextField name="title" label="عنوانِ نظر (اختیاری)" skin="soft" placeholder="مثلاً «سایزش دقیقاً مطابقِ جدول»" maxLength={60} />
+      <TextField name="title" label="عنوانِ نظر (اختیاری)" skin="soft" placeholder="کوتاه و مفید" maxLength={60} />
 
       <TextareaField
         name="body"
         label="نظرِ شما"
         skin="soft"
-        placeholder="کیفیت دوخت، سایز و بسته‌بندی را بنویسید…"
+        placeholder="تجربه‌تان از محصول…"
         min={20}
         maxLength={500}
         required

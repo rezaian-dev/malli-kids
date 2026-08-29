@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
+
 import { useMemo, useState } from "react";
-import { useAdmin } from "@/features/admin";
 import { ORDER_FLOW, statusTone } from "@/features/admin/lib/admin-data";
-import type { AdminOrder, OrderStatus } from "@/types";
+import type { OrderStatus } from "@/types";
+import { setOrderStatus, useOrders, type Order } from "@/lib/orders";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { PageHead } from "@/features/admin";
 import { Badge } from "@/components/ui/badge";
@@ -13,19 +15,21 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/use-pagination";
+import { AdminTable } from "@/features/admin/components/admin-table";
 
 const PER_PAGE = 4;
 
 export default function AdminOrders() {
-  const { db, setOrderStatus } = useAdmin();
+  const all = useOrders();
   const [tab, setTab] = useState<"همه" | OrderStatus>("همه");
-  const [open, setOpen] = useState<AdminOrder | null>(null);
-  const list = useMemo(() => db.orders.filter((o) => tab === "همه" || o.status === tab), [db.orders, tab]);
+  const [open, setOpen] = useState<Order | null>(null);
+  const list = useMemo(() => all.filter((o) => tab === "همه" || o.status === tab), [all, tab]);
   const pg = usePagination(list, PER_PAGE, tab);
 
   return (
     <div>
       <PageHead kicker="ORDERS" title="سفارش‌ها" />
+      <p className="mb-4 text-sm text-navy/50 dark:text-wheat">سفارش‌های واقعیِ کاربران؛ با هر تغییرِ وضعیت، کاربر هم در پنل و هم با اعلان باخبر می‌شود.</p>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="mb-5">
         <TabsList className="h-auto flex-wrap rounded-full border border-navy/10 bg-white p-1 dark:border-gold/25 dark:bg-navy-mid/80">
@@ -41,27 +45,59 @@ export default function AdminOrders() {
         </TabsList>
       </Tabs>
 
-      <div className="grid gap-3">
-        {pg.pageItems.map((o) => (
-          <button key={o.id} type="button" onClick={() => setOpen(o)} className="admin-card flex w-full flex-col gap-3 p-4 text-right transition hover:border-gold/40 sm:flex-row sm:items-center">
-            <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-black text-gold">{o.id}</p>
-              <p className="font-black text-navy dark:text-ivory">{o.customer}</p>
-              <p className="mt-0.5 text-xs text-navy/50 dark:text-wheat">
+      <AdminTable<Order>
+        cols={[
+          {
+            key: "id",
+            title: "شناسه",
+            width: "8rem",
+            render: (o) => <span className="font-black text-gold-deep dark:text-gold-soft">{o.id}</span>,
+          },
+          {
+            key: "customer",
+            title: "مشتری",
+            width: "1.4fr",
+            render: (o) => (
+              <div className="min-w-0">
+                <p className="truncate">{o.customer}</p>
+                <p className="text-[11px] font-bold text-navy/40 dark:text-wheat" dir="ltr">
+                  {o.phone}
+                </p>
+              </div>
+            ),
+          },
+          {
+            key: "meta",
+            title: "شهر و تاریخ",
+            width: "1.5fr",
+            render: (o) => (
+              <span className="font-semibold text-navy/60 dark:text-wheat">
                 {o.city} · {o.date} · {toFaDigits(o.items.length)} قلم
-              </p>
-            </div>
-            <p className="text-sm font-black text-gold-deep dark:text-gold-soft">{formatToman(o.total)} تومان</p>
-            <Badge className={`w-max rounded-full border-0 ${statusTone(o.status)}`}>{o.status}</Badge>
-          </button>
-        ))}
-      </div>
+              </span>
+            ),
+          },
+          {
+            key: "total",
+            title: "مبلغ",
+            width: "9.5rem",
+            align: "center",
+            render: (o) => <span className="whitespace-nowrap font-black text-gold-deep dark:text-gold-soft">{formatToman(o.total)} تومان</span>,
+          },
+          {
+            key: "status",
+            title: "وضعیت",
+            width: "8rem",
+            align: "center",
+            render: (o) => <Badge className={`w-max rounded-full border-0 ${statusTone(o.status)}`}>{o.status}</Badge>,
+          },
+        ]}
+        rows={pg.pageItems}
+        empty="سفارشی در این وضعیت وجود ندارد."
+        onRowClick={(o) => setOpen(o)}
+        minWidth="52rem"
+      />
 
-      {list.length === 0 ? (
-        <p className="admin-card mt-2 p-8 text-center text-sm font-bold text-navy/45 dark:text-wheat">سفارشی در این وضعیت وجود ندارد.</p>
-      ) : (
-        <Pagination pg={pg} unit="سفارش" />
-      )}
+      {list.length > 0 ? <Pagination pg={pg} unit="سفارش" /> : null}
 
       <Sheet open={!!open} onOpenChange={(v) => !v && setOpen(null)}>
         <SheetContent side="right" className="w-[min(88vw,420px)] gap-3 overflow-y-auto border-navy/10 bg-fog text-navy sm:max-w-[420px] dark:border-gold/25 dark:bg-navy-deep dark:text-ivory">
@@ -81,7 +117,7 @@ export default function AdminOrders() {
               <ul className="space-y-2 px-4">
                 {open.items.map((it) => (
                   <li key={`${it.id}-${it.size}`} className="flex items-center gap-3 rounded-2xl bg-white p-2 dark:bg-navy-mid">
-                    <img src={it.img} alt="" className="size-12 rounded-xl object-cover" />
+                    <Image src={it.img} alt="" width={48} height={48} className="size-12 rounded-xl object-cover" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-black text-navy dark:text-ivory">{it.name}</p>
                       <p className="text-[11px] text-navy/50 dark:text-wheat">

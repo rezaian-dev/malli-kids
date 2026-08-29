@@ -100,6 +100,8 @@ function NavigationMenuContent({
       className={cn(
         // انیمیشن حالت viewport-دار
         "data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out",
+        // هنگامِ انیمیشنِ خروج، آیتم‌ها زیرِ نشانگر «هاور» نشوند — رنگِ آیکن‌ها ثابت می‌ماند
+        "data-[state=closed]:pointer-events-none",
         "data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52",
         "data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52",
         "top-0 inset-s-0 w-full p-2 pe-2.5 md:absolute md:w-auto",
@@ -111,7 +113,9 @@ function NavigationMenuContent({
         "group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5",
         "group-data-[viewport=false]/navigation-menu:z-50",
         "group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-md",
-        "group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:shadow group-data-[viewport=false]/navigation-menu:duration-200",
+        "group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:shadow group-data-[viewport=false]/navigation-menu:duration-150",
+        // خروجِ سریع تا تغییرِ رنگِ آیتم و بسته‌شدنِ منو هم‌زمان دیده شوند
+        "data-[state=closed]:duration-100",
         "**:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none",
         className
       )}

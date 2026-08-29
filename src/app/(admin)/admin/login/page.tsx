@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -32,7 +34,7 @@ export default function AdminLogin() {
       <section className="relative flex flex-col justify-between px-6 py-8 sm:px-10 lg:px-16 lg:py-12">
         <header className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img src="/brand/logo-white.png" alt="" className="size-11 rounded-2xl bg-navy p-1.5 object-contain dark:bg-transparent dark:p-0" />
+            <Image src="/brand/logo-white.png" alt="" width={44} height={44} className="size-11 rounded-2xl bg-navy p-1.5 object-contain dark:bg-transparent dark:p-0" />
             <div className="leading-none">
               <p className="font-display text-sm font-bold tracking-[0.2em] text-navy dark:text-ivory">MALLI</p>
               <p className="mt-1 text-[10px] font-black tracking-[0.32em] text-gold">CONSOLE</p>
@@ -113,7 +115,7 @@ export default function AdminLogin() {
 
       {/* Image panel — intentionally rich in both themes */}
       <aside className="relative hidden min-h-[18rem] overflow-hidden bg-navy lg:block">
-        <img src="/brand/hero-dress.jpg" alt="" className="absolute inset-0 size-full object-cover object-[center_15%]" />
+        <Image src="/brand/hero-dress.jpg" alt="" width={900} height={1200} className="absolute inset-0 size-full object-cover object-[center_15%]" />
         <div className="absolute inset-0 bg-linear-to-t from-navy-deep via-navy-deep/35 to-transparent" />
         <div className="absolute inset-5 rounded-[28px] border border-gold/40" />
         <div className="absolute inset-x-10 bottom-10 text-ivory">

@@ -5,12 +5,14 @@ import {
   Crown,
   Gem,
   HandHeart,
+  Handshake,
   HelpCircle,
   Info,
   LayoutGrid,
   Phone,
   ScanFace,
   Shirt,
+  Sofa,
   Sparkles,
 } from "lucide-react";
 
@@ -18,10 +20,12 @@ import {
 export const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   crown: Crown,
   shirt: Shirt,
+  sofa: Sofa,
   baby: Baby,
   briefcase: Briefcase,
   gem: Gem,
   "hand-heart": HandHeart,
+  handshake: Handshake,
   "layout-grid": LayoutGrid,
   sparkles: Sparkles,
   "scan-face": ScanFace,

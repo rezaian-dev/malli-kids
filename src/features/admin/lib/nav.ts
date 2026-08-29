@@ -1,13 +1,13 @@
 import type { ComponentType } from "react";
 import {
   Briefcase,
+  Handshake,
   Info,
   LayoutGrid,
   Mail,
   Percent,
   Shirt,
   ShoppingBag,
-  SlidersHorizontal,
   Sparkles,
   Star,
   User,
@@ -23,6 +23,6 @@ export const ADMIN_NAV: { href: string; label: string; hint: string; Icon: Compo
   { href: "/admin/banners", label: "بنر مناسبت", hint: "جشنواره و اعیاد", Icon: Sparkles },
   { href: "/admin/reviews", label: "نظرات", hint: "تأیید دیدگاه PDP", Icon: Star },
   { href: "/admin/articles", label: "مجله", hint: "مقالات فروشگاه", Icon: Info },
-  { href: "/admin/messages", label: "پیام‌ها", hint: "فرم تماس", Icon: Mail },
-  { href: "/admin/settings", label: "تنظیمات", hint: "ارسال و گالری", Icon: SlidersHorizontal },
+  { href: "/admin/messages", label: "پیام‌ها", hint: "تیکت پشتیبانی", Icon: Mail },
+  { href: "/admin/collab", label: "همکاری", hint: "درخواست‌های همکاری", Icon: Handshake },
 ];

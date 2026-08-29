@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import localFont from "next/font/local";
+import NextTopLoader from "nextjs-toploader";
+import Script from "next/script";
 import { Store } from "@/lib/store";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -41,6 +43,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="fa"
       dir="rtl"
+      data-scroll-behavior="smooth"
       className={`${vazir.variable} ${playfair.variable}`}
       suppressHydrationWarning
     >
@@ -59,7 +62,22 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`${vazir.className} min-h-dvh text-navy antialiased dark:text-ivory data-[scroll-locked]:mr-0!`}
         suppressHydrationWarning
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        {/* نوارِ پیشرفتِ طلاییِ بالای صفحه هنگامِ جابه‌جایی بین صفحات */}
+        <NextTopLoader
+          color="#d9b77f"
+          height={3}
+          showSpinner={false}
+          speed={240}
+          crawlSpeed={110}
+          easing="cubic-bezier(0.4, 0, 0.2, 1)"
+          shadow="0 0 14px rgba(217,183,127,.85), 0 0 6px rgba(193,147,87,.9)"
+          zIndex={9999}
+        />
+        {/* کلاسِ تم پیش از اولین paint اعمال می‌شود — بدونِ FOUC و بدونِ تگِ script داخلِ درختِ React */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`(function(){try{var t=localStorage.getItem("theme");var d=t==="dark"||((!t||t==="system")&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);}catch(e){}})();`}
+        </Script>
+        <ThemeProvider>
           <Store>
             {children}
             <Toaster />

@@ -93,7 +93,8 @@ function CodeStep({ flow, submitLabel, onVerify }: { flow: SmsFlow; submitLabel:
               containerClassName="gap-1.5"
               autoFocus
             >
-              <InputOTPGroup className="gap-1.5">
+              {/* خانه‌های کد از چپ به راست، مثل ورودِ کد در کیبوردِ شماره */}
+              <InputOTPGroup className="gap-1.5" dir="ltr">
                 {Array.from({ length: OTP_LEN }, (_, i) => (
                   <InputOTPSlot
                     key={i}
@@ -184,7 +185,8 @@ function LoginPanel({ onOtp }: { onOtp: () => void }) {
         icon={<Mail className="size-4" />}
         dir="ltr"
         autoComplete="username"
-        placeholder="name@mail.com / 09123456789"
+        placeholder="you@mail.com"
+        inputClassName="text-left"
         required
       />
 
@@ -193,8 +195,9 @@ function LoginPanel({ onOtp }: { onOtp: () => void }) {
         label="رمز عبور"
         icon={<Lock className="size-4" />}
         type={show ? "text" : "password"}
+        dir="ltr"
         autoComplete="current-password"
-        placeholder="••••••"
+        inputClassName="text-left"
         required
         hint="حداقل ۶ نویسه"
         trailing={
@@ -270,7 +273,8 @@ function OtpPanel() {
               dir="ltr"
               inputMode="tel"
               autoComplete="tel-national"
-              placeholder="0912 345 6789"
+              placeholder="0912…"
+              inputClassName="text-left"
               required
             />
             <Button type="submit" className={SUBMIT_GOLD}>
@@ -340,7 +344,8 @@ function RegisterPanel() {
               dir="ltr"
               inputMode="tel"
               autoComplete="tel-national"
-              placeholder="0912 345 6789"
+              placeholder="0912…"
+              inputClassName="text-left"
               required
             />
             <Button type="submit" className={SUBMIT_GOLD}>
@@ -374,7 +379,7 @@ export function Modal() {
         showCloseButton={false}
         className={cn(
           // DialogContent پایه grid و rounded-xl و p-4 دارد؛ همه را صریح بازنویسی می‌کنیم
-          "z-[100] block max-h-[94dvh] w-[calc(100%-1.5rem)] max-w-[26rem] gap-0 overflow-y-auto overflow-x-hidden p-0 sm:max-w-[26rem]",
+          "z-[100] block max-h-[94dvh] w-[calc(100%-1.5rem)] max-w-[26rem] gap-0 overflow-y-auto overflow-x-hidden overscroll-contain p-0 sm:max-w-[26rem]",
           "rounded-[28px] bg-paper text-navy ring-0",
           "border border-gold/35 shadow-[0_28px_80px_-20px_rgba(4,20,39,.55)]",
           "dark:border-gold/40 dark:bg-dusk dark:text-ivory",
@@ -415,7 +420,7 @@ export function Modal() {
               </TabsTrigger>
             </TabsList>
 
-            <div className="-mx-2 min-h-0 flex-1 overflow-y-auto overflow-x-clip px-2 [scrollbar-width:thin]">
+            <div className="auth-fields -mx-2 min-h-0 flex-1 overflow-y-auto overflow-x-clip overscroll-contain px-2 [scrollbar-width:thin]">
               <TabsContent value="login" className="mt-5">
                 <LoginPanel onOtp={() => setTab("otp")} />
               </TabsContent>

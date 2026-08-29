@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
+
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Pencil, Plus, Search, X } from "lucide-react";
 import { useAdmin } from "@/features/admin";
-import { CATS } from "@/lib/constants";
+import { CATS, SEASONS } from "@/lib/constants";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,12 +20,13 @@ export default function AdminProducts() {
   const { db, removeProduct } = useAdmin();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("همه");
+  const [season, setSeason] = useState("همه");
 
   const list = useMemo(
     () => db.products.filter((p) => (cat === "همه" || p.cat === cat) && (!q || p.name.includes(q) || p.cat.includes(q))),
     [db.products, q, cat],
   );
-  const pg = usePagination(list, PER_PAGE, `${q}|${cat}`);
+  const pg = usePagination(list, PER_PAGE, `${q}|${cat}|${season}`);
 
   return (
     <div>
@@ -64,6 +67,25 @@ export default function AdminProducts() {
             );
           })}
         </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {["همه", ...SEASONS].map((sn) => {
+            const on = season === sn;
+            return (
+              <button
+                key={sn}
+                type="button"
+                onClick={() => setSeason(sn)}
+                className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[12px] font-black transition ${
+                  on
+                    ? "bg-gold text-navy-deep"
+                    : "border border-navy/12 bg-white text-navy/70 hover:border-gold/50 dark:border-gold/25 dark:bg-navy-mid dark:text-wheat"
+                }`}
+              >
+                {sn}
+              </button>
+            );
+          })}
+        </div>
       </div>
       <p className="mb-3 text-xs font-bold text-navy/45 dark:text-wheat">{toFaDigits(list.length)} مدل</p>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -71,9 +93,9 @@ export default function AdminProducts() {
           <article key={p.id} className="admin-card overflow-hidden">
             <div className="flex gap-3 p-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p.img} alt="" className="size-20 shrink-0 rounded-2xl object-cover" />
+              <Image src={p.img} alt="" width={80} height={80} className="size-20 shrink-0 rounded-2xl object-cover" />
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black text-gold">{p.cat}</p>
+                <p className="text-[10px] font-black text-gold">{p.cat}{p.season ? ` · ${p.season}` : ""}</p>
                 <h2 className="truncate text-sm font-black text-navy dark:text-ivory">{p.name}</h2>
                 <p className="mt-1 text-xs font-black">{formatToman(p.price)} تومان</p>
                 <p className={`mt-1 text-[11px] font-bold ${p.stock ? "text-navy/45 dark:text-wheat" : "text-rose"}`}>{p.stock ? `${toFaDigits(p.sold)} فروش` : "ناموجود"}</p>

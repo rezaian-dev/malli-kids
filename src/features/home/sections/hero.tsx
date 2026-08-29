@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ArrowLeft, Scissors, ShieldCheck, Sparkles, Star } from "lucide-react";
 import { GoldMark, OrnStar } from "@/features/home/components/ornaments";
 
@@ -64,7 +65,7 @@ export function Hero() {
         </div>
         <div className="group/hero relative mx-auto w-full max-w-[18rem] animate-hero-in px-2 delay-200 xs:max-w-[20rem] xs:px-4 sm:max-w-[27.5rem] sm:px-0">
           <div className="relative aspect-3/4 overflow-hidden rounded-t-[999px] rounded-b-4xl border-8 border-white bg-sand shadow-2xl shadow-navy/20 dark:border-linen sm:rounded-b-[40px] sm:border-10">
-            <img src="/brand/hero-dress.jpg" alt="پیراهن مجلسی دخترانه ملی‌کیدز" className="h-full w-full origin-[58%_38%] animate-hero-ken object-cover" />
+            <Image src="/brand/hero-dress.jpg" alt="پیراهن مجلسی دخترانه ملی‌کیدز" width={900} height={1200} priority className="h-full w-full origin-[58%_38%] animate-hero-ken object-cover" />
             <div className="pointer-events-none absolute inset-0 animate-shimmer bg-[linear-gradient(115deg,transparent_32%,rgba(255,255,255,.38)_48%,transparent_62%)]" aria-hidden />
             <div className="absolute inset-0 bg-linear-to-t from-navy/25 via-transparent to-transparent" />
           </div>

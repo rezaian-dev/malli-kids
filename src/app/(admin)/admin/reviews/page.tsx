@@ -1,7 +1,6 @@
 "use client";
 
 import { Check, CircleDot, Star, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 import { useAdmin } from "@/features/admin";
 import { toFaDigits } from "@/lib/format";
 import { Pagination } from "@/components/ui/pagination";
@@ -9,10 +8,9 @@ import { usePagination } from "@/hooks/use-pagination";
 import { PageHead } from "@/features/admin";
 
 const PER_PAGE = 5;
-const SOON = () => toast("این بخش با راه‌اندازی backend فعال می‌شود");
 
 export default function AdminReviews() {
-  const { db } = useAdmin();
+  const { db, saveReview, removeReview } = useAdmin();
   const pg = usePagination(db.reviews, PER_PAGE);
 
   return (
@@ -51,7 +49,7 @@ export default function AdminReviews() {
               <div className="flex shrink-0 gap-2 sm:flex-col">
                 <button
                   type="button"
-                  onClick={SOON}
+                  onClick={() => saveReview({ ...r, visible: true })}
                   disabled={r.visible}
                   className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-emerald-500 px-4 py-2 text-[12px] font-black text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
                 >
@@ -59,7 +57,7 @@ export default function AdminReviews() {
                 </button>
                 <button
                   type="button"
-                  onClick={SOON}
+                  onClick={() => removeReview(r.id)}
                   className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-rose-pale px-4 py-2 text-[12px] font-black text-rose transition hover:bg-rose/15 dark:bg-rose/15 sm:flex-none"
                 >
                   <Trash2 className="size-4" /> حذف

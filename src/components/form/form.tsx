@@ -41,7 +41,9 @@ function focusFirstError(errors: FieldErrors) {
   if (!nodes.length) return;
   const el = nodes.reduce((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? a : b));
   el.focus({ preventScroll: true });
-  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  // «nearest»: اگر فیلد همین حالا پیداست (مثل کد OTP در مودال) هیچ اسکرولی رخ نمی‌دهد؛
+  // فقط وقتی بیرونِ دید باشد، حداقلِ اسکرول برای نمایان‌شدنش انجام می‌شود.
+  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 export type AppFormProps<T extends FieldValues> = {
@@ -100,7 +102,8 @@ export function AppForm<T extends FieldValues>({
         action={action}
         method={method}
         noValidate
-        className={cn(className, shaking && "animate-shake")}
+        data-shaking={shaking ? "true" : undefined}
+        className={className}
         onAnimationEnd={(e) => {
           if (e.animationName === "shake") setShaking(false);
         }}

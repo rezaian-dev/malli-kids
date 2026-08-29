@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ArrowLeft, Box, GraduationCap, Package, Scissors } from "lucide-react";
 import { OrnStitch } from "@/features/home/components/ornaments";
 
@@ -17,13 +18,13 @@ export function Atelier() {
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7 grid items-center gap-16 sm:gap-14 lg:grid-cols-2 lg:gap-10">
         <div className="relative order-2 h-90 transition-all duration-700 ease-out min-[420px]:h-105 sm:h-135 lg:order-1">
           <div className="absolute top-0 right-0 w-[78%] overflow-hidden rounded-2xl shadow-2xl shadow-navy/20 rotate-2 sm:rounded-[28px]">
-            <img src="/brand/look-knit.jpg" alt="پارچه‌های آتلیه ملی‌کیدز" loading="lazy" className="h-56 w-full object-cover min-[420px]:h-64 sm:h-90" />
+            <Image src="/brand/look-knit.jpg" alt="پارچه‌های آتلیه ملی‌کیدز" width={800} height={600} className="h-56 w-full object-cover min-[420px]:h-64 sm:h-90" />
           </div>
           <div className="absolute bottom-0 left-0 z-10 w-[52%] overflow-hidden rounded-xl border-4 border-white shadow-2xl shadow-navy/25 -rotate-3 sm:rounded-3xl sm:border-8">
-            <img src="/brand/cat-girl.jpg" alt="مدل دوخته‌شده با الگوی آماده" loading="lazy" className="h-44 w-full object-cover min-[420px]:h-52 sm:h-75" />
+            <Image src="/brand/cat-girl.jpg" alt="مدل دوخته‌شده با الگوی آماده" width={600} height={480} className="h-44 w-full object-cover min-[420px]:h-52 sm:h-75" />
           </div>
           <div className="absolute top-4 left-1 z-20 h-20 w-20 animate-floaty overflow-hidden rounded-xl border-4 border-white shadow-xl rotate-6 min-[420px]:h-24 min-[420px]:w-24 sm:top-6 sm:left-8 sm:h-28 sm:w-28 sm:rounded-2xl">
-            <img src="/brand/look-knit.jpg" alt="نمونه بافت" loading="lazy" className="h-full w-full object-cover" />
+            <Image src="/brand/look-knit.jpg" alt="نمونه بافت" width={96} height={96} className="h-full w-full object-cover" />
           </div>
           <div className="absolute -bottom-1 right-4 z-20 flex items-center gap-2 rounded-xl bg-navy px-4 py-2.5 text-cream shadow-xl sm:-bottom-2 sm:right-12 sm:rounded-2xl sm:px-5 sm:py-3">
             <Scissors className="h-4 w-4 shrink-0 text-gold" />

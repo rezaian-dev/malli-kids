@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 import { Percent, ScanFace, Sparkles, Star } from "lucide-react";
 
@@ -19,15 +20,13 @@ function Perk({ icon, t, d }: { icon: ReactNode; t: string; d: string }) {
 export function AuthAside() {
   return (
     <aside className="relative hidden w-[46%] shrink-0 overflow-hidden rounded-s-[28px] bg-navy text-ivory lg:block">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/brand/hero-dress.jpg" alt="" className="absolute inset-0 size-full object-cover object-[center_18%]" />
+      <Image src="/brand/hero-dress.jpg" alt="" width={900} height={1200} className="absolute inset-0 size-full object-cover object-[center_18%]" />
       <div className="absolute inset-0 bg-linear-to-t from-navy-deep via-navy-deep/55 to-transparent" />
       <div className="pointer-events-none absolute inset-3 rounded-[22px] border border-gold/45" />
 
       <div className="relative flex h-full min-h-0 flex-col justify-between p-7 pe-8">
         <div className="flex items-center gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/logo-white.png" alt="" className="h-11 w-auto drop-shadow-md" />
+          <Image src="/brand/logo-white.png" alt="" width={44} height={44} className="size-11 object-contain drop-shadow-md" />
           <div className="leading-none">
             <span className="font-display block text-sm font-bold tracking-[0.2em] text-white">MALLI</span>
             <span className="font-display mt-1 block text-[10px] tracking-[0.38em] text-gold-light">KIDS</span>

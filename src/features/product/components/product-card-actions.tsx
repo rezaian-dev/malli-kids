@@ -10,10 +10,14 @@ import { Button } from "@/components/ui/button";
  */
 export function AddToCart({
   out,
+  id,
+  size = "۹۸",
   className,
   children,
 }: {
   out: boolean;
+  id: number;
+  size?: string;
   className?: string;
   children: ReactNode;
 }) {
@@ -26,7 +30,7 @@ export function AddToCart({
       showToast("به محض موجود شدن خبرتان می‌کنیم");
       return;
     }
-    addToCart();
+    addToCart(id, size);
     showToast("به سبد اضافه شد");
   }
 

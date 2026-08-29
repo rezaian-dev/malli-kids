@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, LogIn, LogOut, Phone, Truck, User } from "lucide-react";
+import { ChevronDown, Heart, Headphones, LogIn, LogOut, Phone, Truck, User } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { fullName, givenName } from "@/lib/format";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -65,10 +65,10 @@ export function UserMenu() {
           )}
         >
           <Face src={user.avatar} letter={first.charAt(0)} className="size-7 text-xs sm:size-8" />
-          <span className="hidden max-w-20 truncate text-xs font-extrabold text-navy min-[400px]:inline md:hidden lg:inline dark:text-linen">
+          <span className="hidden max-w-20 truncate text-xs font-extrabold text-navy min-[480px]:inline md:hidden lg:inline dark:text-linen">
             {first}
           </span>
-          <ChevronDown className="hidden size-3.5 text-gold transition-transform min-[400px]:block md:hidden lg:block group-data-[state=open]:rotate-180" />
+          <ChevronDown className="hidden size-3.5 text-gold transition-transform min-[480px]:block md:hidden lg:block group-data-[state=open]:rotate-180" />
         </Button>
       </DropdownMenuTrigger>
 
@@ -99,6 +99,16 @@ export function UserMenu() {
           <DropdownMenuItem asChild className="rounded-[10px] py-2.5 font-bold">
             <Link href="/profile#orders">
               <Truck className="size-4 text-gold" /> پیگیری سفارشات
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild className="rounded-[10px] py-2.5 font-bold">
+            <Link href="/profile#wishlist">
+              <Heart className="size-4 text-rose" /> علاقه‌مندی‌ها
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild className="rounded-[10px] py-2.5 font-bold">
+            <Link href="/profile#support">
+              <Headphones className="size-4 text-gold" /> پشتیبانی
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem variant="destructive" className="rounded-[10px] py-2.5 font-bold" onSelect={() => logout()}>

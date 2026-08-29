@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { email, nationalId, optMobile, optText, text } from "@/lib/forms";
+import { email, longText, nationalId, optMobile, optText, text } from "@/lib/forms";
 
 /** ویرایشِ حساب — نام و ایمیل الزامی، بقیه اختیاری ولی با قاعدهٔ واقعی */
 export const accountSchema = z
@@ -48,3 +48,12 @@ export const childSchema = z.object({
 
 export type ChildValues = z.infer<typeof childSchema>;
 export const childDefaults: ChildValues = { childName: "", childAge: "", childGender: "" };
+
+/** تیکتِ پشتیبانی — موضوع کوتاه، پیامِ واقعی */
+export const ticketSchema = z.object({
+  subject: text("موضوع", 3, 60),
+  message: longText("پیام", 10, 600),
+});
+
+export type TicketValues = z.infer<typeof ticketSchema>;
+export const ticketDefaults: TicketValues = { subject: "", message: "" };

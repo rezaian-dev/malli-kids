@@ -81,6 +81,7 @@ export function seedAdminDb(): AdminDb {
       tag: a.tag,
       title: a.title,
       excerpt: a.excerpt,
+      body: a.body,
       published: true,
       date: ["۱۴۰۵/۰۵/۱۲", "۱۴۰۵/۰۴/۲۰", "۱۴۰۵/۰۳/۰۸"][i] || "۱۴۰۵/۰۲/۰۱",
     })),
@@ -96,6 +97,7 @@ export function seedAdminDb(): AdminDb {
       address: BRAND.address,
       otpDemo: "12345",
       storeOpen: true,
+      campaign: { active: false, percent: 20, title: "جشنواره ملی‌کیدز" },
     },
   };
 }

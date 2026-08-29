@@ -27,3 +27,8 @@ export function fullName(first?: string, last?: string): string {
 export function parseFaPrice(fa: string): number {
   return Number(toEnDigits(fa).replace(/[^\d]/g, "")) || 0;
 }
+
+/** تاریخِ شمسیِ خوانا برای نمایش (تیکت، سفارش، اعلان) */
+export function faNow(): string {
+  return new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium", timeStyle: "short" }).format(new Date());
+}

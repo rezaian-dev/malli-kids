@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { SizeTable } from "./size-table";
 import { ReviewForm } from "./review-form";
+import { ProductReviews } from "./product-reviews";
 
 const TRIGGER = cn(
   "whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-bold text-navy/50 transition-colors dark:text-wheat",
@@ -45,17 +46,7 @@ export function ProductTabs({ product }: { product: Product }) {
         <TabsContent value="rev">
           <div className="max-w-3xl space-y-4">
             <ReviewForm product={product} />
-
-            <article className="rounded-3xl border border-navy/5 bg-white p-5 dark:border-gold/30 dark:bg-slate">
-              <div className="flex flex-wrap justify-between gap-3">
-                <p className="text-sm font-black text-navy dark:text-ivory">سارا محمدی</p>
-                <span className="text-[11px] text-navy/40">تاریخ نظر: ۳ مرداد ۱۴۰۵</span>
-              </div>
-              <p className="mt-1 text-[11px] text-navy/45">محصول: {product.name}</p>
-              <p className="mt-3 text-sm leading-7 text-navy/70 dark:text-wheat">
-                «کیفیت دوخت از عکس بهتر بود و سایز پیشنهادی پرو مجازی دقیق بود.»
-              </p>
-            </article>
+            <ProductReviews product={product} />
           </div>
         </TabsContent>
       </Tabs>

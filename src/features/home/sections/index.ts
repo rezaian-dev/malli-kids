@@ -8,4 +8,5 @@ export { Atelier } from "./atelier";
 export { Handmade } from "./handmade";
 export { Styles } from "./styles";
 export { Reviews } from "./reviews";
+export { Collab } from "./collab";
 export { Stories } from "./stories";

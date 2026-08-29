@@ -10,7 +10,10 @@ export const BRAND = {
   freeShipFrom: 1_500_000,
 };
 
-export const CATS = ["همه", "دخترانه", "پسرانه", "سیسمونی", "لباس مشاغل", "اکسسوری", "دستدوز"] as const;
+export const CATS = ["همه", "دخترانه", "پسرانه", "سیسمونی", "راحتی و خانگی", "بیرونی و مجلسی", "لباس مشاغل", "اکسسوری", "دستدوز"] as const;
+
+/** زیرشاخه‌های هر دسته = فصل‌ها؛ ادمین و فروشگاه هر دو از همین درخت استفاده می‌کنند. */
+export { SEASONS } from "@/lib/data/products";
 
 export const SORTS: Record<string, string> = {
   new: "جدیدترین",
@@ -22,6 +25,7 @@ export const SORTS: Record<string, string> = {
 export const STORAGE = {
   user: "malli_user",
   purchases: "malli_purchases",
+  cart: "malli_cart",
   admin: "malli_admin",
   adminDb: "malli_admin_db",
 };

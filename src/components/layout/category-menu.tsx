@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft, LayoutGrid } from "lucide-react";
 import { CAT_LINKS } from "@/lib/data/nav";
 import { navIcon } from "@/lib/data/nav-icons";
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { isActive } from "./nav-active-link";
+import { startTopProgress } from "./click-progress";
 
 /**
  * آیتم «دسته‌بندی» نوار ناوبری.
@@ -21,13 +22,19 @@ import { isActive } from "./nav-active-link";
  */
 export function CategoryMenu() {
   const path = usePathname();
+  const router = useRouter();
   const catOn = isActive(path, "/shop");
 
   return (
     <NavigationMenuItem>
       <NavigationMenuTrigger
+        // هاور = باز شدنِ منو؛ کلیک = رفتن به صفحهٔ لیستِ محصولات
+        onClick={() => {
+          startTopProgress();
+          router.push("/shop");
+        }}
         className={cn(
-          "h-auto gap-1 rounded-full bg-transparent px-2 py-2 text-[11px] font-medium transition-colors lg:gap-1.5 lg:px-3 lg:text-sm xl:px-4",
+          "h-auto cursor-pointer gap-1 rounded-full bg-transparent px-2 py-2 text-[11px] font-medium transition-colors lg:gap-1.5 lg:px-3 lg:text-sm xl:px-4",
           "text-navy/80 hover:bg-gold/10 hover:text-gold focus:bg-gold/10 focus:text-gold",
           "data-[state=open]:bg-gold/10 data-[state=open]:text-gold",
           "dark:text-ivory dark:hover:bg-gold/15 dark:hover:text-gold-light",
@@ -75,11 +82,12 @@ export function CategoryMenu() {
                         "dark:border-gold/20 dark:bg-dusk-alt dark:hover:border-gold/60 dark:hover:bg-dusk-mid dark:focus:bg-dusk-mid",
                       )}
                     >
+                      {/* کاشیِ آیکن رنگِ ثابت دارد — هیچ پرشِ رنگی هنگامِ خروجِ ماوس نیست */}
                       <span
                         className={cn(
-                          "flex size-10 shrink-0 items-center justify-center rounded-2xl transition-colors",
-                          "bg-navy text-gold group-hover:bg-navy-mid",
-                          "dark:bg-gold dark:text-navy-deep dark:group-hover:bg-gold-light",
+                          "flex size-10 shrink-0 items-center justify-center rounded-2xl",
+                          "bg-navy text-gold",
+                          "dark:bg-gold dark:text-navy-deep",
                         )}
                       >
                         <Icon className="size-5 text-current" />

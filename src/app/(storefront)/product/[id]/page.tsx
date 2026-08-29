@@ -8,7 +8,8 @@ export function generateStaticParams() {
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const p = getProductById(Number(id));
+  const num = Number(id);
+  const p = getProductById(num);
   if (!p) notFound();
-  return <View product={p} />;
+  return <View product={p} requestedId={Number.isFinite(num) ? num : undefined} />;
 }

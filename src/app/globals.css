@@ -408,3 +408,169 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* ── autofill ─────────────────────────────────────────────────────────────
+   مقدارهایِ ذخیره‌شدهٔ مرورگر نباید رنگِ فیلد را بشکنند. این قاعده عمداً
+   بیرون از هر @layer است تا بر utility هایِ transition خودِ input غلبه کند:
+   با یک transition بسیار طولانی، زرد/آبیِ مرورگر عملاً هرگز رنگ نمی‌شود و
+   رنگِ متن و caret با تم هماهنگ می‌ماند. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+input:autofill,
+textarea:-webkit-autofill,
+textarea:autofill {
+  -webkit-text-fill-color: var(--color-navy);
+  caret-color: var(--color-navy);
+  transition:
+    background-color 9999s ease-in-out 0s,
+    color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active,
+.dark input:autofill,
+.dark textarea:-webkit-autofill,
+.dark textarea:autofill {
+  -webkit-text-fill-color: var(--color-ivory);
+  caret-color: var(--color-ivory);
+}
+
+/* فیلدهای دیالوگِ ورود داخلِ قابِ رنگی نشسته‌اند؛ برای اینکه مستطیلِ
+   آبیِ کروم حتی با پر شدنِ مقدار حینِ load هم هرگز دیده نشود، خودِ input
+   با سایهٔ درونی هم‌رنگِ پس‌زمینهٔ قاب (سفید در روشن، ترکیبِ navy-deep روی
+   dusk در تاریک) رنگ می‌شود — هر ناهم‌خوانیِ هندسی هم‌رنگ و نامرئی است. */
+.auth-fields input:-webkit-autofill,
+.auth-fields input:-webkit-autofill:hover,
+.auth-fields input:-webkit-autofill:focus,
+.auth-fields input:-webkit-autofill:active,
+.auth-fields input:autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-white) inset;
+  border-radius: 0.75rem;
+}
+.dark .auth-fields input:-webkit-autofill,
+.dark .auth-fields input:-webkit-autofill:hover,
+.dark .auth-fields input:-webkit-autofill:focus,
+.dark .auth-fields input:-webkit-autofill:active,
+.dark .auth-fields input:autofill {
+  -webkit-box-shadow: 0 0 0 1000px color-mix(in srgb, var(--color-navy-deep) 60%, var(--color-dusk)) inset;
+}
+
+/* لرزش فقط برای فیلدهای نامعتبر — نه کلِ فرم و نه دکمه‌ها.
+   AppForm هنگامِ ثبتِ نامعتبر data-shaking می‌گیرد و هر فیلدی که
+   data-invalid دارد یک‌بار می‌لرزد (رویداد تا فرم حباب می‌شود و حالت پاک می‌شود). */
+/* پیامِ خطای فیلد: باز شدنِ نرمِ ارتفاع به‌جای پرشِ ناگهانی —
+   تا لرزشِ فیلد (مثل OTP در مودال) اسکرول/پرشِ عمودیِ لحظه‌ای نسازد. */
+.field-error {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows 0.28s ease,
+    opacity 0.28s ease;
+}
+.field-error > * {
+  min-height: 0;
+  overflow: hidden;
+}
+@starting-style {
+  .field-error {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+}
+
+form[data-shaking="true"] [data-invalid="true"] {
+  animation: shake 0.5s ease both;
+}
+
+/* نوارِ پیشرفتِ nextjs-toploader: گرادیانِ طلایی و لنگر از راست (هماهنگ با RTL) */
+#nprogress .bar {
+  left: auto;
+  right: 0;
+  background: linear-gradient(270deg, #b8893f, #f0c878 45%, #d9b77f) !important;
+}
+#nprogress .peg {
+  display: none;
+}
+
+/* ---------- بدنهٔ مقاله (ویرایشگر ادمین + مجله) ---------- */
+.rich-body {
+  line-height: 2.1;
+  font-size: 0.95rem;
+}
+.rich-body h2 {
+  font-size: 1.25rem;
+  font-weight: 900;
+  margin: 1.4rem 0 0.6rem;
+}
+.rich-body h3 {
+  font-size: 1.05rem;
+  font-weight: 900;
+  margin: 1.2rem 0 0.5rem;
+}
+.rich-body p {
+  margin: 0.7rem 0;
+}
+.rich-body ul {
+  list-style: disc;
+  padding-inline-start: 1.4rem;
+  margin: 0.7rem 0;
+}
+.rich-body ol {
+  list-style: decimal;
+  padding-inline-start: 1.4rem;
+  margin: 0.7rem 0;
+}
+.rich-body li {
+  margin: 0.3rem 0;
+}
+.rich-body blockquote {
+  border-inline-start: 3px solid var(--color-gold, #c19357);
+  padding-inline-start: 0.9rem;
+  margin: 1rem 0;
+  color: inherit;
+  opacity: 0.8;
+  font-weight: 600;
+}
+.rich-body a {
+  color: var(--color-gold, #c19357);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rich-body img {
+  border-radius: 1.25rem;
+  margin: 1rem 0;
+  max-width: 100%;
+  height: auto;
+}
+.rich-body strong {
+  font-weight: 900;
+}
+/* Placeholder تیپ‌تپ */
+.rich-body p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: inline-start;
+  height: 0;
+  pointer-events: none;
+  color: currentColor;
+  opacity: 0.35;
+}
+
+/* ── دکمه‌های اسلایدر: موجِ طلایی هنگامِ کلیک ── */
+@keyframes arrow-ripple {
+  from {
+    box-shadow: 0 0 0 0 rgb(193 147 87 / 0.55);
+  }
+  to {
+    box-shadow: 0 0 0 18px rgb(193 147 87 / 0);
+  }
+}
+.slider-arrow:active {
+  animation: arrow-ripple 0.5s ease-out;
+}

@@ -1,13 +1,13 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "./theme-provider";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /**
  * سوییچ تم — با یک کلیک بین روشن و تاریک جابه‌جا می‌شود (بدون منوی کشویی).
- * وضعیت را next-themes نگه می‌دارد؛ هیچ state دستی اینجا نیست.
+ * وضعیت را ThemeProvider داخلی نگه می‌دارد؛ آیکن‌ها کاملاً با CSS جابه‌جا می‌شوند.
  */
 export function ModeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();

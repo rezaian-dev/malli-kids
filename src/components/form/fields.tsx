@@ -47,6 +47,8 @@ export type FieldShellProps = {
   trailing?: ReactNode;
   /** قابِ خطی/باکسی را خاموش می‌کند (فیلدهایی که خودشان قاب دارند، مثل کد یکبارمصرف) */
   noShell?: boolean;
+  /** پیامِ متنیِ خطا را نشان نده — فقط قاب/حاشیه قرمز (مثل ایمیلِ خبرنامه) */
+  hideMessage?: boolean;
   /** کلاسِ خودِ برچسب (مثلاً «sr-only» وقتی برچسبِ تصویری نداریم) */
   labelClassName?: string;
   /** کنترل را خودتان می‌سازید (برای Select/ToggleGroup/InputOTP/…) */
@@ -57,19 +59,20 @@ export type FieldShellProps = {
  * قابِ مشترکِ همهٔ فیلدها: Label + کنترل + پیامِ خطا + راهنما.
  * بقیهٔ فیلدها فقط این را با یک کنترلِ مناسب پر می‌کنند.
  */
-export function Field({ name, label, hint, required, skin = "admin", className, icon, trailing, noShell, labelClassName, children }: FieldShellProps) {
+export function Field({ name, label, hint, required, skin = "admin", className, icon, trailing, noShell, hideMessage, labelClassName, children }: FieldShellProps) {
   const { field, fieldState } = useField(name);
   const uid = useId();
   const id = `f-${uid}-${name}`;
   const invalid = fieldState.invalid;
   const message = fieldState.error?.message;
   const shell = noShell ? undefined : SHELL[skin];
+  const showMsg = Boolean(message) && !hideMessage;
 
   const control = children({
     field,
     invalid,
     id,
-    describedBy: message ? `${id}-msg` : undefined,
+    describedBy: showMsg ? `${id}-msg` : undefined,
   });
 
   return (
@@ -99,10 +102,14 @@ export function Field({ name, label, hint, required, skin = "admin", className, 
         </>
       )}
 
-      {message ? (
-        <p id={`${id}-msg`} role="alert" className={ERROR_TEXT}>
-          <CircleAlert className="mt-0.5 size-3 shrink-0" />
-          <span>{message}</span>
+      {showMsg ? (
+        /* پوستهٔ grid-rows: ارتفاعِ پیامِ خطا به‌جای پرشِ ناگهانی، نرم باز می‌شود
+           (جلوگیری از اسکرول/پرشِ عمودیِ لحظه‌ای، مثل لرزشِ کد OTP در مودال). */
+        <p id={`${id}-msg`} role="alert" className="field-error m-0">
+          <span className={ERROR_TEXT}>
+            <CircleAlert className="mt-0.5 size-3 shrink-0" />
+            <span>{message}</span>
+          </span>
         </p>
       ) : hint ? (
         <p className={HINT_TEXT}>{hint}</p>

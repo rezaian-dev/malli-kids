@@ -1,10 +1,11 @@
+import Image from "next/image";
 import { Search } from "@/features/home/components/search";
 
 export function Find() {
   return (
     <section id="searchHome" className="relative overflow-visible py-16 sm:py-24">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <img src="/brand/search-bg.jpg" alt="" className="absolute inset-0 h-full w-full scale-105 object-cover" />
+        <Image src="/brand/search-bg.jpg" alt="" width={1600} height={900} className="absolute inset-0 h-full w-full scale-105 object-cover" />
         <div className="absolute inset-0 bg-navy-deep/80" />
         <div className="absolute inset-0 bg-linear-to-l from-navy/90 via-navy/70 to-navy/90" />
       </div>

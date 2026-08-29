@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
@@ -14,7 +16,7 @@ import { ModeToggle } from "@/components/shared/mode-toggle";
 
 const BRAND = (
   <div className="flex items-center gap-3">
-    <img src="/brand/logo-white.png" alt="" className="size-11 shrink-0 rounded-2xl bg-navy p-1.5 object-contain dark:bg-white/10" />
+    <Image src="/brand/logo-white.png" alt="" width={44} height={44} className="size-11 shrink-0 rounded-2xl bg-navy p-1.5 object-contain dark:bg-white/10" />
     <div className="leading-none">
       <p className="font-display text-sm font-bold tracking-[0.2em] text-navy dark:text-ivory">MALLI</p>
       <p className="mt-1.5 text-[10px] font-black tracking-[0.32em] text-gold">CONSOLE</p>

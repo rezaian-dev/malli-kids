@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, Shirt, Truck, Users } from "lucide-react";
 import { useAdmin } from "@/features/admin";
@@ -36,7 +38,7 @@ export default function AdminHome() {
 
       {/* KPI hero — intentionally rich navy in both themes */}
       <div className="relative mb-6 overflow-hidden rounded-[28px] border border-gold/25">
-        <img src="/brand/look-party.jpg" alt="" className="absolute inset-0 size-full object-cover opacity-20" />
+        <Image src="/brand/look-party.jpg" alt="" width={800} height={600} className="absolute inset-0 size-full object-cover opacity-20" />
         <div className="absolute inset-0 bg-linear-to-l from-navy-deep via-navy-deep/90 to-navy/75" />
         <div className="relative grid gap-4 p-5 sm:grid-cols-2 sm:p-7 xl:grid-cols-4">
           <Stat t="فروش این ماه" v={`${formatToman(sales)} ت`} d="سفارش‌های پرداخت‌شده" Icon={ShoppingBag} />

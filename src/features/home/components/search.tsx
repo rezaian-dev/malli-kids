@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Baby, Flame, Search as SearchIcon, Shirt, Sparkles, TrendingUp } from "lucide-react";
@@ -59,7 +61,7 @@ export function Search() {
               aria-label="جستجوی محصولات"
               aria-invalid={Boolean(errors.q) || undefined}
               aria-describedby={errors.q ? "homeSearch-msg" : undefined}
-              placeholder="مثلاً پیراهن، سیسمونی، پالتو…"
+              placeholder="پیراهن، سیسمونی…"
               {...qField}
               onChange={(e) => {
                 qField.onChange(e);
@@ -114,7 +116,7 @@ export function Search() {
               {hits.map((p) => (
                 <li key={p.id}>
                   <a href={pdpHref(p.id)} className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-gold/10">
-                    <img src={p.img} alt="" className="h-12 w-10 shrink-0 rounded-lg object-cover" />
+                    <Image src={p.img} alt="" width={40} height={48} className="h-12 w-10 shrink-0 rounded-lg object-cover" />
                     <span className="min-w-0 flex-1 text-start">
                       <span className="block truncate text-sm font-black text-navy dark:text-ivory">{p.name}</span>
                       <span className="block text-[11px] text-navy/45 dark:text-wheat">{p.cat}</span>

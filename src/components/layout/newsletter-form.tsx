@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowLeft } from "lucide-react";
+import { useFormState } from "react-hook-form";
 import { toast } from "sonner";
 import { AppForm, Field, useAppForm } from "@/components/form";
 import { notifyDefaults, notifySchema, type NotifyValues } from "@/lib/forms";
@@ -13,6 +14,11 @@ import { cn } from "@/lib/utils";
  */
 export function NewsletterForm({ className }: { className?: string }) {
   const form = useAppForm({ schema: notifySchema, defaultValues: notifyDefaults });
+  const { submitCount } = useFormState({ control: form.control });
+  const emailVal = String(form.watch("email") ?? "");
+  /** خطا فقط وقتی نمایشی شود که واقعاً ایمیلِ غلطی وارد شده یا ثبت زده شده؛
+   * خروج از فوکوس با فیلدِ خالی نباید قرمز شود. */
+  const showInvalid = (invalid: boolean) => invalid && (submitCount > 0 || emailVal.trim() !== "");
 
   function onValid({ email }: NotifyValues) {
     // TODO: عضویت را به سرویسِ خبرنامه وصل کنید.
@@ -22,13 +28,18 @@ export function NewsletterForm({ className }: { className?: string }) {
 
   return (
     <AppForm form={form} onSubmit={onValid} action="/contact" method="get" ariaLabel="عضویت در خبرنامه" className={cn("w-full max-w-md", className)}>
-      <Field name="email" label="ایمیل شما برای عضویت در خبرنامه" labelClassName="sr-only" skin="inset" noShell className="min-w-0">
-        {({ field, invalid, id, describedBy }) => (
+      {/* خطای ایمیلِ نامعتبر فقط با حاشیهٔ قرمز؛ بدونِ پیامِ متنی (به خواستِ کاربر) */}
+      <Field name="email" label="ایمیل شما برای عضویت در خبرنامه" labelClassName="sr-only" skin="inset" noShell hideMessage className="min-w-0">
+        {({ field, invalid, id, describedBy }) => {
+          const bad = showInvalid(invalid);
+          return (
           <span
             className={cn(
               "flex items-center rounded-full border p-1.5 transition-all duration-300",
               "focus-within:border-gold/60 focus-within:bg-white/10 focus-within:shadow-[0_0_0_4px_rgba(196,147,87,.18)]",
-              invalid ? "border-rose bg-white/10" : "border-white/20 bg-white/5",
+              bad
+                ? "border-rose bg-white/10 focus-within:border-rose focus-within:shadow-[0_0_0_4px_rgba(225,29,72,.16)]"
+                : "border-white/20 bg-white/5",
             )}
           >
             <input
@@ -38,7 +49,7 @@ export function NewsletterForm({ className }: { className?: string }) {
               name="email"
               autoComplete="email"
               placeholder="ایمیل شما…"
-              aria-invalid={invalid || undefined}
+              aria-invalid={bad || undefined}
               aria-describedby={describedBy}
               value={(field.value as string) ?? ""}
               onChange={field.onChange}
@@ -53,7 +64,8 @@ export function NewsletterForm({ className }: { className?: string }) {
               عضویت <ArrowLeft className="size-4 transition-transform duration-200 group-hover/nl:-translate-x-0.5" />
             </button>
           </span>
-        )}
+          );
+        }}
       </Field>
     </AppForm>
   );

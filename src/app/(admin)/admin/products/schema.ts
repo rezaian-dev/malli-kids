@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CATS } from "@/lib/constants";
+import { CATS, SEASONS } from "@/lib/constants";
 import { amount, longText, optAmount, optText, parseFaNumber, text } from "@/lib/forms";
 import type { Product } from "@/types";
 
@@ -15,6 +15,7 @@ export const productSchema = z
   .object({
     name: text("نام محصول", 3, 80),
     cat: oneCat,
+    season: z.enum(SEASONS, { error: () => "زیرشاخه (فصل) را انتخاب کنید" }),
     price: amount("قیمت", { min: 1000, max: 500_000_000 }),
     old: optAmount({ min: 0, max: 500_000_000 }),
     disc: optText(20, "تخفیف"),
@@ -43,6 +44,7 @@ export type ProductValues = z.infer<typeof productSchema>;
 export const productDefaults: ProductValues = {
   name: "",
   cat: CAT_OPTIONS[0],
+  season: SEASONS[0],
   price: "",
   old: "",
   disc: "",
@@ -57,6 +59,7 @@ export function productValues(p: Product): ProductValues {
   return {
     name: p.name,
     cat: p.cat,
+    season: p.season ?? SEASONS[0],
     price: String(p.price),
     old: p.old ? String(p.old) : "",
     disc: p.disc ?? "",

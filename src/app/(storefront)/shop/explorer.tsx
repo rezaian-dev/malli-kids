@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ArrowDownNarrowWide, ArrowUpDown, ArrowUpNarrowWide, Check, LayoutGrid, List, Search, SlidersHorizontal, Sparkles, Star, Tag, X } from "lucide-react";
 import { CATALOG, SEASONS } from "@/lib/data/products";
+import { loadCatalog } from "@/lib/admin-sync";
 import { CATS, PER_PAGE, PRICE_CAP, SORTS } from "@/lib/constants";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { Card } from "@/features/product";
@@ -60,6 +61,8 @@ type State = {
 };
 
 export function Explorer() {
+  const [catalog, setCatalog] = useState(CATALOG);
+  useEffect(() => setCatalog(loadCatalog()), []);
   const params = useSearchParams();
   const router = useRouter();
   const path = usePathname();
@@ -113,7 +116,7 @@ export function Explorer() {
   }
 
   const filtered = useMemo(() => {
-    const list = CATALOG.filter((p) => {
+    const list = catalog.filter((p) => {
       if (state.cat !== "همه" && p.cat !== state.cat) return false;
       if (state.season !== "همه" && p.season !== state.season) return false;
       if (state.q && !p.name.includes(state.q) && !p.cat.includes(state.q)) return false;
@@ -183,7 +186,7 @@ export function Explorer() {
         push({ sort: k, page: 1 });
         onPick?.();
       }}
-      className="flex flex-col gap-1.5"
+      className="flex w-full flex-col gap-1.5"
       aria-label="مرتب‌سازی"
     >
       {SORT_META.map((s) => (
@@ -260,7 +263,13 @@ export function Explorer() {
         <ToggleGroup
           type="single"
           value={state.cat}
-          onValueChange={(c) => c && push({ cat: c, page: 1 })}
+          onValueChange={(c) => {
+            if (!c) return;
+            push({ cat: c, page: 1 });
+            // روی موبایل فیلترها در Sheet بازند؛ با انتخابِ دسته، sheet بسته می‌شود
+            // تا کاربر مستقیم روی صفحهٔ لیستِ محصولات فرود بیاید.
+            setFilterOpen(false);
+          }}
           className="flex flex-wrap justify-start gap-1.5"
         >
           {CATS.map((c) => (
@@ -319,7 +328,7 @@ export function Explorer() {
                   <span className="block text-[13px] font-extrabold text-navy dark:text-ivory">{label}</span>
                   <span className="block text-[10.5px] font-bold text-navy/45 dark:text-wheat">{hint}</span>
                 </span>
-                <Switch checked={on} onCheckedChange={(v) => push({ [key]: v, page: 1 })} />
+                <Switch checked={on} onCheckedChange={(v) => push({ [key]: v, page: 1 })} aria-label={label} />
               </label>
             );
           })}
@@ -356,7 +365,7 @@ export function Explorer() {
             const [min, max] = v.split("-").map(Number);
             push({ min, max, page: 1 });
           }}
-          className="grid grid-cols-2 gap-1.5"
+          className="grid w-full grid-cols-2 gap-1.5"
         >
           {PRICE_PRESETS.map((p) => (
             <ToggleGroupItem
@@ -439,14 +448,15 @@ export function Explorer() {
               <div className="hidden lg:block">
                 <Popover modal={false} open={sortPopOpen} onOpenChange={setSortPopOpen}>
                   <PopoverTrigger asChild>
-                    <button
+                    <Button
                       type="button"
-                      className="inline-flex min-w-[11rem] items-center justify-between gap-2 rounded-full border border-navy/12 bg-sand px-4 py-2.5 text-xs font-black text-navy transition hover:border-gold/50 aria-expanded:border-gold dark:border-gold/40 dark:bg-dusk-mid dark:text-linen"
+                      variant="outline"
+                      className="h-auto min-w-[11rem] justify-between rounded-full border-navy/12 bg-sand px-4 py-2.5 text-xs font-black text-navy hover:border-gold/50 aria-expanded:border-gold dark:border-gold/40 dark:bg-dusk-mid dark:text-linen"
                     >
                       <span className="flex items-center gap-1.5">
                         <ArrowUpDown className="size-4 text-gold-soft" /> {sortLabel}
                       </span>
-                    </button>
+                    </Button>
                   </PopoverTrigger>
                   <PopoverContent align="end" sideOffset={10} className="w-72 border-navy/12 bg-linen dark:border-gold/40 dark:bg-sort-sheet">
                     <p className="px-2 pt-1 pb-2 text-[11px] font-black tracking-[0.14em] text-gold uppercase">مرتب‌سازی</p>
@@ -456,15 +466,16 @@ export function Explorer() {
               </div>
 
               {/* Mobile sort — bottom Sheet */}
-              <button
+              <Button
                 type="button"
-                className="inline-flex min-w-0 flex-1 items-center justify-between gap-2 rounded-full border border-navy/12 bg-sand px-3 py-2.5 text-xs font-black text-navy xs:min-w-[9rem] xs:flex-none lg:hidden dark:border-gold/40 dark:bg-dusk-mid dark:text-linen"
+                variant="outline"
+                className="h-auto min-w-0 flex-1 justify-between rounded-full border-navy/12 bg-sand px-3 py-2.5 text-xs font-black text-navy xs:min-w-[9rem] xs:flex-none lg:hidden dark:border-gold/40 dark:bg-dusk-mid dark:text-linen"
                 onClick={() => setSortOpen(true)}
               >
                 <span className="flex items-center gap-1.5 truncate">
                   <ArrowUpDown className="size-4 text-gold-soft" /> {sortLabel}
                 </span>
-              </button>
+              </Button>
 
               {/* View toggle */}
               <ToggleGroup
@@ -492,7 +503,7 @@ export function Explorer() {
           </div>
 
           {/* Grid / List */}
-          <div className={state.view === "list" ? "flex flex-col gap-4" : "grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 sm:gap-4 xl:grid-cols-3"}>
+          <div className={state.view === "list" ? "flex flex-col gap-4" : "grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 sm:gap-4 min-[900px]:grid-cols-3 min-[1500px]:grid-cols-4"}>
             {slice.map((p) => (
               <Card key={p.id} p={p} view={state.view} />
             ))}

@@ -1,12 +1,15 @@
 "use client";
 
+import Image from "next/image";
+
 import { useAdmin } from "@/features/admin";
+import { AdminTable, type AdminCol } from "@/features/admin/components/admin-table";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { Switch } from "@/components/ui/switch";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/use-pagination";
 import { PageHead } from "@/features/admin";
+import type { Product } from "@/types";
 
 const PER_PAGE = 6;
 
@@ -14,6 +17,36 @@ export default function AdminInventory() {
   const { db, upsertProduct } = useAdmin();
   const low = db.products.filter((p) => !p.stock);
   const pg = usePagination(db.products, PER_PAGE);
+
+  const cols: AdminCol<Product>[] = [
+    {
+      key: "name",
+      title: "کالا",
+      width: "2.2fr",
+      render: (p) => (
+        <div className="flex items-center gap-3">
+          <Image src={p.img} alt="" width={40} height={40} className="size-10 shrink-0 rounded-xl object-cover" />
+          <span className="truncate">{p.name}</span>
+        </div>
+      ),
+    },
+    { key: "cat", title: "دسته", width: "1.1fr", render: (p) => <span className="font-semibold text-navy/60 dark:text-wheat">{p.cat}</span> },
+    { key: "sold", title: "فروش", width: "5.5rem", align: "center", render: (p) => toFaDigits(p.sold) },
+    {
+      key: "price",
+      title: "قیمت",
+      width: "8.5rem",
+      align: "center",
+      render: (p) => <span className="whitespace-nowrap font-black text-gold-deep dark:text-gold-soft">{formatToman(p.price)}</span>,
+    },
+    {
+      key: "stock",
+      title: "موجودی",
+      width: "6rem",
+      align: "center",
+      render: (p) => <Switch checked={p.stock} onCheckedChange={(v) => upsertProduct({ ...p, stock: v })} aria-label={`موجودی ${p.name}`} />,
+    },
+  ];
 
   return (
     <div>
@@ -23,38 +56,7 @@ export default function AdminInventory() {
           {toFaDigits(low.length)} مدل ناموجود است و در فروشگاه نمایش خاکستری می‌شود.
         </p>
       ) : null}
-      <div className="overflow-x-auto lux-card">
-        <Table className="min-w-[40rem] text-sm">
-          <TableHeader className="bg-sand text-[11px] dark:bg-navy-mid">
-            <TableRow className="border-0 hover:bg-transparent">
-              {["کالا", "دسته", "فروش", "قیمت", "موجودی"].map((h) => (
-                <TableHead key={h} className="h-auto px-4 py-3 text-right font-black text-navy/50 dark:text-wheat">
-                  {h}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {pg.pageItems.map((p) => (
-              <TableRow key={p.id} className="border-navy/5 dark:border-gold/15">
-                <TableCell className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.img} alt="" className="size-10 rounded-xl object-cover" />
-                    <span className="max-w-48 truncate font-bold">{p.name}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="px-4 py-3">{p.cat}</TableCell>
-                <TableCell className="px-4 py-3">{toFaDigits(p.sold)}</TableCell>
-                <TableCell className="px-4 py-3 font-black">{formatToman(p.price)}</TableCell>
-                <TableCell className="px-4 py-3">
-                  <Switch checked={p.stock} onCheckedChange={(v) => upsertProduct({ ...p, stock: v })} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <AdminTable cols={cols} rows={pg.pageItems} minWidth="52rem" />
       <Pagination pg={pg} unit="کالا" />
     </div>
   );

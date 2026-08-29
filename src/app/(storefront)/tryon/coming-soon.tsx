@@ -61,7 +61,7 @@ export function TryOnComingSoon() {
                     type="email"
                     dir="ltr"
                     autoComplete="email"
-                    placeholder="ایمیل شما برای اطلاع‌رسانی…"
+                    placeholder="ایمیل شما…"
                     aria-invalid={invalid || undefined}
                     aria-describedby={describedBy}
                     value={(field.value as string) ?? ""}

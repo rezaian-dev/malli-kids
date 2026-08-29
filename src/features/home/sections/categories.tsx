@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ArrowDownLeft } from "lucide-react";
 import { OrnLeaf } from "@/features/home/components/ornaments";
 
@@ -32,7 +33,7 @@ export function Categories() {
         <div className="grid grid-cols-1 gap-3 transition-all duration-700 ease-out min-[360px]:grid-cols-2 sm:gap-5 lg:grid-cols-4">
           {BIG.map((c) => (
             <a key={c.t} href={c.href} className="group relative col-span-2 block h-64 overflow-hidden rounded-2xl shadow-lg shadow-navy/10 min-[420px]:h-80 sm:h-105 sm:rounded-[28px]">
-              <img src={c.img} alt={c.t} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <Image src={c.img} alt={c.t} width={600} height={750} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-linear-to-t from-navy-deep/85 via-navy/20 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2.5 p-4 sm:gap-3 sm:p-6">
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
@@ -53,7 +54,7 @@ export function Categories() {
           ))}
           {SMALL.map((c) => (
             <a key={c.t} href={c.href} className="group relative block h-52 overflow-hidden rounded-xl shadow-lg shadow-navy/10 min-[420px]:h-64 sm:h-80 sm:rounded-3xl lg:h-105">
-              <img src={c.img} alt={c.t} loading="lazy" className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 ${c.top ? "object-top" : ""}`} />
+              <Image src={c.img} alt={c.t} width={600} height={750} className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 ${c.top ? "object-top" : ""}`} />
               <div className="absolute inset-0 bg-linear-to-t from-navy-deep/80 via-navy/10 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3.5 sm:p-5">
                 <div className="min-w-0">

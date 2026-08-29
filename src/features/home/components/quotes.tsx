@@ -1,9 +1,12 @@
 "use client";
 
+import Image from "next/image";
+
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, BadgeCheck, Quote, Star, ThumbsUp } from "lucide-react";
+import { BadgeCheck, Quote, Star, ThumbsUp } from "lucide-react";
+import { SliderArrow } from "@/components/ui/slider-arrow";
 
 const REVIEWS = [
   {
@@ -108,7 +111,7 @@ export function Quotes() {
                   <Quote className="pointer-events-none absolute top-3 end-3 size-12 text-gold/15 sm:size-16" strokeWidth={1.15} />
                   <div className="relative flex min-h-0 flex-1 flex-col gap-4 sm:flex-row">
                     <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-2xl sm:h-auto sm:w-28">
-                      <img src={r.img} alt="" className="size-full object-cover" />
+                      <Image src={r.img} alt="" width={112} height={96} className="size-full object-cover" />
                       <div className="absolute inset-0 bg-linear-to-t from-navy/55 to-transparent" />
                     </div>
                     <div className="relative flex min-w-0 flex-1 flex-col">
@@ -154,12 +157,8 @@ export function Quotes() {
           ))}
         </div>
         <div className="flex gap-2">
-          <button type="button" className="inline-flex size-10 items-center justify-center rounded-full border border-navy/10 bg-white text-navy dark:border-gold/40 dark:bg-dusk-mid dark:text-ivory" aria-label="نظر قبلی" onClick={() => embla?.scrollPrev()}>
-            <ArrowRight className="size-4" />
-          </button>
-          <button type="button" className="inline-flex size-10 items-center justify-center rounded-full bg-navy text-ivory dark:bg-gold-glow dark:text-navy-deep" aria-label="نظر بعدی" onClick={() => embla?.scrollNext()}>
-            <ArrowLeft className="size-4" />
-          </button>
+          <SliderArrow direction="prev" label="نظر قبلی" onClick={() => embla?.scrollPrev()} />
+          <SliderArrow direction="next" label="نظر بعدی" onClick={() => embla?.scrollNext()} />
         </div>
       </div>
     </div>

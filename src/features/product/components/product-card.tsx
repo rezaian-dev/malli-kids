@@ -1,9 +1,12 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Bell, Eye, PackageX, ShoppingBag, Star } from "lucide-react";
 import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { pdpHref } from "@/lib/data/products";
 import { AddToCart } from "./product-card-actions";
+import { FavButton } from "./fav-button";
+import { PriceTag } from "./price-tag";
 
 const BADGE: Record<string, string> = {
   پرفروش: "bg-navy text-gold-light",
@@ -33,9 +36,7 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
   const price = out ? (
     <span className="text-rose font-extrabold text-xs">ناموجود</span>
   ) : (
-    <span className="font-black text-[13px] whitespace-nowrap text-navy dark:text-ivory">
-      {formatToman(p.price)} <span className="text-[10px] font-semibold text-navy/50 dark:text-gold-soft">تومان</span>
-    </span>
+    <PriceTag price={p.price} />
   );
 
   if (view === "list") {
@@ -43,7 +44,8 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
       <article className="group flex min-w-0 flex-row overflow-hidden rounded-[20px] border border-navy/10 bg-white/94 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-gold/55 hover:shadow-[0_18px_36px_-16px_rgba(14,42,71,.28)] dark:border-gold-soft/35 dark:bg-slate/60">
         <Link href={href} className="relative block h-auto min-h-[7.5rem] w-[6.5rem] shrink-0 overflow-hidden bg-sand">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={p.img} alt="" className={`absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${out ? "grayscale opacity-75" : ""}`} />
+          <Image src={p.img} alt="" width={600} height={800} className={`absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${out ? "grayscale opacity-75" : ""}`} />
+          <FavButton id={p.id} name={p.name} className="absolute right-1.5 top-1.5 size-8 shadow" />
         </Link>
         <div className="flex-1 min-w-0 p-3 flex flex-col gap-2">
           <div className="flex justify-between gap-2">
@@ -61,7 +63,7 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
               <Link href={href} className={`${VIEW} h-8 px-2.5 text-[11px]`}>
                 <Eye width={14} height={14} /> مشاهده
               </Link>
-              <AddToCart out={out} className={`${CART} h-8 px-2.5 text-[11px]`}>
+              <AddToCart out={out} id={p.id} className={`${CART} h-8 px-2.5 text-[11px]`}>
                 {out ? "خبرم کن" : "سبد"}
               </AddToCart>
             </div>
@@ -75,9 +77,11 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
     <article className="group @container min-w-0 overflow-hidden rounded-[24px] border border-navy/10 bg-white/94 shadow-[0_10px_28px_-18px_rgba(14,42,71,.22)] transition-all duration-500 ease-out hover:-translate-y-2 hover:border-gold/55 hover:shadow-[0_26px_48px_-18px_rgba(14,42,71,.32)] dark:border-gold-soft/35 dark:bg-slate/60 dark:shadow-none">
       <div className="relative w-full overflow-hidden bg-sand pt-[125%]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={p.img}
           alt={p.name}
+          width={600}
+          height={800}
           className={`absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out ${out ? "grayscale opacity-75" : "group-hover:scale-110"}`}
         />
         {badge ? (
@@ -86,8 +90,9 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
           </span>
         ) : null}
         {p.disc ? (
-          <span className="absolute top-2.5 left-2.5 z-2 bg-rose text-white text-[10px] font-black px-2 py-1 rounded-full whitespace-nowrap">{p.disc} تخفیف</span>
+          <span className="absolute top-2.5 left-14 z-2 bg-rose text-white text-[10px] font-black px-2 py-1 rounded-full whitespace-nowrap">{p.disc} تخفیف</span>
         ) : null}
+        <FavButton id={p.id} name={p.name} className="absolute left-2.5 top-2.5" />
         {out ? (
           <div className="absolute inset-0 z-1 bg-navy/35 flex items-center justify-center">
             <span className="bg-white text-navy text-[11px] font-black px-3 py-1.5 rounded-full inline-flex items-center gap-1">
@@ -99,7 +104,7 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
           <Link href={href} className={`${VIEW} h-10 w-full text-xs rounded-[14px] shadow-md`}>
             <Eye width={16} height={16} /> مشاهده محصول
           </Link>
-          <AddToCart out={out} className={`${CART} h-10 w-full text-xs rounded-[14px] shadow-md`}>
+          <AddToCart out={out} id={p.id} className={`${CART} h-10 w-full text-xs rounded-[14px] shadow-md`}>
             {out ? (
               <>
                 <Bell width={16} height={16} /> اطلاع از موجودی
@@ -138,7 +143,7 @@ export function Card({ p, view }: { p: Product; view: "grid" | "list" }) {
           <Link href={href} className={`${VIEW} h-9 min-w-0 text-[10px]`}>
             <Eye width={12} height={12} className="shrink-0" /> <span className="truncate">مشاهده</span>
           </Link>
-          <AddToCart out={out} className={`${out ? "bg-rose-50 text-rose" : CART} h-9 min-w-0 rounded-[10px] border-0 text-[10px] font-black`}>
+          <AddToCart out={out} id={p.id} className={`${out ? "bg-rose-50 text-rose" : CART} h-9 min-w-0 rounded-[10px] border-0 text-[10px] font-black`}>
             {out ? "اطلاع موجودی" : "افزودن به سبد"}
           </AddToCart>
         </div>
