@@ -28,7 +28,7 @@ export async function Handmade() {
         <div className="mb-10 flex flex-col justify-between gap-5 transition-all duration-700 ease-out sm:mb-12 sm:flex-row sm:items-end">
           <div>
             <span className="text-gold-light flex items-center gap-2 text-sm font-bold tracking-wide">
-              <Heart className="fill-gold text-gold h-4 w-4" />
+              <Heart className="fill-gold-light text-gold-light h-4 w-4" />
               کالکشن دست‌ساز
             </span>
             <h2 className="mt-2 text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black text-white">

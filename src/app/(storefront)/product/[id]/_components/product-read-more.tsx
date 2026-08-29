@@ -43,7 +43,7 @@ export function ProductReadMore({
           onClick={() => setOpen((v) => !v)}
           className={cn(
             "mt-2.5 inline-flex size-9 items-center justify-center rounded-full",
-            "border-gold/55 bg-navy text-gold hover:bg-gold hover:text-navy-deep focus-visible:ring-gold border shadow-[0_10px_22px_-12px_rgba(14,42,71,.5)] transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:outline-none",
+            "border-gold/55 bg-navy text-gold-light hover:bg-gold hover:text-navy-deep focus-visible:ring-gold border shadow-[0_10px_22px_-12px_rgba(14,42,71,.5)] transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:outline-none",
             "dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light",
           )}
         >

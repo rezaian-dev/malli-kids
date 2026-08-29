@@ -29,7 +29,7 @@ export function CollabCard({
           <span
             className={cn(
               "grid size-10 shrink-0 place-items-center rounded-xl font-black",
-              "bg-navy text-gold",
+              "bg-navy text-gold-soft",
               "dark:bg-gold/15 dark:text-gold-soft",
             )}
           >

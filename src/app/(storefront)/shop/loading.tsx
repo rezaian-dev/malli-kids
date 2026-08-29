@@ -6,7 +6,7 @@ import { PRODUCT_GRID } from "@/components/product/card-styles";
 import { cn } from "@/lib/utils";
 
 const FILTER_ICON_BADGE =
-  "bg-navy text-gold dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl";
+  "bg-navy text-gold-soft dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl";
 
 /** 🦴 Server-rendered skeleton for the `/shop` route segment — Next's own
  *  `loading.tsx` boundary shows this the instant navigation starts, no
