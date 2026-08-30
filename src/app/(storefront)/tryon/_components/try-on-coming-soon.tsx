@@ -91,11 +91,11 @@ export function ComingSoon() {
               {/* ambient gold glow */}
               <div
                 aria-hidden="true"
-                className="bg-gold/25 pointer-events-none absolute start-1/4 -top-32 size-72 rounded-full blur-3xl"
+                className="bg-gold/25 pointer-events-none absolute inset-s-1/4 -top-32 size-72 rounded-full blur-3xl"
               />
               <div
                 aria-hidden="true"
-                className="bg-navy-mid pointer-events-none absolute end-1/4 -bottom-40 size-80 rounded-full blur-3xl"
+                className="bg-navy-mid pointer-events-none absolute inset-e-1/4 -bottom-40 size-80 rounded-full blur-3xl"
               />
 
               <div className="relative grid gap-10 px-6 py-10 sm:px-10 sm:py-14 lg:grid-cols-[1.15fr_.85fr] lg:items-center">
@@ -173,12 +173,12 @@ export function ComingSoon() {
                 {/* visual: fitting-room mirror (pure CSS/SVG) */}
                 <div
                   aria-hidden="true"
-                  className="relative mx-auto hidden w-full max-w-[260px] select-none sm:block"
+                  className="relative mx-auto hidden w-full max-w-65 select-none sm:block"
                 >
-                  <div className="border-gold/30 absolute inset-6 animate-spin rounded-full border border-dashed [animation-duration:24s]" />
-                  <div className="border-gold/40 from-navy-mid via-navy-deep to-navy-deep relative aspect-[3/4] overflow-hidden rounded-[2rem] border bg-gradient-to-b shadow-[inset_0_0_60px_rgba(193,147,87,.15)]">
+                  <div className="border-gold/30 absolute inset-6 animate-spin rounded-full border border-dashed animation-duration-[24s]" />
+                  <div className="border-gold/40 from-navy-mid via-navy-deep to-navy-deep relative aspect-3/4 overflow-hidden rounded-4xl border bg-linear-to-b shadow-[inset_0_0_60px_rgba(193,147,87,.15)]">
                     {/* light sweep */}
-                    <div className="via-ivory/10 absolute inset-y-0 start-1/4 w-1/3 -skew-x-12 animate-pulse bg-gradient-to-b from-transparent to-transparent" />
+                    <div className="via-ivory/10 absolute inset-y-0 inset-s-1/4 w-1/3 -skew-x-12 animate-pulse bg-linear-to-b from-transparent to-transparent" />
                     {/* hanger */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                       <svg
@@ -199,10 +199,10 @@ export function ComingSoon() {
                     </div>
                   </div>
                   {/* floating chips */}
-                  <div className="border-gold/40 bg-ivory text-navy-deep absolute -end-8 -top-3 animate-bounce rounded-2xl border px-3 py-2 text-[11px] font-black shadow-xl [animation-duration:2.6s]">
+                  <div className="border-gold/40 bg-ivory text-navy-deep absolute -inset-e-8 -top-3 animate-bounce rounded-2xl border px-3 py-2 text-[11px] font-black shadow-xl animation-duration-[2.6s]">
                     پیراهن مجلسی
                   </div>
-                  <div className="border-gold/40 bg-ivory text-navy-deep absolute -start-10 bottom-8 animate-bounce rounded-2xl border px-3 py-2 text-[11px] font-black shadow-xl [animation-delay:.4s] [animation-duration:3.1s]">
+                  <div className="border-gold/40 bg-ivory text-navy-deep absolute -inset-s-10 bottom-8 animate-bounce rounded-2xl border px-3 py-2 text-[11px] font-black shadow-xl [animation-delay:.4s] animation-duration-[3.1s]">
                     سایز پیشنهادی: ۴
                   </div>
                 </div>
@@ -233,7 +233,7 @@ export function ComingSoon() {
                   >
                     <span
                       aria-hidden="true"
-                      className="bg-gold text-navy-deep absolute start-5 -top-3.5 flex size-7 items-center justify-center rounded-full text-sm font-black shadow"
+                      className="bg-gold text-navy-deep absolute inset-s-5 -top-3.5 flex size-7 items-center justify-center rounded-full text-sm font-black shadow"
                     >
                       {step.n}
                     </span>
