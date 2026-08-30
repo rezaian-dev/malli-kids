@@ -54,7 +54,7 @@ export default function AdminBanners() {
         { label: "پین‌شده", value: pinned, Icon: Pin, tone: "gold" },
       ]} />
 
-      <div className="admin-card mb-5 overflow-hidden">
+      <div className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] mb-5 overflow-hidden">
         <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div className="flex min-w-0 items-center gap-3">
             <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-gold/14 text-gold-deep dark:text-gold-soft"><CalendarDays className="size-5" /></span>
@@ -87,7 +87,7 @@ export default function AdminBanners() {
       {list.length > 0 ? (
         <div className="grid gap-3">
           {pg.pageItems.map((banner, index) => (
-            <article key={banner.id} className="admin-card overflow-hidden" style={{ animationDelay: `${index * 45}ms` }}>
+            <article key={banner.id} className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] overflow-hidden" style={{ animationDelay: `${index * 45}ms` }}>
               <div className={`h-1 w-full ${banner.theme === "gold" ? "bg-linear-to-r from-gold-deep via-gold-light to-gold" : banner.theme === "night" ? "bg-linear-to-r from-navy-deep via-purple-500/60 to-navy" : "bg-linear-to-r from-navy-deep via-navy-soft to-gold"}`} />
               <div className="p-4 sm:p-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -117,7 +117,7 @@ export default function AdminBanners() {
           ))}
         </div>
       ) : (
-        <div className="admin-card px-5 py-14 text-center"><Megaphone className="mx-auto size-10 text-gold" /><p className="mt-3 text-sm font-black">بنری مطابق فیلترها پیدا نشد</p></div>
+        <div className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] px-5 py-14 text-center"><Megaphone className="mx-auto size-10 text-gold" /><p className="mt-3 text-sm font-black">بنری مطابق فیلترها پیدا نشد</p></div>
       )}
       {list.length > 0 ? <Pagination pg={pg} unit="بنر" /> : null}
     </div>

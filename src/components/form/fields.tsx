@@ -105,7 +105,7 @@ export function Field({ name, label, hint, required, skin = "admin", className, 
       {showMsg ? (
         /* پوستهٔ grid-rows: ارتفاعِ پیامِ خطا به‌جای پرشِ ناگهانی، نرم باز می‌شود
            (جلوگیری از اسکرول/پرشِ عمودیِ لحظه‌ای، مثل لرزشِ کد OTP در مودال). */
-        <p id={`${id}-msg`} role="alert" className="field-error m-0">
+        <p id={`${id}-msg`} role="alert" className="m-0 grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity] duration-[280ms] ease-[cubic-bezier(.25,.1,.25,1)] starting:grid-rows-[0fr] starting:opacity-0 [&>*]:min-h-0 [&>*]:overflow-hidden">
           <span className={ERROR_TEXT}>
             <CircleAlert className="mt-0.5 size-3 shrink-0" />
             <span>{message}</span>

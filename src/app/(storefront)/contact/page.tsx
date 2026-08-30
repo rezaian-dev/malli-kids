@@ -66,7 +66,7 @@ export default function ContactPage() {
 
         {/* ── راه‌های ارتباطی ─────────────────────────────── */}
         <section>
-          <h2 className="lux-kicker">راه‌های ارتباطی</h2>
+          <h2 className="text-[11px] font-black tracking-[0.22em] text-gold">راه‌های ارتباطی</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <Info ico={Phone} k="تلفن" v={BRAND.phoneFa} href={`tel:${BRAND.phone}`} ltr />
             <Info ico={MapPin} k="نشانیِ گالری" v={BRAND.address} />
@@ -94,7 +94,7 @@ function Info({ ico: Icon, k, v, href, ltr }: { ico: typeof MapPin; k: string; v
       </span>
     </>
   );
-  const cls = "lux-card flex items-start gap-3 p-4";
+  const cls = "rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60 flex items-start gap-3 p-4";
   return href ? (
     <a href={href} className={cls}>
       {body}

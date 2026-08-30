@@ -96,7 +96,7 @@ export function RichEditor({ value, onChange }: { value: string; onChange: (html
     editorProps: {
       attributes: {
         dir: "rtl",
-        class: "rich-body min-h-[22rem] rounded-2xl border border-navy/10 bg-white px-4 py-3 outline-none focus:border-gold/60 dark:border-gold/25 dark:bg-navy-mid/60",
+        class: "min-h-[22rem] rounded-2xl border border-navy/10 bg-white px-4 py-3 outline-none focus:border-gold/60 leading-[2.1] text-[0.95rem] [&_h2]:my-[1.4rem_0.6rem] [&_h2]:text-[1.25rem] [&_h2]:font-black [&_h3]:my-[1.2rem_0.5rem] [&_h3]:text-[1.05rem] [&_h3]:font-black [&_p]:my-[0.7rem] [&_p:first-child.is-editor-empty:before]:content-[attr(data-placeholder)] [&_p:first-child.is-editor-empty:before]:float-inline-start [&_p:first-child.is-editor-empty:before]:h-0 [&_p:first-child.is-editor-empty:before]:pointer-events-none [&_p:first-child.is-editor-empty:before]:text-current [&_p:first-child.is-editor-empty:before]:opacity-[0.35] [&_ul]:my-[0.7rem] [&_ul]:list-disc [&_ul]:ps-[1.4rem] [&_ol]:my-[0.7rem] [&_ol]:list-decimal [&_ol]:ps-[1.4rem] [&_li]:my-[0.3rem] [&_blockquote]:my-4 [&_blockquote]:border-s-[3px] [&_blockquote]:border-gold [&_blockquote]:ps-[0.9rem] [&_blockquote]:opacity-80 [&_blockquote]:font-semibold [&_a]:font-extrabold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-[3px] [&_img]:my-4 [&_img]:max-w-full [&_img]:rounded-[1.25rem] [&_img]:h-auto [&_strong]:font-black dark:border-gold/25 dark:bg-navy-mid/60",
       },
     },
     onUpdate: ({ editor: ed }) => onChange(ed.getHTML()),

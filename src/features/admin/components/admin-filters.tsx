@@ -51,7 +51,7 @@ export function AdminFilterBar({
   const hasSearch = typeof search === "string" && !!onSearchChange;
 
   return (
-    <section className={cn("admin-filter-bar admin-enter mb-5", className)} aria-label="جستجو و فیلترها">
+    <section className={cn("rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] animate-admin-reveal motion-reduce:animate-none mb-5", className)} aria-label="جستجو و فیلترها">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-navy/8 px-3.5 py-3 dark:border-gold/15 sm:px-4">
         <div className="flex min-w-0 items-center gap-2.5">
           <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-navy text-gold shadow-sm dark:bg-gold/15 dark:text-gold-soft">
@@ -177,7 +177,7 @@ export function AdminStatStrip({ items, className }: { items: AdminStatItem[]; c
       {items.map((item, index) => (
         <article
           key={item.label}
-          className="admin-stat-card admin-enter"
+          className="flex min-w-0 items-center gap-[0.65rem] min-h-[4.75rem] p-3 border border-navy/8 rounded-[18px] bg-paper/88 shadow-[0_16px_35px_-30px_rgba(14,42,71,0.45)] backdrop-blur-[14px] transition-[transform,border-color] duration-[260ms] ease-[cubic-bezier(.25,.1,.25,1)] hover:-translate-y-0.5 hover:border-gold/34 dark:border-gold-soft/13 dark:bg-[rgba(16,43,70,0.62)] dark:shadow-[0_18px_40px_-30px_rgba(0,0,0,0.8)] animate-admin-reveal motion-reduce:animate-none"
           style={{ animationDelay: `${Math.min(index * 55, 220)}ms` }}
         >
           <span className={cn("grid size-9 shrink-0 place-items-center rounded-xl", STAT_TONES[item.tone ?? "gold"])}>

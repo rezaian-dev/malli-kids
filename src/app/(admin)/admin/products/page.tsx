@@ -119,7 +119,7 @@ export default function AdminProducts() {
       {list.length > 0 ? (
         <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
           {pg.pageItems.map((product, index) => (
-            <article key={product.id} className="admin-card group relative overflow-hidden" style={{ animationDelay: `${index * 45}ms` }}>
+            <article key={product.id} className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] group relative overflow-hidden" style={{ animationDelay: `${index * 45}ms` }}>
               <div className="absolute inset-x-0 top-0 z-10 h-px bg-linear-to-r from-transparent via-gold/55 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
               <div className="flex min-w-0 gap-3 p-3.5">
                 <div className="relative size-[5.25rem] shrink-0 overflow-hidden rounded-2xl bg-sand dark:bg-navy-deep">
@@ -152,7 +152,7 @@ export default function AdminProducts() {
           ))}
         </div>
       ) : (
-        <div className="admin-card px-5 py-12 text-center">
+        <div className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] px-5 py-12 text-center">
           <PackageX className="mx-auto size-10 text-gold" />
           <p className="mt-3 text-sm font-black text-navy dark:text-ivory">محصولی مطابق فیلترها پیدا نشد</p>
           <button type="button" onClick={() => { setQ(""); setCat("همه"); setSeason("همه"); setStock("all"); setSort("newest"); }} className="mt-2 text-xs font-black text-gold">نمایش همه محصولات</button>

@@ -40,12 +40,12 @@ export function SliderArrow({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "slider-arrow group inline-flex size-11 shrink-0 items-center justify-center rounded-full",
+        "group inline-flex size-11 shrink-0 items-center justify-center rounded-full",
         "border border-navy/10 bg-white/90 text-navy backdrop-blur",
         "transition-all duration-300 ease-out",
         "hover:scale-110 hover:border-transparent hover:bg-linear-to-l hover:from-gold-deep hover:via-gold hover:to-gold-light hover:text-navy-deep",
         "hover:shadow-[0_12px_28px_-10px_var(--color-gold)]",
-        "active:scale-90 active:duration-100",
+        "active:scale-90 active:duration-100 active:animate-arrow-ripple",
         "dark:border-gold/30 dark:bg-dusk-mid/80 dark:text-gold-light dark:hover:text-navy-deep",
         "disabled:pointer-events-none disabled:opacity-40",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold",

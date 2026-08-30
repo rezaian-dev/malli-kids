@@ -16,7 +16,7 @@ export default function AboutPage() {
       </div>
       <div className="container mx-auto mb-14 grid max-w-5xl grid-cols-2 gap-3 px-3 sm:grid-cols-5 sm:px-5 lg:px-7">
         {ABOUT.stats.map((s) => (
-          <div key={s.n} className="lux-card p-4 text-center">
+          <div key={s.n} className="rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60 p-4 text-center">
             <p className="text-xl font-black text-navy dark:text-ivory">{s.n}</p>
             <p className="mt-1 text-[11px] leading-5 text-navy/50 dark:text-wheat">{s.l}</p>
           </div>
@@ -26,7 +26,7 @@ export default function AboutPage() {
         <h2 className="mb-6 text-2xl font-black text-navy dark:text-ivory">از یک کارگاه کوچک تا بوتیک ملی‌کیدز</h2>
         <div className="grid gap-4 md:grid-cols-3">
           {ABOUT.story.map((s) => (
-            <article key={s.n} className="lux-card p-5">
+            <article key={s.n} className="rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60 p-5">
               <p className="font-black text-gold">{s.n}</p>
               <h3 className="mt-2 font-black text-navy dark:text-ivory">{s.t}</h3>
               <p className="mt-2 text-sm leading-7 text-navy/55 dark:text-wheat">{s.d}</p>
@@ -40,7 +40,7 @@ export default function AboutPage() {
           {ABOUT.promises.map((p, i) => {
             const Icon = ICONS[i] ?? Heart;
             return (
-              <article key={p.t} className="lux-card flex gap-4 p-5">
+              <article key={p.t} className="rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60 flex gap-4 p-5">
                 <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-gold/15 text-gold">
                   <Icon className="size-5" />
                 </span>

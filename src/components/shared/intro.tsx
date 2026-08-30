@@ -22,10 +22,10 @@ export function Intro({
             <span className="mx-1.5 text-gold">/</span>
             {crumb}
           </p>
-          {kicker ? <p className="lux-kicker mt-5">{kicker}</p> : null}
-          <h1 className="lux-title mt-2 text-[clamp(1.6rem,4.5vw,2.6rem)]">{title}</h1>
+          {kicker ? <p className="text-[11px] font-black tracking-[0.22em] text-gold mt-5">{kicker}</p> : null}
+          <h1 className="font-black leading-snug text-navy dark:text-ivory mt-2 text-[clamp(1.6rem,4.5vw,2.6rem)]">{title}</h1>
           <span className="mt-4 block h-px w-16 bg-linear-to-l from-gold to-transparent" aria-hidden />
-          {lead ? <p className="lux-muted mt-4 max-w-2xl text-sm leading-8 sm:text-base">{lead}</p> : null}
+          {lead ? <p className="text-navy/55 dark:text-wheat mt-4 max-w-2xl text-sm leading-8 sm:text-base">{lead}</p> : null}
         </div>
       </div>
     </header>

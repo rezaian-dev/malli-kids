@@ -63,7 +63,7 @@ export function ProductForm({ product }: { product?: Product }) {
 
       <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
         {/* مشخصات */}
-        <section className="admin-card space-y-4 p-5 sm:p-6">
+        <section className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] space-y-4 p-5 sm:p-6">
           <h2 className="text-sm font-black text-gold">مشخصات</h2>
 
           <TextField name="name" label="نام محصول" placeholder="مثلاً: پیراهن مجلسی الماس طلایی" maxLength={80} required />
@@ -94,7 +94,7 @@ export function ProductForm({ product }: { product?: Product }) {
 
         {/* تصویر + وضعیت */}
         <section className="space-y-5">
-          <div className="admin-card space-y-4 p-5 sm:p-6">
+          <div className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] space-y-4 p-5 sm:p-6">
             <h2 className="text-sm font-black text-gold">تصویر محصول</h2>
             <Field name="img" skin="admin" noShell labelClassName="sr-only" label="عکس محصول">
               {({ field }) => (

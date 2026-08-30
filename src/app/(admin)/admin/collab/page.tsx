@@ -71,7 +71,7 @@ export default function AdminCollab() {
       </AdminFilterBar>
 
       {list.length === 0 ? (
-        <div className="admin-card px-6 py-14 text-center">
+        <div className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] px-6 py-14 text-center">
           <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-gold/12 text-gold"><Handshake className="size-6" /></span>
           <p className="mt-4 font-black text-navy dark:text-ivory">{requests.length === 0 ? "هنوز درخواستی ثبت نشده" : "درخواستی مطابق فیلترها نیست"}</p>
           <p className="mx-auto mt-1 max-w-xs text-xs leading-6 text-navy/50 dark:text-wheat">درخواست‌های فرم همکاری، همراه با وضعیت پیگیری، در این بخش مدیریت می‌شوند.</p>
@@ -79,7 +79,7 @@ export default function AdminCollab() {
       ) : (
         <div className="grid gap-3 lg:grid-cols-2">
           {pg.pageItems.map((request, index) => (
-            <article key={request.id} className="admin-card relative overflow-hidden p-4 sm:p-5" style={{ animationDelay: `${index * 45}ms` }}>
+            <article key={request.id} className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] relative overflow-hidden p-4 sm:p-5" style={{ animationDelay: `${index * 45}ms` }}>
               <span className={cn("absolute inset-y-0 start-0 w-1", request.status === "در انتظار بررسی" ? "bg-amber-400" : "bg-emerald-500")} />
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">

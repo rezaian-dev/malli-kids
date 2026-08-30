@@ -107,7 +107,7 @@ export default function AdminMessages() {
       </AdminFilterBar>
 
       {list.length === 0 ? (
-        <div className="admin-card px-5 py-14 text-center">
+        <div className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] px-5 py-14 text-center">
           <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-gold/12 text-gold"><MessagesSquare className="size-6" /></span>
           <p className="mt-4 font-black text-navy dark:text-ivory">{tickets.length === 0 ? "هنوز تیکتی ثبت نشده" : "تیکتی مطابق فیلترها پیدا نشد"}</p>
           <p className="mx-auto mt-1 max-w-sm text-xs leading-6 text-navy/50 dark:text-wheat">{tickets.length === 0 ? "تیکت‌های ساخته‌شده در پنل کاربران، همراه با وضعیت پاسخ، اینجا نمایش داده می‌شوند." : "فیلتر وضعیت یا عبارت جستجو را تغییر دهید."}</p>
@@ -119,7 +119,7 @@ export default function AdminMessages() {
             const meta = STATUS[ticket.status];
             const lastReply = ticket.replies.at(-1);
             return (
-              <article key={ticket.id} className={cn("admin-card overflow-hidden", ticket.status === "open" && "border-rose/20 dark:border-rose/25")} style={{ animationDelay: `${index * 45}ms` }}>
+              <article key={ticket.id} className={cn("rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] overflow-hidden", ticket.status === "open" && "border-rose/20 dark:border-rose/25")} style={{ animationDelay: `${index * 45}ms` }}>
                 <div className="p-3.5 sm:p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex min-w-0 items-start gap-3">

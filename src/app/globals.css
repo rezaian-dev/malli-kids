@@ -1,36 +1,29 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* 🎨 Dark mode = `.dark` ancestor (Tailwind v4 @custom-variant) */
 @custom-variant dark (&:is(.dark *));
 
-/**
- * واریانت‌های جهت‌گیری برای Tabs shadcn.
- *
- * کامپوننت `tabs.tsx` از کلاس‌هایی مثل `data-horizontal:flex-col` و
- * `group-data-horizontal/tabs:h-8` استفاده می‌کند، ولی این واریانت‌ها
- * جزو پیش‌فرض‌های تیلویند نیستند. بدون تعریف‌شان ریشهٔ Tabs روی
- * `flex-row` می‌ماند و TabsContent در کنار TabsList فشرده و صفر-عرض
- * می‌شود (کارت‌ها رندر می‌شدند ولی دیده نمی‌شدند).
- */
-/**
- * واریانت‌های وضعیتِ کامپوننت‌های رادیکس (Sheet، Dialog، Accordion، Popover،
- * Select، DropdownMenu). رادیکس وضعیت را با data-state="open|closed" اعلام
- * می‌کند، ولی سبکِ shadcn این پروژه («radix-nova») در ۵۴ جا data-open: و
- * data-closed: را نوشته؛ بدون تعریف این دو، هیچ‌یک از آن‌ها ساخته نمی‌شد و
- * پنل‌ها و آکاردئون‌ها «بی‌انیمیشن» باز می‌شدند (همان مشکلی که گزارش شده بود).
- */
-@custom-variant data-open (&[data-state="open"]);
-@custom-variant data-closed (&[data-state="closed"]);
-
+/* 📐 Orientation variants used by shadcn Tabs (`tabs.tsx`) —
+   not in Tailwind defaults; without them TabsContent collapses to 0 width. */
 @custom-variant data-horizontal (&[data-orientation="horizontal"]);
 @custom-variant data-vertical (&[data-orientation="vertical"]);
 
+/* 🎚️ Radix state variants for Sheet/Dialog/Accordion/Popover/Select/DropdownMenu.
+   The shadcn "radix-nova" style uses `data-open:`/`data-closed:` (~54 places);
+   without these, panels & accordions open with no animation. */
+@custom-variant data-open (&[data-state="open"]);
+@custom-variant data-closed (&[data-state="closed"]);
+
+/* ─────────────────────────── 🧱 Design tokens ─────────────────────────── */
 @theme inline {
+  /* 📏 Breakpoints & fonts */
   --breakpoint-xs: 20rem;
   --font-vazir: "Vazirmatn", sans-serif;
   --font-display: "Playfair Display", serif;
   --font-sans: "Vazirmatn", sans-serif;
 
+  /* 🎨 Brand palette — navy family */
   --color-navy: #0e2a47;
   --color-navy-dark: #071c33;
   --color-navy-deep: #041427;
@@ -50,12 +43,16 @@
   --color-sort-sheet: #3c5670;
   --color-sort-opt: #4a6580;
   --color-filter-night: #152238;
+
+  /* ✨ Gold accent family */
   --color-gold: #c19357;
   --color-gold-light: #d9b77f;
   --color-gold-soft: #e8c57a;
   --color-gold-glow: #f0c878;
   --color-gold-deep: #b8893f;
   --color-gold-pale: #f0e2cc;
+
+  /* 🧺 Cream / paper / sand family */
   --color-cream: #faf6ef;
   --color-ivory: #fff8ec;
   --color-linen: #f7f4ee;
@@ -76,10 +73,13 @@
   --color-brown-mid: #6b5a42;
   --color-brown-deep: #5a4a32;
   --color-silver: #9aa6b2;
+
+  /* 🌹 Semantic / alert colors */
   --color-rose: #e11d48;
   --color-rose-light: #fb7185;
   --color-rose-pale: #fff1f2;
 
+  /* 🎛️ shadcn semantic aliases (resolve via CSS vars below) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -102,6 +102,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
+  /* 🎬 Motion tokens */
   --animate-user-menu: userMenuIn 0.42s cubic-bezier(0.22, 1, 0.32, 1);
   --animate-st-pulse: stPulse 2.2s ease-in-out infinite;
   --animate-st-bob: stBob 1.8s ease-in-out infinite;
@@ -131,146 +132,115 @@
   --animate-admin-glow: adminGlow 7s ease-in-out infinite alternate;
   --animate-arrow-ripple: arrow-ripple 0.5s ease-out;
 
-
-@keyframes adminReveal {
-  from { opacity: 0; transform: translateY(14px) scale(.992); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes adminContentIn {
-  from { opacity: 0; transform: translateY(9px); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes adminRowIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes adminOrbit { to { transform: rotate(360deg); } }
-
-@keyframes adminGlow {
-  from { opacity: .45; transform: translate3d(0, -12px, 0) scale(.92); }
-  to { opacity: 1; transform: translate3d(18px, 14px, 0) scale(1.08); }
-}
-
-@keyframes userMenuIn {
-  from { opacity: 0; transform: translateY(-12px) scale(0.94); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes stPulse {
-  0%, 100% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.08); opacity: 0.15; }
-}
-
-@keyframes stBob {
-  0%, 100% { transform: translateY(2px); }
-  50% { transform: translateY(-3px); }
-}
-
-@keyframes goldDraw {
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes heroIn {
-  from { opacity: 0; transform: translateY(22px); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-@keyframes floaty {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes scanline {
-  0% { top: -10%; }
-  100% { top: 110%; }
-}
-
-@keyframes heroKen {
-  from { transform: scale(1); }
-  to { transform: scale(1.1) translate3d(-2%, 1.5%, 0); }
-}
-
-@keyframes ornSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes ornSway {
-  0%, 100% { transform: rotate(-8deg); }
-  50% { transform: rotate(8deg); }
-}
-
-@keyframes ornPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.12); opacity: 0.7; }
-}
-
-@keyframes styleCardIn {
-  from { opacity: 0; transform: translateY(28px) scale(0.92); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes shimmer {
-  0%, 58% { transform: translateX(120%); }
-  82%, 100% { transform: translateX(-120%); }
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes twinkle {
-  0%, 100% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.4); opacity: 0.3; }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-5px); }
-  40% { transform: translateX(5px); }
-  60% { transform: translateX(-3px); }
-  80% { transform: translateX(3px); }
-}
-
-@keyframes accordionDown {
-  from { height: 0; opacity: 0.4; }
-  to { height: var(--radix-accordion-content-height); opacity: 1; }
-}
-
-@keyframes accordionUp {
-  from { height: var(--radix-accordion-content-height); opacity: 1; }
-  to { height: 0; opacity: 0.4; }
-}
-
-@keyframes drawerIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-@keyframes overlayIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes arrow-ripple {
-  from {
-    box-shadow: 0 0 0 0 rgb(193 147 87 / 0.55);
+  /* 🪄 Keyframes (referenced by the tokens above) */
+  @keyframes adminReveal {
+    from { opacity: 0; transform: translateY(14px) scale(.992); }
+    to { opacity: 1; transform: none; }
   }
-  to {
-    box-shadow: 0 0 0 18px rgb(193 147 87 / 0);
+  @keyframes adminContentIn {
+    from { opacity: 0; transform: translateY(9px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes adminRowIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes adminOrbit { to { transform: rotate(360deg); } }
+  @keyframes adminGlow {
+    from { opacity: .45; transform: translate3d(0, -12px, 0) scale(.92); }
+    to { opacity: 1; transform: translate3d(18px, 14px, 0) scale(1.08); }
+  }
+  @keyframes userMenuIn {
+    from { opacity: 0; transform: translateY(-12px) scale(0.94); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes stPulse {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.08); opacity: 0.15; }
+  }
+  @keyframes stBob {
+    0%, 100% { transform: translateY(2px); }
+    50% { transform: translateY(-3px); }
+  }
+  @keyframes goldDraw { to { stroke-dashoffset: 0; } }
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes scanline {
+    0% { top: -10%; }
+    100% { top: 110%; }
+  }
+  @keyframes heroKen {
+    from { transform: scale(1); }
+    to { transform: scale(1.1) translate3d(-2%, 1.5%, 0); }
+  }
+  @keyframes ornSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes ornSway {
+    0%, 100% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
+  }
+  @keyframes ornPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.12); opacity: 0.7; }
+  }
+  @keyframes styleCardIn {
+    from { opacity: 0; transform: translateY(28px) scale(0.92); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes shimmer {
+    0%, 58% { transform: translateX(120%); }
+    82%, 100% { transform: translateX(-120%); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes twinkle {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.4); opacity: 0.3; }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+  @keyframes accordionDown {
+    from { height: 0; opacity: 0.4; }
+    to { height: var(--radix-accordion-content-height); opacity: 1; }
+  }
+  @keyframes accordionUp {
+    from { height: var(--radix-accordion-content-height); opacity: 1; }
+    to { height: 0; opacity: 0.4; }
+  }
+  @keyframes drawerIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  @keyframes overlayIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes arrow-ripple {
+    from { box-shadow: 0 0 0 0 rgb(193 147 87 / 0.55); }
+    to { box-shadow: 0 0 0 18px rgb(193 147 87 / 0); }
   }
 }
-}
 
+/* ─────────────────────────── 🌗 Theme vars ─────────────────────────────── */
 :root {
   --background: #faf6ef;
   --foreground: #0e2a47;
@@ -293,6 +263,7 @@
   --radius: 0.625rem;
 }
 
+/* 🌙 Dark palette */
 .dark {
   --background: #041427;
   --foreground: #fff8ec;
@@ -314,40 +285,28 @@
   --ring: #e8c57a;
 }
 
-/**
- * بازتعریف `container`.
- *
- * تیلویند به ازای هر بریک‌پوینت یک max-width برای container می‌سازد. چون
- * بریک‌پوینت سفارشی `xs = 20rem` داریم، container از ۳۲۰px به بعد عرض را روی
- * همان ۳۲۰px قفل می‌کرد و کل صفحه در موبایل باریک و وسط‌چین می‌شد.
- * این نسخه فقط یک سقف ۸۰rem می‌گذارد و در عرض‌های کوچک تمام‌عرض می‌ماند.
- */
+/* ─────────────────────────── 📦 Custom utilities ──────────────────────── */
+/* 🔲 `container` — Tailwind locks width per breakpoint; with custom `xs`
+   it capped the page at 320px. This just sets an 80rem ceiling and stays
+   full-width on small screens. */
 @utility container {
   width: 100%;
   margin-inline: auto;
   max-width: 80rem;
 }
 
-/**
- * گریدِ استانداردِ کارت‌های محصول.
- *
- * به‌جای ستون‌های ثابت بر اساس بریک‌پوینتِ viewport، از `repeat(auto-fill, minmax(...))`
- * استفاده می‌کند تا تعداد ستون‌ها را بر اساس **عرضِ واقعیِ کانتینر** (نه کل صفحه) تعیین
- * کند. نتیجه: وقتی سایدبارِ فیلتر باز است، کانتینرِ محصولات باریک‌تر می‌شود و گرید خودش
- * ستون کم می‌کند — بدون هیچ کارتِ فشرده و باریک (مشکلِ «grid-cols-3» ثابت). از ۳۲۰px
- * (تک‌ستون) تا دسکتاپِ وسیع (چهار ستون) لاستیکی و اصولی رفتار می‌کند.
- */
-@utility grid-products {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
-  gap: 1rem;
-}
-
+/* ─────────────────────────── 🧱 Base layer ────────────────────────────── */
 @layer base {
+  /* 📜 Page scaffold */
   html {
     @apply max-w-full overflow-x-hidden scroll-smooth;
     scroll-padding-top: 110px;
   }
+  main {
+    @apply min-w-0 overflow-x-clip;
+  }
+
+  /* 🖱️ Selection & focus */
   ::selection {
     background: color-mix(in srgb, var(--color-gold) 55%, transparent);
     color: var(--color-navy-deep);
@@ -360,6 +319,8 @@
     outline: 2px solid var(--color-gold);
     outline-offset: 3px;
   }
+
+  /* 🧍 Body — cream bg + subtle grain & ambient glows (light/dark aware) */
   body {
     @apply min-h-dvh max-w-full overflow-x-hidden text-navy antialiased dark:text-ivory;
     font-family: var(--font-vazir), Vazirmatn, Tahoma, sans-serif;
@@ -383,13 +344,17 @@
     content: "";
     pointer-events: none;
     position: fixed;
-    inset: -8%;
+    inset: -10%;
     z-index: 0;
+    /* 🌸 Light-mode ambient wash — less blur, four soft pastels in the
+       brand family (navy · gold · cream) + kid-friendly accents: */
     background:
-      radial-gradient(42% 36% at 88% 8%, color-mix(in srgb, var(--color-gold) 16%, transparent), transparent 70%),
-      radial-gradient(38% 32% at 8% 92%, color-mix(in srgb, var(--color-navy) 8%, transparent), transparent 72%);
-    filter: blur(28px);
-    opacity: 0.55;
+      radial-gradient(42% 34% at 90% 4%, color-mix(in srgb, var(--color-gold) 22%, transparent), transparent 68%),
+      radial-gradient(32% 28% at 8% 88%, color-mix(in srgb, #a9cfe8 15%, transparent), transparent 70%),
+      radial-gradient(24% 20% at 18% 20%, color-mix(in srgb, #f6cdc2 13%, transparent), transparent 72%),
+      radial-gradient(24% 20% at 90% 82%, color-mix(in srgb, #cfe6d3 13%, transparent), transparent 72%);
+    filter: blur(13px);
+    opacity: 0.5;
   }
   .dark body::before {
     opacity: 0.14;
@@ -397,6 +362,8 @@
   .dark body::after {
     content: none;
   }
+
+  /* 🔽 Scrollbar */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -410,13 +377,9 @@
   ::-webkit-scrollbar-track {
     background: transparent;
   }
-  main {
-    @apply min-w-0 overflow-x-clip;
-  }
 
-  /* Newsletter field sits on the dark footer with a transparent background.
-     Browser autofill otherwise paints an opaque square that breaks the pill's
-     rounded corners — keep it transparent, cream-texted and rounded. */
+  /* 📮 Newsletter field sits on the dark footer; browser autofill would paint
+     an opaque square and break the pill's corners — keep it transparent. */
   .newsletter-field:-webkit-autofill,
   .newsletter-field:-webkit-autofill:hover,
   .newsletter-field:-webkit-autofill:focus,
@@ -427,633 +390,21 @@
     border-radius: 9999px;
     transition: background-color 9999s ease-in-out 0s;
   }
+
   * {
     @apply border-border;
   }
+
+  /* 🔠 Display font helper */
   .font-display,
   .font-display * {
     font-family: var(--font-display), "Playfair Display", Georgia, serif;
   }
-  .field {
-    @apply h-11 min-w-0 flex-1 border-0 bg-transparent px-1 text-sm text-navy outline-none placeholder:text-navy/40 dark:text-ivory dark:placeholder:text-wheat;
-  }
-  .lux-card {
-    @apply rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60;
-  }
-  .lux-kicker {
-    @apply text-[11px] font-black tracking-[0.22em] text-gold;
-  }
-  .lux-title {
-    @apply font-black leading-snug text-navy dark:text-ivory;
-  }
-  .lux-muted {
-    @apply text-navy/55 dark:text-wheat;
-  }
 }
 
-/* ── Admin console design system ──────────────────────────────────────────
-   پس‌زمینهٔ گرافیکی فقط در کنسول مدیریت دیده می‌شود. همهٔ سطوح روی آن
-   نیمه‌شفاف‌اند تا هم عمقِ بصری ایجاد شود و هم خوانایی داده حفظ بماند. */
-.admin-root {
-  min-height: 100dvh;
-  color: var(--color-navy);
-  background-color: #f4efe6;
-  background-image:
-    radial-gradient(52% 38% at 100% 0%, rgba(193, 147, 87, 0.15), transparent 68%),
-    radial-gradient(42% 34% at 0% 100%, rgba(14, 42, 71, 0.08), transparent 72%),
-    linear-gradient(rgba(14, 42, 71, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(14, 42, 71, 0.022) 1px, transparent 1px);
-  background-size: auto, auto, 36px 36px, 36px 36px;
-}
-.dark .admin-root {
-  color: var(--color-ivory);
-  background-color: #03111f;
-  background-image:
-    radial-gradient(58% 44% at 103% -4%, rgba(193, 147, 87, 0.18), transparent 68%),
-    radial-gradient(45% 38% at -5% 105%, rgba(44, 86, 128, 0.34), transparent 72%),
-    linear-gradient(rgba(232, 197, 122, 0.027) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(232, 197, 122, 0.027) 1px, transparent 1px);
-  background-size: auto, auto, 42px 42px, 42px 42px;
-}
-.admin-root::before {
-  content: "";
-  position: fixed;
-  z-index: 0;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.22;
-  background-image: url("data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c19357' stroke-opacity='.28'%3E%3Ccircle cx='90' cy='90' r='42'/%3E%3Ccircle cx='90' cy='90' r='28' stroke-dasharray='3 7'/%3E%3Cpath d='M90 34v112M34 90h112M50 50l80 80M130 50l-80 80' stroke-opacity='.15'/%3E%3C/g%3E%3C/svg%3E");
-  background-position: calc(100% + 45px) -45px;
-  background-repeat: no-repeat;
-  background-size: min(44vw, 38rem);
-  mask-image: linear-gradient(to bottom left, #000, transparent 64%);
-}
-.dark .admin-root::before {
-  opacity: 0.52;
-  filter: drop-shadow(0 0 22px rgba(193, 147, 87, 0.08));
-}
-.admin-graphic {
-  position: fixed;
-  z-index: 0;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-.admin-orbit {
-  position: absolute;
-  display: block;
-  border: 1px solid rgba(193, 147, 87, 0.13);
-  border-radius: 999px;
-  box-shadow: inset 0 0 60px rgba(193, 147, 87, 0.025);
-}
-.admin-orbit::before,
-.admin-orbit::after {
-  content: "";
-  position: absolute;
-  border-radius: 999px;
-  background: var(--color-gold);
-  box-shadow: 0 0 16px rgba(193, 147, 87, 0.55);
-}
-.admin-orbit::before { width: 5px; height: 5px; inset-inline-start: 15%; top: 12%; }
-.admin-orbit::after { width: 3px; height: 3px; inset-inline-end: 8%; bottom: 25%; }
-.admin-orbit-one {
-  width: min(46vw, 36rem);
-  aspect-ratio: 1;
-  inset-inline-end: -18rem;
-  top: 14%;
-  animation: var(--animate-admin-orbit);
-}
-.admin-orbit-two {
-  width: min(32vw, 24rem);
-  aspect-ratio: 1;
-  inset-inline-start: -10rem;
-  bottom: -9rem;
-  animation: var(--animate-admin-orbit); animation-direction: reverse;
-}
-.admin-glow {
-  position: absolute;
-  width: 24rem;
-  height: 24rem;
-  inset-inline-end: 18%;
-  top: 42%;
-  border-radius: 999px;
-  background: rgba(193, 147, 87, 0.045);
-  filter: blur(90px);
-  animation: var(--animate-admin-glow);
-}
-.admin-card,
-.admin-table-shell,
-.admin-filter-bar {
-  border: 1px solid color-mix(in srgb, var(--color-navy) 9%, transparent);
-  background: color-mix(in srgb, var(--color-paper) 94%, transparent);
-  border-radius: 22px;
-  box-shadow:
-    0 20px 48px -34px rgba(14, 42, 71, 0.38),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(18px);
-}
-.admin-card {
-  transition: transform 300ms cubic-bezier(.22, 1, .36, 1), border-color 300ms ease, box-shadow 300ms ease;
-}
-.admin-card:hover {
-  border-color: color-mix(in srgb, var(--color-gold) 40%, transparent);
-  box-shadow: 0 24px 52px -34px rgba(14, 42, 71, 0.44);
-}
-.dark .admin-card,
-.dark .admin-table-shell,
-.dark .admin-filter-bar {
-  border-color: rgba(232, 197, 122, 0.16);
-  background: rgba(16, 43, 70, 0.72);
-  box-shadow:
-    0 25px 60px -35px rgba(0, 0, 0, 0.76),
-    inset 0 1px 0 rgba(255, 255, 255, 0.045),
-    0 0 0 1px rgba(193, 147, 87, 0.025);
-}
-.dark .admin-card:hover {
-  border-color: rgba(232, 197, 122, 0.3);
-  box-shadow: 0 28px 64px -36px rgba(0, 0, 0, 0.88), 0 0 34px rgba(193, 147, 87, 0.035);
-}
-
-/* سربرگ اجرایی مشترک تمام صفحات؛ اطلاعات مسیر، شرح صفحه و سلامت داده‌ها را
-   در یک سطح حرفه‌ای و ثابت نگه می‌دارد. */
-.admin-page-head {
-  border: 1px solid rgba(14, 42, 71, 0.09);
-  border-radius: 26px;
-  background:
-    linear-gradient(115deg, rgba(193, 147, 87, 0.075), transparent 38%),
-    rgba(255, 254, 251, 0.78);
-  box-shadow:
-    0 24px 58px -42px rgba(14, 42, 71, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
-  backdrop-filter: blur(20px);
-}
-.dark .admin-page-head {
-  border-color: rgba(232, 197, 122, 0.17);
-  background:
-    linear-gradient(115deg, rgba(193, 147, 87, 0.09), transparent 42%),
-    rgba(10, 31, 53, 0.72);
-  box-shadow:
-    0 28px 70px -44px rgba(0, 0, 0, 0.92),
-    inset 0 1px 0 rgba(255, 255, 255, 0.045),
-    0 0 40px rgba(193, 147, 87, 0.025);
-}
-.admin-page-head-glow {
-  position: absolute;
-  width: 15rem;
-  height: 15rem;
-  inset-inline-end: -4rem;
-  top: -9rem;
-  border-radius: 999px;
-  background: rgba(193, 147, 87, 0.13);
-  filter: blur(44px);
-  pointer-events: none;
-}
-.dark .admin-page-head-glow {
-  background: rgba(193, 147, 87, 0.105);
-}
-.admin-page-head-meta {
-  background: rgba(14, 42, 71, 0.018);
-}
-.dark .admin-page-head-meta {
-  background: rgba(255, 255, 255, 0.018);
-}
-.admin-topbar::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  bottom: -1px;
-  height: 1px;
-  opacity: 0.42;
-  background: linear-gradient(to left, transparent, rgba(193, 147, 87, 0.58) 28%, rgba(193, 147, 87, 0.12) 72%, transparent);
-  pointer-events: none;
-}
-.admin-header-identity {
-  box-shadow: 0 10px 24px -22px rgba(14, 42, 71, 0.55);
-}
-.dark .admin-header-identity {
-  box-shadow: 0 12px 28px -22px rgba(0, 0, 0, 0.85);
-}
-.admin-root .lux-card {
-  border-radius: 22px;
-  border-color: color-mix(in srgb, var(--color-navy) 9%, transparent);
-  background: color-mix(in srgb, var(--color-paper) 94%, transparent);
-  backdrop-filter: blur(18px);
-}
-.dark .admin-root .lux-card {
-  border-color: rgba(232, 197, 122, 0.16);
-  background: rgba(16, 43, 70, 0.72);
-}
-.admin-sidebar,
-.admin-topbar {
-  box-shadow: 0 18px 55px -40px rgba(4, 20, 39, 0.62);
-}
-.dark .admin-sidebar,
-.dark .admin-topbar {
-  box-shadow: 0 20px 60px -38px rgba(0, 0, 0, 0.82);
-}
-.admin-filter-bar {
-  overflow: visible;
-}
-
-/* اسکرول اختصاصی سایدبار: باریک، طلایی و دارای محوشدگی ابتدا/انتها. */
-.admin-sidebar-nav::before,
-.admin-sidebar-nav::after {
-  content: "";
-  position: absolute;
-  z-index: 3;
-  inset-inline: 0;
-  height: 1rem;
-  pointer-events: none;
-}
-.admin-sidebar-nav::before {
-  top: 0;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.78), transparent);
-}
-.admin-sidebar-nav::after {
-  bottom: 0;
-  background: linear-gradient(to top, rgba(255, 255, 255, 0.78), transparent);
-}
-.dark .admin-sidebar-nav::before {
-  background: linear-gradient(to bottom, rgba(3, 17, 31, 0.9), transparent);
-}
-.dark .admin-sidebar-nav::after {
-  background: linear-gradient(to top, rgba(3, 17, 31, 0.9), transparent);
-}
-.admin-sidebar-scroll {
-  padding-inline-end: 0.5rem;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
-}
-.admin-sidebar-scroll::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-.admin-scroll-rail {
-  position: absolute;
-  z-index: 5;
-  inset-block: 1.1rem;
-  inset-inline-end: 3px;
-  width: 4px;
-  border-radius: 999px;
-  background: rgba(14, 42, 71, 0.07);
-  box-shadow: inset 0 0 0 1px rgba(14, 42, 71, 0.04);
-  opacity: 0;
-  transform: scaleY(0.88);
-  transition: opacity 220ms ease, transform 220ms ease, width 220ms ease;
-  pointer-events: none;
-}
-.admin-scroll-rail::before,
-.admin-scroll-rail::after {
-  content: "";
-  position: absolute;
-  inset-inline-start: 50%;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(193, 147, 87, 0.55);
-  transform: translateX(-50%);
-  box-shadow: 0 0 7px rgba(193, 147, 87, 0.35);
-}
-.admin-scroll-rail::before { top: -8px; }
-.admin-scroll-rail::after { bottom: -8px; }
-.admin-scroll-rail.is-visible {
-  opacity: 0.64;
-  transform: scaleY(1);
-}
-.admin-sidebar-scroller:hover .admin-scroll-rail.is-visible,
-.admin-sidebar-scroller:focus-within .admin-scroll-rail.is-visible {
-  width: 5px;
-  opacity: 1;
-}
-.admin-scroll-thumb {
-  position: absolute;
-  inset-inline: 0;
-  top: var(--admin-scroll-top, 0%);
-  height: var(--admin-scroll-size, 2.75rem);
-  border-radius: 999px;
-  background: linear-gradient(to bottom, var(--color-gold-light), var(--color-gold-deep));
-  box-shadow:
-    0 0 0 1px rgba(255, 248, 236, 0.24),
-    0 0 14px rgba(193, 147, 87, 0.38);
-  transition: top 80ms linear, height 180ms ease, filter 180ms ease;
-}
-.admin-sidebar-scroller:hover .admin-scroll-thumb {
-  filter: brightness(1.12);
-}
-.dark .admin-scroll-rail {
-  background: rgba(232, 197, 122, 0.055);
-  box-shadow: inset 0 0 0 1px rgba(232, 197, 122, 0.06);
-}
-
-.admin-stat-card {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 0.65rem;
-  min-height: 4.75rem;
-  padding: 0.75rem;
-  border: 1px solid color-mix(in srgb, var(--color-navy) 8%, transparent);
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--color-paper) 88%, transparent);
-  box-shadow: 0 16px 35px -30px rgba(14, 42, 71, 0.45);
-  backdrop-filter: blur(14px);
-  transition: transform 260ms ease, border-color 260ms ease;
-}
-.admin-stat-card:hover { transform: translateY(-2px); border-color: rgba(193, 147, 87, 0.34); }
-.dark .admin-stat-card {
-  border-color: rgba(232, 197, 122, 0.13);
-  background: rgba(16, 43, 70, 0.62);
-  box-shadow: 0 18px 40px -30px rgba(0, 0, 0, 0.8);
-}
-/* جدول دسکتاپ: شبکهٔ واقعی و خوانا با خطوط ظریف عمودی و افقی. */
-.admin-table-shell {
-  border-color: rgba(14, 42, 71, 0.13);
-  box-shadow:
-    0 24px 55px -38px rgba(14, 42, 71, 0.46),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-}
-.dark .admin-table-shell {
-  border-color: rgba(232, 197, 122, 0.24);
-  box-shadow:
-    0 28px 65px -38px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(255, 255, 255, 0.055),
-    0 0 35px rgba(193, 147, 87, 0.025);
-}
-.admin-table-toolbar {
-  border-bottom: 1px solid rgba(14, 42, 71, 0.11);
-  background: linear-gradient(to left, rgba(193, 147, 87, 0.055), transparent 42%);
-}
-.dark .admin-table-toolbar {
-  border-color: rgba(232, 197, 122, 0.16);
-  background: linear-gradient(to left, rgba(232, 197, 122, 0.055), transparent 42%);
-}
-.admin-table-head {
-  color: rgba(255, 248, 236, 0.9);
-  border-bottom: 1px solid rgba(232, 197, 122, 0.26);
-  background:
-    linear-gradient(100deg, rgba(193, 147, 87, 0.14), transparent 42%),
-    var(--color-navy);
-  box-shadow: inset 0 -1px 0 rgba(4, 20, 39, 0.24);
-}
-.dark .admin-table-head {
-  color: rgba(255, 248, 236, 0.88);
-  border-color: rgba(232, 197, 122, 0.23);
-  background:
-    linear-gradient(100deg, rgba(193, 147, 87, 0.12), transparent 45%),
-    rgba(4, 20, 39, 0.86);
-}
-.admin-table-head-cell:not(:last-child) {
-  border-inline-end: 1px solid rgba(255, 248, 236, 0.105);
-}
-.dark .admin-table-head-cell:not(:last-child) {
-  border-inline-end-color: rgba(232, 197, 122, 0.12);
-}
-.admin-table-row {
-  position: relative;
-  border-bottom: 1px solid rgba(14, 42, 71, 0.095);
-  background: rgba(255, 255, 255, 0.34);
-  opacity: 0;
-  animation: var(--animate-admin-row-in);
-  animation-delay: calc(var(--row-index, 0) * 42ms);
-  transition: background-color 220ms ease, box-shadow 220ms ease;
-}
-.admin-table-row:nth-child(even) {
-  background: rgba(14, 42, 71, 0.022);
-}
-.admin-table-row:last-child {
-  border-bottom: 0;
-}
-.dark .admin-table-row {
-  border-bottom-color: rgba(232, 197, 122, 0.125);
-  background: rgba(4, 20, 39, 0.17);
-}
-.dark .admin-table-row:nth-child(even) {
-  background: rgba(232, 197, 122, 0.024);
-}
-.admin-table-cell:not(:last-child) {
-  border-inline-end: 1px solid rgba(14, 42, 71, 0.075);
-}
-.dark .admin-table-cell:not(:last-child) {
-  border-inline-end-color: rgba(232, 197, 122, 0.105);
-}
-.admin-table-row:hover,
-.admin-table-row:focus-visible {
-  z-index: 1;
-  background: rgba(193, 147, 87, 0.09);
-  box-shadow:
-    inset 3px 0 0 var(--color-gold),
-    inset -3px 0 0 rgba(193, 147, 87, 0.32),
-    0 8px 24px -20px rgba(14, 42, 71, 0.5);
-}
-.dark .admin-table-row:hover,
-.dark .admin-table-row:focus-visible {
-  background: rgba(232, 197, 122, 0.07);
-}
-
-/* موبایل/تبلت: هر ردیف هنوز «جدول» است، نه مجموعه‌ای از متن‌های پراکنده. */
-.admin-table-mobile {
-  background:
-    linear-gradient(rgba(14, 42, 71, 0.022) 1px, transparent 1px),
-    rgba(14, 42, 71, 0.018);
-  background-size: 100% 34px;
-}
-.dark .admin-table-mobile {
-  background:
-    linear-gradient(rgba(232, 197, 122, 0.022) 1px, transparent 1px),
-    rgba(4, 20, 39, 0.24);
-  background-size: 100% 34px;
-}
-.admin-table-card {
-  overflow: hidden;
-  border: 1px solid rgba(14, 42, 71, 0.14);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow:
-    0 10px 24px -22px rgba(14, 42, 71, 0.52),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85);
-  opacity: 0;
-  animation: var(--animate-admin-row-in);
-  animation-delay: calc(var(--row-index, 0) * 45ms);
-  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
-}
-.admin-table-card-head {
-  min-height: 3.75rem;
-  border-bottom: 1px solid rgba(14, 42, 71, 0.115);
-  background:
-    linear-gradient(to left, rgba(193, 147, 87, 0.09), transparent 55%),
-    rgba(14, 42, 71, 0.025);
-}
-.admin-table-details {
-  background: rgba(14, 42, 71, 0.025);
-}
-.admin-table-field {
-  min-height: 2.75rem;
-  border-bottom: 1px solid rgba(14, 42, 71, 0.105);
-  background: rgba(255, 255, 255, 0.44);
-  transition: background-color 180ms ease;
-}
-.admin-table-field:nth-child(odd) {
-  border-inline-end: 1px solid rgba(14, 42, 71, 0.105);
-}
-.admin-table-field:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
-  border-inline-end: 0;
-}
-.admin-table-field dd > * {
-  margin-inline-start: auto;
-}
-.admin-table-field:hover {
-  background: rgba(193, 147, 87, 0.075);
-}
-.admin-table-actions {
-  border-top: 0;
-  background: rgba(14, 42, 71, 0.025);
-}
-.admin-table-card:hover,
-.admin-table-card:focus-visible {
-  transform: translateY(-2px);
-  border-color: rgba(193, 147, 87, 0.48);
-  box-shadow: 0 22px 42px -28px rgba(14, 42, 71, 0.56);
-}
-.dark .admin-table-card {
-  border-color: rgba(232, 197, 122, 0.22);
-  background: rgba(4, 20, 39, 0.68);
-  box-shadow:
-    0 18px 42px -27px rgba(0, 0, 0, 0.94),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-.dark .admin-table-card-head {
-  border-bottom-color: rgba(232, 197, 122, 0.17);
-  background:
-    linear-gradient(to left, rgba(193, 147, 87, 0.085), transparent 58%),
-    rgba(255, 255, 255, 0.018);
-}
-.dark .admin-table-details {
-  background: rgba(4, 20, 39, 0.28);
-}
-.dark .admin-table-field {
-  border-bottom-color: rgba(232, 197, 122, 0.145);
-  background: rgba(16, 43, 70, 0.22);
-}
-.dark .admin-table-field:nth-child(odd) {
-  border-inline-end-color: rgba(232, 197, 122, 0.145);
-}
-.dark .admin-table-field:hover {
-  background: rgba(232, 197, 122, 0.055);
-}
-.dark .admin-table-actions {
-  background: rgba(255, 255, 255, 0.018);
-}
-.admin-table-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(193, 147, 87, 0.78) rgba(14, 42, 71, 0.04);
-}
-.admin-table-scroll::-webkit-scrollbar { height: 9px; }
-.admin-table-scroll::-webkit-scrollbar-track { background: rgba(14, 42, 71, 0.045); }
-.admin-table-scroll::-webkit-scrollbar-thumb {
-  border: 2px solid transparent;
-  border-radius: 999px;
-  background: linear-gradient(to right, var(--color-gold-deep), var(--color-gold-light)) padding-box;
-}
-.dark .admin-table-scroll::-webkit-scrollbar-track { background: rgba(232, 197, 122, 0.04); }
-
-@media (max-width: 340px) {
-  .admin-table-field {
-    display: flex;
-    min-height: 2.65rem;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
-  .admin-table-field dt {
-    margin-bottom: 0;
-    flex: none;
-  }
-  .admin-table-field dd {
-    min-width: 0;
-    flex: 1;
-    text-align: end;
-  }
-}
-.admin-enter {
-  animation: var(--animate-admin-reveal);
-}
-.admin-page-head {
-  animation: var(--animate-admin-reveal);
-}
-.admin-page > div > *:not(.admin-page-head) {
-  animation: var(--animate-admin-content-in);
-}
-.admin-page > div > *:nth-child(2) { animation-delay: 45ms; }
-.admin-page > div > *:nth-child(3) { animation-delay: 80ms; }
-.admin-page > div > *:nth-child(4) { animation-delay: 115ms; }
-.admin-nav-item::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  transform: translateX(105%);
-  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.1), transparent 70%);
-  transition: transform 520ms ease;
-}
-.admin-nav-item:hover::after { transform: translateX(-105%); }
-
-
-
-
-
-
-
-@media (max-width: 639px) {
-  .admin-orbit-one { width: 24rem; inset-inline-end: -18rem; }
-  .admin-orbit-two { display: none; }
-  .admin-root::before { background-size: 20rem; opacity: .14; }
-  .admin-card,
-  .admin-table-shell,
-  .admin-filter-bar { border-radius: 19px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .admin-enter,
-  .admin-page-head,
-  .admin-page > div > *,
-  .admin-table-row,
-  .admin-table-card,
-  .admin-orbit,
-  .admin-glow {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-  .admin-nav-item::after { display: none; }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ── autofill ─────────────────────────────────────────────────────────────
-   مقدارهایِ ذخیره‌شدهٔ مرورگر نباید رنگِ فیلد را بشکنند. این قاعده عمداً
-   بیرون از هر @layer است تا بر utility هایِ transition خودِ input غلبه کند:
-   با یک transition بسیار طولانی، زرد/آبیِ مرورگر عملاً هرگز رنگ نمی‌شود و
-   رنگِ متن و caret با تم هماهنگ می‌ماند. */
+/* 🖋️ Input autofill — huge transition so the browser's yellow/blue tint never
+   visibly paints; text + caret stay themed. Kept outside @layer to override
+   the input's own `transition` utility. */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -1080,33 +431,7 @@ textarea:autofill {
   caret-color: var(--color-ivory);
 }
 
-/* لرزش فقط برای فیلدهای نامعتبر — نه کلِ فرم و نه دکمه‌ها.
-   AppForm هنگامِ ثبتِ نامعتبر data-shaking می‌گیرد و هر فیلدی که
-   data-invalid دارد یک‌بار می‌لرزد (رویداد تا فرم حباب می‌شود و حالت پاک می‌شود). */
-/* پیامِ خطای فیلد: باز شدنِ نرمِ ارتفاع به‌جای پرشِ ناگهانی —
-   تا لرزشِ فیلد (مثل OTP در مودال) اسکرول/پرشِ عمودیِ لحظه‌ای نسازد. */
-.field-error {
-  display: grid;
-  grid-template-rows: 1fr;
-  opacity: 1;
-  transition:
-    grid-template-rows 0.28s ease,
-    opacity 0.28s ease;
-}
-.field-error > * {
-  min-height: 0;
-  overflow: hidden;
-}
-@starting-style {
-  .field-error {
-    grid-template-rows: 0fr;
-    opacity: 0;
-  }
-}
-
-
-
-/* نوارِ پیشرفتِ nextjs-toploader: گرادیانِ طلایی و لنگر از راست (هماهنگ با RTL) */
+/* 🔄 nextjs-toploader — gold gradient anchored to the right (RTL-friendly) */
 #nprogress .bar {
   left: auto;
   right: 0;
@@ -1114,74 +439,4 @@ textarea:autofill {
 }
 #nprogress .peg {
   display: none;
-}
-
-/* ---------- بدنهٔ مقاله (ویرایشگر ادمین + مجله) ---------- */
-.rich-body {
-  line-height: 2.1;
-  font-size: 0.95rem;
-}
-.rich-body h2 {
-  font-size: 1.25rem;
-  font-weight: 900;
-  margin: 1.4rem 0 0.6rem;
-}
-.rich-body h3 {
-  font-size: 1.05rem;
-  font-weight: 900;
-  margin: 1.2rem 0 0.5rem;
-}
-.rich-body p {
-  margin: 0.7rem 0;
-}
-.rich-body ul {
-  list-style: disc;
-  padding-inline-start: 1.4rem;
-  margin: 0.7rem 0;
-}
-.rich-body ol {
-  list-style: decimal;
-  padding-inline-start: 1.4rem;
-  margin: 0.7rem 0;
-}
-.rich-body li {
-  margin: 0.3rem 0;
-}
-.rich-body blockquote {
-  border-inline-start: 3px solid var(--color-gold, #c19357);
-  padding-inline-start: 0.9rem;
-  margin: 1rem 0;
-  color: inherit;
-  opacity: 0.8;
-  font-weight: 600;
-}
-.rich-body a {
-  color: var(--color-gold, #c19357);
-  font-weight: 800;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.rich-body img {
-  border-radius: 1.25rem;
-  margin: 1rem 0;
-  max-width: 100%;
-  height: auto;
-}
-.rich-body strong {
-  font-weight: 900;
-}
-/* Placeholder تیپ‌تپ */
-.rich-body p.is-editor-empty:first-child::before {
-  content: attr(data-placeholder);
-  float: inline-start;
-  height: 0;
-  pointer-events: none;
-  color: currentColor;
-  opacity: 0.35;
-}
-
-/* ── دکمه‌های اسلایدر: موجِ طلایی هنگامِ کلیک ── */
-
-.slider-arrow:active {
-  animation: var(--animate-arrow-ripple);
 }

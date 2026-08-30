@@ -284,9 +284,9 @@ export function Buy({ product }: { product: Product }) {
         </Dialog>
 
         <ul className="mt-5 grid grid-cols-3 gap-2 text-[11px] text-navy/60 dark:text-wheat">
-          <li className="lux-card px-2 py-3 text-center hover:translate-y-0"><Truck className="mx-auto mb-1 size-4 text-gold" /> ارسال ۲–۴ روز</li>
-          <li className="lux-card px-2 py-3 text-center hover:translate-y-0"><RotateCcw className="mx-auto mb-1 size-4 text-gold" /> ۷ روز بازگشت</li>
-          <li className="lux-card px-2 py-3 text-center hover:translate-y-0"><ShieldCheck className="mx-auto mb-1 size-4 text-gold" /> ضدحساسیت</li>
+          <li className="rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60 px-2 py-3 text-center hover:translate-y-0"><Truck className="mx-auto mb-1 size-4 text-gold" /> ارسال ۲–۴ روز</li>
+          <li className="rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60 px-2 py-3 text-center hover:translate-y-0"><RotateCcw className="mx-auto mb-1 size-4 text-gold" /> ۷ روز بازگشت</li>
+          <li className="rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60 px-2 py-3 text-center hover:translate-y-0"><ShieldCheck className="mx-auto mb-1 size-4 text-gold" /> ضدحساسیت</li>
         </ul>
       </div>
     </div>

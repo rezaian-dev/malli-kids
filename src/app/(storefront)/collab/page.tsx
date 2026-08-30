@@ -50,7 +50,7 @@ export default function CollabPage() {
       <div className="container mx-auto w-full max-w-5xl space-y-9 px-4 sm:px-5 lg:px-7">
         <section className="grid gap-4 sm:grid-cols-2">
           {KINDS.map(({ Icon, t, d }) => (
-            <div key={t} className="lux-card flex items-start gap-4 p-5">
+            <div key={t} className="rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60 flex items-start gap-4 p-5">
               <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-gold/15 text-gold">
                 <Icon className="size-5" />
               </span>
@@ -62,12 +62,12 @@ export default function CollabPage() {
           ))}
         </section>
 
-        <section className="lux-card p-6 sm:p-8">
+        <section className="rounded-[26px] border border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60 p-6 sm:p-8">
           <p className="flex items-center gap-2 text-[11px] font-black tracking-[0.22em] text-gold">
             <Handshake className="size-4" /> فرمِ درخواست
           </p>
-          <h2 className="lux-title mt-2 text-xl">برای شروع، خودتان را معرفی کنید</h2>
-          <p className="lux-muted mt-2 text-sm leading-7">فرم را پر کنید؛ تیم همکاری‌ها حداکثر تا ۲ روز کاری با شما تماس می‌گیرد.</p>
+          <h2 className="font-black leading-snug text-navy dark:text-ivory mt-2 text-xl">برای شروع، خودتان را معرفی کنید</h2>
+          <p className="text-navy/55 dark:text-wheat mt-2 text-sm leading-7">فرم را پر کنید؛ تیم همکاری‌ها حداکثر تا ۲ روز کاری با شما تماس می‌گیرد.</p>
 
           <AppForm form={form} onSubmit={onValid} ariaLabel="فرم همکاری" className="mt-6 space-y-4" notify>
             <div className="grid gap-4 sm:grid-cols-2">

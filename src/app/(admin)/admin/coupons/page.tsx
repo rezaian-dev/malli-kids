@@ -117,7 +117,7 @@ export default function AdminCoupons() {
             const usage = Math.min(100, Math.round((coupon.used / Math.max(1, coupon.cap)) * 100));
             const usable = coupon.active && coupon.used < coupon.cap;
             return (
-              <article key={coupon.code} className="admin-card group overflow-hidden" style={{ animationDelay: `${index * 45}ms` }}>
+              <article key={coupon.code} className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] group overflow-hidden" style={{ animationDelay: `${index * 45}ms` }}>
                 <div className="p-4 sm:p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -146,7 +146,7 @@ export default function AdminCoupons() {
           })}
         </div>
       ) : (
-        <div className="admin-card px-5 py-14 text-center"><TicketPercent className="mx-auto size-10 text-gold" /><p className="mt-3 text-sm font-black">کد تخفیفی مطابق فیلترها نیست</p></div>
+        <div className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] px-5 py-14 text-center"><TicketPercent className="mx-auto size-10 text-gold" /><p className="mt-3 text-sm font-black">کد تخفیفی مطابق فیلترها نیست</p></div>
       )}
       {list.length > 0 ? <Pagination pg={pg} unit="کد" /> : null}
 

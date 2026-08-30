@@ -51,7 +51,7 @@ export default function AdminHome() {
         <SalesChart orders={db.orders} />
 
         {/* Category share */}
-        <section className="admin-card p-5 sm:p-6">
+        <section className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] p-5 sm:p-6">
           <h2 className="mb-5 font-black text-navy dark:text-ivory">سهم دسته‌ها</h2>
           {["دخترانه", "پسرانه", "سیسمونی", "دستدوز"].map((c, i) => {
             const n = db.products.filter((p) => p.cat === c).length;
@@ -96,7 +96,7 @@ export default function AdminHome() {
 
 function Stat({ t, v, d, Icon, warn }: { t: string; v: string; d: string; Icon: typeof ShoppingBag; warn?: boolean }) {
   return (
-    <article className="rounded-[22px] border border-gold/20 bg-navy-deep/55 p-4 backdrop-blur-sm">
+    <article className="rounded-[22px] max-[639px]:rounded-[19px] border border-gold/20 bg-navy-deep/55 p-4 backdrop-blur-sm">
       <div className="flex items-start justify-between">
         <p className="text-[11px] font-black text-wheat">{t}</p>
         <span className={`grid size-9 place-items-center rounded-2xl ${warn ? "bg-rose text-white" : "bg-gold text-navy-deep"}`}>

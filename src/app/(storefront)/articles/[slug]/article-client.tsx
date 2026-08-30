@@ -40,7 +40,11 @@ export function ArticleClient({ slug }: { slug: string }) {
         <img src={a.cover} alt="" className="mt-6 w-full rounded-3xl object-cover" />
       ) : null}
       {isHtml ? (
-        <div className="rich-body mt-6" dir="rtl" dangerouslySetInnerHTML={{ __html: a.body }} />
+        <div
+          className="mt-6 leading-[2.1] text-[0.95rem] [&_h2]:my-[1.4rem_0.6rem] [&_h2]:text-[1.25rem] [&_h2]:font-black [&_h3]:my-[1.2rem_0.5rem] [&_h3]:text-[1.05rem] [&_h3]:font-black [&_p]:my-[0.7rem] [&_ul]:my-[0.7rem] [&_ul]:list-disc [&_ul]:ps-[1.4rem] [&_ol]:my-[0.7rem] [&_ol]:list-decimal [&_ol]:ps-[1.4rem] [&_li]:my-[0.3rem] [&_blockquote]:my-4 [&_blockquote]:border-s-[3px] [&_blockquote]:border-gold [&_blockquote]:ps-[0.9rem] [&_blockquote]:opacity-80 [&_blockquote]:font-semibold [&_a]:font-extrabold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-[3px] [&_img]:my-4 [&_img]:max-w-full [&_img]:rounded-[1.25rem] [&_img]:h-auto [&_strong]:font-black"
+          dir="rtl"
+          dangerouslySetInnerHTML={{ __html: a.body }}
+        />
       ) : (
         <p className="mt-6 leading-9 text-navy/75 dark:text-cream/75">{a.body}</p>
       )}

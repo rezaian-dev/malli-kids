@@ -83,14 +83,23 @@ function SidebarScroller({ children, className = "" }: { children: ReactNode; cl
   }, [updateScroll]);
 
   return (
-    <div className="admin-sidebar-scroller relative h-full min-h-0">
-      <div ref={viewportRef} onScroll={updateScroll} className={`admin-sidebar-scroll h-full overflow-y-auto ${className}`}>
+    <div className="group relative h-full min-h-0">
+      <div ref={viewportRef} onScroll={updateScroll} className={`h-full overflow-y-auto overscroll-contain pe-2 [scrollbar-width:none] [&::-webkit-scrollbar]:size-0 ${className}`}>
         {children}
       </div>
-      <span className={`admin-scroll-rail ${scroll.visible ? "is-visible" : ""}`} aria-hidden="true">
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none absolute z-[5] inset-y-[1.1rem] end-[3px] w-1 rounded-full bg-navy/[0.07] shadow-[inset_0_0_0_1px_rgba(14,42,71,0.04)] transition-[opacity,transform,width] duration-[220ms] dark:bg-gold-soft/[0.055] dark:shadow-[inset_0_0_0_1px_rgba(232,197,122,0.06)] ${
+          scroll.visible
+            ? "opacity-[0.64] scale-y-100 group-hover:opacity-100 group-hover:w-[5px]"
+            : "opacity-0 scale-y-[0.88]"
+        }`}
+      >
+        <span className="absolute start-1/2 top-[-8px] size-1 -translate-x-1/2 rounded-full bg-gold/55 shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
+        <span className="absolute start-1/2 bottom-[-8px] size-1 -translate-x-1/2 rounded-full bg-gold/55 shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
         <span
-          className="admin-scroll-thumb"
-          style={{ "--admin-scroll-top": `${scroll.top}px`, "--admin-scroll-size": `${scroll.thumb}px` } as CSSProperties}
+          className="absolute inset-x-0 rounded-full bg-linear-to-b from-gold-light to-gold-deep shadow-[0_0_0_1px_rgba(255,248,236,0.24),0_0_14px_rgba(193,147,87,0.38)] transition-[top,height,filter] duration-[180ms] group-hover:brightness-[1.12]"
+          style={{ "--admin-scroll-top": `${scroll.top}px`, "--admin-scroll-size": `${scroll.thumb}px`, top: "var(--admin-scroll-top, 0%)", height: "var(--admin-scroll-size, 2.75rem)" } as CSSProperties}
         />
       </span>
     </div>
@@ -125,12 +134,14 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
                     href={item.href}
                     onClick={onNavigate}
                     aria-current={active ? "page" : undefined}
-                    className={`admin-nav-item group relative flex items-center gap-3 overflow-hidden rounded-2xl px-2.5 py-2 transition-all duration-300 ${
+                    className={`group relative flex items-center gap-3 overflow-hidden rounded-2xl px-2.5 py-2 transition-all duration-300 ${
                       active
                         ? "bg-navy text-ivory shadow-[0_14px_30px_-18px_rgba(4,20,39,.85)] dark:bg-gold dark:text-navy-deep"
                         : "text-navy/68 hover:bg-navy/5 hover:text-navy dark:text-ivory/68 dark:hover:bg-white/6 dark:hover:text-ivory"
                     }`}
                   >
+                    {/* shimmer sweep — جانشینِ .admin-nav-item::after */}
+                    <span aria-hidden="true" className="pointer-events-none absolute inset-0 translate-x-[105%] bg-[linear-gradient(105deg,transparent_30%,rgba(255,255,255,.1),transparent_70%)] transition-transform duration-[520ms] ease-[cubic-bezier(.25,.1,.25,1)] group-hover:-translate-x-[105%] motion-reduce:hidden" />
                     {active ? <span className="absolute inset-y-2 start-0 w-0.5 rounded-full bg-gold dark:bg-navy-deep/45" /> : null}
                     <span
                       className={`grid size-9 shrink-0 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-105 ${
@@ -218,7 +229,7 @@ function HeaderNotifications() {
 
 function HeaderIdentity({ profile }: { profile: AdminIdentity }) {
   return (
-    <div className="admin-header-identity flex h-10 min-w-0 items-center gap-2 rounded-xl border border-navy/8 bg-white/62 px-3 dark:border-gold/15 dark:bg-white/[0.04]" aria-label={`ادمین واردشده: ${profile.name}`}>
+    <div className="flex h-10 min-w-0 items-center gap-2 rounded-xl border border-navy/8 bg-white/62 px-3 shadow-[0_10px_24px_-22px_rgba(14,42,71,0.55)] dark:border-gold/15 dark:bg-white/[0.04] dark:shadow-[0_12px_28px_-22px_rgba(0,0,0,0.85)]" aria-label={`ادمین واردشده: ${profile.name}`}>
       {profile.avatar ? (
         <Avatar size="sm" className="ring-1 ring-gold/25">
           <AvatarImage src={profile.avatar} alt={`تصویر ${profile.name}`} />
@@ -242,17 +253,34 @@ export function AdminShell({ children }: { children: ReactNode }) {
   if (path === "/admin/login") return <>{children}</>;
 
   return (
-    <div className="admin-root relative isolate min-h-dvh overflow-x-clip">
-      <div className="admin-graphic" aria-hidden="true">
-        <span className="admin-orbit admin-orbit-one" />
-        <span className="admin-orbit admin-orbit-two" />
-        <span className="admin-glow" />
+    <div className="relative isolate min-h-dvh overflow-x-clip text-navy bg-fog bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-[size:auto,auto,36px_36px,36px_36px] dark:text-ivory dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-[size:auto,auto,42px_42px,42px_42px]">
+      {/* الگوی هندسیِ admin-root::before — جانشین pseudo-element */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-0 bg-no-repeat opacity-[0.22] bg-[position:calc(100%+45px)_-45px] bg-[size:min(44vw,38rem)] [mask-image:linear-gradient(to_bottom_left,#000,transparent_64%)] max-[639px]:bg-[size:20rem] max-[639px]:opacity-[0.14] dark:opacity-[0.52] dark:[filter:drop-shadow(0_0_22px_rgba(193,147,87,0.08))]"
+        style={{
+          backgroundImage:
+            'url("data:image/svg+xml,%3Csvg width=\'180\' height=\'180\' viewBox=\'0 0 180 180\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' stroke=\'%23c19357\' stroke-opacity=\'.28\'%3E%3Ccircle cx=\'90\' cy=\'90\' r=\'42\'/%3E%3Ccircle cx=\'90\' cy=\'90\' r=\'28\' stroke-dasharray=\'3 7\'/%3E%3Cpath d=\'M90 34v112M34 90h112M50 50l80 80M130 50l-80 80\' stroke-opacity=\'.15\'/%3E%3C/g%3E%3C/svg%3E")',
+        }}
+      />
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <span className="absolute block w-[min(46vw,36rem)] aspect-square rounded-full border border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)] end-[-18rem] top-[14%] animate-admin-orbit motion-reduce:animate-none max-[639px]:w-96">
+          <span className="absolute start-[15%] top-[12%] size-[5px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
+          <span className="absolute end-[8%] bottom-[25%] size-[3px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
+        </span>
+        <span className="absolute block w-[min(32vw,24rem)] aspect-square rounded-full border border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)] start-[-10rem] bottom-[-9rem] animate-admin-orbit [animation-direction:reverse] motion-reduce:animate-none max-[639px]:hidden">
+          <span className="absolute start-[15%] top-[12%] size-[5px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
+          <span className="absolute end-[8%] bottom-[25%] size-[3px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
+        </span>
+        <span className="absolute end-[18%] top-[42%] size-96 rounded-full bg-gold/[0.045] blur-[90px] animate-admin-glow motion-reduce:animate-none" />
       </div>
 
-      <aside className="admin-sidebar fixed inset-y-0 start-0 z-40 hidden w-[276px] flex-col overflow-hidden border-e border-navy/8 bg-white/68 backdrop-blur-2xl dark:border-gold/16 dark:bg-navy-deep/62 lg:flex">
+      <aside className="fixed inset-y-0 start-0 z-40 hidden w-[276px] flex-col overflow-hidden border-e border-navy/8 bg-white/68 backdrop-blur-2xl shadow-[0_18px_55px_-40px_rgba(4,20,39,0.62)] dark:border-gold/16 dark:bg-navy-deep/62 dark:shadow-[0_20px_60px_-38px_rgba(0,0,0,0.82)] lg:flex">
         <div className="pointer-events-none absolute -top-20 start-0 size-56 rounded-full bg-gold/12 blur-3xl dark:bg-gold/9" />
         <div className="relative px-5 pb-5 pt-6">{BRAND}</div>
-        <div className="admin-sidebar-nav relative min-h-0 flex-1 overflow-hidden">
+        <div className="relative min-h-0 flex-1 overflow-hidden">
+          <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-[3] h-4 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.78),transparent)] dark:bg-[linear-gradient(to_bottom,rgba(3,17,31,0.9),transparent)]" />
+          <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-4 bg-[linear-gradient(to_top,rgba(255,255,255,0.78),transparent)] dark:bg-[linear-gradient(to_top,rgba(3,17,31,0.9),transparent)]" />
           <SidebarScroller className="pb-2">
             <NavList />
           </SidebarScroller>
@@ -282,7 +310,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </Button>
           </SheetHeader>
           <Separator className="bg-navy/8 dark:bg-gold/14" />
-          <div className="admin-sidebar-nav relative min-h-0 flex-1 overflow-hidden">
+          <div className="relative min-h-0 flex-1 overflow-hidden">
+            <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-[3] h-4 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.78),transparent)] dark:bg-[linear-gradient(to_bottom,rgba(3,17,31,0.9),transparent)]" />
+            <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-4 bg-[linear-gradient(to_top,rgba(255,255,255,0.78),transparent)] dark:bg-[linear-gradient(to_top,rgba(3,17,31,0.9),transparent)]" />
             <SidebarScroller className="pb-2 pt-3">
               <NavList onNavigate={() => setOpen(false)} />
             </SidebarScroller>
@@ -297,7 +327,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </Sheet>
 
       <div className="relative z-10 min-w-0 lg:ps-[276px]">
-        <header className="admin-topbar sticky top-0 z-30 border-b border-navy/7 bg-fog/76 backdrop-blur-2xl dark:border-gold/14 dark:bg-navy-deep/64">
+        <header className="relative sticky top-0 z-30 border-b border-navy/7 bg-fog/76 backdrop-blur-2xl shadow-[0_18px_55px_-40px_rgba(4,20,39,0.62)] dark:border-gold/14 dark:bg-navy-deep/64 dark:shadow-[0_20px_60px_-38px_rgba(0,0,0,0.82)]">
+          {/* line gradient زیرِ topbar — جانشینِ .admin-topbar::after */}
+          <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 -bottom-px h-px opacity-42 bg-[linear-gradient(to_left,transparent,rgba(193,147,87,0.58)_28%,rgba(193,147,87,0.12)_72%,transparent)]" />
           <div className="mx-auto flex h-[72px] max-w-[100rem] items-center gap-2 px-3 sm:gap-2.5 sm:px-5 lg:px-8">
             <Button
               type="button"
@@ -328,7 +360,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main key={path} className="admin-page mx-auto w-full max-w-[100rem] px-3 py-5 sm:px-5 sm:py-7 lg:px-8 lg:py-8">
+        <main
+          key={path}
+          className="mx-auto w-full max-w-[100rem] px-3 py-5 sm:px-5 sm:py-7 lg:px-8 lg:py-8 [&>div>*:not(.admin-page-head)]:animate-admin-content-in [&>div>*:not(.admin-page-head)]:motion-reduce:animate-none [&>div>*:not(.admin-page-head):nth-child(2)]:[animation-delay:45ms] [&>div>*:not(.admin-page-head):nth-child(3)]:[animation-delay:80ms] [&>div>*:not(.admin-page-head):nth-child(4)]:[animation-delay:115ms]"
+        >
           {children}
         </main>
       </div>
@@ -338,8 +373,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
 export function PageHead({ kicker, title, description, action }: { kicker: string; title: string; description?: string; action?: ReactNode }) {
   return (
-    <header className="admin-page-head relative mb-6 overflow-hidden sm:mb-7">
-      <span className="admin-page-head-glow" aria-hidden="true" />
+    <header className="admin-page-head relative mb-6 overflow-hidden rounded-[26px] border border-navy/9 bg-[linear-gradient(115deg,rgba(193,147,87,0.075),transparent_38%),rgba(255,254,251,0.78)] shadow-[0_24px_58px_-42px_rgba(14,42,71,0.5),inset_0_1px_0_rgba(255,255,255,0.84)] backdrop-blur-[20px] animate-admin-reveal motion-reduce:animate-none sm:mb-7 dark:border-gold-soft/17 dark:bg-[linear-gradient(115deg,rgba(193,147,87,0.09),transparent_42%),rgba(10,31,53,0.72)] dark:shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92),inset_0_1px_0_rgba(255,255,255,0.045),0_0_40px_rgba(193,147,87,0.025)]">
+      <span className="absolute end-[-4rem] top-[-9rem] size-60 rounded-full bg-gold/[0.13] blur-[44px] pointer-events-none dark:bg-gold/[0.105]" aria-hidden="true" />
       <div className="relative flex flex-col justify-between gap-5 px-4 pb-5 pt-4 sm:flex-row sm:items-end sm:px-6 sm:pb-6 sm:pt-5">
         <div className="min-w-0">
           <div className="mb-3 flex min-w-0 items-center gap-1.5 text-[9px] font-black text-navy/38 dark:text-wheat/50">
@@ -357,7 +392,7 @@ export function PageHead({ kicker, title, description, action }: { kicker: strin
         </div>
         {action ? <div className="flex w-full shrink-0 [&>*]:w-full sm:w-auto sm:[&>*]:w-auto">{action}</div> : null}
       </div>
-      <div className="admin-page-head-meta relative flex flex-wrap items-center justify-between gap-2 border-t border-navy/7 px-4 py-2.5 text-[9px] font-bold text-navy/42 sm:px-6 dark:border-gold/12 dark:text-wheat/52">
+      <div className="relative flex flex-wrap items-center justify-between gap-2 border-t border-navy/7 bg-navy/[0.018] px-4 py-2.5 text-[9px] font-bold text-navy/42 sm:px-6 dark:border-gold/12 dark:bg-white/[0.018] dark:text-wheat/52">
         <span className="flex items-center gap-1.5"><Activity className="size-3.5 text-emerald-600 dark:text-emerald-300" /><span className="size-1.5 rounded-full bg-emerald-500" /> وضعیت داده‌ها: به‌روز</span>
         <span className="hidden items-center gap-1.5 sm:flex"><ShieldCheck className="size-3.5 text-gold" /> سطح دسترسی: مدیریت</span>
       </div>

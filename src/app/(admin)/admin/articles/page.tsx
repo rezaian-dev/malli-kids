@@ -163,7 +163,7 @@ export default function AdminArticles() {
           <div className="space-y-4">
             <RichEditor value={draft.body} onChange={(html) => set("body", html)} />
           </div>
-          <aside className="lux-card space-y-4 p-4 sm:p-5">
+          <aside className="border shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] space-y-4 rounded-[22px] max-[639px]:rounded-[19px] border-navy/9 bg-paper/94 p-4 backdrop-blur-[18px] sm:p-5 dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)]">
             <div className="space-y-1.5">
               <label className="text-[11px] font-black text-navy/50 dark:text-wheat" htmlFor="art-title">
                 عنوان
@@ -269,7 +269,7 @@ export default function AdminArticles() {
 
       <div className="grid gap-3">
         {pg.pageItems.map((article, index) => (
-          <article key={article.slug} className="admin-card group flex flex-col gap-3 overflow-hidden p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4" style={{ animationDelay: `${index * 45}ms` }}>
+          <article key={article.slug} className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] group flex flex-col gap-3 overflow-hidden p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4" style={{ animationDelay: `${index * 45}ms` }}>
             {article.cover ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img src={article.cover} alt="" className="h-32 w-full rounded-2xl object-cover transition-transform duration-500 group-hover:scale-[1.02] sm:h-24 sm:w-32" />
@@ -292,7 +292,7 @@ export default function AdminArticles() {
             </div>
           </article>
         ))}
-        {filteredArticles.length === 0 ? <div className="admin-card p-12 text-center"><FilePenLine className="mx-auto size-10 text-gold" /><p className="mt-3 text-sm font-black text-navy dark:text-ivory">{db.articles.length === 0 ? "هنوز مقاله‌ای نوشته نشده" : "مقاله‌ای مطابق فیلترها نیست"}</p></div> : null}
+        {filteredArticles.length === 0 ? <div className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] p-12 text-center"><FilePenLine className="mx-auto size-10 text-gold" /><p className="mt-3 text-sm font-black text-navy dark:text-ivory">{db.articles.length === 0 ? "هنوز مقاله‌ای نوشته نشده" : "مقاله‌ای مطابق فیلترها نیست"}</p></div> : null}
       </div>
       {filteredArticles.length > 0 ? <Pagination pg={pg} unit="مقاله" /> : null}
     </div>
