@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="fa"
       dir="rtl"
       data-scroll-behavior="smooth"
-      className={`${vazir.variable} ${playfair.variable}`}
+      className={`${vazir.variable} ${playfair.variable} [scrollbar-gutter:stable]`}
       suppressHydrationWarning
     >
       {/*

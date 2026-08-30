@@ -3,14 +3,14 @@ import { ArrowDownLeft } from "lucide-react";
 import { OrnLeaf } from "@/features/home/components/ornaments";
 
 const BIG = [
-  { href: "#styles", img: "/brand/cat-girl.jpg", t: "دخترانه", d: "+۱۴۰ مدل فعال" },
-  { href: "#styles", img: "/brand/cat-boy.jpg", t: "پسرانه", d: "+۱۲۰ مدل فعال" },
+  { href: "#styles", img: "/brand/cat-girl-portrait.jpg", t: "دخترانه", d: "+۱۴۰ مدل فعال" },
+  { href: "#styles", img: "/brand/cat-boy-portrait.jpg", t: "پسرانه", d: "+۱۲۰ مدل فعال" },
 ];
 const SMALL = [
-  { href: "#styles", img: "/brand/cat-baby.jpg", t: "سیسمونی", d: "۰ تا ۲۴ ماه" },
-  { href: "#styles", img: "/brand/cat-boy.jpg", t: "لباس مشاغل", d: "رویاهای بزرگ" },
-  { href: "#styles", img: "/brand/look-party.jpg", t: "اکسسوری", d: "تکمیلِ استایل", top: true },
-  { href: "#handmade", img: "/brand/look-knit.jpg", t: "دستدوز خاص", d: "تک‌نسخه‌ای" },
+  { href: "#styles", img: "/brand/cat-baby-portrait.jpg", t: "سیسمونی", d: "۰ تا ۲۴ ماه" },
+  { href: "#styles", img: "/brand/cat-boy-portrait.jpg", t: "لباس مشاغل", d: "رویاهای بزرگ" },
+  { href: "#styles", img: "/brand/cat-accessories-portrait.jpg", t: "اکسسوری", d: "تکمیلِ استایل", top: true },
+  { href: "#handmade", img: "/brand/look-knit-portrait.jpg", t: "دستدوز خاص", d: "تک‌نسخه‌ای" },
 ];
 
 export function Categories() {

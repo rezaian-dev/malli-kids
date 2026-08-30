@@ -20,7 +20,7 @@ function Perk({ icon, t, d }: { icon: ReactNode; t: string; d: string }) {
 export function AuthAside() {
   return (
     <aside className="relative hidden w-[46%] shrink-0 overflow-hidden rounded-s-[28px] bg-navy text-ivory lg:block">
-      <Image src="/brand/hero-dress.jpg" alt="" width={900} height={1200} className="absolute inset-0 size-full object-cover object-[center_18%]" />
+      <Image src="/brand/auth-aside.jpg" alt="" fill sizes="46vw" className="absolute inset-0 size-full object-cover object-[center_18%]" />
       <div className="absolute inset-0 bg-linear-to-t from-navy-deep via-navy-deep/55 to-transparent" />
       <div className="pointer-events-none absolute inset-3 rounded-[22px] border border-gold/45" />
 

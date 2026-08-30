@@ -103,7 +103,7 @@ export function AppForm<T extends FieldValues>({
         method={method}
         noValidate
         data-shaking={shaking ? "true" : undefined}
-        className={className}
+        className={cn(className, "[&[data-shaking=true]_[data-invalid=true]]:animate-shake")}
         onAnimationEnd={(e) => {
           if (e.animationName === "shake") setShaking(false);
         }}

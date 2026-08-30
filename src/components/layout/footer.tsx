@@ -153,7 +153,17 @@ export function Footer() {
           <h5 className="mb-4 text-[15px] font-black text-white">تماس با ما</h5>
           <ul className="m-0 grid list-none gap-3.5 p-0 text-sm text-taupe">
             <li className="flex items-start gap-2.5"><MapPin className="mt-0.5 size-4 shrink-0 text-gold-light" /><span>تهران، خیابان ولیعصر، گالری ملی‌کیدز</span></li>
-            <li className="flex items-center gap-2.5"><Phone className="size-4 shrink-0 text-gold-light" /><span dir="ltr">۰۲۱ — ۲۶۴۰ ۱۲۳۴</span></li>
+            <li>
+              <a
+                href="tel:+982126401234"
+                dir="ltr"
+                aria-label="تماس با مالی‌کیدز"
+                className="inline-flex min-h-11 items-center gap-2.5 rounded-lg px-1 py-1 transition-colors hover:text-gold-light focus-visible:text-gold-light"
+              >
+                <Phone className="size-4 shrink-0 text-gold-light" />
+                <span>۰۲۱ — ۲۶۴۰ ۱۲۳۴</span>
+              </a>
+            </li>
             <li className="flex items-start gap-2.5"><Clock className="mt-0.5 size-4 shrink-0 text-gold-light" /><span>شنبه تا پنجشنبه<br />۹ صبح تا ۹ شب</span></li>
           </ul>
         </div>

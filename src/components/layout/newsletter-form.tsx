@@ -55,7 +55,7 @@ export function NewsletterForm({ className }: { className?: string }) {
               onChange={field.onChange}
               onBlur={field.onBlur}
               ref={field.ref}
-              className="newsletter-field h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-right text-sm text-cream outline-none placeholder:text-taupe"
+              className="newsletter-field h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-right text-sm text-cream outline-none placeholder:text-taupe autofill:bg-transparent autofill:shadow-[0_0_0_1000px_transparent_inset] autofill:[-webkit-text-fill-color:var(--color-cream)]"
             />
             <button
               type="submit"

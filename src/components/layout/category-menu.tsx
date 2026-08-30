@@ -57,7 +57,7 @@ export function CategoryMenu() {
           "start-0 end-auto z-[80] p-0",
           "overflow-hidden rounded-2xl border border-navy/10 bg-paper shadow-xl",
           "dark:border-gold/25 dark:bg-dusk",
-          "[&_svg]:text-current",
+          "[&_a]:text-current [&_button]:text-current [&_svg]:text-current",
         )}
       >
         <div className="w-[min(34rem,calc(100vw-1.5rem))]">
@@ -82,7 +82,6 @@ export function CategoryMenu() {
                         "dark:border-gold/20 dark:bg-dusk-alt dark:hover:border-gold/60 dark:hover:bg-dusk-mid dark:focus:bg-dusk-mid",
                       )}
                     >
-                      {/* کاشیِ آیکن رنگِ ثابت دارد — هیچ پرشِ رنگی هنگامِ خروجِ ماوس نیست */}
                       <span
                         className={cn(
                           "flex size-10 shrink-0 items-center justify-center rounded-2xl",
@@ -104,18 +103,16 @@ export function CategoryMenu() {
           </ul>
 
           <div className="px-3 pb-3">
-            <NavigationMenuLink asChild>
-              <Link
-                href="/shop"
-                className={cn(
-                  "flex flex-row items-center justify-center gap-2 rounded-2xl py-3 text-xs font-black transition-colors",
-                  "bg-navy text-cream hover:bg-navy-mid",
-                  "dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light",
-                )}
-              >
-                مشاهده همه‌ی دسته‌بندی‌ها <ArrowLeft className="size-4 text-current" />
-              </Link>
-            </NavigationMenuLink>
+            <Link
+              href="/shop"
+              className={cn(
+                "flex flex-row items-center justify-center gap-2 rounded-2xl border-0 py-3.5 text-sm font-black no-underline transition-all",
+                "bg-gold text-navy-deep shadow-[0_4px_14px_-4px_rgba(193,147,87,.5)] hover:bg-gold-light hover:shadow-[0_6px_20px_-4px_rgba(193,147,87,.7)]",
+              )}
+              onClick={() => { startTopProgress(); }}
+            >
+              مشاهده همه‌ی دسته‌بندی‌ها <ArrowLeft className="size-4 text-current" />
+            </Link>
           </div>
         </div>
       </NavigationMenuContent>

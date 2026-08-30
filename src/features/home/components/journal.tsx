@@ -8,11 +8,11 @@ import { useCallback, useEffect, useState } from "react";
 import { SliderArrow } from "@/components/ui/slider-arrow";
 
 const SLIDES = [
-  { href: "/articles/size", img: "/brand/cat-baby.jpg", tag: "اندازه", title: "راهنمای سایز بدون اشتباه", excerpt: "قد و دور سینه را چطور بگیرید تا لباس برنگردد." },
-  { href: "/articles/fabric", img: "/brand/look-knit.jpg", tag: "مراقبت", title: "پارچه مناسب پوست حساس", excerpt: "پنبه ارگانیک، شست‌وشو و اتوی بی‌خطر برای نوزاد." },
+  { href: "/articles/size", img: "/brand/cat-baby-portrait.jpg", tag: "اندازه", title: "راهنمای سایز بدون اشتباه", excerpt: "قد و دور سینه را چطور بگیرید تا لباس برنگردد." },
+  { href: "/articles/fabric", img: "/brand/look-knit-portrait.jpg", tag: "مراقبت", title: "پارچه مناسب پوست حساس", excerpt: "پنبه ارگانیک، شست‌وشو و اتوی بی‌خطر برای نوزاد." },
   { href: "/articles/party", img: "/brand/look-party.jpg", tag: "استایل", title: "استایل جشن تولد دخترانه", excerpt: "پیراهن مجلسی را با تل و کفش چطور ست کنید." },
-  { href: "/articles/size", img: "/brand/cat-girl.jpg", tag: "راهنما", title: "بین دو سایز کدام را بردارید؟", excerpt: "برای پالتو و لباس رویی معمولاً سایز بزرگ‌تر راحت‌تر است." },
-  { href: "/articles/fabric", img: "/brand/cat-boy.jpg", tag: "دوخت", title: "چرا الگوی آزاد برای بازی مهم است", excerpt: "درز آزاد یعنی کودک می‌دود و لباس کش نمی‌آید." },
+  { href: "/articles/size", img: "/brand/cat-girl-portrait.jpg", tag: "راهنما", title: "بین دو سایز کدام را بردارید؟", excerpt: "برای پالتو و لباس رویی معمولاً سایز بزرگ‌تر راحت‌تر است." },
+  { href: "/articles/fabric", img: "/brand/cat-boy-portrait.jpg", tag: "دوخت", title: "چرا الگوی آزاد برای بازی مهم است", excerpt: "درز آزاد یعنی کودک می‌دود و لباس کش نمی‌آید." },
 ];
 
 export function Journal() {

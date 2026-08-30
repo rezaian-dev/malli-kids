@@ -1,8 +1,8 @@
 import Image from "next/image";
 const LOOKS = [
   { href: "/shop?cat=دخترانه", img: "/brand/look-party.jpg", k: "GIRLS", t: "دخترانه" },
-  { href: "/shop?cat=پسرانه", img: "/brand/cat-boy.jpg", k: "BOYS", t: "پسرانه" },
-  { href: "/shop?cat=سیسمونی", img: "/brand/cat-baby.jpg", k: "BABY", t: "سیسمونی" },
+  { href: "/shop?cat=پسرانه", img: "/brand/cat-boy-portrait.jpg", k: "BOYS", t: "پسرانه" },
+  { href: "/shop?cat=سیسمونی", img: "/brand/cat-baby-portrait.jpg", k: "BABY", t: "سیسمونی" },
 ];
 
 export function Looks() {
