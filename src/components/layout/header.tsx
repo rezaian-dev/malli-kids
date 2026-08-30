@@ -1,21 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { NAV_MAIN } from "@/lib/data/nav";
-import { navIcon } from "@/lib/data/nav-icons";
 import { Separator } from "@/components/ui/separator";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { cn, shell } from "@/lib/utils";
 import { FestiveBanner } from "@/features/festive";
-import { NAV_LINK, ICON_BTN } from "./header-styles";
-import { NavActiveLink } from "./nav-active-link";
-import { CategoryMenu } from "./category-menu";
+import { ICON_BTN } from "./header-styles";
+import { DesktopNav } from "./desktop-nav";
 import { UserMenu } from "./user-menu";
 import { NoticesBell } from "./notices-bell";
 import { CartSheet } from "./cart-sheet";
 import { MobileNav } from "./mobile-nav";
-
-const MAIN_LINKS = NAV_MAIN.filter((n) => n.href !== "/shop");
 
 /**
  * Header — Server Component.
@@ -68,30 +62,8 @@ export function Header() {
             </span>
           </Link>
 
-          {/* ناوبری دسکتاپ — ساختار روی سرور، فقط آیتم‌ها جزیرهٔ client */}
-          <NavigationMenu
-            dir="rtl"
-            viewport={false}
-            delayDuration={60}
-            skipDelayDuration={120}
-            className={cn("mx-auto hidden max-w-none min-w-0 flex-1 justify-center md:flex")}
-          >
-            <NavigationMenuList className="gap-0.5 lg:gap-1">
-              <CategoryMenu />
-
-              {MAIN_LINKS.map((n) => {
-                const Icon = navIcon(n.icon);
-                return (
-                  <NavigationMenuItem key={n.href}>
-                    <NavActiveLink href={n.href} className={NAV_LINK}>
-                      <Icon className="size-4 text-current" />
-                      {n.label}
-                    </NavActiveLink>
-                  </NavigationMenuItem>
-                );
-              })}
-            </NavigationMenuList>
-          </NavigationMenu>
+          {/* ناوبری دسکتاپ — جزیرهٔ client؛ با تغییر مسیر منو را می‌بندد */}
+          <DesktopNav />
 
           {/* خوشهٔ اکشن‌ها */}
           <div className="ms-auto flex shrink-0 items-center gap-1.5 min-[360px]:gap-2 md:gap-1.5 lg:gap-2">

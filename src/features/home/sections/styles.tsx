@@ -51,7 +51,7 @@ export function Styles() {
               <TabsContent key={name} value={name} className="mt-0">
                 {/* تک‌ستونه تا ۵۱۹px (همان مرزِ گریدِ /shop)؛ از ۵۲۰px دو ستونه.
                    با این کار پهنای هر کارت در دو‌ستونه هیچ‌وقت زیر ~۲۳۸px نمی‌آید. */}
-                <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 min-[520px]:gap-4 sm:gap-6 lg:grid-cols-4">
+                <div className="grid-products">
                   {items.map((p, i) => (
                     <div key={p.id} className="animate-style-in" style={{ animationDelay: `${i * 72}ms` }}>
                       <Card p={p} view="grid" />

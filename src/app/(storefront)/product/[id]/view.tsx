@@ -40,7 +40,7 @@ export function View({ product, requestedId }: { product: Product; requestedId?:
         {related.length ? (
           <section className="mt-16">
             <h2 className="mb-6 text-xl font-black text-navy dark:text-ivory">مدل‌های مشابه</h2>
-            <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+            <div className="grid-products">
               {related.map((x) => (
                 <Card key={x.id} p={x} view="grid" />
               ))}

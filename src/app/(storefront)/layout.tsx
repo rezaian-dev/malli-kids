@@ -3,6 +3,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { HeaderSpacer } from "@/components/layout/header-spacer";
 import { ClickProgress } from "@/components/layout/click-progress";
+import { BackToTop } from "@/components/layout/back-to-top";
 import { BackgroundScene } from "@/components/shared/background-scene";
 import { Modal } from "@/features/auth";
 
@@ -15,8 +16,9 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
       <Header />
       <HeaderSpacer />
       <ClickProgress />
-      <main className="relative z-10 pt-[7.25rem] pb-10 sm:pt-32 sm:pb-16">{children}</main>
+      <main className="relative z-10 pb-10 sm:pb-16">{children}</main>
       <Footer />
+      <BackToTop />
       <Modal />
     </>
   );

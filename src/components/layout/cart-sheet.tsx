@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Minus, Plus, ShoppingBag, Sparkles, Trash2, Truck } from "lucide-react";
+import { ArrowLeft, Minus, Plus, ShoppingBag, Sparkles, Trash2, Truck, XIcon } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { toFaDigits, formatToman } from "@/lib/format";
 import { getProductById } from "@/lib/data/products";
@@ -72,8 +72,18 @@ export function CartSheet() {
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="left" dir="rtl" className={cn(PANEL, "flex w-[min(24rem,94vw)] flex-col")}>
-        <SheetHeader className={PANEL_HEAD}>
+      <SheetContent side="left" dir="rtl" showCloseButton={false} className={cn(PANEL, "flex w-[min(24rem,94vw)] flex-col")}>
+        <SheetHeader className={cn(PANEL_HEAD, "relative pe-14")}>
+          <SheetClose asChild className="absolute end-3.5 top-1/2 -translate-y-1/2">
+            <Button
+              size="icon-sm"
+              variant="ghost"
+              aria-label="بستن سبد خرید"
+              className="rounded-full text-cream transition-transform duration-300 ease-out hover:scale-105 hover:bg-white/15 hover:text-gold-light"
+            >
+              <XIcon className="size-5 text-current" />
+            </Button>
+          </SheetClose>
           <SheetTitle className="flex items-center gap-2 text-start text-base font-black text-cream">
             <span className="grid size-9 place-items-center rounded-2xl bg-gold text-navy-deep">
               <ShoppingBag className="size-4.5" />

@@ -328,6 +328,21 @@
   max-width: 80rem;
 }
 
+/**
+ * گریدِ استانداردِ کارت‌های محصول.
+ *
+ * به‌جای ستون‌های ثابت بر اساس بریک‌پوینتِ viewport، از `repeat(auto-fill, minmax(...))`
+ * استفاده می‌کند تا تعداد ستون‌ها را بر اساس **عرضِ واقعیِ کانتینر** (نه کل صفحه) تعیین
+ * کند. نتیجه: وقتی سایدبارِ فیلتر باز است، کانتینرِ محصولات باریک‌تر می‌شود و گرید خودش
+ * ستون کم می‌کند — بدون هیچ کارتِ فشرده و باریک (مشکلِ «grid-cols-3» ثابت). از ۳۲۰px
+ * (تک‌ستون) تا دسکتاپِ وسیع (چهار ستون) لاستیکی و اصولی رفتار می‌کند.
+ */
+@utility grid-products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+  gap: 1rem;
+}
+
 @layer base {
   html {
     @apply max-w-full overflow-x-hidden scroll-smooth;

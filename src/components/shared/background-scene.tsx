@@ -2,6 +2,11 @@
  * Storefront background — pure Tailwind and inline SVG, no background image.
  * Light keeps the editorial paper direction; dark is intentionally rebuilt as
  * a quiet midnight gallery with velvet gradients, fine seams, and constellations.
+ *
+ * نکتهٔ مهم: آلفای رنگ‌ها داخل مقادیرِ arbitrary (bg-[radial-...]) را نمی‌توان با
+ * `theme(colors.x/N)` ساخت — Tailwind آن را داخل یک string برش نمی‌زند و گرادیان
+ * ناخواسته اوپک (۱۴/۱۸٪ → ۱۰۰٪) رندر می‌شود. به‌جای آن از `color-mix` با درصدِ
+ * صریح استفاده می‌کنیم تا درخشش‌ها واقعاً محو و ملایم بمانند.
  */
 const STARS = Array.from({ length: 30 }, (_, i) => i);
 const DELAYS = [
@@ -17,15 +22,15 @@ export function BackgroundScene() {
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-cream dark:bg-ink">
       {/* Light: editorial paper, gold swatch, and a restrained navy undertone. */}
-      <div className="absolute inset-0 bg-[radial-gradient(at_top_right,theme(colors.gold/16),transparent_55%),radial-gradient(at_bottom_left,theme(colors.navy/7),transparent_50%),linear-gradient(180deg,theme(colors.paper-soft)_0%,theme(colors.cream)_60%,theme(colors.fog)_100%)] dark:hidden" />
+      <div className="absolute inset-0 bg-[radial-gradient(at_top_right,color-mix(in_srgb,theme(colors.gold)_18%,transparent),transparent_55%),radial-gradient(at_bottom_left,color-mix(in_srgb,theme(colors.navy)_8%,transparent),transparent_50%),linear-gradient(180deg,theme(colors.paper-soft)_0%,theme(colors.cream)_60%,theme(colors.fog)_100%)] dark:hidden" />
       {/* Dark: a completely different midnight-gallery direction. */}
-      <div className="absolute inset-0 hidden dark:block bg-[radial-gradient(ellipse_at_78%_12%,theme(colors.navy-light/35),transparent_27%),radial-gradient(ellipse_at_15%_82%,theme(colors.gold/12),transparent_30%),linear-gradient(135deg,theme(colors.ink)_0%,theme(colors.navy-deep)_46%,theme(colors.night-deep)_100%)]" />
-      <div className="absolute -end-48 -top-48 hidden size-[42rem] rounded-full bg-[radial-gradient(ellipse_at_center,theme(colors.gold/16),transparent_68%)] blur-3xl dark:block" />
-      <div className="absolute -bottom-64 -start-52 hidden size-[46rem] rounded-full bg-[radial-gradient(ellipse_at_center,theme(colors.navy-light/28),transparent_68%)] blur-3xl dark:block" />
+      <div className="absolute inset-0 hidden dark:block bg-[radial-gradient(ellipse_at_62%_10%,color-mix(in_srgb,theme(colors.navy-light)_16%,transparent),transparent_32%),radial-gradient(ellipse_at_22%_82%,color-mix(in_srgb,theme(colors.gold)_6%,transparent),transparent_34%),linear-gradient(135deg,theme(colors.ink)_0%,theme(colors.navy-deep)_46%,theme(colors.night-deep)_100%)]" />
+      <div className="absolute -end-72 -top-72 hidden size-[34rem] rounded-full bg-[radial-gradient(ellipse_at_50%_15%,color-mix(in_srgb,theme(colors.gold)_7%,transparent),transparent_64%)] blur-3xl dark:block" />
+      <div className="absolute -bottom-72 -start-56 hidden size-[38rem] rounded-full bg-[radial-gradient(ellipse_at_50%_20%,color-mix(in_srgb,theme(colors.navy-light)_9%,transparent),transparent_62%)] blur-3xl dark:block" />
       <div className="absolute inset-y-0 start-[12%] hidden w-px bg-gradient-to-b from-transparent via-gold/20 to-transparent dark:block" />
       <div className="absolute inset-y-0 end-[18%] hidden w-px bg-gradient-to-b from-transparent via-gold/10 to-transparent dark:block" />
 
-      <svg className="absolute inset-0 hidden h-full w-full opacity-[0.22] text-gold mix-blend-screen dark:block" xmlns="http://www.w3.org/2000/svg">
+      <svg className="absolute inset-0 hidden h-full w-full opacity-[0.16] text-gold mix-blend-screen dark:block" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="midnight-seam" width="96" height="96" patternUnits="userSpaceOnUse">
             <path d="M0 0L96 96M-24 24L24 -24M72 120L120 72" fill="none" stroke="currentColor" strokeWidth=".45" opacity=".55" />
@@ -47,7 +52,7 @@ export function BackgroundScene() {
           return (
             <span
               key={i}
-              className={`absolute ${size} rounded-full bg-gold-light/60 shadow-[0_0_12px_theme(colors.gold/70)] animate-twinkle ${DELAYS[i % DELAYS.length]}`}
+              className={`absolute ${size} rounded-full bg-gold-light/40 shadow-[0_0_8px_color-mix(in_srgb,theme(colors.gold)_45%,transparent)] animate-twinkle ${DELAYS[i % DELAYS.length]}`}
               style={{ top: `${y}%`, left: `${x}%` }}
             />
           );

@@ -125,7 +125,7 @@ export function Card({ p, view, priority = false }: { p: Product; view: "grid" |
           <span>·</span>
           <span className="overflow-hidden text-ellipsis whitespace-nowrap">{p.cat}</span>
         </div>
-        <h3 className="mt-1.5 mb-0 font-black text-navy dark:text-ivory text-[13px] leading-snug whitespace-nowrap overflow-hidden text-ellipsis">{p.name}</h3>
+        <h3 className="mt-1.5 mb-0 font-black text-navy dark:text-ivory text-sm leading-snug whitespace-nowrap overflow-hidden text-ellipsis">{p.name}</h3>
         {sold}
         <div className="mt-2 flex items-center gap-1.5 flex-wrap">
           {out ? (
@@ -141,10 +141,10 @@ export function Card({ p, view, priority = false }: { p: Product; view: "grid" |
         {/* تا ۵۱۹px (حالت تک‌ستونه) ردیف دکمه‌ها همیشه زیر قیمت می‌ماند؛ از ۵۲۰px
             روی دستگاه ماوس‌دار دکمه‌ها به روی تصویر و با hover می‌آیند. */}
         <div className="mt-2.5 grid grid-cols-1 gap-1.5 @[10rem]:grid-cols-2 pointer-fine:min-[520px]:hidden">
-          <Link href={href} className={`${VIEW} h-9 min-w-0 text-[10px]`}>
-            <Eye width={12} height={12} className="shrink-0" /> <span className="truncate">مشاهده</span>
+          <Link href={href} className={`${VIEW} h-9 min-w-0 text-[11px]`}>
+            <Eye width={13} height={13} className="shrink-0" /> <span className="truncate">مشاهده</span>
           </Link>
-          <AddToCart out={out} id={p.id} className={`${out ? "bg-rose-50 text-rose" : CART} h-9 min-w-0 rounded-[10px] border-0 text-[10px] font-black`}>
+          <AddToCart out={out} id={p.id} className={`${out ? "bg-rose-50 text-rose" : CART} h-9 min-w-0 rounded-[10px] border-0 text-[11px] font-black`}>
             {out ? "اطلاع موجودی" : "افزودن به سبد"}
           </AddToCart>
         </div>

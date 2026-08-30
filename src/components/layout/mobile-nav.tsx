@@ -52,8 +52,18 @@ export function MobileNav() {
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="right" dir="rtl" className={cn(PANEL, "w-[min(20rem,90vw)]")}>
-        <SheetHeader className={cn(PANEL_HEAD, "py-4")}>
+      <SheetContent side="right" dir="rtl" showCloseButton={false} className={cn(PANEL, "w-[min(20rem,90vw)]")}>
+        <SheetHeader className={cn(PANEL_HEAD, "relative pe-14 py-4")}>
+          <SheetClose asChild className="absolute end-3.5 top-1/2 -translate-y-1/2">
+            <Button
+              size="icon-sm"
+              variant="ghost"
+              aria-label="بستن منو"
+              className="rounded-full text-cream transition-transform duration-300 ease-out hover:scale-105 hover:bg-white/15 hover:text-gold-light"
+            >
+              <X className="size-5 text-current" />
+            </Button>
+          </SheetClose>
           <SheetTitle className="text-start text-sm font-black text-cream">منوی ملی‌کیدز</SheetTitle>
         </SheetHeader>
 

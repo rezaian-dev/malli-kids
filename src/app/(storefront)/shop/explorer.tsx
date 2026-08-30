@@ -505,7 +505,7 @@ export function Explorer() {
           </div>
 
           {/* Grid / List */}
-          <div className={state.view === "list" ? "flex flex-col gap-4" : "grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 sm:gap-4 min-[900px]:grid-cols-3 min-[1500px]:grid-cols-4"}>
+          <div className={state.view === "list" ? "flex flex-col gap-4" : "grid-products"}>
             {slice.map((p) => (
               <Card key={p.id} p={p} view={state.view} priority={slice.slice(0, 4).some((aboveFold) => aboveFold.img === p.img)} />
             ))}
