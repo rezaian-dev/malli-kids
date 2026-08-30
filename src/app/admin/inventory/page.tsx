@@ -3,7 +3,7 @@ import { getAllProducts } from "@/lib/shop/products";
 import { AdminInventoryLanding } from "./_components/admin-inventory-landing";
 
 export default async function AdminInventory() {
-  const admin = await requireAdminPage();
+  await requireAdminPage();
 
   const products = await getAllProducts();
 

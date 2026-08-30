@@ -12,7 +12,7 @@ import {
 } from "@/components/form";
 import { IRAN_CITIES } from "@/lib/data/iran-cities";
 import type { User } from "@/types";
-import { updateAccountAction } from "../_lib/actions";
+import { updateAccountAction } from "../_lib/account-actions";
 import {
   updateAccountDefaults,
   updateAccountSchema,

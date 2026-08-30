@@ -4,22 +4,21 @@ import { useState, type FormEvent } from "react";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { FIELD_FOCUS_WITHIN } from "@/lib/field";
+import { EMAIL_PATTERN } from "@/lib/forms";
 import { cn } from "@/lib/utils";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function NewsletterForm({ className }: { className?: string }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const trimmed = email.trim();
-  const invalid = trimmed !== "" && !EMAIL_RE.test(trimmed);
+  const invalid = trimmed !== "" && !EMAIL_PATTERN.test(trimmed);
   const bad = submitted && invalid;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!trimmed) return;
     setSubmitted(true);
-    if (!EMAIL_RE.test(trimmed)) return;
+    if (!EMAIL_PATTERN.test(trimmed)) return;
 
     toast.success(`عضو خبرنامه شدید — کد ۱۰٪ تخفیف به ${trimmed} فرستاده شد`);
     setEmail("");

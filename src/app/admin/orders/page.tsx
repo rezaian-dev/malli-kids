@@ -3,7 +3,7 @@ import { getAllOrders } from "@/lib/shop/orders";
 import { AdminOrdersLanding } from "./_components/admin-orders-landing";
 
 export default async function AdminOrders() {
-  const admin = await requireAdminPage();
+  await requireAdminPage();
 
   const orders = await getAllOrders();
 

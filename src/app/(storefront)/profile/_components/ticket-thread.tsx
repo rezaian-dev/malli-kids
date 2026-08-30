@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import type { Ticket } from "@/lib/shop/tickets";
-import { replyTicketAsUserAction } from "../_lib/actions";
+import { replyTicketAsUserAction } from "../_lib/ticket-actions";
 
 /** 💬 An expanded ticket's reply thread + the "reply as user" composer. */
 export function TicketThread({

@@ -3,7 +3,7 @@ import { getDashboardData } from "./_lib/data";
 import { DashboardLanding } from "./_components/dashboard-landing";
 
 export default async function AdminHome() {
-  const admin = await requireAdminPage();
+  await requireAdminPage();
 
   const data = await getDashboardData();
 

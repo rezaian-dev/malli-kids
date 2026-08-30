@@ -30,7 +30,7 @@ import {
   sendChatReplyAction,
   setChatStatusAction,
   type ChatThread,
-} from "@/lib/shop/chat-actions";
+} from "@/lib/shop/admin-chat-actions";
 import { setChatAssigneeAction } from "../_lib/actions";
 import type { CannedResponse } from "@/lib/shop/canned-responses";
 import { toFaDigits } from "@/lib/locale/fa";

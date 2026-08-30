@@ -2,7 +2,6 @@
 
 import { useMemo, useState, useTransition } from "react";
 import {
-  Ban,
   CircleCheckBig,
   ShieldCheck,
   UsersRound,

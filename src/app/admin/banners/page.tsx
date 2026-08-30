@@ -3,7 +3,7 @@ import { getAllBanners } from "./_lib/data";
 import { AdminBannersLanding } from "./_components/admin-banners-landing";
 
 export default async function AdminBanners() {
-  const admin = await requireAdminPage();
+  await requireAdminPage();
 
   const banners = await getAllBanners();
 

@@ -10,7 +10,7 @@ import {
   useAppForm,
 } from "@/components/form";
 import type { User } from "@/types";
-import { updateChildAction } from "../_lib/actions";
+import { updateChildAction } from "../_lib/child-actions";
 import {
   updateChildDefaults,
   updateChildSchema,

@@ -3,7 +3,7 @@ import { getAllCoupons } from "./_lib/data";
 import { AdminCouponsLanding } from "./_components/admin-coupons-landing";
 
 export default async function AdminCoupons() {
-  const admin = await requireAdminPage();
+  await requireAdminPage();
 
   const coupons = await getAllCoupons();
 

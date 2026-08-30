@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toFaDigits } from "@/lib/locale/fa";
 import { usePolling } from "@/hooks/use-polling";
-import { createTicketAction, getMyTicketsAction } from "../_lib/actions";
+import { createTicketAction, getMyTicketsAction } from "../_lib/ticket-actions";
 import { PROFILE_CARD } from "./profile-shared";
 import { TicketThread } from "./ticket-thread";
 

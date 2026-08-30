@@ -9,10 +9,11 @@ import {
   nextProductId,
   PRODUCTS_TAG,
 } from "@/lib/shop/products";
-import { deriveStock, type ProductVariant } from "@/lib/shop/inventory";
+import { deriveStock } from "@/lib/shop/inventory";
 import { notifyBackInStock } from "@/lib/shop/back-in-stock";
 import { logAudit } from "@/lib/admin/audit";
 import { formatToman } from "@/lib/locale/fa";
+import { uniqueSlugAgainst } from "@/lib/db/unique-slug";
 import type { ActionResult } from "@/lib/action-result";
 import type { Product } from "@/types";
 import { productSchema, type ProductValues } from "./schemas";
@@ -43,7 +44,8 @@ function revalidateCatalog() {
 
 /** 🪶 A clean, URL-safe slug from the name, de-duplicated against what's
  *  already in the database — same pattern as `articles/_lib/actions.ts`'s
- *  `uniqueSlug`. Only used when the admin didn't type their own. */
+ *  `uniqueSlug` (shared loop: `uniqueSlugAgainst`). Only used when the admin
+ *  didn't type their own. */
 async function uniqueProductSlug(name: string): Promise<string> {
   const base =
     name
@@ -53,12 +55,7 @@ async function uniqueProductSlug(name: string): Promise<string> {
       .trim()
       .replace(/\s+/g, "-") || "product";
 
-  let slug = base;
-  let i = 2;
-  while (await ProductModel.exists({ slug })) {
-    slug = `${base}-${i++}`;
-  }
-  return slug;
+  return uniqueSlugAgainst(ProductModel, base);
 }
 
 /** 🧮 `findOneAndUpdate` skips the model's `pre("save")` hook, so the

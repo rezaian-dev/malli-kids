@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, useTransition } from "react";
 import { BadgeCheck, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,13 +8,9 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { useStore } from "@/providers/store-provider";
-import { phoneDigits } from "@/lib/digits";
-import { toEnDigits } from "@/lib/locale/fa";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
-import {
-  checkCouponAction,
-  createCartOrderAction,
-} from "@/lib/shop/checkout-actions";
+import { createCartOrderAction } from "@/lib/shop/checkout-actions";
+import { useCheckoutDeliveryForm } from "@/hooks/use-checkout-delivery-form";
 import { cn } from "@/lib/utils";
 
 export type CartCheckoutRow = {
@@ -27,7 +22,8 @@ export type CartCheckoutRow = {
 // 🧾 The one place the *whole cart* becomes a single order — every line
 // submitted together, the way checkout works on every standard storefront.
 // Mirrors `CheckoutDialog`'s single-item layout (same delivery form, coupon
-// field, summary) with the product card widened into a scrollable line list.
+// field, summary — shared via `useCheckoutDeliveryForm`) with the product
+// card widened into a scrollable line list.
 export function CartCheckoutDialog({
   open,
   onOpenChange,
@@ -40,69 +36,42 @@ export function CartCheckoutDialog({
   onSuccess: () => void;
 }) {
   const { user, showToast } = useStore();
-  const [city, setCity] = useState(user?.city || "");
-  const [address, setAddress] = useState(user?.address || "");
-  const [phone, setPhone] = useState(user?.phone || "");
-  const [postal, setPostal] = useState(user?.postalCode || "");
-  const [couponIn, setCouponIn] = useState("");
-  const [applied, setApplied] = useState<{ code: string; rate: number } | null>(
-    null,
-  );
-  const [couponBad, setCouponBad] = useState(false);
-  const [pending, startTransition] = useTransition();
-  // 🔁 Same idempotency contract as `CheckoutDialog`: one key per checkout
-  // attempt, regenerated whenever the dialog (re)opens.
-  const [idempotencyKey, setIdempotencyKey] = useState(() =>
-    crypto.randomUUID(),
-  );
-
-  useEffect(() => {
-    if (!open) return;
-    setCity(user?.city || "");
-    setAddress(user?.address || "");
-    setPhone(user?.phone || "");
-    setPostal(user?.postalCode || "");
-    setIdempotencyKey(crypto.randomUUID());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
   const subtotal = rows.reduce(
     (sum, { item, unitPrice }) => sum + unitPrice * item.qty,
     0,
   );
-  const discount = applied ? Math.round(subtotal * applied.rate) : 0;
+  const form = useCheckoutDeliveryForm({ open, user, subtotal, showToast });
+  const {
+    city,
+    setCity,
+    address,
+    setAddress,
+    phone,
+    setPhone,
+    postal,
+    setPostal,
+    couponIn,
+    setCouponIn,
+    applied,
+    couponBad,
+    setCouponBad,
+    pending,
+    startTransition,
+    idempotencyKey,
+    discount,
+    applyCoupon,
+    validateDelivery,
+    deliveryPayload,
+  } = form;
+
   const shipping =
     subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
   const itemCount = rows.reduce((sum, { item }) => sum + item.qty, 0);
 
-  function applyCoupon() {
-    const code = toEnDigits(couponIn).trim().toUpperCase();
-    if (!code) return;
-
-    startTransition(async () => {
-      const hit = await checkCouponAction(code, subtotal);
-      if (hit) {
-        setApplied(hit);
-        setCouponBad(false);
-        showToast(
-          `کد ${hit.code} اعمال شد — ${toFaDigits(Math.round(hit.rate * 100))}٪ تخفیف 🎉`,
-        );
-      } else {
-        setApplied(null);
-        setCouponBad(true);
-      }
-    });
-  }
-
   function submitOrder() {
     if (!user || rows.length === 0) return;
-    if (city.trim().length < 2) return showToast("شهر را بنویسید");
-    if (address.trim().length < 10) return showToast("آدرس کامل را بنویسید");
-    if (phoneDigits(phone).length !== 11)
-      return showToast("شمارهٔ موبایل ۱۱ رقمی بنویسید");
-    const postalDigits = toEnDigits(postal).replace(/\D/g, "");
-    if (postalDigits.length !== 10)
-      return showToast("کد پستیِ ۱۰ رقمی بنویسید");
+    const error = validateDelivery();
+    if (error) return showToast(error);
 
     startTransition(async () => {
       const result = await createCartOrderAction({
@@ -111,10 +80,7 @@ export function CartCheckoutDialog({
           size: item.size,
           qty: item.qty,
         })),
-        city: city.trim(),
-        address: address.trim(),
-        phone: phoneDigits(phone),
-        postalCode: postalDigits,
+        ...deliveryPayload(),
         couponCode: applied?.code,
         idempotencyKey,
       });
