@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { JsonLd } from "@/components/shared/json-ld";
+import { toFaDigits } from "@/lib/locale/fa";
 import { pdpHref } from "@/lib/data/products";
 import { getAllProducts } from "@/lib/shop/products";
 import {
@@ -37,14 +38,20 @@ export async function generateMetadata({
     ...(state.cat !== "همه" ? [state.cat] : []),
     ...(state.season !== "همه" ? [state.season] : []),
   ];
+  // 📄 A self-canonical, indexable page N still needs a title/description
+  // distinct from page 1 — otherwise every page in the sequence reports the
+  // identical <title>, a duplicate-metadata signal Google's guidance warns
+  // against even when the underlying products genuinely differ per page.
+  const pageSuffix =
+    indexable && state.page > 1 ? ` — صفحه ${toFaDigits(state.page)}` : "";
 
   return buildMetadata({
-    title: heading === "کالکشن پوشاک کودک" ? "فروشگاه" : heading,
+    title: (heading === "کالکشن پوشاک کودک" ? "فروشگاه" : heading) + pageSuffix,
     description: state.q
       ? `نتایج «${state.q}» در فروشگاه ملی‌کیدز.`
       : heading === "کالکشن پوشاک کودک"
-        ? "پوشاک کودک؛ دخترانه، پسرانه و سیسمونی."
-        : `کالکشن ${heading} در ملی‌کیدز.`,
+        ? `پوشاک کودک؛ دخترانه، پسرانه و سیسمونی.${pageSuffix}`
+        : `کالکشن ${heading} در ملی‌کیدز.${pageSuffix}`,
     path: shopCanonicalHref(state),
     noIndex: !indexable,
     keywords,

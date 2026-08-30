@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Search } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import { toFaDigits } from "@/lib/locale/fa";
@@ -5,6 +6,7 @@ import { ProductCard } from "@/components/product";
 import { PRODUCT_GRID } from "@/components/product/card-styles";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toShopHref, type ShopState } from "@/lib/shop/shop-state";
 import type { Product } from "@/types";
 
 /** 🛍️ Product grid/list, empty state, and pagination. */
@@ -13,17 +15,21 @@ export function ShopResults({
   items,
   activeN,
   onReset,
+  state,
   page,
   pages,
-  onPageChange,
 }: {
   view: "grid" | "list";
   items: Product[];
   activeN: number;
   onReset: () => void;
+  // 🔗 Needed to build each page's real `href` (`toShopHref`) — pagination
+  // must render as crawlable `<a>` links, not JS-only click handlers, or
+  // Googlebot has no way to discover page 2+ at all (see the JavaScript SEO
+  // guidance on link discovery: only `<a href>` is followed).
+  state: ShopState;
   page: number;
   pages: number;
-  onPageChange: (page: number) => void;
 }) {
   return (
     <>
@@ -79,10 +85,8 @@ export function ShopResults({
           {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
             <Button
               key={n}
-              type="button"
+              asChild
               variant={n === page ? "default" : "outline"}
-              onClick={() => onPageChange(n)}
-              aria-current={n === page ? "page" : undefined}
               className={cn(
                 "h-11 min-w-11 rounded-full px-3 text-sm font-black",
                 n === page
@@ -90,7 +94,14 @@ export function ShopResults({
                   : "border-navy/10 text-navy hover:border-gold/50 dark:border-gold/30 dark:bg-slate dark:text-ivory bg-white",
               )}
             >
-              {toFaDigits(n)}
+              <Link
+                href={toShopHref({ ...state, page: n })}
+                scroll={false}
+                prefetch={false}
+                aria-current={n === page ? "page" : undefined}
+              >
+                {toFaDigits(n)}
+              </Link>
             </Button>
           ))}
         </nav>
