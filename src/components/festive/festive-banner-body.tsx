@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft, Gift, PartyPopper, Sparkles, Ticket } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
-import { loadBanners } from "@/lib/admin-sync";
-import { pickBanner } from "@/lib/festive/occasions";
 import { toFaDigits } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { FestiveBanner as BannerItem, FestiveTheme } from "@/types";
+import type { FestiveTheme } from "@/types";
 import { FestiveDecor } from "./festive-decor";
 
 const TONE: Record<FestiveTheme, string> = {
@@ -17,125 +15,124 @@ const TONE: Record<FestiveTheme, string> = {
   night: "from-navy-deep via-slate to-navy-deep",
 };
 
-export function FestiveBannerBody({
-  item: serverItem,
+function BannerFrame({
+  className,
+  children,
+  topLine,
 }: {
-  item: BannerItem | null;
+  className: string;
+  children: ReactNode;
+  topLine?: string;
 }) {
-  const { campaign } = useStore();
-  const [seen, setSeen] = useState(false);
-  const [item, setItem] = useState<BannerItem | null>(serverItem);
-  useEffect(() => setSeen(true), []);
+  return (
+    <div className={cn("relative isolate overflow-hidden bg-linear-to-l", className)}>
+      <FestiveDecor />
+      <span
+        className={cn(
+          "pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-l from-transparent to-transparent",
+          topLine ?? "via-gold/60",
+        )}
+        aria-hidden
+      />
+      <div className="relative mx-auto flex min-h-12 max-w-7xl flex-wrap items-center justify-center gap-x-4 gap-y-2 px-3 py-3.5 text-center sm:min-h-13 sm:flex-nowrap sm:justify-between sm:px-6 sm:py-4">
+        {children}
+      </div>
+    </div>
+  );
+}
 
-  useEffect(() => setItem(pickBanner(loadBanners()) ?? null), []);
+// 🎀 Render the festival strip from the shared store snapshot. ✨
+export function FestiveBannerBody() {
+  const { campaign, banner } = useStore();
 
-  if (seen && campaign.active && campaign.percent > 0) {
+  if (campaign.active && campaign.percent > 0) {
     return (
-      <div
-        className="from-gold-deep via-gold-light to-gold text-navy-deep relative isolate overflow-hidden bg-linear-to-l"
-        role="status"
+      <BannerFrame
+        className="from-gold-deep via-gold-light to-gold text-navy-deep"
+        topLine="via-white/70"
       >
-        <FestiveDecor />
-        <span
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-l from-transparent via-white/70 to-transparent"
-          aria-hidden
-        />
-        <div className="animate-fade-up relative mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 px-4 py-3.5 text-center sm:py-4">
+        <div className="flex min-w-0 items-center justify-center gap-3 sm:gap-4">
           <PartyPopper className="size-4.5 shrink-0" />
           <p className="text-xs font-black sm:text-[13px]">
-            {campaign.title || "جشنواره"} — {toFaDigits(campaign.percent)}٪
-            تخفیف روی همهٔ محصولات
+            {campaign.title || "جشنواره"} — {toFaDigits(campaign.percent)}٪ تخفیف روی
+            همهٔ محصولات
           </p>
-          <Link
-            href="/shop"
-            className="group inline-flex items-center gap-1 text-[11px] font-black underline-offset-4 hover:underline sm:text-xs"
-          >
-            خرید
-            <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />
-          </Link>
         </div>
-      </div>
+        <Link
+          href="/shop"
+          prefetch={false}
+          className="group inline-flex shrink-0 items-center gap-1 text-[11px] font-black underline-offset-4 hover:underline sm:text-xs"
+        >
+          خرید
+          <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />
+        </Link>
+      </BannerFrame>
     );
   }
 
-  if (item) {
+  if (banner) {
     return (
-      <div
-        className={cn(
-          "text-ivory relative isolate overflow-hidden bg-linear-to-l",
-          TONE[item.theme],
-        )}
-      >
-        <FestiveDecor />
-        {/* gold hairline at the top edge too — the strip reads as a framed ribbon */}
-        <span
-          className="via-gold/60 pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-l from-transparent to-transparent"
-          aria-hidden
-        />
-
-        <div className="animate-fade-up relative mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-4 gap-y-2 px-3 py-3.5 sm:flex-nowrap sm:justify-between sm:px-6 sm:py-4">
-          {/* right cluster: occasion pill + title/subtitle */}
-          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-            <span className="bg-gold text-navy-deep shadow-gold/70 relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black shadow-[0_4px_14px_-4px] sm:px-3.5 sm:text-[11px]">
-              <Gift className="animate-orn-sway size-3.5 motion-reduce:animate-none" />
-              {item.occasion}
-              <span
-                className="absolute inset-0 rounded-full ring-1 ring-white/40 ring-inset"
-                aria-hidden
-              />
-            </span>
-            <div className="min-w-0 text-center sm:text-start">
-              <p className="truncate text-[13px] font-black tracking-tight sm:text-[15px]">
-                {item.title}
-              </p>
-              <p className="text-ivory/70 mt-0.5 hidden truncate text-[11px] font-bold min-[560px]:block sm:text-xs">
-                {item.subtitle}
-              </p>
-            </div>
-          </div>
-
-          {/* left cluster: coupon chip + CTA with hover shine */}
-          <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
-            {item.coupon ? (
-              <span
-                className="border-gold/60 bg-gold/10 text-gold-light hidden items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 text-[11px] font-black tracking-[0.14em] md:inline-flex"
-                title="کد تخفیف را در صفحهٔ پرداخت وارد کنید"
-              >
-                <Ticket className="size-3.5" />
-                {item.coupon}
-              </span>
-            ) : null}
-            <Link
-              href={item.href}
-              className="group bg-gold text-navy-deep shadow-gold/30 hover:shadow-gold/50 relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full px-4 py-2 text-[11px] font-black shadow-lg transition-all hover:scale-[1.04] sm:px-5 sm:text-xs"
-            >
-              <span className="relative z-10">{item.cta}</span>
-              <ArrowLeft className="relative z-10 size-3.5 transition-transform group-hover:-translate-x-0.5" />
-              <span className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/60 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
-            </Link>
+      <BannerFrame className={cn("text-ivory", TONE[banner.theme])}>
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+          <span className="relative inline-flex shrink-0 items-center gap-1.5 rounded-full bg-gold px-3 py-1.5 text-[10px] font-black text-navy-deep shadow-[0_4px_14px_-4px] shadow-gold/70 sm:px-3.5 sm:text-[11px]">
+            <Gift className="size-3.5" />
+            {banner.occasion}
+            <span
+              className="absolute inset-0 rounded-full ring-1 ring-white/40 ring-inset"
+              aria-hidden
+            />
+          </span>
+          <div className="min-w-0 text-center sm:text-start">
+            <p className="truncate text-[13px] font-black tracking-tight sm:text-[15px]">
+              {banner.title}
+            </p>
+            <p className="mt-0.5 hidden truncate text-[11px] font-bold text-ivory/70 min-[560px]:block sm:text-xs">
+              {banner.subtitle}
+            </p>
           </div>
         </div>
-      </div>
+
+        <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
+          {banner.coupon ? (
+            <span
+              className="hidden items-center gap-1.5 rounded-lg border border-dashed border-gold/60 bg-gold/10 px-3 py-1.5 text-[11px] font-black tracking-[0.14em] text-gold-light md:inline-flex"
+              title="کد تخفیف را در صفحهٔ پرداخت وارد کنید"
+            >
+              <Ticket className="size-3.5" />
+              {banner.coupon}
+            </span>
+          ) : null}
+          <Link
+            href={banner.href}
+            prefetch={false}
+            className="group relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-gold px-4 py-2 text-[11px] font-black text-navy-deep shadow-lg shadow-gold/30 transition-all hover:scale-[1.04] hover:shadow-gold/50 sm:px-5 sm:text-xs"
+          >
+            <span className="relative z-10">{banner.cta}</span>
+            <ArrowLeft className="relative z-10 size-3.5 transition-transform group-hover:-translate-x-0.5" />
+            <span className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/60 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
+          </Link>
+        </div>
+      </BannerFrame>
     );
   }
 
   return (
-    <div className="from-navy via-navy-mid to-navy text-ivory relative isolate overflow-hidden bg-linear-to-l">
-      <FestiveDecor />
-      <div className="animate-fade-up relative mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 px-4 py-3.5 text-center sm:py-4">
-        <Sparkles className="animate-twinkle text-gold size-4.5 shrink-0 motion-reduce:animate-none" />
+    <BannerFrame className="from-navy via-navy-mid to-navy text-ivory">
+      <div className="flex min-w-0 items-center justify-center gap-3 sm:gap-4">
+        <Sparkles className="size-4.5 shrink-0 text-gold motion-reduce:animate-none" />
         <p className="text-xs font-bold sm:text-[13px]">
-          <span className="text-gold-light font-black">ارسال رایگان</span> برای
-          خریدهای بالای ۱٬۵٬۰۰ تومان
+          <span className="font-black text-gold-light">ارسال رایگان</span> برای
+          خریدهای بالای ۱٬۵۰۰٬۰۰۰ تومان
         </p>
-        <Link
-          href="/shipping"
-          className="group text-gold-light inline-flex items-center gap-1 text-[11px] font-black underline-offset-4 hover:underline sm:text-xs"
-        >
-          جزئیات
-          <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />
-        </Link>
       </div>
-    </div>
+      <Link
+        href="/shipping"
+        prefetch={false}
+        className="group inline-flex shrink-0 items-center gap-1 text-[11px] font-black text-gold-light underline-offset-4 hover:underline sm:text-xs"
+      >
+        جزئیات
+        <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />
+      </Link>
+    </BannerFrame>
   );
 }

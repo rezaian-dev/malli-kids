@@ -1,9 +1,8 @@
 "use client";
 
-import type { FestiveBanner as BannerItem } from "@/types";
 import { FestiveBannerBody } from "./festive-banner-body";
 
-// 🎉 Keep the banner stable instead of swapping through a fallback. ✨
-export function FestiveBannerMount({ item }: { item: BannerItem | null }) {
-  return <FestiveBannerBody item={item} />;
+// 🎉 Keep the top ribbon on the same data snapshot as the header. ✨
+export function FestiveBannerMount() {
+  return <FestiveBannerBody />;
 }

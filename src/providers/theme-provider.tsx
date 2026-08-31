@@ -13,6 +13,7 @@ import {
   readThemePreference,
   resolveThemePreference,
   THEME_KEY,
+  THEME_RESOLVED_KEY,
   writeCookie,
   type ResolvedTheme,
   type ThemePreference,
@@ -41,41 +42,49 @@ function readClientTheme(fallback: Theme) {
   }
 }
 
-function readClientResolvedTheme() {
-  if (typeof document === "undefined") return "light" as Resolved;
+function readClientResolvedTheme(fallback: Resolved) {
+  if (typeof document === "undefined") return fallback;
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
-// 🌗 Keep the first paint in sync with the saved theme. ✨
+function applyTheme(nextTheme: Theme, nextResolved: Resolved) {
+  const root = document.documentElement;
+  root.classList.toggle("dark", nextResolved === "dark");
+  root.style.colorScheme = nextResolved;
+  writeCookie(THEME_KEY, encodeURIComponent(nextTheme));
+  writeCookie(THEME_RESOLVED_KEY, nextResolved);
+}
+
+// 🌗 Keep SSR, first paint and later toggles in the same theme lane. ✨
 export function ThemeProvider({
   children,
   initialTheme = "system",
+  initialResolved = "light",
 }: {
   children: ReactNode;
   initialTheme?: Theme;
+  initialResolved?: Resolved;
 }) {
   const [theme, setThemeState] = useState<Theme>(() => readClientTheme(initialTheme));
-  const [resolved, setResolved] = useState<Resolved>(readClientResolvedTheme);
+  const [resolved, setResolved] = useState<Resolved>(() =>
+    readClientResolvedTheme(initialResolved),
+  );
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
 
-    const apply = () => {
+    const sync = () => {
       const nextTheme = readClientTheme(initialTheme);
       const nextResolved = resolveThemePreference(nextTheme, mq.matches);
-      const root = document.documentElement;
-
-      root.classList.toggle("dark", nextResolved === "dark");
-      root.style.colorScheme = nextResolved;
-      writeCookie(THEME_KEY, encodeURIComponent(nextTheme));
+      applyTheme(nextTheme, nextResolved);
       setThemeState(nextTheme);
       setResolved(nextResolved);
     };
 
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, [initialTheme]);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, [initialResolved, initialTheme]);
 
   const setTheme = useCallback((nextTheme: Theme) => {
     try {
@@ -87,10 +96,7 @@ export function ThemeProvider({
       window.matchMedia("(prefers-color-scheme: dark)").matches,
     );
 
-    const root = document.documentElement;
-    root.classList.toggle("dark", nextResolved === "dark");
-    root.style.colorScheme = nextResolved;
-    writeCookie(THEME_KEY, encodeURIComponent(nextTheme));
+    applyTheme(nextTheme, nextResolved);
     setThemeState(nextTheme);
     setResolved(nextResolved);
   }, []);

@@ -11,15 +11,20 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { STORAGE } from "@/lib/constants";
+import { pickBanner } from "@/lib/festive/occasions";
 import {
   NO_CAMPAIGN,
+  clearCookie,
   sanitizeCampaign,
   sanitizeCart,
   sanitizeUser,
+  writeCookie,
+  writeJsonCookie,
+  type StoreBootstrap,
   type StoredCampaign,
   type StoredCartItem,
 } from "@/lib/storefront-state";
-import type { User } from "@/types";
+import type { FestiveBanner as BannerItem, User } from "@/types";
 
 // 🛒 Cart item shared across storage and UI.
 export type CartItem = StoredCartItem;
@@ -27,13 +32,15 @@ export type CartItem = StoredCartItem;
 // 🎉 Campaign state shared across the storefront.
 export type Campaign = StoredCampaign;
 
-// 🧠 Small client store for auth, cart and campaign state.
+// 🧠 Small client store for auth, cart and festive state.
 type Ctx = {
   ready: boolean;
   user: User | null;
   authOpen: boolean;
   cart: CartItem[];
   cartCount: number;
+  campaign: Campaign;
+  banner: BannerItem | null;
   setAuthOpen: (v: boolean) => void;
   login: (u: User) => void;
   updateUser: (patch: Partial<User>) => void;
@@ -43,37 +50,50 @@ type Ctx = {
   removeCartItem: (id: number, size: string) => void;
   clearCart: () => void;
   showToast: (text: string) => void;
-  campaign: Campaign;
   priceOf: (price: number) => number;
 };
 
 const StoreCtx = createContext<Ctx | null>(null);
 
-function readCampaignFromAdminDb() {
+function readCampaignFromAdminDb(current: Campaign) {
   try {
     const raw = window.localStorage.getItem(STORAGE.adminDb);
-    if (!raw) return NO_CAMPAIGN;
+    if (!raw) return current;
     return sanitizeCampaign(JSON.parse(raw)?.settings?.campaign);
   } catch {
-    return NO_CAMPAIGN;
+    return current;
   }
 }
 
-function readLocalUser() {
+function readBannerFromAdminDb(current: BannerItem | null) {
+  try {
+    const raw = window.localStorage.getItem(STORAGE.adminDb);
+    if (!raw) return current;
+    const banners = JSON.parse(raw)?.banners;
+    if (!Array.isArray(banners)) return current;
+    return pickBanner(banners) ?? null;
+  } catch {
+    return current;
+  }
+}
+
+function readLocalUser(current: User | null) {
   try {
     const raw = window.localStorage.getItem(STORAGE.user);
-    return raw ? sanitizeUser(JSON.parse(raw)) : null;
+    if (raw === null) return current;
+    return sanitizeUser(JSON.parse(raw));
   } catch {
-    return null;
+    return current;
   }
 }
 
-function readLocalCart() {
+function readLocalCart(current: CartItem[]) {
   try {
     const raw = window.localStorage.getItem(STORAGE.cart);
-    return raw ? sanitizeCart(JSON.parse(raw)) : [];
+    if (raw === null) return current;
+    return sanitizeCart(JSON.parse(raw));
   } catch {
-    return [];
+    return current;
   }
 }
 
@@ -86,18 +106,34 @@ function normalizeUser(input: User) {
   } satisfies User;
 }
 
-// 🪶 Wait for local storage once, then keep the header stable. ✨
-export function StoreProvider({ children }: { children: ReactNode }) {
-  const [ready, setReady] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+// 🪶 Start from the server snapshot, then sync tiny client deltas. ✨
+export function StoreProvider({
+  children,
+  initialState,
+}: {
+  children: ReactNode;
+  initialState?: StoreBootstrap;
+}) {
+  const boot = initialState ?? {
+    ready: false,
+    user: null,
+    cart: [],
+    campaign: NO_CAMPAIGN,
+    banner: null,
+  };
+
+  const [ready, setReady] = useState(boot.ready);
+  const [user, setUser] = useState<User | null>(boot.user);
   const [authOpen, setAuthOpen] = useState(false);
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [campaign, setCampaign] = useState<Campaign>(NO_CAMPAIGN);
+  const [cart, setCart] = useState<CartItem[]>(boot.cart);
+  const [campaign, setCampaign] = useState<Campaign>(boot.campaign);
+  const [banner, setBanner] = useState<BannerItem | null>(boot.banner);
 
   useEffect(() => {
-    setUser(readLocalUser());
-    setCart(readLocalCart());
-    setCampaign(readCampaignFromAdminDb());
+    setUser((current) => readLocalUser(current));
+    setCart((current) => readLocalCart(current));
+    setCampaign((current) => readCampaignFromAdminDb(current));
+    setBanner((current) => readBannerFromAdminDb(current));
     setReady(true);
   }, []);
 
@@ -111,8 +147,36 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       window.localStorage.setItem(STORAGE.cart, JSON.stringify(cart));
     } catch {}
 
+    if (user) writeJsonCookie(STORAGE.user, user);
+    else clearCookie(STORAGE.user);
+
+    writeJsonCookie(STORAGE.cart, cart);
+    writeJsonCookie(STORAGE.campaign, campaign);
+    if (banner) writeJsonCookie(STORAGE.banner, banner);
+    else clearCookie(STORAGE.banner);
+    writeCookie(STORAGE.boot, "1");
     document.documentElement.dataset.auth = user ? "user" : "guest";
-  }, [ready, user, cart]);
+  }, [ready, user, cart, campaign, banner]);
+
+  useEffect(() => {
+    const syncFestive = () => {
+      const currentCampaign = readCampaignFromAdminDb(campaign);
+      const currentBanner = readBannerFromAdminDb(banner);
+      setCampaign((prev) =>
+        JSON.stringify(prev) === JSON.stringify(currentCampaign)
+          ? prev
+          : currentCampaign,
+      );
+      setBanner((prev) => (prev?.id === currentBanner?.id ? prev : currentBanner));
+    };
+
+    window.addEventListener("storage", syncFestive);
+    window.addEventListener("focus", syncFestive);
+    return () => {
+      window.removeEventListener("storage", syncFestive);
+      window.removeEventListener("focus", syncFestive);
+    };
+  }, [banner, campaign]);
 
   const login = useCallback((nextUser: User) => {
     setUser(normalizeUser(nextUser));
@@ -183,6 +247,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       authOpen,
       cart,
       cartCount,
+      campaign,
+      banner,
       setAuthOpen,
       login,
       updateUser,
@@ -192,7 +258,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       removeCartItem,
       clearCart,
       showToast,
-      campaign,
       priceOf,
     }),
     [
@@ -201,6 +266,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       authOpen,
       cart,
       cartCount,
+      campaign,
+      banner,
       login,
       updateUser,
       logout,
@@ -209,7 +276,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       removeCartItem,
       clearCart,
       showToast,
-      campaign,
       priceOf,
     ],
   );

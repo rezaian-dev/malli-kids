@@ -78,7 +78,7 @@ export function FestiveBannerFallback({ item }: { item: BannerItem | null }) {
         <Sparkles className="text-gold size-4.5 shrink-0" />
         <p className="text-xs font-bold sm:text-[13px]">
           <span className="text-gold-light font-black">ارسال رایگان</span> برای
-          خریدهای بالای ۱٬۵۰۰ تومان
+          خریدهای بالای ۱٬۵۰۰٬۰۰۰ تومان
         </p>
         <Link
           href="/shipping"

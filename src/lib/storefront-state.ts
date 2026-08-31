@@ -1,5 +1,5 @@
-import type { User } from "@/types";
 import { STORAGE } from "@/lib/constants";
+import type { FestiveBanner as BannerItem, User } from "@/types";
 
 export type ThemePreference = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -10,10 +10,12 @@ export type StoreBootstrap = {
   user: User | null;
   cart: StoredCartItem[];
   campaign: StoredCampaign;
+  banner: BannerItem | null;
   ready: boolean;
 };
 
 export const THEME_KEY = STORAGE.theme;
+export const THEME_RESOLVED_KEY = STORAGE.themeResolved;
 export const COOKIE_AGE = 60 * 60 * 24 * 180;
 export const NO_CAMPAIGN: StoredCampaign = {
   active: false,
@@ -49,12 +51,25 @@ export function readThemePreference(value?: string): ThemePreference {
     : "system";
 }
 
+export function readResolvedTheme(value?: string): ResolvedTheme | null {
+  const theme = decode(value);
+  return theme === "light" || theme === "dark" ? theme : null;
+}
+
 export function resolveThemePreference(
   theme: ThemePreference,
   systemDark: boolean,
 ): ResolvedTheme {
   if (theme === "system") return systemDark ? "dark" : "light";
   return theme;
+}
+
+export function resolveInitialTheme(
+  theme: ThemePreference,
+  resolved: ResolvedTheme | null,
+) {
+  if (theme === "light" || theme === "dark") return theme;
+  return resolved ?? "light";
 }
 
 export function sanitizeUser(value: unknown): User | null {
@@ -96,11 +111,13 @@ export function sanitizeCart(value: unknown): StoredCartItem[] {
 
     if (!Number.isFinite(id) || !size || !Number.isFinite(qty)) return [];
 
-    return [{
-      id,
-      size,
-      qty: Math.min(9, Math.max(1, Math.round(qty))),
-    }];
+    return [
+      {
+        id,
+        size,
+        qty: Math.min(9, Math.max(1, Math.round(qty))),
+      },
+    ];
   });
 }
 
@@ -117,17 +134,57 @@ export function sanitizeCampaign(value: unknown): StoredCampaign {
   };
 }
 
+export function sanitizeBanner(value: unknown): BannerItem | null {
+  if (!value || typeof value !== "object") return null;
+
+  const banner = value as Record<string, unknown>;
+  const theme = banner.theme;
+
+  if (
+    typeof banner.id !== "string" ||
+    typeof banner.occasion !== "string" ||
+    typeof banner.title !== "string" ||
+    typeof banner.subtitle !== "string" ||
+    typeof banner.cta !== "string" ||
+    typeof banner.href !== "string" ||
+    typeof banner.from !== "string" ||
+    typeof banner.to !== "string" ||
+    (theme !== "navy" && theme !== "gold" && theme !== "night")
+  ) {
+    return null;
+  }
+
+  return {
+    id: banner.id.trim(),
+    occasion: banner.occasion.trim(),
+    title: banner.title.trim(),
+    subtitle: banner.subtitle.trim(),
+    cta: banner.cta.trim(),
+    href: banner.href.trim(),
+    coupon: typeof banner.coupon === "string" ? banner.coupon.trim() : undefined,
+    theme,
+    from: banner.from.trim(),
+    to: banner.to.trim(),
+    active: Boolean(banner.active),
+    pinned: Boolean(banner.pinned),
+  };
+}
+
 export function readStoreBootstrap(getCookie: (name: string) => string | undefined) {
   const userCookie = getCookie(STORAGE.user);
   const cartCookie = getCookie(STORAGE.cart);
   const campaignCookie = getCookie(STORAGE.campaign);
+  const bannerCookie = getCookie(STORAGE.banner);
   const bootCookie = getCookie(STORAGE.boot);
 
   return {
     user: sanitizeUser(parseJson(userCookie, null)),
     cart: sanitizeCart(parseJson(cartCookie, [])),
     campaign: sanitizeCampaign(parseJson(campaignCookie, NO_CAMPAIGN)),
-    ready: bootCookie === "1" || Boolean(userCookie || cartCookie || campaignCookie),
+    banner: sanitizeBanner(parseJson(bannerCookie, null)),
+    ready:
+      bootCookie === "1" ||
+      Boolean(userCookie || cartCookie || campaignCookie || bannerCookie),
   } satisfies StoreBootstrap;
 }
 
@@ -148,6 +205,7 @@ export function writeJsonCookie(name: string, value: unknown) {
 export function buildThemeScript() {
   return `(() => {
     const themeKey = ${JSON.stringify(THEME_KEY)};
+    const resolvedKey = ${JSON.stringify(THEME_RESOLVED_KEY)};
     const userKey = ${JSON.stringify(STORAGE.user)};
     const readCookie = (key) => {
       const hit = document.cookie
@@ -160,11 +218,13 @@ export function buildThemeScript() {
       const saved = localStorage.getItem(themeKey) || readCookie(themeKey) || 'system';
       const theme = saved === 'light' || saved === 'dark' || saved === 'system' ? saved : 'system';
       const dark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const resolved = dark ? 'dark' : 'light';
       const root = document.documentElement;
       root.classList.toggle('dark', dark);
-      root.style.colorScheme = dark ? 'dark' : 'light';
-      root.dataset.auth = localStorage.getItem(userKey) ? 'user' : 'guest';
+      root.style.colorScheme = resolved;
+      root.dataset.auth = localStorage.getItem(userKey) || readCookie(userKey) ? 'user' : 'guest';
       document.cookie = themeKey + '=' + encodeURIComponent(theme) + '; path=/; max-age=${COOKIE_AGE}; samesite=lax';
+      document.cookie = resolvedKey + '=' + resolved + '; path=/; max-age=${COOKIE_AGE}; samesite=lax';
     } catch {
       document.documentElement.dataset.auth = 'guest';
     }

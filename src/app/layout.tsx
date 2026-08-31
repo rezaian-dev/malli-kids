@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Viewport } from "next";
+import { cookies } from "next/headers";
 import localFont from "next/font/local";
 import NextTopLoader from "nextjs-toploader";
 import { StoreProvider } from "@/providers/store-provider";
@@ -7,7 +8,15 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { JsonLd } from "@/components/shared/json-ld";
 import { getRootMetadata, organizationSchema, websiteSchema } from "@/lib/seo";
-import { buildThemeScript } from "@/lib/storefront-state";
+import {
+  buildThemeScript,
+  readResolvedTheme,
+  readStoreBootstrap,
+  readThemePreference,
+  resolveInitialTheme,
+  THEME_KEY,
+  THEME_RESOLVED_KEY,
+} from "@/lib/storefront-state";
 import "./globals.css";
 
 const vazir = localFont({
@@ -42,14 +51,29 @@ export const viewport: Viewport = {
   ],
 };
 
-// 🌗 Set the saved theme before the first paint. ✨
-export default function RootLayout({ children }: { children: ReactNode }) {
+// 🌗 Hydrate from cookies first so the shell matches before React wakes up. ✨
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const cookieStore = await cookies();
+  const initialTheme = readThemePreference(cookieStore.get(THEME_KEY)?.value);
+  const initialResolved = resolveInitialTheme(
+    initialTheme,
+    readResolvedTheme(cookieStore.get(THEME_RESOLVED_KEY)?.value),
+  );
+  const initialState = readStoreBootstrap((name) => cookieStore.get(name)?.value);
+
   return (
     <html
       lang="fa-IR"
       dir="rtl"
       data-scroll-behavior="smooth"
-      className={`${vazir.variable} ${playfair.variable} scrollbar-gutter-stable`}
+      className={`${vazir.variable} ${playfair.variable} scrollbar-gutter-stable ${
+        initialResolved === "dark" ? "dark" : ""
+      }`}
+      style={{ colorScheme: initialResolved }}
       suppressHydrationWarning
     >
       <head>
@@ -72,8 +96,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           shadow="0 0 14px rgba(217,183,127,.85), 0 0 6px rgba(193,147,87,.9)"
           zIndex={9999}
         />
-        <ThemeProvider>
-          <StoreProvider>
+        <ThemeProvider
+          initialTheme={initialTheme}
+          initialResolved={initialResolved}
+        >
+          <StoreProvider initialState={initialState}>
             {children}
             <Toaster />
           </StoreProvider>
