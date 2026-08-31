@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { findPublishedArticle, loadPublishedArticles } from "@/lib/articles";
-import { ArticleView } from "./article-view";
-import { ArticleMissing } from "./article-missing";
-import { ArticleActions } from "./article-actions";
+import { ArticleView } from "./_components/article-view";
+import { ArticleMissing } from "./_components/article-missing";
+import { ArticleActions } from "./_components/article-actions";
 
 /** اسلاگ‌های فارسی از مسیر به‌صورت percent-encoded می‌رسند */
 function decode(slug: string) {

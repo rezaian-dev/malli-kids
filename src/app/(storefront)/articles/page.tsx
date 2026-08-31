@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Intro } from "@/components/shared/intro";
 import { loadPublishedArticles } from "@/lib/articles";
-import { ArticlesList } from "./articles-list";
+import { ArticlesList } from "./_components/articles-list";
 
 export const metadata: Metadata = {
   title: "مجله ملی‌کیدز",

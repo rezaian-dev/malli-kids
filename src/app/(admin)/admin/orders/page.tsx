@@ -8,9 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Pagination } from "@/components/ui/pagination";
-import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead } from "@/features/admin";
-import { AdminTable } from "@/features/admin/components/admin-table";
-import { ORDER_FLOW, statusTone } from "@/features/admin/lib/admin-data";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, AdminPageHeader } from "@/components/admin";
+import { AdminTable } from "@/components/admin/admin-table";
+import { ORDER_FLOW, statusTone } from "@/lib/admin/admin-data";
 import { usePagination } from "@/hooks/use-pagination";
 import { setOrderStatus, useOrders, type Order } from "@/lib/orders";
 import { formatToman, toFaDigits } from "@/lib/format";
@@ -55,7 +55,7 @@ export default function AdminOrders() {
 
   return (
     <div>
-      <PageHead kicker="ORDERS" title="مدیریت سفارش‌ها" description="پیگیری یکپارچه سفارش‌ها از لحظه ثبت تا پردازش، ارسال و تحویل نهایی." />
+      <AdminPageHeader kicker="ORDERS" title="مدیریت سفارش‌ها" description="پیگیری یکپارچه سفارش‌ها از لحظه ثبت تا پردازش، ارسال و تحویل نهایی." />
 
       <AdminStatStrip items={[
         { label: "سفارش جدید", value: newCount, Icon: Clock3, tone: "rose" },

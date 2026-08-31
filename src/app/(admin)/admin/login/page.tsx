@@ -6,10 +6,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Lock, ShieldCheck, Sparkles, User } from "lucide-react";
-import { useAdmin } from "@/features/admin";
+import { useAdmin } from "@/components/admin";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { AppForm, TextField, useAppForm } from "@/components/form";
-import { adminLoginDefaults, adminLoginSchema, type AdminLoginValues } from "./schema";
+import { adminLoginDefaults, adminLoginSchema, type AdminLoginValues } from "./_lib/login-schema";
 
 export default function AdminLogin() {
   const { login } = useAdmin();

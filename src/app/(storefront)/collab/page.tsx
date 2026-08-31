@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Camera, Handshake, Scissors, Store, Megaphone } from "lucide-react";
 import { Intro } from "@/components/shared/intro";
-import { CollabForm } from "./collab-form";
+import { CollabForm } from "./_components/collab-form";
 
 export const metadata: Metadata = {
   title: "همکاری با مالی‌کیدز",

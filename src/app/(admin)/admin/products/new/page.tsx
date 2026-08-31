@@ -1,4 +1,4 @@
-import { ProductForm } from "../_form";
+import { ProductForm } from "../_components/product-form";
 
 export default function NewProductPage() {
   return <ProductForm />;

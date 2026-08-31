@@ -6,8 +6,8 @@ import { Boxes, PackageCheck, PackageX, ShoppingBag } from "lucide-react";
 
 import { Pagination } from "@/components/ui/pagination";
 import { Switch } from "@/components/ui/switch";
-import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead, useAdmin } from "@/features/admin";
-import { AdminTable, type AdminCol } from "@/features/admin/components/admin-table";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, AdminPageHeader, useAdmin } from "@/components/admin";
+import { AdminTable, type AdminCol } from "@/components/admin/admin-table";
 import { usePagination } from "@/hooks/use-pagination";
 import { CATS } from "@/lib/constants";
 import { formatToman, toFaDigits } from "@/lib/format";
@@ -82,7 +82,7 @@ export default function AdminInventory() {
 
   return (
     <div>
-      <PageHead kicker="INVENTORY" title="موجودی انبار" description="کنترل لحظه‌ای موجودی، شناسایی کمبودها و اولویت‌بندی تأمین کالاها." />
+      <AdminPageHeader kicker="INVENTORY" title="موجودی انبار" description="کنترل لحظه‌ای موجودی، شناسایی کمبودها و اولویت‌بندی تأمین کالاها." />
 
       <AdminStatStrip items={[
         { label: "کل مدل‌ها", value: db.products.length, Icon: Boxes, tone: "blue" },

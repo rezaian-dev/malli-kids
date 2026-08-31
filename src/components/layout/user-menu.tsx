@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ChevronDown, Heart, Headphones, LogIn, LogOut, Phone, Truck, User } from "lucide-react";
-import { useStore } from "@/lib/store";
+import { useStore } from "@/providers/store-provider";
 import { fullName, givenName } from "@/lib/format";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

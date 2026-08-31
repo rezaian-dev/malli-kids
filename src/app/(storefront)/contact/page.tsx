@@ -4,7 +4,7 @@ import { ArrowLeft, Clock, Handshake, Headphones, MapPin, Phone } from "lucide-r
 import { Intro } from "@/components/shared/intro";
 import { Button } from "@/components/ui/button";
 import { BRAND } from "@/lib/constants";
-import { Map } from "./map";
+import { ContactMap } from "./_components/contact-map";
 
 export const metadata: Metadata = {
   title: "تماس با ما",
@@ -81,7 +81,7 @@ export default function ContactPage() {
           </div>
         </section>
 
-        <Map />
+        <ContactMap />
       </div>
     </>
   );

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import { Textarea } from "@/components/ui/textarea";
-import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead } from "@/features/admin";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, AdminPageHeader } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
 import { replyTicket, setTicketStatus, useTickets, type TicketStatus } from "@/lib/tickets";
 import { cn } from "@/lib/utils";
@@ -65,7 +65,7 @@ export default function AdminMessages() {
 
   return (
     <div>
-      <PageHead kicker="SUPPORT CENTER" title="تیکت‌های پشتیبانی" description="رسیدگی متمرکز به درخواست‌ها و پایش سرعت پاسخ‌گویی تیم پشتیبانی." />
+      <AdminPageHeader kicker="SUPPORT CENTER" title="تیکت‌های پشتیبانی" description="رسیدگی متمرکز به درخواست‌ها و پایش سرعت پاسخ‌گویی تیم پشتیبانی." />
 
       <AdminStatStrip items={[
         { label: "کل تیکت‌ها", value: tickets.length, Icon: Headphones, tone: "blue" },

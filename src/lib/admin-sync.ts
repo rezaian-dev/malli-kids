@@ -1,5 +1,5 @@
 import { isRetiredCategory, STORAGE } from "@/lib/constants";
-import { seedAdminDb } from "@/features/admin/lib/admin-data";
+import { seedAdminDb } from "@/lib/admin/admin-data";
 import { CATALOG } from "@/lib/data/products";
 import type { AdminCoupon, AdminReview, FestiveBanner, Product } from "@/types";
 

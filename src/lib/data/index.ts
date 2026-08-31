@@ -1,4 +1,4 @@
-import { seedAdminDb } from "@/features/admin/lib/admin-data";
+import { seedAdminDb } from "@/lib/admin/admin-data";
 import type { AdminDb } from "@/types";
 
 /**

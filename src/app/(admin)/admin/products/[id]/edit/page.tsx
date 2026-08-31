@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useAdmin } from "@/features/admin";
+import { useAdmin } from "@/components/admin";
 import { Button } from "@/components/ui/button";
-import { ProductForm } from "../../_form";
+import { ProductForm } from "../../_components/product-form";
 
 export default function EditProductPage() {
   const { id } = useParams<{ id: string }>();

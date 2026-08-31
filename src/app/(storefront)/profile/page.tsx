@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Profile } from "./profile";
+import { ProfileView } from "./_components/profile-view";
 
 export const metadata: Metadata = {
   title: "پنل کاربری",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 
 
 export default function ProfilePage() {
-  return <Profile />;
+  return <ProfileView />;
 }

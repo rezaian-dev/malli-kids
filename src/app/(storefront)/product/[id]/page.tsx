@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CORE_PRODUCTS, getProductById } from "@/lib/data/products";
-import { Card } from "@/features/product";
+import { ProductCard } from "@/components/product";
 import { shell } from "@/lib/utils";
-import { Buy } from "./buy";
-import { ProductTabs } from "./tabs";
-import { LiveName, LiveProduct } from "./live-product";
+import { ProductBuyPanel } from "./_components/product-buy-panel";
+import { ProductDetailsTabs } from "./_components/product-details-tabs";
+import { LiveName, ProductLiveProvider } from "./_components/product-live-context";
 
 export function generateStaticParams() {
   return CORE_PRODUCTS.map((_, i) => ({ id: String(i) }));
@@ -34,7 +34,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const related = CORE_PRODUCTS.filter((x) => x.id !== p.id && x.cat === p.cat).slice(0, 4);
 
   return (
-    <LiveProduct product={p} requestedId={Number.isFinite(num) ? num : undefined}>
+    <ProductLiveProvider product={p} requestedId={Number.isFinite(num) ? num : undefined}>
       <div>
         <div className={shell}>
           <p className="mb-8 text-xs font-bold text-navy/45 dark:text-wheat">
@@ -44,20 +44,20 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             <span className="mx-1.5 text-gold">/</span>
             <LiveName product={p} />
           </p>
-          <Buy product={p} />
-          <ProductTabs product={p} />
+          <ProductBuyPanel product={p} />
+          <ProductDetailsTabs product={p} />
           {related.length ? (
             <section className="mt-16">
               <h2 className="mb-6 text-xl font-black text-navy dark:text-ivory">مدل‌های مشابه</h2>
               <div className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4">
                 {related.map((x) => (
-                  <Card key={x.id} p={x} view="grid" />
+                  <ProductCard key={x.id} p={x} view="grid" />
                 ))}
               </div>
             </section>
           ) : null}
         </div>
       </div>
-    </LiveProduct>
+    </ProductLiveProvider>
   );
 }

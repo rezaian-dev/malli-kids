@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
-import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead } from "@/features/admin";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, AdminPageHeader } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
 import { COLLAB_KINDS, setCollabStatus, useCollabs, type CollabStatus } from "@/lib/collab";
 import { cn } from "@/lib/utils";
@@ -42,7 +42,7 @@ export default function AdminCollab() {
 
   return (
     <div>
-      <PageHead kicker="PARTNERSHIP CRM" title="درخواست‌های همکاری" description="ارزیابی، دسته‌بندی و پیگیری فرصت‌های همکاری و ارتباطات تجاری." />
+      <AdminPageHeader kicker="PARTNERSHIP CRM" title="درخواست‌های همکاری" description="ارزیابی، دسته‌بندی و پیگیری فرصت‌های همکاری و ارتباطات تجاری." />
 
       <AdminStatStrip items={[
         { label: "کل درخواست‌ها", value: requests.length, Icon: Handshake, tone: "blue" },

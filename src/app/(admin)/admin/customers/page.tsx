@@ -4,8 +4,8 @@ import { useMemo, useState } from "react";
 import { Ban, CircleCheckBig, Mail, Phone, ShieldCheck, Trash2, UserRound, UsersRound, UserX } from "lucide-react";
 import { toast } from "sonner";
 
-import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead, useAdmin } from "@/features/admin";
-import { AdminTable, type AdminCol } from "@/features/admin/components/admin-table";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, AdminPageHeader, useAdmin } from "@/components/admin";
+import { AdminTable, type AdminCol } from "@/components/admin/admin-table";
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/use-pagination";
 import { formatToman, toFaDigits } from "@/lib/format";
@@ -146,7 +146,7 @@ export default function AdminCustomers() {
 
   return (
     <div>
-      <PageHead kicker="AUDIENCE" title="کاربران و مشتریان" description="مدیریت مشتریان، وضعیت حساب‌ها و سطح دسترسی اعضای تیم مدیریت." />
+      <AdminPageHeader kicker="AUDIENCE" title="کاربران و مشتریان" description="مدیریت مشتریان، وضعیت حساب‌ها و سطح دسترسی اعضای تیم مدیریت." />
 
       <AdminStatStrip items={[
         { label: "کاربران فروشگاه", value: userCount, hint: "حساب مشتری", Icon: UsersRound, tone: "blue" },

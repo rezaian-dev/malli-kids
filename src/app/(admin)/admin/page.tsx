@@ -4,14 +4,14 @@ import Image from "next/image";
 
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, Shirt, Truck, Users } from "lucide-react";
-import { useAdmin } from "@/features/admin";
+import { useAdmin } from "@/components/admin";
 import { formatToman, toFaDigits } from "@/lib/format";
-import { statusTone } from "@/features/admin/lib/admin-data";
-import { PageHead } from "@/features/admin";
-import { SalesChart } from "@/features/admin";
+import { statusTone } from "@/lib/admin/admin-data";
+import { AdminPageHeader } from "@/components/admin";
+import { SalesChart } from "@/components/admin";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AdminTable } from "@/features/admin/components/admin-table";
+import { AdminTable } from "@/components/admin/admin-table";
 import type { AdminOrder } from "@/types";
 
 export default function AdminHome() {
@@ -22,7 +22,7 @@ export default function AdminHome() {
 
   return (
     <div>
-      <PageHead
+      <AdminPageHeader
         kicker="ATELIER"
         title="داشبورد گالری"
         description="نمای اجرایی فروش، رفتار مشتریان و سلامت موجودی برای تصمیم‌گیری سریع‌تر."

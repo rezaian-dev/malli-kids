@@ -7,7 +7,7 @@ import { BadgePercent, Boxes, PackageCheck, PackageX, Pencil, Plus, Star, Trash2
 
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
-import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead, useAdmin } from "@/features/admin";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, AdminPageHeader, useAdmin } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
 import { CATS, SEASONS } from "@/lib/constants";
 import { formatToman, toFaDigits } from "@/lib/format";
@@ -50,7 +50,7 @@ export default function AdminProducts() {
 
   return (
     <div>
-      <PageHead
+      <AdminPageHeader
         kicker="CATALOG"
         title="مدیریت محصولات"
         description="مدیریت حرفه‌ای کاتالوگ، قیمت‌گذاری، موجودی و وضعیت انتشار محصولات."

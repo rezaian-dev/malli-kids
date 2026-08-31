@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Intro } from "@/components/shared/intro";
-import { TryOnComingSoon } from "./coming-soon";
+import { TryOnComingSoon } from "./_components/try-on-coming-soon";
 
 export const metadata: Metadata = {
   title: "پرو مجازی",
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 
-// The live AI studio lives in ./studio (<Studio />) and its API in app/api/tryon/route.ts.
+// The live AI studio lives in ./_components/try-on-studio (<Studio />) and its API in app/api/tryon/route.ts.
 // When the AI provider is ready, swap <TryOnComingSoon /> for <Studio /> to re-enable it.
 export default function TryOnPage() {
   return (

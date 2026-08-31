@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { cn, shell } from "@/lib/utils";
-import { FestiveBanner } from "@/features/festive";
+import { FestiveBanner } from "@/components/festive";
 import { ICON_BTN } from "./header-styles";
 import { DesktopNav } from "./desktop-nav";
 import { UserMenu } from "./user-menu";
@@ -11,20 +11,7 @@ import { NoticesBell } from "./notices-bell";
 import { CartSheet } from "./cart-sheet";
 import { MobileNav } from "./mobile-nav";
 
-/**
- * Header — Server Component.
- *
- * پوسته، لوگو، ساختار نوار و لینک‌ها روی سرور رندر می‌شوند و هیچ JS به مرورگر
- * نمی‌فرستند. فقط این جزیره‌ها client هستند و هر کدام دلیل مشخصی دارد:
- *
- *   CategoryMenu   → NavigationMenuTrigger باز/بسته می‌شود + حالت active
- *   NavActiveLink  → usePathname برای data-[active]
- *   UserMenu       → useStore (ورود / منوی حساب)
- *   CartSheet      → Sheet باز/بسته می‌شود
- *   MobileNav      → Sheet + Accordion
- *   ModeToggle     → useTheme
- *   FestiveBanner  → انتخاب بنر بر اساس تاریخ
- */
+// 🧭 Server shell with small client islands for interactive actions.
 export function Header() {
   return (
     <header dir="rtl" className="fixed inset-x-0 top-0 z-[70]">

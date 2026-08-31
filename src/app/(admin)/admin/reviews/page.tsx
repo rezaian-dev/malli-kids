@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Check, CircleAlert, Eye, EyeOff, MessageSquareText, Star, Trash2 } from "lucide-react";
 
 import { Pagination } from "@/components/ui/pagination";
-import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead, useAdmin } from "@/features/admin";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, AdminPageHeader, useAdmin } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
 import { toFaDigits } from "@/lib/format";
 
@@ -43,7 +43,7 @@ export default function AdminReviews() {
 
   return (
     <div>
-      <PageHead kicker="CUSTOMER VOICE" title="مدیریت نظرات" description="بررسی، پالایش و انتشار بازخوردهای مشتریان برای حفظ کیفیت تجربه خرید." />
+      <AdminPageHeader kicker="CUSTOMER VOICE" title="مدیریت نظرات" description="بررسی، پالایش و انتشار بازخوردهای مشتریان برای حفظ کیفیت تجربه خرید." />
 
       <AdminStatStrip items={[
         { label: "کل نظرات", value: db.reviews.length, Icon: MessageSquareText, tone: "blue" },

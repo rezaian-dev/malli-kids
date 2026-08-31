@@ -7,12 +7,12 @@ import { AppForm, MoneyField, TextField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import { Switch } from "@/components/ui/switch";
-import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead, useAdmin } from "@/features/admin";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, AdminPageHeader, useAdmin } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { parseFaNumber } from "@/lib/forms";
 import type { AdminCoupon } from "@/types";
-import { couponDefaults, couponSchema, type CouponValues } from "./schema";
+import { couponDefaults, couponSchema, type CouponValues } from "./_lib/coupon-schema";
 
 const PER_PAGE = 8;
 type StatusFilter = "all" | "active" | "inactive" | "full";
@@ -74,7 +74,7 @@ export default function AdminCoupons() {
 
   return (
     <div>
-      <PageHead
+      <AdminPageHeader
         kicker="PROMOTIONS"
         title="کدهای تخفیف"
         description="طراحی، فعال‌سازی و تحلیل کمپین‌های تخفیفی و میزان استفاده مشتریان."

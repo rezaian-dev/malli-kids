@@ -4,8 +4,8 @@ import dynamic from "next/dynamic";
 import { useMemo, useRef, useState } from "react";
 import { ArrowRight, Eye, EyeOff, FilePenLine, ImagePlus, LibraryBig, PenLine, Plus, Trash2 } from "lucide-react";
 
-import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead, useAdmin } from "@/features/admin";
-import { fileToDataUrl } from "@/features/admin/components/rich-editor";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, AdminPageHeader, useAdmin } from "@/components/admin";
+import { fileToDataUrl } from "@/components/admin/rich-editor";
 import { toFaDigits } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import type { AdminArticle } from "@/types";
 
-const RichEditor = dynamic(() => import("@/features/admin/components/rich-editor").then((m) => m.RichEditor), {
+const RichEditor = dynamic(() => import("@/components/admin/rich-editor").then((m) => m.RichEditor), {
   ssr: false,
   loading: () => (
     <div className="grid min-h-[22rem] place-items-center rounded-3xl border border-dashed border-navy/15 text-sm font-bold text-navy/40 dark:border-gold/25 dark:text-wheat">
@@ -149,7 +149,7 @@ export default function AdminArticles() {
   if (draft) {
     return (
       <div>
-        <PageHead
+        <AdminPageHeader
           kicker="JOURNAL"
           title={draft.slug ? "ویرایش مقاله" : "مقالهٔ جدید"}
           description="محتوا، تصویر شاخص و وضعیت انتشار مقاله را در یک فضای ویرایش متمرکز مدیریت کنید."
@@ -228,7 +228,7 @@ export default function AdminArticles() {
   /* ---------------- نمایِ فهرست ---------------- */
   return (
     <div>
-      <PageHead
+      <AdminPageHeader
         kicker="JOURNAL"
         title="مقاله‌ها"
         description="مدیریت تقویم محتوایی، پیش‌نویس‌ها و انتشار مطالب مجله مالی کیدز."

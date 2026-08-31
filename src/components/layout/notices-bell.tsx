@@ -1,7 +1,7 @@
 "use client";
 
 import { Bell, BellOff, CheckCheck, Headphones, PackageCheck, Sparkles } from "lucide-react";
-import { useStore } from "@/lib/store";
+import { useStore } from "@/providers/store-provider";
 import { markAllRead, markRead, useNotices, type NoticeKind } from "@/lib/notifications";
 import { toFaDigits } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";

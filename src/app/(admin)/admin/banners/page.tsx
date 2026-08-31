@@ -8,8 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Pagination } from "@/components/ui/pagination";
 import { Switch } from "@/components/ui/switch";
-import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, PageHead, useAdmin } from "@/features/admin";
-import { pickBanner, toJalali } from "@/features/festive/lib/occasions";
+import { AdminFilterBar, AdminFilterSelect, AdminStatStrip, AdminPageHeader, useAdmin } from "@/components/admin";
+import { pickBanner, toJalali } from "@/lib/festive/occasions";
 import { usePagination } from "@/hooks/use-pagination";
 import { toFaDigits } from "@/lib/format";
 import type { FestiveTheme } from "@/types";
@@ -45,7 +45,7 @@ export default function AdminBanners() {
 
   return (
     <div>
-      <PageHead kicker="CAMPAIGN CALENDAR" title="بنر مناسبت‌ها" description="برنامه‌ریزی و کنترل کمپین‌های مناسبتی با زمان‌بندی و اولویت نمایش دقیق." />
+      <AdminPageHeader kicker="CAMPAIGN CALENDAR" title="بنر مناسبت‌ها" description="برنامه‌ریزی و کنترل کمپین‌های مناسبتی با زمان‌بندی و اولویت نمایش دقیق." />
 
       <AdminStatStrip items={[
         { label: "کل بنرها", value: db.banners.length, Icon: Megaphone, tone: "blue" },
