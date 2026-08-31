@@ -493,6 +493,16 @@
     background: transparent;
   }
 
+  /* Native dark `Field` paint is the inner capsule. Reset appearance only —
+     do not force a fill; the shell keeps the color. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+      [type="file"]
+    ):not([type="color"]),
+  textarea {
+    appearance: none;
+    background-color: transparent;
+  }
+
   * {
     @apply border-border;
   }

@@ -78,6 +78,9 @@ const PRICE_STEP = 50_000;
 const SECTION_LABEL =
   "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-gold uppercase";
 
+const FILTER_CHIP =
+  "border-navy/12 text-navy/70 hover:border-gold/50 hover:bg-sand hover:text-navy h-auto rounded-full border bg-white px-3.5 py-1.5 text-[12px] font-black dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50 dark:hover:bg-navy-light dark:hover:text-ivory data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] data-[state=on]:hover:bg-navy data-[state=on]:hover:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep dark:data-[state=on]:hover:bg-gold dark:data-[state=on]:hover:text-navy-deep";
+
 export function ShopExplorer({ state }: { state: ShopState }) {
   const [catalog, setCatalog] = useState(CATALOG);
   const router = useRouter();
@@ -296,16 +299,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
           className="flex flex-wrap justify-start gap-1.5"
         >
           {CATS.map((c) => (
-            <ToggleGroupItem
-              key={c}
-              value={c}
-              className={cn(
-                "border-navy/12 text-navy/70 hover:border-gold/50 hover:text-navy h-auto rounded-full border bg-white px-3.5 py-1.5 text-[12px] font-black",
-                "dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50",
-                "data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:border-transparent data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)]",
-                "dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep",
-              )}
-            >
+            <ToggleGroupItem key={c} value={c} className={FILTER_CHIP}>
               {c}
             </ToggleGroupItem>
           ))}
@@ -324,16 +318,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
           className="flex flex-wrap justify-start gap-1.5"
         >
           {["همه", ...SEASONS].map((sn) => (
-            <ToggleGroupItem
-              key={sn}
-              value={sn}
-              className={cn(
-                "border-navy/12 text-navy/70 hover:border-gold/50 hover:text-navy h-auto rounded-full border bg-white px-3.5 py-1.5 text-[12px] font-black",
-                "dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50",
-                "data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:border-transparent data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)]",
-                "dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep",
-              )}
-            >
+            <ToggleGroupItem key={sn} value={sn} className={FILTER_CHIP}>
               {sn}
             </ToggleGroupItem>
           ))}

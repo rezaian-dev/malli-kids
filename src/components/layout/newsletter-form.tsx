@@ -60,7 +60,7 @@ export function NewsletterForm({ className }: { className?: string }) {
               setSubmitted(false);
             }
           }}
-          className="newsletter-field caret-cream text-cream placeholder:text-taupe h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-right text-sm shadow-none outline-none"
+          className="newsletter-field caret-cream text-cream placeholder:text-taupe h-10 min-w-0 flex-1 appearance-none rounded-full bg-transparent px-4 text-right text-sm shadow-none outline-none"
         />
         <button
           type="submit"
