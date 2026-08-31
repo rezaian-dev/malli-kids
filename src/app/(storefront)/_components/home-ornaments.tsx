@@ -1,15 +1,16 @@
 import { Ellipsis, Gift, Leaf, Minus, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function GoldMark({ className = "" }: { className?: string }) {
   return (
-    <Minus className={`text-gold ${className}`} strokeWidth={4} aria-hidden />
+    <Minus className={cn("text-gold", className)} strokeWidth={4} aria-hidden />
   );
 }
 
 export function OrnStar({ className = "" }: { className?: string }) {
   return (
     <Star
-      className={`animate-orn-spin fill-gold text-gold ${className}`}
+      className={cn("animate-orn-spin fill-gold text-gold", className)}
       aria-hidden
     />
   );
@@ -17,14 +18,14 @@ export function OrnStar({ className = "" }: { className?: string }) {
 
 export function OrnLeaf({ className = "" }: { className?: string }) {
   return (
-    <Leaf className={`animate-orn-sway text-gold ${className}`} aria-hidden />
+    <Leaf className={cn("animate-orn-sway text-gold", className)} aria-hidden />
   );
 }
 
 export function OrnStitch({ className = "" }: { className?: string }) {
   return (
     <Ellipsis
-      className={`text-gold ${className}`}
+      className={cn("text-gold", className)}
       strokeWidth={2.4}
       aria-hidden
     />
@@ -33,6 +34,6 @@ export function OrnStitch({ className = "" }: { className?: string }) {
 
 export function OrnBow({ className = "" }: { className?: string }) {
   return (
-    <Gift className={`animate-orn-sway text-gold ${className}`} aria-hidden />
+    <Gift className={cn("animate-orn-sway text-gold", className)} aria-hidden />
   );
 }

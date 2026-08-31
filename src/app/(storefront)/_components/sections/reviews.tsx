@@ -19,7 +19,7 @@ export async function Reviews() {
   return (
     <section
       id="testimonials"
-      className={`${wash.navy} cv-auto py-12 sm:py-16 lg:py-20`}
+      className={cn(wash.navy, "cv-auto py-12 sm:py-16 lg:py-20")}
     >
       <div
         className={cn(

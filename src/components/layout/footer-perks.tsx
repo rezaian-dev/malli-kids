@@ -17,7 +17,10 @@ export function FooterPerks() {
   return (
     <div className="border-b border-white/10">
       <div
-        className={`${shell} grid grid-cols-[repeat(auto-fit,minmax(13.75rem,1fr))] gap-5 py-9 sm:py-11`}
+        className={cn(
+          shell,
+          "grid grid-cols-[repeat(auto-fit,minmax(13.75rem,1fr))] gap-5 py-9 sm:py-11",
+        )}
       >
         {PERKS.map(({ Icon, t, d }) => (
           <div key={t} className="flex min-w-0 items-center gap-3.5">

@@ -8,7 +8,7 @@ import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
 function ProductDetailsFallback() {
   return (
     <section
-      className={`${pdpCard} mt-10 overflow-hidden sm:mt-12`}
+      className={cn(pdpCard, "mt-10 overflow-hidden sm:mt-12")}
       aria-label="جزئیات محصول"
     >
       <div className="border-navy/8 dark:border-gold/20 border-b px-4 py-4 sm:px-7 sm:py-5">
@@ -32,7 +32,10 @@ function ProductDetailsFallback() {
         </div>
       </div>
       <div
-        className={`${pdpWell} text-navy/70 dark:text-wheat m-4 p-4 text-sm leading-8 sm:m-7 sm:p-5`}
+        className={cn(
+          pdpWell,
+          "text-navy/70 dark:text-wheat m-4 p-4 text-sm leading-8 sm:m-7 sm:p-5",
+        )}
       >
         جزئیات تکمیلی، جدول سایز و نظر خریداران بلافاصله بعد از بارگذاری این بخش
         نمایش داده می‌شود.

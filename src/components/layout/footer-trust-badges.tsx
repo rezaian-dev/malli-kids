@@ -10,7 +10,10 @@ export function FooterTrustBadges() {
   return (
     <div className="border-t border-white/10">
       <div
-        className={`${shell} flex flex-col items-center justify-between gap-6 py-8 sm:flex-row`}
+        className={cn(
+          shell,
+          "flex flex-col items-center justify-between gap-6 py-8 sm:flex-row",
+        )}
       >
         <div className="flex items-center gap-3.5 text-center sm:text-start">
           <span className="bg-gold/15 text-gold inline-flex size-12 shrink-0 items-center justify-center rounded-2xl">

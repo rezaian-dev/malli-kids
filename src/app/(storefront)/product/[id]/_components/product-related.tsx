@@ -20,7 +20,7 @@ export async function ProductRelated({
 
   return (
     <section
-      className={`${pdpCard} cv-auto mt-8 p-4 sm:mt-12 sm:p-7`}
+      className={cn(pdpCard, "cv-auto mt-8 p-4 sm:mt-12 sm:p-7")}
       aria-labelledby="related-products-heading"
     >
       <p className={pdpKicker}>MORE LIKE THIS</p>

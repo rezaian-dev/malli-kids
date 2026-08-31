@@ -177,7 +177,7 @@ export function ProductGallery({
           ))}
         </div>
       </div>
-      <div className={`${pdpCard} mt-3 p-2`}>
+      <div className={cn(pdpCard, "mt-3 p-2")}>
         <div className="flex gap-2 overflow-x-auto pb-0.5">
           {images.map((src, i) => (
             <button

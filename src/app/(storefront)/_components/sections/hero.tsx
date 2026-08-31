@@ -23,7 +23,7 @@ export function Hero() {
   return (
     <section
       id="heroSection"
-      className={`${wash.gold} pt-8 pb-14 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24`}
+      className={cn(wash.gold, "pt-8 pb-14 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24")}
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden dark:hidden">
         <div

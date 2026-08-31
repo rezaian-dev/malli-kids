@@ -11,7 +11,7 @@ import { ProductReviewForm } from "./product-review-form";
 import { ProductReviews } from "./product-reviews";
 import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
 
-const SPEC_ITEM = `${pdpWell} p-4`;
+const SPEC_ITEM = cn(pdpWell, "p-4");
 const SPEC_LABEL = "text-gold text-[11px] font-bold";
 const SPEC_VALUE = "text-navy dark:text-ivory mt-1 text-sm font-black";
 
@@ -35,7 +35,7 @@ export function ProductDetailsTabs({
   canReview: boolean;
 }) {
   return (
-    <section className={`${pdpCard} mt-10 overflow-hidden sm:mt-12`}>
+    <section className={cn(pdpCard, "mt-10 overflow-hidden sm:mt-12")}>
       <Tabs defaultValue="info" dir="rtl" className="gap-0">
         <div
           className={cn(
@@ -79,7 +79,10 @@ export function ProductDetailsTabs({
           <TabsContent value="info" className="mt-0">
             <div className="grid min-w-0 items-start gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,.8fr)]">
               <div
-                className={`${pdpWell} text-navy/70 dark:text-wheat p-4 text-sm leading-8 sm:p-6`}
+                className={cn(
+                  pdpWell,
+                  "text-navy/70 dark:text-wheat p-4 text-sm leading-8 sm:p-6",
+                )}
               >
                 <p className="text-navy dark:text-ivory mb-3 flex items-center gap-2 text-sm font-black">
                   <Sparkles className="text-gold size-4" />

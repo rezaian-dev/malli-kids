@@ -8,7 +8,7 @@ import { getSession } from "@/lib/auth/session";
 import { productSchema } from "@/lib/seo";
 import { getVisibleReviewsForProduct, hasPurchased } from "@/lib/shop/reviews";
 import { getSubscribedSizes } from "@/lib/shop/back-in-stock";
-import { shell } from "@/lib/utils";
+import { cn, shell } from "@/lib/utils";
 import { wash } from "@/components/shared/section-wash";
 import type { Product } from "@/types";
 import { ProductBuyPanel } from "./product-buy-panel";
@@ -19,7 +19,7 @@ import { pdpCard } from "../_lib/product-chrome";
 
 function RelatedFallback() {
   return (
-    <section className={`${pdpCard} mt-8 p-4 sm:mt-12 sm:p-7`} aria-hidden>
+    <section className={cn(pdpCard, "mt-8 p-4 sm:mt-12 sm:p-7")} aria-hidden>
       <Skeleton className="mb-6 h-5 w-40" />
       <div className={PRODUCT_GRID}>
         {Array.from({ length: 4 }).map((_, i) => (
@@ -53,7 +53,7 @@ export async function ProductDetailLanding({
   return (
     <>
       <JsonLd data={productSchema(product, reviews)} />
-      <div className={`${wash.silk} pb-2`}>
+      <div className={cn(wash.silk, "pb-2")}>
         <div className={shell}>
           <Breadcrumb
             items={[

@@ -5,7 +5,7 @@ import { EitaaIcon } from "@/components/shared/eitaa-icon";
 import { InstagramIcon } from "@/components/shared/instagram-icon";
 import { TelegramIcon } from "@/components/shared/telegram-icon";
 import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
-import { shell } from "@/lib/utils";
+import { cn, shell } from "@/lib/utils";
 
 const FOOT_LINK =
   "inline-flex min-h-11 items-center py-1 transition-colors hover:text-gold md:min-h-9";
@@ -54,7 +54,10 @@ const SOCIALS = [
 export function FooterColumns() {
   return (
     <div
-      className={`${shell} grid grid-cols-[repeat(auto-fit,minmax(11.25rem,1fr))] gap-8 py-10 sm:py-12`}
+      className={cn(
+        shell,
+        "grid grid-cols-[repeat(auto-fit,minmax(11.25rem,1fr))] gap-8 py-10 sm:py-12",
+      )}
     >
       <div className="min-w-0">
         <div className="flex items-center gap-3">
@@ -85,7 +88,7 @@ export function FooterColumns() {
               target="_blank"
               rel="noreferrer"
               aria-label={name}
-              className={`${SOCIAL_BASE} ${hover}`}
+              className={cn(SOCIAL_BASE, hover)}
             >
               <span className={TIP}>{name}</span>
               <Icon className="size-4.5 transition-transform duration-300 group-hover:scale-115 group-hover:-rotate-6" />

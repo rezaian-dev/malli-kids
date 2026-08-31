@@ -171,7 +171,7 @@ export function ProductBuyPanel({
         badge={product.badge}
       />
 
-      <div className={`${pdpCard} p-4 sm:p-7`}>
+      <div className={cn(pdpCard, "p-4 sm:p-7")}>
         <p className={pdpKicker}>{product.cat}</p>
         <h1
           className={cn(
@@ -224,7 +224,7 @@ export function ProductBuyPanel({
           )}
         />
 
-        <div className={`${pdpWell} mt-6 p-4 sm:p-5`}>
+        <div className={cn(pdpWell, "mt-6 p-4 sm:p-5")}>
           <p className="text-navy/70 dark:text-wheat mb-1 text-[11px] font-bold">
             قیمت
           </p>

@@ -23,7 +23,10 @@ export function Footer() {
       <Reveal delay={0.06}>
         <div className="border-b border-white/10">
           <div
-            className={`${shell} flex flex-wrap items-center justify-between gap-6 py-10 sm:py-12`}
+            className={cn(
+              shell,
+              "flex flex-wrap items-center justify-between gap-6 py-10 sm:py-12",
+            )}
           >
             <div className="min-w-0 flex-1 basis-65">
               {/* ♿ `h2`, not `h3` — this is the `<footer>` landmark's own
@@ -55,7 +58,10 @@ export function Footer() {
       <FadeIn delay={0.2}>
         <div className="border-t border-white/10">
           <div
-            className={`${shell} text-cream/55 flex flex-wrap items-center justify-between gap-2.5 py-5 text-center text-xs`}
+            className={cn(
+              shell,
+              "text-cream/55 flex flex-wrap items-center justify-between gap-2.5 py-5 text-center text-xs",
+            )}
           >
             <span>
               © ۱۴۰۴ ملی‌کیدز — تمامی حقوق محفوظ است.{" "}

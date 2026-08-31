@@ -19,7 +19,7 @@ export async function ProductCompleteLook({
 
   return (
     <section
-      className={`${pdpCard} cv-auto mt-8 p-4 sm:mt-12 sm:p-7`}
+      className={cn(pdpCard, "cv-auto mt-8 p-4 sm:mt-12 sm:p-7")}
       aria-labelledby="complete-look-heading"
     >
       <p className={pdpKicker}>COMPLETE THE LOOK</p>

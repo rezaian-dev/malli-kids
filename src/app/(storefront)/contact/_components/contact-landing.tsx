@@ -162,6 +162,6 @@ function Info({
       {body}
     </a>
   ) : (
-    <div className={`${CARD_CLS} hover:translate-y-0`}>{body}</div>
+    <div className={cn(CARD_CLS, "hover:translate-y-0")}>{body}</div>
   );
 }

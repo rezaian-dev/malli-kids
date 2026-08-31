@@ -30,7 +30,7 @@ export function ReviewSummary({
   const bars = starDistribution(ratings);
 
   return (
-    <div className={`${pdpWell} overflow-hidden p-4 sm:p-6`}>
+    <div className={cn(pdpWell, "overflow-hidden p-4 sm:p-6")}>
       <p className={pdpKicker}>BUYER NOTES</p>
       <div className="mt-3 grid min-w-0 items-center gap-5 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-6">
         <div className="text-center sm:text-right">

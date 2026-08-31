@@ -42,7 +42,7 @@ export async function RecentlyViewed() {
   if (!ordered.length) return null;
 
   return (
-    <section className={`${wash.silk} cv-auto py-10 sm:py-14`}>
+    <section className={cn(wash.silk, "cv-auto py-10 sm:py-14")}>
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="mb-6 sm:mb-8">
           <span className="text-gold text-sm font-bold tracking-wide">

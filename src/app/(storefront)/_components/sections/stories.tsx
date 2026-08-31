@@ -3,12 +3,13 @@ import { HomeJournalMount } from "../home-journal-mount";
 import { HomeJournalSlides } from "../home-journal-slides";
 import { OrnStitch } from "../home-ornaments";
 import { wash } from "@/components/shared/section-wash";
+import { cn } from "@/lib/utils";
 
 export function Stories() {
   return (
     <section
       id="articles"
-      className={`${wash.silk} cv-auto py-12 sm:py-16 lg:py-20`}
+      className={cn(wash.silk, "cv-auto py-12 sm:py-16 lg:py-20")}
     >
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">

@@ -42,7 +42,7 @@ export function Atelier() {
   return (
     <section
       id="atelier"
-      className={`${wash.gold} cv-auto py-12 sm:py-16 lg:py-20`}
+      className={cn(wash.gold, "cv-auto py-12 sm:py-16 lg:py-20")}
     >
       <span
         className={cn(
