@@ -173,7 +173,9 @@ export function AdminStore({ children }: { children: ReactNode }) {
           /* noop */
         }
         setSession(DEFAULT_SESSION);
-        router.push("/admin/login");
+        // خروج → بازگشت به صفحهٔ اصلی فروشگاه؛ «بازگشت به فروشگاه» و «خروج از پنل»
+        // هر دو کاربر را به تجربهٔ خرید برمی‌گردانند، نه به صفحهٔ ورود.
+        router.push("/");
       },
       saveProducts: (list) => {
         setDb((d) => ({ ...d, products: list.filter((product) => !isRetiredCategory(product.cat)) }));

@@ -386,7 +386,8 @@ export function PageHead({ kicker, title, description, action }: { kicker: strin
           <div className="relative min-w-0 ps-4">
             <span className="absolute inset-y-1 start-0 w-1 rounded-full bg-linear-to-b from-gold-light via-gold to-gold-deep shadow-[0_0_18px_rgba(193,147,87,.28)]" />
             <p className="text-[9px] font-black tracking-[0.24em] text-gold">{kicker}</p>
-            <h1 className="mt-1 font-display text-[clamp(1.6rem,3vw,2.35rem)] font-bold leading-tight tracking-wide text-navy dark:text-ivory">{title}</h1>
+            {/* عنوان فارسی با Vazirmatn؛ Playfair حروف فارسی ندارد و باعث «فونت نگرفته» می‌شود */}
+            <h1 className="mt-1 text-[clamp(1.6rem,3vw,2.35rem)] font-black leading-tight text-navy dark:text-ivory">{title}</h1>
             {description ? <p className="mt-2 max-w-2xl text-[11px] font-bold leading-6 text-navy/50 sm:text-xs dark:text-wheat/68">{description}</p> : null}
           </div>
         </div>

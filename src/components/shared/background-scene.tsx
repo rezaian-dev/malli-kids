@@ -21,8 +21,14 @@ const DELAYS = [
 export function BackgroundScene() {
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-cream dark:bg-ink">
-      {/* Light: editorial paper, gold swatch, and a restrained navy undertone. */}
-      <div className="absolute inset-0 bg-[radial-gradient(at_top_right,color-mix(in_srgb,theme(colors.gold)_18%,transparent),transparent_55%),radial-gradient(at_bottom_left,color-mix(in_srgb,theme(colors.navy)_8%,transparent),transparent_50%),linear-gradient(180deg,theme(colors.paper-soft)_0%,theme(colors.cream)_60%,theme(colors.fog)_100%)] dark:hidden" />
+      {/* Light: a vivid, logo-inspired blend — navy·gold·cream with warm coral
+          & sky accents, plus a soft golden ring echoing the brand mark. */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_18%_16%,color-mix(in_srgb,theme(colors.gold)_30%,transparent),transparent_48%),radial-gradient(ellipse_at_88%_8%,color-mix(in_srgb,theme(colors.navy-soft)_22%,transparent),transparent_44%),radial-gradient(ellipse_at_86%_88%,color-mix(in_srgb,#f6cdc2_30%,transparent),transparent_46%),radial-gradient(ellipse_at_6%_86%,color-mix(in_srgb,#a9d4ec_26%,transparent),transparent_46%),radial-gradient(ellipse_at_50%_50%,color-mix(in_srgb,theme(colors.cream)_58%,transparent),transparent_70%),linear-gradient(160deg,theme(colors.paper-warm)_0%,theme(colors.sand)_42%,theme(colors.cream)_100%)] dark:hidden" />
+      {/* Golden halo ring — a soft echo of the circular gold mark in the logo. */}
+      <div className="absolute -top-32 left-1/2 hidden size-[42rem] -translate-x-1/2 rounded-full border-[1.5px] border-gold/20 dark:hidden md:block" />
+      <div className="absolute -top-20 left-1/2 hidden size-[34rem] -translate-x-1/2 rounded-full border-[1px] border-gold/15 dark:hidden md:block" />
+      <div className="absolute -end-40 top-10 hidden size-[26rem] rounded-full bg-[radial-gradient(circle_at_40%_35%,color-mix(in_srgb,theme(colors.gold)_22%,transparent),transparent_62%)] blur-2xl dark:hidden md:block" />
+      <div className="absolute -start-40 bottom-0 hidden size-[24rem] rounded-full bg-[radial-gradient(circle_at_45%_60%,color-mix(in_srgb,theme(colors.navy-soft)_18%,transparent),transparent_62%)] blur-2xl dark:hidden md:block" />
       {/* Dark: a completely different midnight-gallery direction. */}
       <div className="absolute inset-0 hidden dark:block bg-[radial-gradient(ellipse_at_62%_10%,color-mix(in_srgb,theme(colors.navy-light)_16%,transparent),transparent_32%),radial-gradient(ellipse_at_22%_82%,color-mix(in_srgb,theme(colors.gold)_6%,transparent),transparent_34%),linear-gradient(135deg,theme(colors.ink)_0%,theme(colors.navy-deep)_46%,theme(colors.night-deep)_100%)]" />
       <div className="absolute -end-72 -top-72 hidden size-[34rem] rounded-full bg-[radial-gradient(ellipse_at_50%_15%,color-mix(in_srgb,theme(colors.gold)_7%,transparent),transparent_64%)] blur-3xl dark:block" />

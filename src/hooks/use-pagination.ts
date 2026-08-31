@@ -54,33 +54,38 @@ export function usePagination<T>(items: T[], pageSize: number, resetKey?: unknow
 }
 
 /**
- * پنجرهٔ صفحه‌بندی با تعداد خروجی ثابت و مستقل از تعداد کل صفحات.
- * با مقدار پیش‌فرض، حتی برای یک میلیون صفحه حداکثر ۷ توکن برمی‌گرداند:
- * [1, "…", 499, 500, 501, "…", 1000]
+ * پنجرهٔ صفحه‌بندی — منطقِ ساده و قابل‌خواندن برای انسان:
+ * همیشه اول و آخر، صفحاتِ نزدیک به صفحهٔ جاری، و «…» بینِ شکاف‌ها.
+ * اعداد با same token «…» به‌جای تکرارِ صدها دکمه، حتی برای میلیون‌ها صفحه.
+ *
+ * همگام با منطق درخواستی:
+ *   const pages = [];
+ *   for (let i = 1; i <= totalPages; i++) {
+ *     const isFirst = i === 1;
+ *     const isLast = i === totalPages;
+ *     const isNearCurrent = Math.abs(i - currentPage) <= siblings;
+ *     if (isFirst || isLast || isNearCurrent) pages.push(i);
+ *     else if (pages[pages.length - 1] !== "…") pages.push("…");
+ *   }
  */
 export function pageWindow(page: number, pageCount: number, siblings = 1): (number | "…")[] {
   const totalPages = Number.isFinite(pageCount) ? Math.max(1, Math.floor(pageCount)) : 1;
   const currentPage = Number.isFinite(page) ? Math.min(totalPages, Math.max(1, Math.floor(page))) : 1;
-  // جلوگیری از تولید ناخواستهٔ صدها دکمه در صورت ارسال مقدار نامعتبر از مصرف‌کننده.
-  const siblingCount = Number.isFinite(siblings) ? Math.min(2, Math.max(0, Math.floor(siblings))) : 1;
-  const range = (start: number, end: number) => Array.from({ length: Math.max(0, end - start + 1) }, (_, index) => start + index);
-  const maxTokens = siblingCount * 2 + 5;
+  // فاصلهٔ همسایگیِ اطراف صفحهٔ جاری؛ حداکثر ۲ برای حفظ کارایی.
+  const neighborRange = Math.min(2, Math.max(0, Number.isFinite(siblings) ? Math.floor(siblings) : 1));
 
-  if (totalPages <= maxTokens) return range(1, totalPages);
+  const pages: (number | "…")[] = [];
+  for (let i = 1; i <= totalPages; i++) {
+    const isFirst = i === 1;
+    const isLast = i === totalPages;
+    const isNearCurrent = Math.abs(i - currentPage) <= neighborRange;
 
-  const leftSibling = Math.max(currentPage - siblingCount, 1);
-  const rightSibling = Math.min(currentPage + siblingCount, totalPages);
-  const showLeftEllipsis = leftSibling > 3;
-  const showRightEllipsis = rightSibling < totalPages - 2;
-  const edgeWindow = 3 + siblingCount * 2;
-
-  if (!showLeftEllipsis && showRightEllipsis) {
-    return [...range(1, edgeWindow), "…", totalPages];
+    if (isFirst || isLast || isNearCurrent) {
+      pages.push(i);
+    } else if (pages[pages.length - 1] !== "…") {
+      pages.push("…");
+    }
   }
 
-  if (showLeftEllipsis && !showRightEllipsis) {
-    return [1, "…", ...range(totalPages - edgeWindow + 1, totalPages)];
-  }
-
-  return [1, "…", ...range(leftSibling, rightSibling), "…", totalPages];
+  return pages;
 }

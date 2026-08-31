@@ -31,7 +31,7 @@ export function Handmade() {
           </a>
         </div>
         <div id="handmadeGrid" className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4 transition-all duration-700 ease-out">
-          {CORE_PRODUCTS.slice(0, 4).map((p) => (
+          {CORE_PRODUCTS.slice(0, 8).map((p) => (
             <Card key={p.id} p={p} view="grid" />
           ))}
         </div>

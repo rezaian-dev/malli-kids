@@ -52,8 +52,8 @@ export function Search() {
     <div className="mt-8 text-right">
       <div className="relative">
         <AppForm form={form} onSubmit={goShop} ariaLabel="جستجوی محصولات" role="search" className="relative z-20">
-          <div className="flex items-center gap-1.5 rounded-3xl bg-white p-1.5 shadow-2xl xs:gap-2 xs:p-2 sm:p-2.5">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-gold/15 text-navy">
+          <div className="flex items-center gap-1.5 rounded-3xl border border-gold/40 bg-white/85 p-1.5 shadow-[0_18px_50px_-18px_rgba(193,147,87,.55)] backdrop-blur-xl sm:p-2.5 xs:gap-2 xs:p-2">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-gold/25 to-gold/10 text-gold-deep ring-1 ring-gold/30">
               <SearchIcon className="size-5" />
             </span>
             <input

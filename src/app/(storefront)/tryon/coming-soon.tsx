@@ -39,7 +39,7 @@ export function TryOnComingSoon() {
             <Wand2 className="size-9 text-gold" />
           </div>
 
-          <h2 className="mt-6 font-display text-[clamp(1.7rem,4vw,2.6rem)] font-bold tracking-tight">
+          <h2 className="mt-6 text-[clamp(1.7rem,4vw,2.6rem)] font-black leading-tight">
             پرو مجازی با <span className="text-gold">هوش مصنوعی</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-8 text-wheat sm:text-base">

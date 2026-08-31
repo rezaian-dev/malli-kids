@@ -340,27 +340,11 @@
     opacity: 0.035;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  body::after {
-    content: "";
-    pointer-events: none;
-    position: fixed;
-    inset: -10%;
-    z-index: 0;
-    /* 🌸 Light-mode ambient wash — less blur, four soft pastels in the
-       brand family (navy · gold · cream) + kid-friendly accents: */
-    background:
-      radial-gradient(42% 34% at 90% 4%, color-mix(in srgb, var(--color-gold) 22%, transparent), transparent 68%),
-      radial-gradient(32% 28% at 8% 88%, color-mix(in srgb, #a9cfe8 15%, transparent), transparent 70%),
-      radial-gradient(24% 20% at 18% 20%, color-mix(in srgb, #f6cdc2 13%, transparent), transparent 72%),
-      radial-gradient(24% 20% at 90% 82%, color-mix(in srgb, #cfe6d3 13%, transparent), transparent 72%);
-    filter: blur(13px);
-    opacity: 0.5;
-  }
+  /* صفحه بک‌گراند از BackgroundScene (کامپوننت) مدیریت می‌شود و هرگز
+     از پشت فوترِ تیره بالا نمی‌زند. body::after حذف شد تا رنگ‌های پاستلی
+     روی فوتر و محتوا سایه نیندازند. */
   .dark body::before {
     opacity: 0.14;
-  }
-  .dark body::after {
-    content: none;
   }
 
   /* 🔽 Scrollbar */
