@@ -524,10 +524,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main
-          key={path}
-          className="[&>div>*:not(.admin-page-head)]:animate-admin-content-in mx-auto w-full max-w-[100rem] px-3 py-5 sm:px-5 sm:py-7 lg:px-8 lg:py-8 [&>div>*:not(.admin-page-head)]:motion-reduce:animate-none [&>div>*:not(.admin-page-head):nth-child(2)]:[animation-delay:45ms] [&>div>*:not(.admin-page-head):nth-child(3)]:[animation-delay:80ms] [&>div>*:not(.admin-page-head):nth-child(4)]:[animation-delay:115ms]"
-        >
+        <main className="mx-auto w-full max-w-[100rem] px-3 py-5 sm:px-5 sm:py-7 lg:px-8 lg:py-8">
           {children}
         </main>
       </div>
@@ -547,7 +544,7 @@ export function AdminPageHeader({
   action?: ReactNode;
 }) {
   return (
-    <header className="admin-page-head border-navy/9 animate-admin-reveal dark:border-gold-soft/17 relative mb-6 overflow-hidden rounded-[26px] border bg-[linear-gradient(115deg,rgba(193,147,87,0.075),transparent_38%),rgba(255,254,251,0.78)] shadow-[0_24px_58px_-42px_rgba(14,42,71,0.5),inset_0_1px_0_rgba(255,255,255,0.84)] backdrop-blur-[20px] motion-reduce:animate-none sm:mb-7 dark:bg-[linear-gradient(115deg,rgba(193,147,87,0.09),transparent_42%),rgba(10,31,53,0.72)] dark:shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92),inset_0_1px_0_rgba(255,255,255,0.045),0_0_40px_rgba(193,147,87,0.025)]">
+    <header className="admin-page-head border-navy/9 dark:border-gold-soft/17 relative mb-6 overflow-hidden rounded-[26px] border bg-[linear-gradient(115deg,rgba(193,147,87,0.075),transparent_38%),rgba(255,254,251,0.78)] shadow-[0_24px_58px_-42px_rgba(14,42,71,0.5),inset_0_1px_0_rgba(255,255,255,0.84)] backdrop-blur-[20px] sm:mb-7 dark:bg-[linear-gradient(115deg,rgba(193,147,87,0.09),transparent_42%),rgba(10,31,53,0.72)] dark:shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92),inset_0_1px_0_rgba(255,255,255,0.045),0_0_40px_rgba(193,147,87,0.025)]">
       <span
         className="bg-gold/13 dark:bg-gold/10.5 pointer-events-none absolute -inset-e-16 -top-36 size-60 rounded-full blur-[44px]"
         aria-hidden="true"

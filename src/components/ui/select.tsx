@@ -36,12 +36,13 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "border-navy/12 text-navy flex w-full items-center justify-between gap-2 rounded-2xl border bg-white px-3.5 text-sm font-bold shadow-none transition-[color,box-shadow,border-color] duration-200 outline-none",
+        "group/select border-navy/12 text-navy flex w-full items-center justify-between gap-2 rounded-2xl border bg-white/90 px-3.5 text-sm font-bold shadow-none backdrop-blur-md transition-[color,box-shadow,border-color] duration-200 outline-none",
         "data-[size=default]:h-11 data-[size=sm]:h-9",
         "hover:border-gold/50",
         FIELD_FOCUS,
+        "aria-invalid:border-destructive",
         "data-placeholder:text-navy/40 disabled:cursor-not-allowed disabled:opacity-50",
-        "dark:border-gold/25 dark:bg-navy-mid dark:text-ivory dark:hover:border-gold/50 dark:data-placeholder:text-wheat/70",
+        "dark:border-gold/25 dark:bg-navy-deep/55 dark:text-ivory dark:hover:border-gold/50 dark:data-placeholder:text-wheat/70",
         "[&>span]:line-clamp-1 [&>span]:text-right",
         className,
       )}
@@ -49,7 +50,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className="text-gold size-4 shrink-0 transition-transform duration-200 data-open:rotate-180" />
+        <ChevronDown className="text-gold size-4 shrink-0 transition-transform duration-200 group-data-open/select:rotate-180" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -66,7 +67,7 @@ function SelectContent({
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          "border-gold/25 bg-popover text-popover-foreground ring-foreground/10 relative z-130 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-hidden rounded-2xl border p-1 shadow-xl ring-1 duration-150",
+          "border-gold/30 bg-paper/96 text-navy relative z-130 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-hidden rounded-2xl border p-1.5 shadow-[0_28px_70px_-24px_rgba(14,42,71,0.55),0_0_0_1px_rgba(193,147,87,0.12)] backdrop-blur-xl duration-150 dark:border-gold/25 dark:bg-navy-deep/96 dark:text-ivory dark:shadow-[0_28px_70px_-24px_rgba(0,0,0,0.72),0_0_40px_rgba(193,147,87,0.08)]",
           "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           position === "popper" &&
@@ -115,7 +116,7 @@ function SelectItem({
       data-slot="select-item"
       className={cn(
         "text-navy relative flex w-full cursor-pointer items-center rounded-xl py-2 ps-3 pe-9 text-sm font-bold outline-none select-none",
-        "focus:bg-gold/12 focus:text-gold-deep data-[state=checked]:bg-gold/15 data-[state=checked]:text-gold-deep",
+        "focus:bg-gold/12 focus:text-gold-deep data-[state=checked]:bg-gold/14 data-[state=checked]:text-gold-deep",
         "data-disabled:pointer-events-none data-disabled:opacity-50",
         "dark:text-ivory dark:focus:bg-gold/20 dark:focus:text-gold-soft dark:data-[state=checked]:bg-gold/20 dark:data-[state=checked]:text-gold-soft",
         className,
@@ -124,7 +125,7 @@ function SelectItem({
     >
       <span className="absolute inset-e-3 flex size-4 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <Check className="size-4" />
+          <Check className="text-gold size-4" />
         </SelectPrimitive.ItemIndicator>
       </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>

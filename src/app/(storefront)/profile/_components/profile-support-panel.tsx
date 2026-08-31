@@ -33,7 +33,7 @@ const TICKET_STATUS: Record<TicketStatus, { label: string; cls: string }> = {
 
 function fieldClass(error?: string) {
   return [
-    "w-full rounded-2xl border bg-transparent px-4 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
+    "field-autofill scheme-light w-full rounded-2xl border bg-transparent px-4 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
     error
       ? "border-rose"
       : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",

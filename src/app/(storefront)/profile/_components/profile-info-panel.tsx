@@ -5,6 +5,13 @@ import { toast } from "sonner";
 import { useStore } from "@/providers/store-provider";
 import { phoneDigits, toLatinDigits } from "@/lib/digits";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PROFILE_CARD } from "./profile-shared";
 
 type AccountState = {
@@ -57,7 +64,7 @@ function isIranianNationalId(value: string) {
 
 function inputClass(error?: string) {
   return [
-    "h-11 w-full rounded-2xl border bg-transparent px-4 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
+    "field-autofill scheme-light h-11 w-full rounded-2xl border bg-transparent px-4 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
     error
       ? "border-rose"
       : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
@@ -66,7 +73,7 @@ function inputClass(error?: string) {
 
 function textAreaClass(error?: string) {
   return [
-    "min-h-28 w-full rounded-2xl border bg-transparent px-4 py-3 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
+    "field-autofill scheme-light min-h-28 w-full rounded-2xl border bg-transparent px-4 py-3 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
     error
       ? "border-rose"
       : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
@@ -437,24 +444,35 @@ export function ProfileInfoPanel() {
             <span className="text-navy/60 dark:text-wheat text-xs font-black">
               جنسیت
             </span>
-            <select
-              value={child.childGender}
-              onChange={(event) => {
+            <Select
+              value={child.childGender || undefined}
+              onValueChange={(value) => {
                 setChild((current) => ({
                   ...current,
-                  childGender: event.target.value,
+                  childGender: value,
                 }));
                 setChildErrors((current) => ({
                   ...current,
                   childGender: undefined,
                 }));
               }}
-              className={inputClass(childErrors.childGender)}
+              dir="rtl"
             >
-              <option value="">انتخاب کنید</option>
-              <option value="دختر">دختر</option>
-              <option value="پسر">پسر</option>
-            </select>
+              <SelectTrigger
+                aria-invalid={Boolean(childErrors.childGender) || undefined}
+                className={
+                  childErrors.childGender
+                    ? "h-11 bg-transparent shadow-none"
+                    : "border-navy/12 dark:border-gold/25 h-11 bg-transparent shadow-none"
+                }
+              >
+                <SelectValue placeholder="انتخاب کنید" />
+              </SelectTrigger>
+              <SelectContent align="start">
+                <SelectItem value="دختر">دختر</SelectItem>
+                <SelectItem value="پسر">پسر</SelectItem>
+              </SelectContent>
+            </Select>
             {childErrors.childGender ? (
               <p className="text-rose text-xs font-bold">
                 {childErrors.childGender}

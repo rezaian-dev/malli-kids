@@ -8,6 +8,13 @@ import { ArrowRight, ImagePlus, Save, Trash2 } from "lucide-react";
 import { AdminPageHeader, useAdmin } from "@/components/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { CATS, SEASONS } from "@/lib/constants";
@@ -235,20 +242,26 @@ export function ProductForm({ product }: { product?: Product }) {
               >
                 دسته‌بندی
               </label>
-              <select
-                id="product-cat"
+              <Select
                 value={values.cat}
-                onChange={(event) => updateValue("cat", event.target.value)}
-                aria-invalid={Boolean(errors.cat)}
-                className="border-navy/12 focus-visible:border-gold dark:border-gold/20 h-11 w-full rounded-2xl border bg-transparent px-4 text-sm transition-[color,box-shadow,border-color] duration-200 outline-none focus-visible:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:focus-visible:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]"
-                required
+                onValueChange={(value) => updateValue("cat", value)}
+                dir="rtl"
               >
-                {CAT_OPTIONS.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger
+                  id="product-cat"
+                  aria-invalid={Boolean(errors.cat) || undefined}
+                  className="border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm shadow-none"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent align="start">
+                  {CAT_OPTIONS.map((item) => (
+                    <SelectItem key={item} value={item}>
+                      {item}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FieldNote error={errors.cat} />
             </div>
 
@@ -259,20 +272,26 @@ export function ProductForm({ product }: { product?: Product }) {
               >
                 زیرشاخه (فصل)
               </label>
-              <select
-                id="product-season"
+              <Select
                 value={values.season}
-                onChange={(event) => updateValue("season", event.target.value)}
-                aria-invalid={Boolean(errors.season)}
-                className="border-navy/12 focus-visible:border-gold dark:border-gold/20 h-11 w-full rounded-2xl border bg-transparent px-4 text-sm transition-[color,box-shadow,border-color] duration-200 outline-none focus-visible:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:focus-visible:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]"
-                required
+                onValueChange={(value) => updateValue("season", value)}
+                dir="rtl"
               >
-                {SEASONS.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger
+                  id="product-season"
+                  aria-invalid={Boolean(errors.season) || undefined}
+                  className="border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm shadow-none"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent align="start">
+                  {SEASONS.map((item) => (
+                    <SelectItem key={item} value={item}>
+                      {item}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FieldNote error={errors.season} />
             </div>
           </div>

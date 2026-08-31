@@ -49,7 +49,7 @@ export function AdminFilterBar({
   return (
     <section
       className={cn(
-        "border-navy/9 bg-paper/94 dark:border-gold-soft/16 animate-admin-reveal mb-5 rounded-[22px] border shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] motion-reduce:animate-none max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)]",
+        "border-navy/9 bg-paper/94 dark:border-gold-soft/16 mb-5 rounded-[22px] border shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)]",
         className,
       )}
       aria-label="جستجو و فیلترها"
@@ -197,11 +197,10 @@ export function AdminStatStrip({
     <div
       className={cn("mb-5 grid grid-cols-2 gap-2.5 lg:grid-cols-4", className)}
     >
-      {items.map((item, index) => (
+      {items.map((item) => (
         <article
           key={item.label}
-          className="border-navy/8 bg-paper/88 hover:border-gold/34 dark:border-gold-soft/13 animate-admin-reveal flex min-h-19 min-w-0 items-center gap-[0.65rem] rounded-[18px] border p-3 shadow-[0_16px_35px_-30px_rgba(14,42,71,0.45)] backdrop-blur-[14px] transition-[transform,border-color] duration-260 ease-[cubic-bezier(.25,.1,.25,1)] hover:-translate-y-0.5 motion-reduce:animate-none dark:bg-[rgba(16,43,70,0.62)] dark:shadow-[0_18px_40px_-30px_rgba(0,0,0,0.8)]"
-          style={{ animationDelay: `${Math.min(index * 55, 220)}ms` }}
+          className="border-navy/8 bg-paper/88 hover:border-gold/34 dark:border-gold-soft/13 flex min-h-19 min-w-0 items-center gap-[0.65rem] rounded-[18px] border p-3 shadow-[0_16px_35px_-30px_rgba(14,42,71,0.45)] backdrop-blur-[14px] transition-[transform,border-color] duration-260 ease-[cubic-bezier(.25,.1,.25,1)] hover:-translate-y-0.5 dark:bg-[rgba(16,43,70,0.62)] dark:shadow-[0_18px_40px_-30px_rgba(0,0,0,0.8)]"
         >
           <span
             className={cn(
