@@ -111,7 +111,9 @@ export function Quotes() {
                   <Quote className="pointer-events-none absolute top-3 end-3 size-12 text-gold/15 sm:size-16" strokeWidth={1.15} />
                   <div className="relative flex min-h-0 flex-1 flex-col gap-4 sm:flex-row">
                     <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-2xl sm:h-auto sm:w-28">
-                      <Image src={r.img} alt="" width={112} height={96} className="size-full object-cover" />
+                      {/* موبایل: تمام‌عرض با ارتفاع ثابت / دسکتاپ: ستون ۷rem —
+                          نسبت ابعاد را خودِ کانتینر تعیین می‌کند، پس fill می‌رود. */}
+                      <Image src={r.img} alt="" fill sizes="(min-width: 640px) 7rem, 100vw" className="object-cover" />
                       <div className="absolute inset-0 bg-linear-to-t from-navy/55 to-transparent" />
                     </div>
                     <div className="relative flex min-w-0 flex-1 flex-col">

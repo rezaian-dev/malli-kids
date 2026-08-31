@@ -34,7 +34,7 @@ export function Styles() {
               </h2>
             </div>
 
-            <div className="-mx-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
+            <div className="no-scrollbar -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
               <TabsList className="h-auto w-max gap-1 rounded-full border border-navy/5 bg-white p-2 shadow-sm sm:gap-1.5 sm:p-2.5 dark:border-gold/20 dark:bg-dusk-alt">
                 {TABS.map((name) => (
                   <TabsTrigger key={name} value={name} className={TRIGGER}>

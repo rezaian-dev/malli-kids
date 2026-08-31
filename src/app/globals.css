@@ -295,6 +295,18 @@
   max-width: 80rem;
 }
 
+/* 🫥 `no-scrollbar` — horizontal strips (tab rails, chip rows) still scroll
+   by touch/wheel, but the 10px gold bar from the base layer is hidden. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+
 /* ─────────────────────────── 🧱 Base layer ────────────────────────────── */
 @layer base {
   /* 📜 Page scaffold */

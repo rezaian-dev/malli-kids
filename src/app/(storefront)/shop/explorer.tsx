@@ -592,11 +592,8 @@ export function Explorer() {
       <Sheet open={sortOpen} onOpenChange={setSortOpen}>
         <SheetContent side="bottom" showCloseButton={false} className="mx-auto max-w-[32.5rem] gap-0 rounded-t-[28px] border-t border-gold/30 bg-linen p-0 dark:border-gold/40 dark:bg-sort-sheet">
           <div className="mx-auto mt-3 mb-1 h-[5px] w-11 rounded-full bg-gold-light" aria-hidden />
-          <SheetHeader className="flex-row items-center justify-between gap-0 px-5 pt-1 pb-3">
+          <SheetHeader className="gap-0 px-5 pt-1 pb-3">
             <SheetTitle className="text-base font-black text-navy dark:text-linen">مرتب‌سازی کالاها</SheetTitle>
-            <Button type="button" variant="ghost" size="icon" className="size-9 rounded-full bg-navy text-ivory dark:bg-gold-light dark:text-navy" onClick={() => setSortOpen(false)} aria-label="بستن">
-              <X className="size-4" />
-            </Button>
           </SheetHeader>
           <div className="px-4 pb-5">{sortOptions(() => setSortOpen(false))}</div>
         </SheetContent>
