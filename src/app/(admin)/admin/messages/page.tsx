@@ -146,7 +146,7 @@ export default function AdminMessages() {
                     {ticket.replies.map((item, replyIndex) => (
                       <div key={`${item.at}-${replyIndex}`} className={cn("max-w-[92%] rounded-2xl px-3.5 py-2.5 text-xs leading-6 sm:max-w-[82%]", item.from === "support" ? "ms-auto border border-gold/18 bg-gold/8 text-navy dark:text-ivory" : "me-auto bg-navy/[0.045] text-navy/80 dark:bg-white/[0.04] dark:text-ivory/80")}>
                         <div className="mb-0.5 flex items-center justify-between gap-4 text-[9px] font-black">
-                          <span className={item.from === "support" ? "text-gold-deep dark:text-gold-soft" : "text-navy/45 dark:text-wheat"}>{item.from === "support" ? "پشتیبانی مالی" : "کاربر"}</span>
+                          <span className={item.from === "support" ? "text-gold-deep dark:text-gold-soft" : "text-navy/45 dark:text-wheat"}>{item.from === "support" ? "پشتیبانی ملی‌کیدز" : "کاربر"}</span>
                           <span className="font-bold text-navy/30 dark:text-wheat/45">{item.at}</span>
                         </div>
                         <p>{item.text}</p>

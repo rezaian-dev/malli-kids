@@ -1,16 +1,18 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowDownLeft } from "lucide-react";
 import { OrnLeaf } from "@/components/home/home-ornaments";
 
 const BIG = [
-  { href: "#styles", img: "/brand/cat-girl-portrait.jpg", t: "دخترانه", d: "+۱۴۰ مدل فعال" },
-  { href: "#styles", img: "/brand/cat-boy-portrait.jpg", t: "پسرانه", d: "+۱۲۰ مدل فعال" },
+  { href: "/#styles", img: "/brand/cat-girl-portrait.jpg", t: "دخترانه", d: "+۱۴۰ مدل فعال" },
+  { href: "/#styles", img: "/brand/cat-boy-portrait.jpg", t: "پسرانه", d: "+۱۲۰ مدل فعال" },
 ];
+
 const SMALL = [
-  { href: "#styles", img: "/brand/cat-baby-portrait.jpg", t: "سیسمونی", d: "۰ تا ۲۴ ماه" },
-  { href: "#styles", img: "/brand/cat-boy-portrait.jpg", t: "لباس مشاغل", d: "رویاهای بزرگ" },
-  { href: "#styles", img: "/brand/cat-accessories-portrait.jpg", t: "اکسسوری", d: "تکمیلِ استایل", top: true },
-  { href: "#handmade", img: "/brand/look-knit-portrait.jpg", t: "دستدوز خاص", d: "تک‌نسخه‌ای" },
+  { href: "/#styles", img: "/brand/cat-baby-portrait.jpg", t: "سیسمونی", d: "۰ تا ۲۴ ماه" },
+  { href: "/#styles", img: "/brand/cat-boy-portrait.jpg", t: "لباس مشاغل", d: "رویاهای بزرگ" },
+  { href: "/#styles", img: "/brand/cat-accessories-portrait.jpg", t: "اکسسوری", d: "تکمیلِ استایل", top: true },
+  { href: "/#handmade", img: "/brand/look-knit-portrait.jpg", t: "دستدوز خاص", d: "تک‌نسخه‌ای" },
 ];
 
 export function Categories() {
@@ -28,14 +30,14 @@ export function Categories() {
               </span>
             </h2>
           </div>
-          <p className="max-w-md text-sm leading-7 text-navy/55 dark:text-wheat sm:text-[15px]">از سیسمونیِ لطیف تا لباس مشاغل فانتزی؛ هر دسته با وسواسِ یک مادر انتخاب و دوخته شده است.</p>
+          <p className="max-w-md text-sm leading-7 text-navy/55 dark:text-wheat sm:text-[15px]">از سیسمونی لطیف تا لباس مشاغل فانتزی؛ هر دسته با وسواس یک مادر انتخاب و دوخته شده است.</p>
         </div>
         <div className="grid grid-cols-1 gap-3 transition-all duration-700 ease-out min-[360px]:grid-cols-2 sm:gap-5 lg:grid-cols-4">
-          {BIG.map((c) => (
-            <a key={c.t} href={c.href} className="group relative col-span-2 block h-64 overflow-hidden rounded-2xl shadow-lg shadow-navy/10 min-[420px]:h-80 sm:h-105 sm:rounded-[28px]">
+          {BIG.map((card) => (
+            <Link key={card.t} href={card.href} className="group relative col-span-2 block h-64 overflow-hidden rounded-2xl shadow-lg shadow-navy/10 min-[420px]:h-80 sm:h-105 sm:rounded-[28px]">
               <Image
-                src={c.img}
-                alt={c.t}
+                src={card.img}
+                alt={card.t}
                 width={600}
                 height={750}
                 sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(100vw - 3rem), 50vw"
@@ -49,37 +51,37 @@ export function Categories() {
                 </div>
                 <div className="flex items-end justify-between gap-2">
                   <div className="min-w-0">
-                    <h3 className="text-xl font-black text-white sm:text-3xl">{c.t}</h3>
-                    <p className="mt-1 text-xs text-cream/70 sm:text-sm">{c.d}</p>
+                    <h3 className="text-xl font-black text-white sm:text-3xl">{card.t}</h3>
+                    <p className="mt-1 text-xs text-cream/70 sm:text-sm">{card.d}</p>
                   </div>
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold text-navy-deep transition-transform duration-500 group-hover:rotate-45 sm:h-12 sm:w-12">
                     <ArrowDownLeft className="h-4 w-4 sm:h-5 sm:w-5" />
                   </span>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
-          {SMALL.map((c) => (
-            <a key={c.t} href={c.href} className="group relative block h-52 overflow-hidden rounded-xl shadow-lg shadow-navy/10 min-[420px]:h-64 sm:h-80 sm:rounded-3xl lg:h-105">
+          {SMALL.map((card) => (
+            <Link key={card.t} href={card.href} className="group relative block h-52 overflow-hidden rounded-xl shadow-lg shadow-navy/10 min-[420px]:h-64 sm:h-80 sm:rounded-3xl lg:h-105">
               <Image
-                src={c.img}
-                alt={c.t}
+                src={card.img}
+                alt={card.t}
                 width={600}
                 height={750}
                 sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(50vw - 2rem), 25vw"
-                className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 ${c.top ? "object-top" : ""}`}
+                className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 ${card.top ? "object-top" : ""}`}
               />
               <div className="absolute inset-0 bg-linear-to-t from-navy-deep/80 via-navy/10 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3.5 sm:p-5">
                 <div className="min-w-0">
-                  <h3 className="text-base font-black text-white sm:text-xl">{c.t}</h3>
-                  <p className="mt-1 text-[11px] text-cream/70 sm:text-xs">{c.d}</p>
+                  <h3 className="text-base font-black text-white sm:text-xl">{card.t}</h3>
+                  <p className="mt-1 text-[11px] text-cream/70 sm:text-xs">{card.d}</p>
                 </div>
                 <span className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/30 bg-navy/40 text-white transition-all group-hover:border-gold group-hover:bg-gold group-hover:text-navy-deep min-[420px]:flex sm:h-9 sm:w-9">
                   <ArrowDownLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </span>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

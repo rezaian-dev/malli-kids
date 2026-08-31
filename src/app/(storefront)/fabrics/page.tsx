@@ -1,18 +1,20 @@
-import type { Metadata } from "next";
 import { Intro } from "@/components/shared/intro";
 import { ProductCatalog } from "@/components/product";
 import { FABRICS } from "@/lib/data/pages";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "پارچه‌های کالکشن",
-  description: "متری همان پارچه‌ای که لباس‌ها از آن دوخته شده؛ با راهنمای شست‌وشو.",
-};
+  description: "پارچه‌های همان کالکشن ملی‌کیدز با راهنمای شست‌وشو، جنس دقیق و انتخاب مناسب برای دوخت خانگی.",
+  path: "/fabrics",
+  keywords: ["پارچه لباس کودک", "پارچه ارگانیک کودک", "پارچه کالکشن ملی‌کیدز"],
+});
 
 export default function FabricsPage() {
   return (
     <>
-<Intro crumb="پارچه مدل‌ها" kicker="TEXTILES" title="پارچه‌های همان کالکشن" lead="متری همان پارچه‌ای که لباس‌ها از آن دوخته شده؛ با توضیح شست‌وشو." />
+      <Intro crumb="پارچه مدل‌ها" kicker="TEXTILES" title="پارچه‌های همان کالکشن" lead="متری همان پارچه‌ای که لباس‌ها از آن دوخته شده؛ با توضیح شست‌وشو." />
       <ProductCatalog items={FABRICS} cta="سفارش پارچه" />
     </>
-      );
+  );
 }

@@ -231,7 +231,7 @@ export default function AdminArticles() {
       <AdminPageHeader
         kicker="JOURNAL"
         title="مقاله‌ها"
-        description="مدیریت تقویم محتوایی، پیش‌نویس‌ها و انتشار مطالب مجله مالی کیدز."
+        description="مدیریت تقویم محتوایی، پیش‌نویس‌ها و انتشار مطالب مجله ملی کیدز."
         action={
           <Button variant="navy" onClick={() => setDraft(EMPTY)}>
             <Plus className="size-4" /> مقاله جدید

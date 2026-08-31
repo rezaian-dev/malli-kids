@@ -152,7 +152,7 @@ export function Footer() {
               <a
                 href="tel:+982126401234"
                 dir="ltr"
-                aria-label="تماس با مالی‌کیدز"
+                aria-label="تماس با ملی‌کیدز"
                 className="inline-flex min-h-11 items-center gap-2.5 rounded-lg px-1 py-1 transition-colors hover:text-gold-light focus-visible:text-gold-light"
               >
                 <Phone className="size-4 shrink-0 text-gold-light" />

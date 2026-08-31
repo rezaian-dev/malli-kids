@@ -27,7 +27,7 @@ import { useTickets } from "@/lib/tickets";
 const BRAND = (
   <div className="flex min-w-0 items-center gap-3">
     <span className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-2xl bg-navy shadow-[0_12px_28px_-14px_rgba(4,20,39,.8)] ring-1 ring-gold/25 dark:bg-white/8">
-      <Image src="/brand/logo-white.png" alt="مالی کیدز" width={42} height={42} className="size-10 object-contain p-1.5" />
+      <Image src="/brand/logo-white.png" alt="ملی کیدز" width={42} height={42} className="size-10 object-contain p-1.5" />
       <span className="absolute inset-x-2 bottom-0 h-px bg-linear-to-r from-transparent via-gold to-transparent" />
     </span>
     <div className="min-w-0 leading-none">
@@ -346,7 +346,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               </span>
               <div className="min-w-0">
                 <p className="truncate text-[10px] font-black text-navy sm:text-[11px] dark:text-ivory">{current.label}</p>
-                <p className="hidden truncate text-[9px] font-bold text-navy/40 dark:text-wheat/55 sm:block">فضای عملیاتی مالی کیدز</p>
+                <p className="hidden truncate text-[9px] font-bold text-navy/40 dark:text-wheat/55 sm:block">فضای عملیاتی ملی کیدز</p>
               </div>
             </div>
 

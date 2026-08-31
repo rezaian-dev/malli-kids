@@ -1,18 +1,20 @@
-import type { Metadata } from "next";
 import { Intro } from "@/components/shared/intro";
 import { ProductCatalog } from "@/components/product";
 import { PATTERNS } from "@/lib/data/pages";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "الگوهای آماده دوخت",
-  description: "الگوهای سایزبندی‌شدهٔ ۸۰ تا ۱۲۲ همراه با فیلم کوتاه برش.",
-};
+  description: "الگوهای آماده دوخت کودک با سایزبندی دقیق، راهنمای برش و مسیر ساده‌تر برای دوخت خانگی.",
+  path: "/patterns",
+  keywords: ["الگوی لباس کودک", "الگوی آماده دوخت", "خیاطی کودک"],
+});
 
 export default function PatternsPage() {
   return (
     <>
-<Intro crumb="الگوهای آماده" kicker="ATELIER PATTERNS" title="الگوهای آماده دوخت" lead="هر الگو سایزبندی ۸۰ تا ۱۲۲ دارد و با فیلم برش کوتاه همراه است." />
+      <Intro crumb="الگوهای آماده" kicker="ATELIER PATTERNS" title="الگوهای آماده دوخت" lead="هر الگو سایزبندی ۸۰ تا ۱۲۲ دارد و با فیلم برش کوتاه همراه است." />
       <ProductCatalog items={PATTERNS} cta="خرید الگو" />
     </>
-      );
+  );
 }

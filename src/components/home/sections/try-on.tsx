@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ScanFace, Sparkles, WandSparkles } from "lucide-react";
 import { OrnRing } from "@/components/home/home-ornaments";
 
@@ -13,7 +14,7 @@ export function TryOn() {
     <section id="tryon" className="bg-transparent py-12 sm:py-16 lg:py-20">
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="relative overflow-hidden rounded-3xl bg-navy bg-[radial-gradient(rgba(255,255,255,.09)_1px,transparent_1px)] bg-size-[22px_22px] shadow-2xl shadow-navy/30 transition-all duration-700 ease-out sm:rounded-[36px]">
-          <div className="pointer-events-none absolute -top-40 -right-40 h-120 w-120 rounded-full bg-gold/20 blur-3xl" />
+          <div className="pointer-events-none absolute -right-40 -top-40 h-120 w-120 rounded-full bg-gold/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-52 -left-32 h-105 w-105 rounded-full bg-navy-soft/40 blur-3xl" />
           <div className="relative grid items-center gap-10 p-6 min-[420px]:p-8 sm:p-12 lg:grid-cols-2 lg:gap-8 lg:p-16">
             <div>
@@ -25,7 +26,7 @@ export function TryOn() {
                 اتاق پرو{" "}
                 <span className="relative inline-block">
                   دیجیتال
-                  <OrnRing className="absolute -top-3 -left-5 h-6 w-6 opacity-80" />
+                  <OrnRing className="absolute -left-5 -top-3 h-6 w-6 opacity-80" />
                 </span>
               </h2>
               <p className="mt-2 text-sm font-bold text-gold-light">عکس + لباس کالکشن + سایز پیشنهادی</p>
@@ -45,14 +46,14 @@ export function TryOn() {
                   </div>
                 ))}
               </div>
-              <div className="mt-8 flex flex-col flex-wrap gap-3 min-[420px]:flex-row sm:mt-10 sm:gap-4">
-                <a href="/tryon" className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gold px-7 py-3.5 text-sm font-black text-navy-deep shadow-lg shadow-gold/25 transition-all duration-500 hover:-translate-y-1 hover:bg-gold-light sm:px-8 sm:py-4 sm:text-base">
+              <div className="mt-8 flex min-[420px]:flex-row flex-col flex-wrap gap-3 sm:mt-10 sm:gap-4">
+                <Link href="/tryon" className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gold px-7 py-3.5 text-sm font-black text-navy-deep shadow-lg shadow-gold/25 transition-all duration-500 hover:-translate-y-1 hover:bg-gold-light sm:px-8 sm:py-4 sm:text-base">
                   <Sparkles className="relative h-5 w-5" />
                   <span className="relative">شروع پرو مجازی</span>
-                </a>
-                <a href="/tryon" className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full border border-cream/30 px-6 py-3.5 text-sm font-bold text-cream transition-all duration-500 hover:-translate-y-1 hover:bg-white/10 sm:px-7 sm:py-4 sm:text-base">
+                </Link>
+                <Link href="/tryon" className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full border border-cream/30 px-6 py-3.5 text-sm font-bold text-cream transition-all duration-500 hover:-translate-y-1 hover:bg-white/10 sm:px-7 sm:py-4 sm:text-base">
                   ورود به اتاق پرو
-                </a>
+                </Link>
               </div>
             </div>
             <div className="relative mt-2 lg:mt-0">
@@ -67,8 +68,8 @@ export function TryOn() {
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-navy-deep/80 via-transparent to-navy/20" />
                 <div className="absolute inset-x-0 h-16 animate-scan bg-linear-to-b from-transparent via-gold/25 to-transparent" />
-                <div className="absolute top-4 right-4 h-8 w-8 rounded-tr-lg border-t-2 border-r-2 border-gold-light sm:top-5 sm:right-5 sm:h-10 sm:w-10" />
-                <div className="absolute top-4 left-4 h-8 w-8 rounded-tl-lg border-t-2 border-l-2 border-gold-light sm:top-5 sm:left-5 sm:h-10 sm:w-10" />
+                <div className="absolute right-4 top-4 h-8 w-8 rounded-tr-lg border-r-2 border-t-2 border-gold-light sm:right-5 sm:top-5 sm:h-10 sm:w-10" />
+                <div className="absolute left-4 top-4 h-8 w-8 rounded-tl-lg border-l-2 border-t-2 border-gold-light sm:left-5 sm:top-5 sm:h-10 sm:w-10" />
                 <div className="absolute bottom-4 right-4 h-8 w-8 rounded-br-lg border-b-2 border-r-2 border-gold-light sm:bottom-5 sm:right-5 sm:h-10 sm:w-10" />
                 <div className="absolute bottom-4 left-4 h-8 w-8 rounded-bl-lg border-b-2 border-l-2 border-gold-light sm:bottom-5 sm:left-5 sm:h-10 sm:w-10" />
                 <div className="absolute inset-x-4 bottom-4 flex items-center justify-between gap-2 sm:inset-x-5 sm:bottom-5">

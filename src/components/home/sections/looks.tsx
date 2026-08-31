@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
+
 const LOOKS = [
   { href: "/shop?cat=دخترانه", img: "/brand/look-party.jpg", k: "GIRLS", t: "دخترانه" },
   { href: "/shop?cat=پسرانه", img: "/brand/cat-boy-portrait.jpg", k: "BOYS", t: "پسرانه" },
@@ -10,11 +12,11 @@ export function Looks() {
     <section id="multi" className="py-10 sm:py-14">
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-          {LOOKS.map((c) => (
-            <a key={c.t} href={c.href} className="group relative min-h-50 overflow-hidden rounded-[28px] border border-white/0 bg-navy shadow-[0_18px_40px_-22px_rgba(14,42,71,.45)] transition-all duration-500 hover:-translate-y-2 hover:border-gold/50 hover:shadow-[0_24px_50px_-18px_rgba(193,147,87,.35)] sm:min-h-65">
+          {LOOKS.map((card) => (
+            <Link key={card.t} href={card.href} className="group relative min-h-50 overflow-hidden rounded-[28px] border border-white/0 bg-navy shadow-[0_18px_40px_-22px_rgba(14,42,71,.45)] transition-all duration-500 hover:-translate-y-2 hover:border-gold/50 hover:shadow-[0_24px_50px_-18px_rgba(193,147,87,.35)] sm:min-h-65">
               <Image
-                src={c.img}
-                alt={c.t}
+                src={card.img}
+                alt={card.t}
                 width={600}
                 height={800}
                 sizes="(max-width: 639px) calc(100vw - 2rem), 33vw"
@@ -22,11 +24,11 @@ export function Looks() {
               />
               <div className="absolute inset-0 bg-linear-to-t from-navy-deep via-navy/35 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-5">
-                <p className="text-[10px] font-bold tracking-[0.2em] text-gold-light">{c.k}</p>
-                <h3 className="mt-1 text-xl font-black text-white">{c.t}</h3>
+                <p className="text-[10px] font-bold tracking-[0.2em] text-gold-light">{card.k}</p>
+                <h3 className="mt-1 text-xl font-black text-white">{card.t}</h3>
                 <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-ivory/85">مشاهده کالکشن →</span>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
