@@ -10,7 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   COUNT_TEXT,
   LATIN_ANCHOR,
@@ -29,7 +35,10 @@ import {
 function useField(name: string) {
   const form = useFormContext();
   if (!form) throw new Error("‹Field› باید داخل <AppForm> قرار بگیرد.");
-  const { field, fieldState } = useController({ control: form.control as never, name: name as never });
+  const { field, fieldState } = useController({
+    control: form.control as never,
+    name: name as never,
+  });
   return { form, field, fieldState };
 }
 
@@ -40,21 +49,39 @@ export type FieldShellProps = {
   required?: boolean;
   skin?: Skin;
   className?: string;
-  
+
   icon?: ReactNode;
-  
+
   trailing?: ReactNode;
-  
+
   noShell?: boolean;
-  
+
   hideMessage?: boolean;
-  
+
   labelClassName?: string;
-  
-  children: (p: { field: ReturnType<typeof useField>["field"]; invalid: boolean; id: string; describedBy?: string }) => ReactNode;
+
+  children: (p: {
+    field: ReturnType<typeof useField>["field"];
+    invalid: boolean;
+    id: string;
+    describedBy?: string;
+  }) => ReactNode;
 };
 
-export function Field({ name, label, hint, required, skin = "admin", className, icon, trailing, noShell, hideMessage, labelClassName, children }: FieldShellProps) {
+export function Field({
+  name,
+  label,
+  hint,
+  required,
+  skin = "admin",
+  className,
+  icon,
+  trailing,
+  noShell,
+  hideMessage,
+  labelClassName,
+  children,
+}: FieldShellProps) {
   const { field, fieldState } = useField(name);
   const uid = useId();
   const id = `f-${uid}-${name}`;
@@ -84,7 +111,14 @@ export function Field({ name, label, hint, required, skin = "admin", className, 
       ) : null}
 
       {shell ? (
-        <span data-field-shell className={cn(shell, skin === "bare" && (invalid ? SHELL_BARE_BAD : SHELL_BARE_IDLE))} data-invalid={invalid ? "true" : undefined}>
+        <span
+          data-field-shell
+          className={cn(
+            shell,
+            skin === "bare" && (invalid ? SHELL_BARE_BAD : SHELL_BARE_IDLE),
+          )}
+          data-invalid={invalid ? "true" : undefined}
+        >
           {icon ? <span className={cn(LEAD[skin])}>{icon}</span> : null}
           {control}
           {trailing}
@@ -98,8 +132,11 @@ export function Field({ name, label, hint, required, skin = "admin", className, 
       )}
 
       {showMsg ? (
-        
-        <p id={`${id}-msg`} role="alert" className="m-0 grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity] duration-280 ease-[cubic-bezier(.25,.1,.25,1)] starting:grid-rows-[0fr] starting:opacity-0 *:min-h-0 *:overflow-hidden">
+        <p
+          id={`${id}-msg`}
+          role="alert"
+          className="m-0 grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity] duration-280 ease-[cubic-bezier(.25,.1,.25,1)] *:min-h-0 *:overflow-hidden starting:grid-rows-[0fr] starting:opacity-0"
+        >
           <span className={ERROR_TEXT}>
             <CircleAlert className="mt-0.5 size-3 shrink-0" />
             <span>{message}</span>
@@ -126,10 +163,10 @@ export type TextFieldProps = {
   dir?: "rtl" | "ltr";
   maxLength?: number;
   icon?: ReactNode;
-  
+
   trailing?: ReactNode;
   required?: boolean;
-  
+
   showCount?: boolean;
 };
 
@@ -152,7 +189,16 @@ export function TextField({
   showCount,
 }: TextFieldProps) {
   return (
-    <Field name={name} label={label} hint={hint} skin={skin} required={required} className={className} icon={icon} trailing={trailing}>
+    <Field
+      name={name}
+      label={label}
+      hint={hint}
+      skin={skin}
+      required={required}
+      className={className}
+      icon={icon}
+      trailing={trailing}
+    >
       {({ field, invalid, id, describedBy }) => (
         <>
           <Input
@@ -165,7 +211,7 @@ export function TextField({
             placeholder={placeholder}
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
-            
+
             className={cn(INPUT[skin], LATIN_ANCHOR, inputClassName)}
             value={(field.value as string | number | undefined) ?? ""}
             name={field.name}
@@ -173,16 +219,21 @@ export function TextField({
             onBlur={field.onBlur}
             ref={field.ref}
           />
-          {showCount && maxLength ? <CharCount value={String(field.value ?? "")} max={maxLength} /> : null}
+          {showCount && maxLength ? (
+            <CharCount value={String(field.value ?? "")} max={maxLength} />
+          ) : null}
         </>
       )}
     </Field>
   );
 }
 
-export type TextareaFieldProps = Omit<TextFieldProps, "type" | "icon" | "inputClassName"> & {
+export type TextareaFieldProps = Omit<
+  TextFieldProps,
+  "type" | "icon" | "inputClassName"
+> & {
   rows?: number;
-  
+
   min?: number;
 };
 
@@ -200,7 +251,14 @@ export function TextareaField({
   showCount = true,
 }: TextareaFieldProps) {
   return (
-    <Field name={name} label={label} hint={hint} skin={skin} required={required} className={className}>
+    <Field
+      name={name}
+      label={label}
+      hint={hint}
+      skin={skin}
+      required={required}
+      className={className}
+    >
       {({ field, invalid, id, describedBy }) => (
         <>
           <Textarea
@@ -217,7 +275,13 @@ export function TextareaField({
             onBlur={field.onBlur}
             ref={field.ref}
           />
-          {showCount && maxLength ? <CharCount value={String(field.value ?? "")} max={maxLength} min={min} /> : null}
+          {showCount && maxLength ? (
+            <CharCount
+              value={String(field.value ?? "")}
+              max={maxLength}
+              min={min}
+            />
+          ) : null}
         </>
       )}
     </Field>
@@ -246,7 +310,14 @@ export function MoneyField({
   required?: boolean;
 }) {
   return (
-    <Field name={name} label={label} hint={hint} skin={skin} required={required} className={className}>
+    <Field
+      name={name}
+      label={label}
+      hint={hint}
+      skin={skin}
+      required={required}
+      className={className}
+    >
       {({ field, invalid, id, describedBy }) => (
         <Input
           id={id}
@@ -259,7 +330,9 @@ export function MoneyField({
           className={cn(INPUT[skin], LATIN_ANCHOR, "tabular-nums")}
           value={formatFaMoney(parseFaNumber(field.value))}
           name={field.name}
-          onChange={(e) => field.onChange(toLatinDigits(e.target.value).replace(/\D/g, ""))}
+          onChange={(e) =>
+            field.onChange(toLatinDigits(e.target.value).replace(/\D/g, ""))
+          }
           onBlur={field.onBlur}
           ref={field.ref}
         />
@@ -279,13 +352,39 @@ export type SelectFieldProps = {
   required?: boolean;
 };
 
-export function SelectField({ name, label, hint, skin = "admin", className, options, placeholder, required }: SelectFieldProps) {
-  const items = options.map((o) => (typeof o === "string" ? { value: o, label: o } : o));
+export function SelectField({
+  name,
+  label,
+  hint,
+  skin = "admin",
+  className,
+  options,
+  placeholder,
+  required,
+}: SelectFieldProps) {
+  const items = options.map((o) =>
+    typeof o === "string" ? { value: o, label: o } : o,
+  );
   return (
-    <Field name={name} label={label} hint={hint} skin={skin} required={required} className={className}>
+    <Field
+      name={name}
+      label={label}
+      hint={hint}
+      skin={skin}
+      required={required}
+      className={className}
+    >
       {({ field, invalid }) => (
-        <Select name={field.name} value={(field.value as string) ?? ""} onValueChange={field.onChange} onOpenChange={(o) => !o && field.onBlur()}>
-          <SelectTrigger aria-invalid={invalid || undefined} className={cn("w-full", INPUT[skin])}>
+        <Select
+          name={field.name}
+          value={(field.value as string) ?? ""}
+          onValueChange={field.onChange}
+          onOpenChange={(o) => !o && field.onBlur()}
+        >
+          <SelectTrigger
+            aria-invalid={invalid || undefined}
+            className={cn("w-full", INPUT[skin])}
+          >
             <SelectValue placeholder={placeholder ?? items[0]?.label} />
           </SelectTrigger>
           <SelectContent>
@@ -316,27 +415,48 @@ export function SwitchField({
   return (
     <label
       className={cn(
-        "flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-navy/10 px-4 py-3 transition-colors hover:border-gold/50 dark:border-gold/20",
+        "border-navy/10 hover:border-gold/50 dark:border-gold/20 flex cursor-pointer items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition-colors",
         className,
       )}
       data-field={name}
     >
       <span className="min-w-0">
-        <span className="block text-sm font-black text-navy dark:text-ivory">{label}</span>
-        {description ? <span className="block text-[11px] font-bold text-navy/45 dark:text-wheat">{description}</span> : null}
+        <span className="text-navy dark:text-ivory block text-sm font-black">
+          {label}
+        </span>
+        {description ? (
+          <span className="text-navy/45 dark:text-wheat block text-[11px] font-bold">
+            {description}
+          </span>
+        ) : null}
       </span>
-      <Switch checked={Boolean(field.value)} onCheckedChange={field.onChange} name={field.name} onBlur={field.onBlur} />
+      <Switch
+        checked={Boolean(field.value)}
+        onCheckedChange={field.onChange}
+        name={field.name}
+        onBlur={field.onBlur}
+      />
     </label>
   );
 }
 
-function CharCount({ value, max, min }: { value: string; max: number; min?: number }) {
+function CharCount({
+  value,
+  max,
+  min,
+}: {
+  value: string;
+  max: number;
+  min?: number;
+}) {
   const n = value.trim().length;
   const left = max - value.length;
   return (
     <p className={cn(COUNT_TEXT, "text-left")} aria-live="polite">
       {left < 0 ? (
-        <span className="text-rose">{toFaDigits(Math.abs(left))} حرف اضافه است</span>
+        <span className="text-rose">
+          {toFaDigits(Math.abs(left))} حرف اضافه است
+        </span>
       ) : min && n < min ? (
         <span>{toFaDigits(min - n)} حرف تا اعتبارسنجی</span>
       ) : (

@@ -24,7 +24,6 @@ export function CategoryMenu() {
   return (
     <NavigationMenuItem>
       <NavigationMenuTrigger
-        
         onClick={() => {
           startTopProgress();
           router.push("/shop");
@@ -51,15 +50,17 @@ export function CategoryMenu() {
       <NavigationMenuContent
         className={cn(
           "inset-s-0 inset-e-auto z-80 p-0",
-          "overflow-hidden rounded-2xl border border-navy/10 bg-paper shadow-xl",
+          "border-navy/10 bg-paper overflow-hidden rounded-2xl border shadow-xl",
           "dark:border-gold/25 dark:bg-dusk",
           "[&_a]:text-current [&_button]:text-current [&_svg]:text-current",
         )}
       >
         <div className="w-[min(34rem,calc(100vw-1.5rem))]">
-          <div className="flex items-center justify-between bg-linear-to-l from-navy to-navy-mid px-4 py-3">
-            <p className="m-0 text-sm font-black text-cream">دسته‌بندی کالکشن</p>
-            <Badge className="rounded-full border-0 bg-gold/20 text-[10px] font-bold text-gold">
+          <div className="from-navy to-navy-mid flex items-center justify-between bg-linear-to-l px-4 py-3">
+            <p className="text-cream m-0 text-sm font-black">
+              دسته‌بندی کالکشن
+            </p>
+            <Badge className="bg-gold/20 text-gold rounded-full border-0 text-[10px] font-bold">
               {CAT_LINKS.length.toLocaleString("fa-IR")} دسته فعال
             </Badge>
           </div>
@@ -88,8 +89,12 @@ export function CategoryMenu() {
                         <Icon className="size-5 text-current" />
                       </span>
                       <span className="min-w-0">
-                        <span className="block text-sm font-black text-navy dark:text-ivory">{c.label}</span>
-                        <span className="mt-0.5 block text-[11px] font-normal text-navy/45 dark:text-wheat/80">{c.hint}</span>
+                        <span className="text-navy dark:text-ivory block text-sm font-black">
+                          {c.label}
+                        </span>
+                        <span className="text-navy/45 dark:text-wheat/80 mt-0.5 block text-[11px] font-normal">
+                          {c.hint}
+                        </span>
                       </span>
                     </Link>
                   </NavigationMenuLink>
@@ -103,11 +108,14 @@ export function CategoryMenu() {
               href="/shop"
               className={cn(
                 "flex flex-row items-center justify-center gap-2 rounded-2xl border-0 py-3.5 text-sm font-black no-underline transition-all",
-                "bg-gold text-navy-deep shadow-[0_4px_14px_-4px_rgba(193,147,87,.5)] hover:bg-gold-light hover:shadow-[0_6px_20px_-4px_rgba(193,147,87,.7)]",
+                "bg-gold text-navy-deep hover:bg-gold-light shadow-[0_4px_14px_-4px_rgba(193,147,87,.5)] hover:shadow-[0_6px_20px_-4px_rgba(193,147,87,.7)]",
               )}
-              onClick={() => { startTopProgress(); }}
+              onClick={() => {
+                startTopProgress();
+              }}
             >
-              مشاهده همه‌ی دسته‌بندی‌ها <ArrowLeft className="size-4 text-current" />
+              مشاهده همه‌ی دسته‌بندی‌ها{" "}
+              <ArrowLeft className="size-4 text-current" />
             </Link>
           </div>
         </div>

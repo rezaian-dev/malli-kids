@@ -13,7 +13,11 @@ import type { Paged } from "@/types";
  * `resetKey` lets a page reset to the first page when its *filter* changes
  * (e.g. search text / active tab) — pass a primitive or a stable stringified key.
  */
-export function usePagination<T>(items: T[], pageSize: number, resetKey?: unknown): Paged<T> {
+export function usePagination<T>(
+  items: T[],
+  pageSize: number,
+  resetKey?: unknown,
+): Paged<T> {
   const [page, setPageRaw] = useState(1);
 
   const total = items.length;
@@ -36,7 +40,8 @@ export function usePagination<T>(items: T[], pageSize: number, resetKey?: unknow
     return items.slice(start, start + pageSize);
   }, [items, current, pageSize]);
 
-  const setPage = (p: number) => setPageRaw(Math.min(Math.max(1, p), pageCount));
+  const setPage = (p: number) =>
+    setPageRaw(Math.min(Math.max(1, p), pageCount));
 
   return {
     page: current,
@@ -53,11 +58,22 @@ export function usePagination<T>(items: T[], pageSize: number, resetKey?: unknow
   };
 }
 
-export function pageWindow(page: number, pageCount: number, siblings = 1): (number | "…")[] {
-  const totalPages = Number.isFinite(pageCount) ? Math.max(1, Math.floor(pageCount)) : 1;
-  const currentPage = Number.isFinite(page) ? Math.min(totalPages, Math.max(1, Math.floor(page))) : 1;
-  
-  const neighborRange = Math.min(2, Math.max(0, Number.isFinite(siblings) ? Math.floor(siblings) : 1));
+export function pageWindow(
+  page: number,
+  pageCount: number,
+  siblings = 1,
+): (number | "…")[] {
+  const totalPages = Number.isFinite(pageCount)
+    ? Math.max(1, Math.floor(pageCount))
+    : 1;
+  const currentPage = Number.isFinite(page)
+    ? Math.min(totalPages, Math.max(1, Math.floor(page)))
+    : 1;
+
+  const neighborRange = Math.min(
+    2,
+    Math.max(0, Number.isFinite(siblings) ? Math.floor(siblings) : 1),
+  );
 
   const pages: (number | "…")[] = [];
   for (let i = 1; i <= totalPages; i++) {

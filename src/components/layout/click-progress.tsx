@@ -17,7 +17,7 @@ export function ClickProgress() {
   useEffect(() => {
     const start = () => {
       setPhase("run");
-      
+
       window.setTimeout(() => setPhase((s) => (s === "run" ? "done" : s)), 900);
     };
     window.addEventListener(PROGRESS_EVENT, start);
@@ -40,15 +40,21 @@ export function ClickProgress() {
   return (
     <div
       aria-hidden={phase === "idle"}
-      className="pointer-events-none fixed top-0 inset-x-0 z-95 h-0.75"
-      style={{ opacity: phase === "done" ? 0 : phase === "run" ? 1 : 0, transition: "opacity .35s ease" }}
+      className="pointer-events-none fixed inset-x-0 top-0 z-95 h-0.75"
+      style={{
+        opacity: phase === "done" ? 0 : phase === "run" ? 1 : 0,
+        transition: "opacity .35s ease",
+      }}
     >
       <div
-        className="h-full rounded-s-full bg-linear-to-l from-gold-deep via-gold to-gold-light shadow-[0_0_10px_0_var(--color-gold)]"
+        className="from-gold-deep via-gold to-gold-light h-full rounded-s-full bg-linear-to-l shadow-[0_0_10px_0_var(--color-gold)]"
         style={{
           marginInlineStart: "auto",
           width: phase === "idle" ? "0%" : phase === "run" ? "72%" : "100%",
-          transition: phase === "run" ? "width .8s cubic-bezier(.2,.7,.3,1)" : "width .25s ease",
+          transition:
+            phase === "run"
+              ? "width .8s cubic-bezier(.2,.7,.3,1)"
+              : "width .25s ease",
         }}
       />
     </div>

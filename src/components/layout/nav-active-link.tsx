@@ -20,7 +20,11 @@ export function NavActiveLink({
   const path = usePathname();
 
   return (
-    <NavigationMenuLink asChild active={isActive(path, href)} className={className}>
+    <NavigationMenuLink
+      asChild
+      active={isActive(path, href)}
+      className={className}
+    >
       <Link href={href} {...props}>
         {children}
       </Link>
@@ -41,7 +45,11 @@ export function MobileActiveLink({
   const path = usePathname();
 
   return (
-    <Link href={href} className={cn(className, isActive(path, href) && activeClassName)} {...props}>
+    <Link
+      href={href}
+      className={cn(className, isActive(path, href) && activeClassName)}
+      {...props}
+    >
       {children}
     </Link>
   );

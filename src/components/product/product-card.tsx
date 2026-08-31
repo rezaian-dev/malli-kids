@@ -18,11 +18,20 @@ const VIEW =
   "inline-flex items-center justify-center gap-1.5 font-black no-underline bg-white text-ink border-2 border-ink rounded-[12px] transition-all duration-300 hover:-translate-y-0.5 hover:bg-ink hover:text-white dark:bg-transparent dark:text-ivory dark:border-ivory dark:hover:bg-ivory dark:hover:text-navy-deep";
 const CART =
   "inline-flex items-center justify-center gap-1.5 font-extrabold border-0 cursor-pointer bg-navy text-ivory rounded-[12px] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 dark:bg-gold dark:text-navy-deep";
-const GRID_SIZES = "(max-width: 639px) calc(100vw - 3.5rem), (max-width: 1023px) calc((100vw - 5.5rem) / 2), (max-width: 1535px) 33vw, 18rem";
+const GRID_SIZES =
+  "(max-width: 639px) calc(100vw - 3.5rem), (max-width: 1023px) calc((100vw - 5.5rem) / 2), (max-width: 1535px) 33vw, 18rem";
 const LIST_SIZES = "104px";
 
 // 🪶 Server-first card with tiny client actions.
-export function ProductCard({ p, view, aboveFold = false }: { p: Product; view: "grid" | "list"; aboveFold?: boolean }) {
+export function ProductCard({
+  p,
+  view,
+  aboveFold = false,
+}: {
+  p: Product;
+  view: "grid" | "list";
+  aboveFold?: boolean;
+}) {
   const href = pdpHref(p.id);
   const out = !p.stock;
   const badge = p.badge ? BADGE[p.badge] || "bg-navy text-gold-light" : null;
@@ -32,22 +41,25 @@ export function ProductCard({ p, view, aboveFold = false }: { p: Product; view: 
   };
 
   const sold = (
-    <p className="inline-flex flex-row items-center gap-1.5 m-0 mt-1.5 text-[11px] font-extrabold leading-none text-gold dark:text-gold-soft">
+    <p className="text-gold dark:text-gold-soft m-0 mt-1.5 inline-flex flex-row items-center gap-1.5 text-[11px] leading-none font-extrabold">
       <ShoppingBag className="block size-3.25 shrink-0" />
       {toFaDigits(p.sold)} فروش
     </p>
   );
 
   const price = out ? (
-    <span className="text-rose font-extrabold text-xs">ناموجود</span>
+    <span className="text-rose text-xs font-extrabold">ناموجود</span>
   ) : (
     <PriceTag price={p.price} />
   );
 
   if (view === "list") {
     return (
-      <article className="group flex min-w-0 flex-row overflow-hidden rounded-[20px] border border-navy/10 bg-white/94 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-gold/55 hover:shadow-[0_18px_36px_-16px_rgba(14,42,71,.28)] dark:border-gold-soft/35 dark:bg-slate/60">
-        <Link href={href} className="relative block h-auto min-h-30 w-26 shrink-0 overflow-hidden bg-sand">
+      <article className="group border-navy/10 hover:border-gold/55 dark:border-gold-soft/35 dark:bg-slate/60 flex min-w-0 flex-row overflow-hidden rounded-[20px] border bg-white/94 transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_18px_36px_-16px_rgba(14,42,71,.28)]">
+        <Link
+          href={href}
+          className="bg-sand relative block h-auto min-h-30 w-26 shrink-0 overflow-hidden"
+        >
           <Image
             src={p.img}
             alt={p.name}
@@ -55,15 +67,24 @@ export function ProductCard({ p, view, aboveFold = false }: { p: Product; view: 
             height={800}
             sizes={LIST_SIZES}
             {...imageProps}
-            className={`absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${out ? "grayscale opacity-75" : ""}`}
+            className={`absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${out ? "opacity-75 grayscale" : ""}`}
           />
-          <FavButton id={p.id} name={p.name} className="absolute right-1.5 top-1.5 size-8 shadow" />
+          <FavButton
+            id={p.id}
+            name={p.name}
+            className="absolute top-1.5 right-1.5 size-8 shadow"
+          />
         </Link>
-        <div className="flex-1 min-w-0 p-3 flex flex-col gap-2">
+        <div className="flex min-w-0 flex-1 flex-col gap-2 p-3">
           <div className="flex justify-between gap-2">
             <div className="min-w-0">
-              <p className="text-[11px] text-navy/45 dark:text-khaki m-0">{p.cat}</p>
-              <Link href={href} className="block font-black text-navy dark:text-ivory text-sm leading-snug no-underline">
+              <p className="text-navy/45 dark:text-khaki m-0 text-[11px]">
+                {p.cat}
+              </p>
+              <Link
+                href={href}
+                className="text-navy dark:text-ivory block text-sm leading-snug font-black no-underline"
+              >
                 {p.name}
               </Link>
             </div>
@@ -71,11 +92,15 @@ export function ProductCard({ p, view, aboveFold = false }: { p: Product; view: 
           {sold}
           <div className="mt-auto flex flex-wrap items-center gap-2">
             {price}
-            <div className="flex gap-1.5 ms-auto">
+            <div className="ms-auto flex gap-1.5">
               <Link href={href} className={`${VIEW} h-8 px-2.5 text-[11px]`}>
                 <Eye width={14} height={14} /> مشاهده
               </Link>
-              <AddToCartButton out={out} id={p.id} className={`${CART} h-8 px-2.5 text-[11px]`}>
+              <AddToCartButton
+                out={out}
+                id={p.id}
+                className={`${CART} h-8 px-2.5 text-[11px]`}
+              >
                 {out ? "خبرم کن" : "سبد"}
               </AddToCartButton>
             </div>
@@ -86,8 +111,8 @@ export function ProductCard({ p, view, aboveFold = false }: { p: Product; view: 
   }
 
   return (
-    <article className="group @container min-w-0 overflow-hidden rounded-3xl border border-navy/10 bg-white/94 shadow-[0_10px_28px_-18px_rgba(14,42,71,.22)] transition-all duration-500 ease-out hover:-translate-y-2 hover:border-gold/55 hover:shadow-[0_26px_48px_-18px_rgba(14,42,71,.32)] dark:border-gold-soft/35 dark:bg-slate/60 dark:shadow-none">
-      <div className="relative w-full overflow-hidden bg-sand pt-[125%]">
+    <article className="group border-navy/10 hover:border-gold/55 dark:border-gold-soft/35 dark:bg-slate/60 @container min-w-0 overflow-hidden rounded-3xl border bg-white/94 shadow-[0_10px_28px_-18px_rgba(14,42,71,.22)] transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_26px_48px_-18px_rgba(14,42,71,.32)] dark:shadow-none">
+      <div className="bg-sand relative w-full overflow-hidden pt-[125%]">
         <Image
           src={p.img}
           alt={p.name}
@@ -95,29 +120,44 @@ export function ProductCard({ p, view, aboveFold = false }: { p: Product; view: 
           height={800}
           sizes={GRID_SIZES}
           {...imageProps}
-          className={`absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out ${out ? "grayscale opacity-75" : "group-hover:scale-110"}`}
+          className={`absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out ${out ? "opacity-75 grayscale" : "group-hover:scale-110"}`}
         />
         {badge ? (
-          <span className={`absolute top-2.5 right-2.5 z-2 rounded-full px-2.5 py-1 text-[10px] font-black whitespace-nowrap ${badge}`}>
+          <span
+            className={`absolute top-2.5 right-2.5 z-2 rounded-full px-2.5 py-1 text-[10px] font-black whitespace-nowrap ${badge}`}
+          >
             {p.badge}
           </span>
         ) : null}
         {p.disc ? (
-          <span className="absolute top-2.5 left-14 z-2 bg-rose text-white text-[10px] font-black px-2 py-1 rounded-full whitespace-nowrap">{p.disc} تخفیف</span>
+          <span className="bg-rose absolute top-2.5 left-14 z-2 rounded-full px-2 py-1 text-[10px] font-black whitespace-nowrap text-white">
+            {p.disc} تخفیف
+          </span>
         ) : null}
-        <FavButton id={p.id} name={p.name} className="absolute left-2.5 top-2.5" />
+        <FavButton
+          id={p.id}
+          name={p.name}
+          className="absolute top-2.5 left-2.5"
+        />
         {out ? (
-          <div className="absolute inset-0 z-1 bg-navy/35 flex items-center justify-center">
-            <span className="bg-white text-navy text-[11px] font-black px-3 py-1.5 rounded-full inline-flex items-center gap-1">
+          <div className="bg-navy/35 absolute inset-0 z-1 flex items-center justify-center">
+            <span className="text-navy inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[11px] font-black">
               <PackageX width={14} height={14} /> ناموجود
             </span>
           </div>
         ) : null}
         <div className="absolute inset-x-2.5 bottom-2.5 z-4 hidden translate-y-[130%] flex-col gap-1.5 transition-all duration-500 ease-out group-hover:translate-y-0 pointer-fine:min-[520px]:flex">
-          <Link href={href} className={`${VIEW} h-10 w-full text-xs rounded-[14px] shadow-md`}>
+          <Link
+            href={href}
+            className={`${VIEW} h-10 w-full rounded-[14px] text-xs shadow-md`}
+          >
             <Eye width={16} height={16} /> مشاهده محصول
           </Link>
-          <AddToCartButton out={out} id={p.id} className={`${CART} h-10 w-full text-xs rounded-[14px] shadow-md`}>
+          <AddToCartButton
+            out={out}
+            id={p.id}
+            className={`${CART} h-10 w-full rounded-[14px] text-xs shadow-md`}
+          >
             {out ? (
               <>
                 <Bell width={16} height={16} /> اطلاع از موجودی
@@ -131,31 +171,50 @@ export function ProductCard({ p, view, aboveFold = false }: { p: Product; view: 
         </div>
       </div>
       <div className="px-3 pt-3 pb-3.5">
-        <div className="flex items-center gap-1 text-[11px] text-navy/45 dark:text-khaki min-w-0">
-          <Star className="size-3.5 fill-gold text-gold" />
+        <div className="text-navy/45 dark:text-khaki flex min-w-0 items-center gap-1 text-[11px]">
+          <Star className="fill-gold text-gold size-3.5" />
           <b className="text-navy dark:text-ivory">{toFaDigits(p.rate)}</b>
           <span>·</span>
-          <span className="overflow-hidden text-ellipsis whitespace-nowrap">{p.cat}</span>
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+            {p.cat}
+          </span>
         </div>
-        <h3 className="mt-1.5 mb-0 font-black text-navy dark:text-ivory text-sm leading-snug whitespace-nowrap overflow-hidden text-ellipsis">{p.name}</h3>
+        <h3 className="text-navy dark:text-ivory mt-1.5 mb-0 overflow-hidden text-sm leading-snug font-black text-ellipsis whitespace-nowrap">
+          {p.name}
+        </h3>
         {sold}
-        <div className="mt-2 flex items-center gap-1.5 flex-wrap">
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
           {out ? (
-            <span className="text-navy/45 dark:text-wheat font-bold text-xs">به‌زودی موجود می‌شود</span>
+            <span className="text-navy/45 dark:text-wheat text-xs font-bold">
+              به‌زودی موجود می‌شود
+            </span>
           ) : (
             <>
               {price}
-              {p.old ? <span className="text-[11px] text-silver line-through whitespace-nowrap">{formatToman(p.old)}</span> : null}
-              {p.disc ? <span className="text-[10px] font-black bg-rose text-white px-1.5 py-0.5 rounded">{p.disc}</span> : null}
+              {p.old ? (
+                <span className="text-silver text-[11px] whitespace-nowrap line-through">
+                  {formatToman(p.old)}
+                </span>
+              ) : null}
+              {p.disc ? (
+                <span className="bg-rose rounded px-1.5 py-0.5 text-[10px] font-black text-white">
+                  {p.disc}
+                </span>
+              ) : null}
             </>
           )}
         </div>
         {/* 📱 Keep actions visible under the price on narrow screens. */}
         <div className="mt-2.5 grid grid-cols-1 gap-1.5 @[10rem]:grid-cols-2 pointer-fine:min-[520px]:hidden">
           <Link href={href} className={`${VIEW} h-9 min-w-0 text-[11px]`}>
-            <Eye width={13} height={13} className="shrink-0" /> <span className="truncate">مشاهده</span>
+            <Eye width={13} height={13} className="shrink-0" />{" "}
+            <span className="truncate">مشاهده</span>
           </Link>
-          <AddToCartButton out={out} id={p.id} className={`${out ? "bg-rose-50 text-rose" : CART} h-9 min-w-0 rounded-[10px] border-0 text-[11px] font-black`}>
+          <AddToCartButton
+            out={out}
+            id={p.id}
+            className={`${out ? "text-rose bg-rose-50" : CART} h-9 min-w-0 rounded-[10px] border-0 text-[11px] font-black`}
+          >
             {out ? "اطلاع موجودی" : "افزودن به سبد"}
           </AddToCartButton>
         </div>

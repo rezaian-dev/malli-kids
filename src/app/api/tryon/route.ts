@@ -22,36 +22,54 @@ async function toBytes(img: string, origin: string): Promise<Img> {
   const url = img.startsWith("http") ? img : new URL(img, origin).toString();
   const res = await fetch(url);
   if (!res.ok) throw new Error(`دریافت تصویر ناموفق بود (${res.status}).`);
-  return { buf: Buffer.from(await res.arrayBuffer()), mime: res.headers.get("content-type") || "image/jpeg" };
+  return {
+    buf: Buffer.from(await res.arrayBuffer()),
+    mime: res.headers.get("content-type") || "image/jpeg",
+  };
 }
 
-const dataUri = ({ buf, mime }: Img) => `data:${mime};base64,${buf.toString("base64")}`;
+const dataUri = ({ buf, mime }: Img) =>
+  `data:${mime};base64,${buf.toString("base64")}`;
 
 function timeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
-  return Promise.race([p, new Promise<T>((_, rej) => setTimeout(() => rej(new Error(`${label} بیش از حد طول کشید.`)), ms))]);
+  return Promise.race([
+    p,
+    new Promise<T>((_, rej) =>
+      setTimeout(() => rej(new Error(`${label} بیش از حد طول کشید.`)), ms),
+    ),
+  ]);
 }
 
 /* ─── Free: Hugging Face (Kolors) — best-effort, unstable public demo ─── */
-const HF_SPACE = process.env.HF_TRYON_SPACE || "Kwai-Kolors/Kolors-Virtual-Try-On";
+const HF_SPACE =
+  process.env.HF_TRYON_SPACE || "Kwai-Kolors/Kolors-Virtual-Try-On";
 
 async function tryonHuggingFace(person: Img, garment: Img): Promise<string> {
   const token = process.env.HF_TOKEN;
   const client = await timeout(
-    Client.connect(HF_SPACE, token ? { hf_token: token as `hf_${string}` } : undefined),
+    Client.connect(
+      HF_SPACE,
+      token ? { hf_token: token as `hf_${string}` } : undefined,
+    ),
     30_000,
     "اتصال به سرویس رایگان",
   );
   const result = await timeout(
     client.predict("/tryon", [
-      handle_file(new Blob([new Uint8Array(person.buf)], { type: person.mime })),
-      handle_file(new Blob([new Uint8Array(garment.buf)], { type: garment.mime })),
+      handle_file(
+        new Blob([new Uint8Array(person.buf)], { type: person.mime }),
+      ),
+      handle_file(
+        new Blob([new Uint8Array(garment.buf)], { type: garment.mime }),
+      ),
       0,
       true,
     ]),
     100_000,
     "پردازش سرویس رایگان",
   );
-  const out = (result?.data as unknown[])?.[0] as { url?: string; path?: string } | string | undefined;
+  const out = (result?.data as unknown[])?.[0] as
+    { url?: string; path?: string } | string | undefined;
   const url = typeof out === "string" ? out : out?.url || out?.path;
   if (!url) throw new Error("empty");
   return url;
@@ -62,9 +80,15 @@ async function tryonFal(person: Img, garment: Img): Promise<string> {
   const key = process.env.FAL_KEY;
   if (!key) throw new Error("FAL_KEY تنظیم نشده است.");
   fal.config({ credentials: key });
-  const result = await fal.subscribe("fal-ai/kling/v1-5/kolors-virtual-try-on", {
-    input: { human_image_url: dataUri(person), garment_image_url: dataUri(garment) },
-  });
+  const result = await fal.subscribe(
+    "fal-ai/kling/v1-5/kolors-virtual-try-on",
+    {
+      input: {
+        human_image_url: dataUri(person),
+        garment_image_url: dataUri(garment),
+      },
+    },
+  );
   const url = (result?.data as { image?: { url?: string } })?.image?.url;
   if (!url) throw new Error("سرویس پاسخ معتبری نداد.");
   return url;
@@ -78,11 +102,24 @@ async function fashnStart(person: Img, garment: Img): Promise<string> {
   if (!key) throw new Error("FASHN_API_KEY تنظیم نشده است.");
   const run = await fetch(`${FASHN_URL}/run`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-    body: JSON.stringify({ model_name: "tryon-v1.6", inputs: { model_image: dataUri(person), garment_image: dataUri(garment), category: "auto" } }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${key}`,
+    },
+    body: JSON.stringify({
+      model_name: "tryon-v1.6",
+      inputs: {
+        model_image: dataUri(person),
+        garment_image: dataUri(garment),
+        category: "auto",
+      },
+    }),
   });
   const data = await run.json().catch(() => ({}));
-  if (!run.ok || !data?.id) throw new Error(data?.error?.message || data?.error || "شروع پرو مجازی ناموفق بود.");
+  if (!run.ok || !data?.id)
+    throw new Error(
+      data?.error?.message || data?.error || "شروع پرو مجازی ناموفق بود.",
+    );
   return data.id as string;
 }
 
@@ -91,15 +128,29 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "درخواست نامعتبر است." }, { status: 400 });
+    return NextResponse.json(
+      { error: "درخواست نامعتبر است." },
+      { status: 400 },
+    );
   }
   const { modelImage, garmentImage } = body;
-  if (!modelImage || !garmentImage) return NextResponse.json({ error: "عکس شخص و لباس هر دو لازم است." }, { status: 400 });
-  if (modelImage.length > 8_000_000) return NextResponse.json({ error: "حجم عکس زیاد است؛ عکس کوچک‌تری انتخاب کنید." }, { status: 413 });
+  if (!modelImage || !garmentImage)
+    return NextResponse.json(
+      { error: "عکس شخص و لباس هر دو لازم است." },
+      { status: 400 },
+    );
+  if (modelImage.length > 8_000_000)
+    return NextResponse.json(
+      { error: "حجم عکس زیاد است؛ عکس کوچک‌تری انتخاب کنید." },
+      { status: 413 },
+    );
 
   let person: Img, garment: Img;
   try {
-    [person, garment] = await Promise.all([toBytes(modelImage, req.nextUrl.origin), toBytes(garmentImage, req.nextUrl.origin)]);
+    [person, garment] = await Promise.all([
+      toBytes(modelImage, req.nextUrl.origin),
+      toBytes(garmentImage, req.nextUrl.origin),
+    ]);
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 502 });
   }
@@ -109,10 +160,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ id: await fashnStart(person, garment) });
     }
     if (PROVIDER === "fal") {
-      return NextResponse.json({ status: "completed", image: await tryonFal(person, garment) });
+      return NextResponse.json({
+        status: "completed",
+        image: await tryonFal(person, garment),
+      });
     }
     // free HF (default)
-    return NextResponse.json({ status: "completed", image: await tryonHuggingFace(person, garment) });
+    return NextResponse.json({
+      status: "completed",
+      image: await tryonHuggingFace(person, garment),
+    });
   } catch (e) {
     const raw = (e as Error).message || "";
     // The free public demo is frequently busy/offline — return a clear, friendly message.
@@ -126,16 +183,39 @@ export async function POST(req: NextRequest) {
 
 // FASHN polling only.
 export async function GET(req: NextRequest) {
-  if (PROVIDER !== "fashn") return NextResponse.json({ error: "این provider نیازی به poll ندارد." }, { status: 400 });
+  if (PROVIDER !== "fashn")
+    return NextResponse.json(
+      { error: "این provider نیازی به poll ندارد." },
+      { status: 400 },
+    );
   const key = process.env.FASHN_API_KEY;
-  if (!key) return NextResponse.json({ error: "FASHN_API_KEY تنظیم نشده است." }, { status: 503 });
+  if (!key)
+    return NextResponse.json(
+      { error: "FASHN_API_KEY تنظیم نشده است." },
+      { status: 503 },
+    );
   const id = req.nextUrl.searchParams.get("id");
-  if (!id) return NextResponse.json({ error: "شناسه لازم است." }, { status: 400 });
+  if (!id)
+    return NextResponse.json({ error: "شناسه لازم است." }, { status: 400 });
 
-  const res = await fetch(`${FASHN_URL}/status/${id}`, { headers: { Authorization: `Bearer ${key}` } });
+  const res = await fetch(`${FASHN_URL}/status/${id}`, {
+    headers: { Authorization: `Bearer ${key}` },
+  });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) return NextResponse.json({ error: data?.error || "خطا در بررسی وضعیت." }, { status: 502 });
-  if (data.status === "completed") return NextResponse.json({ status: "completed", image: data.output?.[0] ?? null });
-  if (data.status === "failed" || data.error) return NextResponse.json({ status: "failed", error: data.error?.message || data.error || "تولید ناموفق بود." });
+  if (!res.ok)
+    return NextResponse.json(
+      { error: data?.error || "خطا در بررسی وضعیت." },
+      { status: 502 },
+    );
+  if (data.status === "completed")
+    return NextResponse.json({
+      status: "completed",
+      image: data.output?.[0] ?? null,
+    });
+  if (data.status === "failed" || data.error)
+    return NextResponse.json({
+      status: "failed",
+      error: data.error?.message || data.error || "تولید ناموفق بود.",
+    });
   return NextResponse.json({ status: data.status || "processing" });
 }

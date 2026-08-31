@@ -7,10 +7,20 @@ import { useStore } from "@/providers/store-provider";
 import { STORAGE } from "@/lib/constants";
 import { faNow } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { AppForm, Field, TextField, TextareaField, useAppForm } from "@/components/form";
+import {
+  AppForm,
+  Field,
+  TextField,
+  TextareaField,
+  useAppForm,
+} from "@/components/form";
 import { cn } from "@/lib/utils";
 import { Product } from "@/types";
-import { RATING_STARS, reviewDefaults, reviewSchema } from "../_lib/product-review-schema";
+import {
+  RATING_STARS,
+  reviewDefaults,
+  reviewSchema,
+} from "../_lib/product-review-schema";
 import { useLiveProduct } from "./product-live-context";
 
 // ✍️ Review form with lightweight validation.
@@ -18,14 +28,25 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
   const product = useLiveProduct(seed);
   const { user } = useStore();
   const [purchased, setPurchased] = useState(false);
-  const form = useAppForm({ schema: reviewSchema, defaultValues: reviewDefaults });
+  const form = useAppForm({
+    schema: reviewSchema,
+    defaultValues: reviewDefaults,
+  });
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE.purchases);
-      const orders: { items?: { id?: number; name?: string }[] }[] = raw ? JSON.parse(raw) : [];
+      const orders: { items?: { id?: number; name?: string }[] }[] = raw
+        ? JSON.parse(raw)
+        : [];
       setPurchased(
-        orders.some((o) => Array.isArray(o?.items) && o.items.some((it) => it.id === product.id || it.name === product.name)),
+        orders.some(
+          (o) =>
+            Array.isArray(o?.items) &&
+            o.items.some(
+              (it) => it.id === product.id || it.name === product.name,
+            ),
+        ),
       );
     } catch {
       setPurchased(false);
@@ -34,14 +55,13 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
 
   if (!user || !purchased) {
     return (
-      <p className="rounded-3xl border border-dashed border-navy/15 bg-sand px-5 py-4 text-sm text-navy/55 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat">
+      <p className="border-navy/15 bg-sand text-navy/55 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat rounded-3xl border border-dashed px-5 py-4 text-sm">
         ثبت نظر فقط پس از خرید و ورود ممکن است.
       </p>
     );
   }
 
   function onValid({ rating, body }: typeof reviewDefaults) {
-    
     try {
       const raw = window.localStorage.getItem(STORAGE.adminDb);
       const db = raw ? (JSON.parse(raw) as { reviews?: unknown[] }) : {};
@@ -49,7 +69,9 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
       reviews.unshift({
         id: `ur-${Date.now().toString(36)}`,
         product: product.name,
-        author: user ? `${user.firstName} ${user.lastName ?? ""}`.trim() : "کاربر",
+        author: user
+          ? `${user.firstName} ${user.lastName ?? ""}`.trim()
+          : "کاربر",
         rate: Number(rating),
         text: body.trim(),
         date: faNow(),
@@ -57,20 +79,34 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
       });
       db.reviews = reviews;
       window.localStorage.setItem(STORAGE.adminDb, JSON.stringify(db));
-    } catch {
-      
-    }
-    toast.success(`نظرِ ${rating} ستاره‌تان ثبت شد — پس از تأیید ادمین نمایش داده می‌شود ✨`);
+    } catch {}
+    toast.success(
+      `نظرِ ${rating} ستاره‌تان ثبت شد — پس از تأیید ادمین نمایش داده می‌شود ✨`,
+    );
     form.reset({ ...reviewDefaults });
   }
 
   return (
-    <AppForm form={form} onSubmit={onValid} ariaLabel="ثبت نظر" className="space-y-4 rounded-3xl border border-navy/8 bg-white p-5 dark:border-gold/30 dark:bg-slate">
-      <p className="text-sm font-black text-navy dark:text-ivory">تجربه‌تان از این خرید</p>
+    <AppForm
+      form={form}
+      onSubmit={onValid}
+      ariaLabel="ثبت نظر"
+      className="border-navy/8 dark:border-gold/30 dark:bg-slate space-y-4 rounded-3xl border bg-white p-5"
+    >
+      <p className="text-navy dark:text-ivory text-sm font-black">
+        تجربه‌تان از این خرید
+      </p>
 
       <Field name="rating" label="امتیاز" skin="soft" required noShell>
         {({ field, invalid }) => (
-          <div className={cn("flex items-center gap-1", invalid && "animate-shake")} role="radiogroup" aria-label="امتیاز به این محصول">
+          <div
+            className={cn(
+              "flex items-center gap-1",
+              invalid && "animate-shake",
+            )}
+            role="radiogroup"
+            aria-label="امتیاز به این محصول"
+          >
             {RATING_STARS.map((n, i) => {
               const on = i < Number(field.value || 0);
               return (
@@ -86,8 +122,10 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
                   }}
                   className={cn(
                     "inline-flex size-11 items-center justify-center rounded-xl transition-all",
-                    "hover:bg-gold/10 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
-                    on ? "scale-105 text-gold" : "text-navy/25 dark:text-ivory/25",
+                    "hover:bg-gold/10 focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none",
+                    on
+                      ? "text-gold scale-105"
+                      : "text-navy/25 dark:text-ivory/25",
                   )}
                 >
                   <Star className={cn("size-6", on && "fill-gold")} />
@@ -98,7 +136,13 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
         )}
       </Field>
 
-      <TextField name="title" label="عنوانِ نظر (اختیاری)" skin="soft" placeholder="کوتاه و مفید" maxLength={60} />
+      <TextField
+        name="title"
+        label="عنوانِ نظر (اختیاری)"
+        skin="soft"
+        placeholder="کوتاه و مفید"
+        maxLength={60}
+      />
 
       <TextareaField
         name="body"

@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { email, longText, nationalId, optMobile, optText, text } from "@/lib/forms";
+import {
+  email,
+  longText,
+  nationalId,
+  optMobile,
+  optText,
+  text,
+} from "@/lib/forms";
 
 export const accountSchema = z
   .object({
@@ -12,9 +19,12 @@ export const accountSchema = z
     email: email("ایمیل"),
   })
   .superRefine((v, ctx) => {
-    
     if (v.address.trim() && !v.city.trim()) {
-      ctx.addIssue({ code: "custom", path: ["city"], message: "با آدرس، شهر را هم بنویسید" });
+      ctx.addIssue({
+        code: "custom",
+        path: ["city"],
+        message: "با آدرس، شهر را هم بنویسید",
+      });
     }
   });
 
@@ -41,11 +51,18 @@ export const childSchema = z.object({
   childGender: z
     .string()
     .trim()
-    .refine((v) => v === "" || v === "دختر" || v === "پسر", "یا «دختر» را انتخاب کنید یا «پسر»"),
+    .refine(
+      (v) => v === "" || v === "دختر" || v === "پسر",
+      "یا «دختر» را انتخاب کنید یا «پسر»",
+    ),
 });
 
 export type ChildValues = z.infer<typeof childSchema>;
-export const childDefaults: ChildValues = { childName: "", childAge: "", childGender: "" };
+export const childDefaults: ChildValues = {
+  childName: "",
+  childAge: "",
+  childGender: "",
+};
 
 export const ticketSchema = z.object({
   subject: text("موضوع", 3, 60),

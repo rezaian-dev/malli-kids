@@ -19,10 +19,12 @@ export function Styles() {
         <Tabs defaultValue="همه" dir="rtl">
           <div className="mb-10 flex flex-col justify-between gap-5 sm:mb-12 sm:gap-6 lg:flex-row lg:items-end">
             <div>
-              <span className="text-sm font-bold tracking-wide text-gold">انتخاب سردبیر</span>
-              <h2 className="mt-2 text-[clamp(1.5rem,5.5vw,2.625rem)] font-black leading-snug text-navy dark:text-ivory">
+              <span className="text-gold text-sm font-bold tracking-wide">
+                انتخاب سردبیر
+              </span>
+              <h2 className="text-navy dark:text-ivory mt-2 text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black">
                 استایل‌های{" "}
-                <span className="relative inline-block text-gold">
+                <span className="text-gold relative inline-block">
                   منتخب
                   <OrnStar className="absolute -top-3 -left-4 h-4 w-4" />
                 </span>
@@ -31,7 +33,7 @@ export function Styles() {
 
             {}
             <div className="flex w-full justify-center lg:w-auto">
-              <TabsList className="h-auto max-w-full flex-nowrap justify-center gap-0.5 min-[360px]:gap-1 rounded-full border border-navy/5 bg-white p-2 shadow-sm sm:gap-1.5 sm:p-2.5 dark:border-gold/20 dark:bg-dusk-alt">
+              <TabsList className="border-navy/5 dark:border-gold/20 dark:bg-dusk-alt h-auto max-w-full flex-nowrap justify-center gap-0.5 rounded-full border bg-white p-2 shadow-sm min-[360px]:gap-1 sm:gap-1.5 sm:p-2.5">
                 {TABS.map((name) => (
                   <TabsTrigger key={name} value={name} className={TRIGGER}>
                     {name}
@@ -42,13 +44,20 @@ export function Styles() {
           </div>
 
           {TABS.map((name) => {
-            const items = name === "همه" ? CORE_PRODUCTS : CORE_PRODUCTS.filter((p) => p.cat === name);
+            const items =
+              name === "همه"
+                ? CORE_PRODUCTS
+                : CORE_PRODUCTS.filter((p) => p.cat === name);
             return (
               <TabsContent key={name} value={name} className="mt-0">
                 {}
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4">
                   {items.map((p, i) => (
-                    <div key={p.id} className="animate-style-in" style={{ animationDelay: `${i * 72}ms` }}>
+                    <div
+                      key={p.id}
+                      className="animate-style-in"
+                      style={{ animationDelay: `${i * 72}ms` }}
+                    >
                       <ProductCard p={p} view="grid" />
                     </div>
                   ))}

@@ -5,7 +5,10 @@ import { useEffect, useState } from "react";
 import { useStore } from "@/providers/store-provider";
 
 // 🚪 Lazy mount the auth modal only when it matters.
-const AuthModal = dynamic(() => import("./auth-modal").then((m) => m.AuthModal), { ssr: false });
+const AuthModal = dynamic(
+  () => import("./auth-modal").then((m) => m.AuthModal),
+  { ssr: false },
+);
 
 export function AuthModalMount() {
   const { authOpen } = useStore();
@@ -19,7 +22,9 @@ export function AuthModalMount() {
     if (mounted) return;
     const preload = () => void import("./auth-modal");
     const idle = typeof window.requestIdleCallback === "function";
-    const id = idle ? window.requestIdleCallback(preload, { timeout: 4000 }) : window.setTimeout(preload, 2500);
+    const id = idle
+      ? window.requestIdleCallback(preload, { timeout: 4000 })
+      : window.setTimeout(preload, 2500);
     return () => {
       if (idle) window.cancelIdleCallback(id);
       else window.clearTimeout(id);

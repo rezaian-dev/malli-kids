@@ -1,7 +1,20 @@
 import type { AdminOrder } from "@/types";
 import { toEnDigits, toFaDigits } from "@/lib/format";
 
-const FA_MONTHS = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
+const FA_MONTHS = [
+  "فروردین",
+  "اردیبهشت",
+  "خرداد",
+  "تیر",
+  "مرداد",
+  "شهریور",
+  "مهر",
+  "آبان",
+  "آذر",
+  "دی",
+  "بهمن",
+  "اسفند",
+];
 
 type Parsed = { y: number; m: number; d: number; key: string };
 
@@ -10,10 +23,20 @@ function parseJalali(date: string): Parsed | null {
   if (parts.length !== 3) return null;
   const [y, m, d] = parts.map((s) => Number(toEnDigits(s)));
   if ([y, m, d].some((n) => Number.isNaN(n)) || m < 1 || m > 12) return null;
-  return { y, m, d, key: `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}` };
+  return {
+    y,
+    m,
+    d,
+    key: `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`,
+  };
 }
 
-export type SalesPoint = { label: string; sub?: string; value: number; count: number };
+export type SalesPoint = {
+  label: string;
+  sub?: string;
+  value: number;
+  count: number;
+};
 
 /** Paid, non-returned orders with a parseable date — the honest revenue base. */
 function revenueOrders(orders: AdminOrder[]) {
@@ -55,7 +78,11 @@ export function dailySeries(orders: AdminOrder[], count = 7): SalesPoint[] {
 
   const byDate = new Map<string, SalesPoint>();
   for (const { o, p } of paid) {
-    const prev = byDate.get(p.key) ?? { label: `${toFaDigits(p.d)}/${toFaDigits(p.m)}`, value: 0, count: 0 };
+    const prev = byDate.get(p.key) ?? {
+      label: `${toFaDigits(p.d)}/${toFaDigits(p.m)}`,
+      value: 0,
+      count: 0,
+    };
     prev.value += o.total;
     prev.count += 1;
     byDate.set(p.key, prev);

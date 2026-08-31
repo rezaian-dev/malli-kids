@@ -30,10 +30,7 @@ export const ICON_BTN = cn(
 export const PANEL = cn(
   "z-[90] flex flex-col gap-0 border-navy/10 bg-cream p-0",
   "dark:border-gold/20 dark:bg-navy-deep",
-  
-  
-  
-  
+
   "duration-400 ease-[cubic-bezier(0.22,1,0.32,1)]",
   "data-open:animate-in data-closed:animate-out",
   "data-open:fade-in-0 data-open:blur-in-4 data-closed:fade-out-0",

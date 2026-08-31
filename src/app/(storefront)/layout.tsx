@@ -8,7 +8,11 @@ import { BackgroundScene } from "@/components/shared/background-scene";
 import { AuthModalMount } from "@/components/auth";
 
 // 🛍️ Shared storefront shell for every public page.
-export default function StorefrontLayout({ children }: { children: ReactNode }) {
+export default function StorefrontLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <>
       <BackgroundScene />

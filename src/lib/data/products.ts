@@ -126,7 +126,10 @@ export const CATALOG: Product[] = (() => {
         ...src,
         img: CORE_PRODUCTS[(i + r) % CORE_PRODUCTS.length].img,
         name: r ? `${src.name} — ${extras[r % extras.length]}` : src.name,
-        season: SEASONS[(SEASONS.indexOf(src.season ?? SEASONS[0]) + r) % SEASONS.length],
+        season:
+          SEASONS[
+            (SEASONS.indexOf(src.season ?? SEASONS[0]) + r) % SEASONS.length
+          ],
         stock: r === 2 && i % 5 === 0 ? false : src.stock,
         badge: r === 1 && i % 4 === 0 ? "پرفروش" : src.badge,
         disc: r === 1 && i % 4 === 0 ? src.disc || "۱۱٪" : src.disc,
@@ -139,7 +142,9 @@ export const CATALOG: Product[] = (() => {
 })();
 
 export function getProductById(id: number): Product | undefined {
-  return CATALOG.find((p) => p.id === id) ?? CORE_PRODUCTS[id % CORE_PRODUCTS.length];
+  return (
+    CATALOG.find((p) => p.id === id) ?? CORE_PRODUCTS[id % CORE_PRODUCTS.length]
+  );
 }
 
 export function pdpHref(id: number) {

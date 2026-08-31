@@ -34,7 +34,14 @@ function persist(list: Notice[]) {
 
 export function notify(owner: string, kind: NoticeKind, text: string) {
   if (!owner) return;
-  const n: Notice = { id: `n-${Date.now().toString(36)}-${Math.floor(Math.random() * 999)}`, owner, kind, text, at: faNow(), read: false };
+  const n: Notice = {
+    id: `n-${Date.now().toString(36)}-${Math.floor(Math.random() * 999)}`,
+    owner,
+    kind,
+    text,
+    at: faNow(),
+    read: false,
+  };
   persist([n, ...loadNotices()].slice(0, 60));
 }
 
@@ -43,7 +50,9 @@ export function markRead(id: string) {
 }
 
 export function markAllRead(owner: string) {
-  persist(loadNotices().map((n) => (n.owner === owner ? { ...n, read: true } : n)));
+  persist(
+    loadNotices().map((n) => (n.owner === owner ? { ...n, read: true } : n)),
+  );
 }
 
 export function useNotices(owner?: string): Notice[] {

@@ -8,7 +8,8 @@ import { ContactMap } from "./_components/contact-map";
 
 export const metadata = buildMetadata({
   title: "تماس با ما",
-  description: "راه‌های ارتباط با ملی کیدز، آدرس گالری، ساعت پاسخ‌گویی و پشتیبانی سفارش‌ها از طریق سایت.",
+  description:
+    "راه‌های ارتباط با ملی کیدز، آدرس گالری، ساعت پاسخ‌گویی و پشتیبانی سفارش‌ها از طریق سایت.",
   path: "/contact",
   keywords: ["تماس با ملی کیدز", "آدرس گالری ملی‌کیدز", "پشتیبانی سفارش کودک"],
 });
@@ -24,15 +25,19 @@ export default function ContactPage() {
       />
 
       <div className="container mx-auto w-full max-w-5xl space-y-9 px-4 sm:px-5 lg:px-7">
-        <section className="overflow-hidden rounded-[28px] bg-linear-to-br from-navy via-navy-mid to-navy-light px-6 py-8 shadow-[0_24px_60px_-30px_rgba(4,20,39,.6)] sm:px-10 sm:py-10">
+        <section className="from-navy via-navy-mid to-navy-light overflow-hidden rounded-[28px] bg-linear-to-br px-6 py-8 shadow-[0_24px_60px_-30px_rgba(4,20,39,.6)] sm:px-10 sm:py-10">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
             <div className="min-w-0 flex-1">
-              <p className="flex items-center gap-2 text-[11px] font-black tracking-[0.22em] text-gold">
+              <p className="text-gold flex items-center gap-2 text-[11px] font-black tracking-[0.22em]">
                 <Headphones className="size-4" /> SUPPORT
               </p>
-              <h2 className="mt-2 text-xl font-black text-white sm:text-2xl">پشتیبانی، در پنل خودتان</h2>
+              <h2 className="mt-2 text-xl font-black text-white sm:text-2xl">
+                پشتیبانی، در پنل خودتان
+              </h2>
               <p className="mt-3 max-w-xl text-sm leading-8 text-white/75">
-                سوال سایز، پیگیری سفارش یا هر چیز دیگر — به‌جای فرم و ایمیل، تیکت ثبت کنید؛ پاسخ ما فقط و فقط در پنل کاربری خودتان ثبت می‌شود، همیشه در دسترس و هرگز گم‌نشده.
+                سوال سایز، پیگیری سفارش یا هر چیز دیگر — به‌جای فرم و ایمیل،
+                تیکت ثبت کنید؛ پاسخ ما فقط و فقط در پنل کاربری خودتان ثبت
+                می‌شود، همیشه در دسترس و هرگز گم‌نشده.
               </p>
 
               <ol className="mt-7 grid gap-4 sm:grid-cols-3">
@@ -41,10 +46,17 @@ export default function ContactPage() {
                   ["۲", "تیکت بزنید", "در تب «پشتیبانی» پنل کاربری"],
                   ["۳", "پاسخ بگیرید", "همان‌جا، در پنل خودتان"],
                 ].map(([n, t, d]) => (
-                  <li key={n} className="rounded-2xl border border-white/12 bg-white/6 px-4 py-4">
-                    <span className="grid size-8 place-items-center rounded-full bg-gold font-black text-navy-deep">{n}</span>
+                  <li
+                    key={n}
+                    className="rounded-2xl border border-white/12 bg-white/6 px-4 py-4"
+                  >
+                    <span className="bg-gold text-navy-deep grid size-8 place-items-center rounded-full font-black">
+                      {n}
+                    </span>
                     <p className="mt-3 text-sm font-black text-white">{t}</p>
-                    <p className="mt-1 text-[11px] font-bold leading-5 text-white/60">{d}</p>
+                    <p className="mt-1 text-[11px] leading-5 font-bold text-white/60">
+                      {d}
+                    </p>
                   </li>
                 ))}
               </ol>
@@ -56,7 +68,11 @@ export default function ContactPage() {
                   ورود و ثبت تیکت <ArrowLeft className="size-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-12 rounded-full border-white/30 bg-white/10 px-7 text-white hover:bg-white/15">
+              <Button
+                asChild
+                variant="outline"
+                className="h-12 rounded-full border-white/30 bg-white/10 px-7 text-white hover:bg-white/15"
+              >
                 <Link href="/faq">سوالات پرتکرار</Link>
               </Button>
             </div>
@@ -64,11 +80,23 @@ export default function ContactPage() {
         </section>
 
         <section>
-          <h2 className="text-[11px] font-black tracking-[0.22em] text-gold">راه‌های ارتباطی</h2>
+          <h2 className="text-gold text-[11px] font-black tracking-[0.22em]">
+            راه‌های ارتباطی
+          </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <Info ico={Phone} k="تلفن" v={BRAND.phoneFa} href={`tel:${BRAND.phone}`} ltr />
+            <Info
+              ico={Phone}
+              k="تلفن"
+              v={BRAND.phoneFa}
+              href={`tel:${BRAND.phone}`}
+              ltr
+            />
             <Info ico={MapPin} k="نشانی گالری" v={BRAND.address} />
-            <Info ico={Clock} k="ساعت پاسخ‌گویی" v="شنبه تا پنجشنبه، ۹ صبح تا ۹ شب" />
+            <Info
+              ico={Clock}
+              k="ساعت پاسخ‌گویی"
+              v="شنبه تا پنجشنبه، ۹ صبح تا ۹ شب"
+            />
           </div>
         </section>
 
@@ -78,15 +106,32 @@ export default function ContactPage() {
   );
 }
 
-function Info({ ico: Icon, k, v, href, ltr }: { ico: typeof MapPin; k: string; v: string; href?: string; ltr?: boolean }) {
+function Info({
+  ico: Icon,
+  k,
+  v,
+  href,
+  ltr,
+}: {
+  ico: typeof MapPin;
+  k: string;
+  v: string;
+  href?: string;
+  ltr?: boolean;
+}) {
   const body = (
     <>
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-gold">
+      <span className="bg-gold/15 text-gold flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
         <Icon className="h-5 w-5" />
       </span>
       <span className="min-w-0">
-        <span className="block text-xs font-black text-gold dark:text-gold-glow">{k}</span>
-        <span className="mt-1 block font-bold text-navy dark:text-ivory" dir={ltr ? "ltr" : undefined}>
+        <span className="text-gold dark:text-gold-glow block text-xs font-black">
+          {k}
+        </span>
+        <span
+          className="text-navy dark:text-ivory mt-1 block font-bold"
+          dir={ltr ? "ltr" : undefined}
+        >
           {v}
         </span>
       </span>

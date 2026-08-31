@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { emailOrMobile, fullName, mobile, otpCode, password } from "@/lib/forms";
+import {
+  emailOrMobile,
+  fullName,
+  mobile,
+  otpCode,
+  password,
+} from "@/lib/forms";
 
 export const loginSchema = z.object({
   identifier: emailOrMobile("ایمیل یا موبایل"),

@@ -8,13 +8,20 @@ import { breadcrumbSchema, buildMetadata, productSchema } from "@/lib/seo";
 import { shell } from "@/lib/utils";
 import { ProductBuyPanel } from "./_components/product-buy-panel";
 import { ProductDetailsTabs } from "./_components/product-details-tabs";
-import { LiveName, ProductLiveProvider } from "./_components/product-live-context";
+import {
+  LiveName,
+  ProductLiveProvider,
+} from "./_components/product-live-context";
 
 export function generateStaticParams() {
   return CORE_PRODUCTS.map((_, i) => ({ id: String(i) }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
   const { id } = await params;
   const product = getProductById(Number(id));
 
@@ -37,25 +44,40 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   });
 }
 
-export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const num = Number(id);
   const product = getProductById(num);
 
   if (!product) notFound();
 
-  const related = CORE_PRODUCTS.filter((item) => item.id !== product.id && item.cat === product.cat).slice(0, 4);
+  const related = CORE_PRODUCTS.filter(
+    (item) => item.id !== product.id && item.cat === product.cat,
+  ).slice(0, 4);
 
   return (
     <>
-      <JsonLd data={breadcrumbSchema([{ name: "خانه", path: "/" }, { name: "فروشگاه", path: "/shop" }, { name: product.name, path: pdpHref(product.id) }])} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "خانه", path: "/" },
+          { name: "فروشگاه", path: "/shop" },
+          { name: product.name, path: pdpHref(product.id) },
+        ])}
+      />
       <JsonLd data={productSchema(product)} />
-      <ProductLiveProvider product={product} requestedId={Number.isFinite(num) ? num : undefined}>
+      <ProductLiveProvider
+        product={product}
+        requestedId={Number.isFinite(num) ? num : undefined}
+      >
         <div className={shell}>
           <nav aria-label="مسیر محصول" className="mb-8">
-            <ol className="flex flex-wrap items-center gap-1.5 text-xs font-bold text-navy/45 dark:text-wheat">
+            <ol className="text-navy/45 dark:text-wheat flex flex-wrap items-center gap-1.5 text-xs font-bold">
               <li>
-                <Link href="/" className="inline-block py-1.5 hover:text-gold">
+                <Link href="/" className="hover:text-gold inline-block py-1.5">
                   خانه
                 </Link>
               </li>
@@ -63,7 +85,10 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 /
               </li>
               <li>
-                <Link href="/shop" className="inline-block py-1.5 hover:text-gold">
+                <Link
+                  href="/shop"
+                  className="hover:text-gold inline-block py-1.5"
+                >
                   فروشگاه
                 </Link>
               </li>
@@ -80,8 +105,14 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           <ProductDetailsTabs product={product} />
 
           {related.length ? (
-            <section className="mt-16" aria-labelledby="related-products-heading">
-              <h2 id="related-products-heading" className="mb-6 text-xl font-black text-navy dark:text-ivory">
+            <section
+              className="mt-16"
+              aria-labelledby="related-products-heading"
+            >
+              <h2
+                id="related-products-heading"
+                className="text-navy dark:text-ivory mb-6 text-xl font-black"
+              >
                 مدل‌های مشابه
               </h2>
               <div className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4">

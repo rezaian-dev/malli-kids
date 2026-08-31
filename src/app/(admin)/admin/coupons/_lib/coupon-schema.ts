@@ -1,5 +1,13 @@
 import { z } from "zod";
-import { amount, isJalaliFuture, jalaliDate, optAmount, percent, promoCode, text } from "@/lib/forms";
+import {
+  amount,
+  isJalaliFuture,
+  jalaliDate,
+  optAmount,
+  percent,
+  promoCode,
+  text,
+} from "@/lib/forms";
 
 export const couponSchema = z
   .object({
@@ -12,7 +20,11 @@ export const couponSchema = z
   })
   .superRefine((v, ctx) => {
     if (!isJalaliFuture(v.until)) {
-      ctx.addIssue({ code: "custom", path: ["until"], message: "انقضا باید بعد ازِ امروز باشد" });
+      ctx.addIssue({
+        code: "custom",
+        path: ["until"],
+        message: "انقضا باید بعد ازِ امروز باشد",
+      });
     }
   });
 

@@ -1,4 +1,3 @@
-
 export type Skin = "lux" | "soft" | "admin" | "bare" | "inset";
 
 export const INPUT: Record<Skin, string> = {
@@ -6,7 +5,8 @@ export const INPUT: Record<Skin, string> = {
   soft: "h-[46px] rounded-2xl border-gold/40 bg-white px-4 text-sm font-semibold dark:bg-dusk-mid dark:text-linen",
   admin: "h-11 rounded-2xl px-4",
   bare: "h-11 w-full bg-transparent px-2 text-base font-bold text-navy outline-none placeholder:text-navy/30 dark:text-ivory dark:placeholder:text-ivory/30",
-  inset: "h-full min-w-0 flex-1 border-0 bg-transparent px-4 shadow-none focus-visible:ring-0 aria-invalid:border-0 aria-invalid:ring-0 dark:bg-transparent",
+  inset:
+    "h-full min-w-0 flex-1 border-0 bg-transparent px-4 shadow-none focus-visible:ring-0 aria-invalid:border-0 aria-invalid:ring-0 dark:bg-transparent",
 };
 
 export const TEXTAREA: Record<Skin, string> = {
@@ -14,7 +14,8 @@ export const TEXTAREA: Record<Skin, string> = {
   soft: "min-h-24 rounded-2xl border-gold/40 bg-white px-4 py-3 text-sm font-semibold dark:bg-dusk-mid dark:text-linen",
   admin: "min-h-24 rounded-2xl px-4 py-3",
   bare: "min-h-24 w-full bg-transparent py-2 text-sm font-semibold text-navy outline-none placeholder:text-navy/30 dark:text-ivory",
-  inset: "min-h-24 w-full border-0 bg-transparent py-2 text-sm font-semibold shadow-none focus-visible:ring-0 dark:bg-transparent",
+  inset:
+    "min-h-24 w-full border-0 bg-transparent py-2 text-sm font-semibold shadow-none focus-visible:ring-0 dark:bg-transparent",
 };
 
 export const LABEL: Record<Skin, string> = {
@@ -32,14 +33,18 @@ export const SHELL: Partial<Record<Skin, string>> = {
 };
 
 export const LEAD: Partial<Record<Skin, string>> = {
-  inset: "flex w-8 shrink-0 items-center justify-center text-gold dark:text-gold-light",
+  inset:
+    "flex w-8 shrink-0 items-center justify-center text-gold dark:text-gold-light",
 };
 
 export const LATIN_ANCHOR = "text-right";
 
-export const SHELL_BARE_IDLE = "border-navy/15 focus-within:border-gold dark:border-gold/25";
+export const SHELL_BARE_IDLE =
+  "border-navy/15 focus-within:border-gold dark:border-gold/25";
 export const SHELL_BARE_BAD = "border-rose";
 
-export const ERROR_TEXT = "flex items-start gap-1 text-[11px] font-bold leading-5 text-rose animate-fade-up";
+export const ERROR_TEXT =
+  "flex items-start gap-1 text-[11px] font-bold leading-5 text-rose animate-fade-up";
 export const HINT_TEXT = "text-[11px] leading-5 text-navy/45 dark:text-wheat";
-export const COUNT_TEXT = "text-[10px] font-bold tabular-nums text-navy/35 dark:text-wheat/60";
+export const COUNT_TEXT =
+  "text-[10px] font-bold tabular-nums text-navy/35 dark:text-wheat/60";

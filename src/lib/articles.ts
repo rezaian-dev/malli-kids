@@ -6,9 +6,9 @@ export type JournalArticle = {
   tag: string;
   title: string;
   excerpt: string;
-  
+
   body: string;
-  
+
   cover?: string;
   date?: string;
 };
@@ -33,7 +33,6 @@ const SEED: JournalArticle[] = ARTICLES.map((a) => ({
 }));
 
 function sanitizeHtml(html: string): string {
-  
   return html
     .replace(/<\s*(script|iframe|object|embed)[\s\S]*?<\s*\/\s*\1\s*>/gi, "")
     .replace(/<\s*(script|iframe|object|embed)[^>]*\/?\s*>/gi, "")
@@ -47,7 +46,8 @@ export function loadPublishedArticles(): JournalArticle[] {
     const raw = window.localStorage.getItem(STORAGE.adminDb);
     if (!raw) return SEED;
     const parsed = JSON.parse(raw) as { articles?: StoredArticle[] };
-    if (!Array.isArray(parsed.articles) || parsed.articles.length === 0) return SEED;
+    if (!Array.isArray(parsed.articles) || parsed.articles.length === 0)
+      return SEED;
     return parsed.articles
       .filter((a) => a && a.published && typeof a.slug === "string")
       .map((a) => ({

@@ -4,9 +4,14 @@ import { TryOnComingSoon } from "./_components/try-on-coming-soon";
 
 export const metadata = buildMetadata({
   title: "پرو مجازی",
-  description: "اتاق پرو دیجیتال ملی کیدز برای پیش‌نمایش لباس و پیدا کردن سایز مناسب کودک.",
+  description:
+    "اتاق پرو دیجیتال ملی کیدز برای پیش‌نمایش لباس و پیدا کردن سایز مناسب کودک.",
   path: "/tryon",
-  keywords: ["پرو مجازی کودک", "اتاق پرو دیجیتال", "سایز لباس کودک با هوش مصنوعی"],
+  keywords: [
+    "پرو مجازی کودک",
+    "اتاق پرو دیجیتال",
+    "سایز لباس کودک با هوش مصنوعی",
+  ],
   noIndex: true,
 });
 

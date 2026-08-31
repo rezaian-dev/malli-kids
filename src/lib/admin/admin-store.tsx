@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { isRetiredCategory, STORAGE } from "@/lib/constants";
@@ -63,7 +70,10 @@ type AdminCtx = {
 const Ctx = createContext<AdminCtx | null>(null);
 const KEY = STORAGE.adminDb;
 const SESSION_KEY = STORAGE.admin;
-const DEFAULT_SESSION: AdminSession = { username: ADMIN_CREDS.user, loggedAt: null };
+const DEFAULT_SESSION: AdminSession = {
+  username: ADMIN_CREDS.user,
+  loggedAt: null,
+};
 
 function loadSession(): AdminSession {
   try {
@@ -86,18 +96,26 @@ function loadDb(): AdminDb {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return seed;
     const saved = JSON.parse(raw) as Partial<AdminDb>;
-    const legacyCustomers = (saved.customers ?? seed.customers).map((customer) => ({
-      ...customer,
-      role: customer.role ?? ("user" as const),
-    }));
-    
-    
-    const adminSeed = seed.customers.find((customer) => customer.role === "admin");
-    const customers = legacyCustomers.some((customer) => customer.role === "admin") || !adminSeed
-      ? legacyCustomers
-      : [adminSeed, ...legacyCustomers];
+    const legacyCustomers = (saved.customers ?? seed.customers).map(
+      (customer) => ({
+        ...customer,
+        role: customer.role ?? ("user" as const),
+      }),
+    );
+
+    const adminSeed = seed.customers.find(
+      (customer) => customer.role === "admin",
+    );
+    const customers =
+      legacyCustomers.some((customer) => customer.role === "admin") ||
+      !adminSeed
+        ? legacyCustomers
+        : [adminSeed, ...legacyCustomers];
     return {
-      products: (saved.products?.length ? saved.products : seed.products).filter((product) => !isRetiredCategory(product.cat)),
+      products: (saved.products?.length
+        ? saved.products
+        : seed.products
+      ).filter((product) => !isRetiredCategory(product.cat)),
       orders: saved.orders ?? seed.orders,
       customers,
       coupons: saved.coupons ?? seed.coupons,
@@ -105,7 +123,7 @@ function loadDb(): AdminDb {
       articles: saved.articles ?? seed.articles,
       messages: saved.messages ?? seed.messages,
       banners: saved.banners ?? seed.banners,
-      
+
       settings: { ...seed.settings, ...saved.settings },
     };
   } catch {
@@ -119,27 +137,30 @@ export function AdminStore({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AdminSession>(DEFAULT_SESSION);
   const [hydrated, setHydrated] = useState(false);
 
-  
   useEffect(() => {
     setDb(loadDb());
     setSession(loadSession());
     setHydrated(true);
   }, []);
 
-  
   useEffect(() => {
     if (!hydrated) return;
     try {
       window.localStorage.setItem(KEY, JSON.stringify(db));
-    } catch {
-      
-    }
+    } catch {}
   }, [db, hydrated]);
 
   const value = useMemo<AdminCtx>(() => {
     const admins = db.customers.filter((customer) => customer.role === "admin");
-    const account = admins.find((customer) => customer.email?.split("@")[0]?.toLocaleLowerCase("en") === session.username.toLocaleLowerCase("en")) ?? admins[0];
-    const name = account ? `${account.firstName} ${account.lastName}`.trim() : session.username;
+    const account =
+      admins.find(
+        (customer) =>
+          customer.email?.split("@")[0]?.toLocaleLowerCase("en") ===
+          session.username.toLocaleLowerCase("en"),
+      ) ?? admins[0];
+    const name = account
+      ? `${account.firstName} ${account.lastName}`.trim()
+      : session.username;
     const profile: AdminIdentity = {
       username: session.username,
       name,
@@ -153,14 +174,17 @@ export function AdminStore({ children }: { children: ReactNode }) {
       db,
       login: (user, pass) => {
         const username = user.trim();
-        if (username.toLocaleLowerCase("en") !== ADMIN_CREDS.user.toLocaleLowerCase("en") || pass !== ADMIN_CREDS.pass) return false;
+        if (
+          username.toLocaleLowerCase("en") !==
+            ADMIN_CREDS.user.toLocaleLowerCase("en") ||
+          pass !== ADMIN_CREDS.pass
+        )
+          return false;
         const nextSession = { username, loggedAt: new Date().toISOString() };
         setSession(nextSession);
         try {
           window.localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
-        } catch {
-          
-        }
+        } catch {}
         return true;
       },
       logout: () => {
@@ -170,12 +194,14 @@ export function AdminStore({ children }: { children: ReactNode }) {
           /* 🪶 No-op. */
         }
         setSession(DEFAULT_SESSION);
-        
-        
+
         router.push("/");
       },
       saveProducts: (list) => {
-        setDb((d) => ({ ...d, products: list.filter((product) => !isRetiredCategory(product.cat)) }));
+        setDb((d) => ({
+          ...d,
+          products: list.filter((product) => !isRetiredCategory(product.cat)),
+        }));
         toast("محصولات ذخیره شد");
       },
       upsertProduct: (p) => {
@@ -185,16 +211,24 @@ export function AdminStore({ children }: { children: ReactNode }) {
         }
         setDb((d) => ({
           ...d,
-          products: d.products.some((x) => x.id === p.id) ? d.products.map((x) => (x.id === p.id ? p : x)) : [p, ...d.products],
+          products: d.products.some((x) => x.id === p.id)
+            ? d.products.map((x) => (x.id === p.id ? p : x))
+            : [p, ...d.products],
         }));
         toast("محصول ذخیره شد", { description: p.name });
       },
       removeProduct: (id) => {
-        setDb((d) => ({ ...d, products: d.products.filter((x) => x.id !== id) }));
+        setDb((d) => ({
+          ...d,
+          products: d.products.filter((x) => x.id !== id),
+        }));
         toast("محصول حذف شد");
       },
       setOrderStatus: (id, status) => {
-        setDb((d) => ({ ...d, orders: d.orders.map((o) => (o.id === id ? { ...o, status } : o)) }));
+        setDb((d) => ({
+          ...d,
+          orders: d.orders.map((o) => (o.id === id ? { ...o, status } : o)),
+        }));
         toast("وضعیت سفارش تغییر کرد", { description: status });
       },
       saveCustomers: (list) => {
@@ -204,12 +238,19 @@ export function AdminStore({ children }: { children: ReactNode }) {
       saveCustomer: (c) => {
         setDb((d) => ({
           ...d,
-          customers: d.customers.some((x) => x.id === c.id) ? d.customers.map((x) => (x.id === c.id ? c : x)) : [c, ...d.customers],
+          customers: d.customers.some((x) => x.id === c.id)
+            ? d.customers.map((x) => (x.id === c.id ? c : x))
+            : [c, ...d.customers],
         }));
-        toast("مشتری ذخیره شد", { description: `${c.firstName} ${c.lastName}` });
+        toast("مشتری ذخیره شد", {
+          description: `${c.firstName} ${c.lastName}`,
+        });
       },
       removeCustomer: (id) => {
-        setDb((d) => ({ ...d, customers: d.customers.filter((x) => x.id !== id) }));
+        setDb((d) => ({
+          ...d,
+          customers: d.customers.filter((x) => x.id !== id),
+        }));
         toast("مشتری حذف شد");
       },
       saveCoupons: (list) => {
@@ -219,12 +260,17 @@ export function AdminStore({ children }: { children: ReactNode }) {
       saveCoupon: (c) => {
         setDb((d) => ({
           ...d,
-          coupons: d.coupons.some((x) => x.code === c.code) ? d.coupons.map((x) => (x.code === c.code ? c : x)) : [c, ...d.coupons],
+          coupons: d.coupons.some((x) => x.code === c.code)
+            ? d.coupons.map((x) => (x.code === c.code ? c : x))
+            : [c, ...d.coupons],
         }));
         toast("کد تخفیف ذخیره شد", { description: c.code });
       },
       removeCoupon: (code) => {
-        setDb((d) => ({ ...d, coupons: d.coupons.filter((x) => x.code !== code) }));
+        setDb((d) => ({
+          ...d,
+          coupons: d.coupons.filter((x) => x.code !== code),
+        }));
         toast("کد تخفیف حذف شد", { description: code });
       },
       saveReviews: (list) => {
@@ -234,7 +280,9 @@ export function AdminStore({ children }: { children: ReactNode }) {
       saveReview: (r) => {
         setDb((d) => ({
           ...d,
-          reviews: d.reviews.some((x) => x.id === r.id) ? d.reviews.map((x) => (x.id === r.id ? r : x)) : [r, ...d.reviews],
+          reviews: d.reviews.some((x) => x.id === r.id)
+            ? d.reviews.map((x) => (x.id === r.id ? r : x))
+            : [r, ...d.reviews],
         }));
         toast("دیدگاه ذخیره شد");
       },
@@ -249,12 +297,21 @@ export function AdminStore({ children }: { children: ReactNode }) {
       upsertArticle: (a) => {
         setDb((d) => ({
           ...d,
-          articles: d.articles.some((x) => x.slug === a.slug) ? d.articles.map((x) => (x.slug === a.slug ? a : x)) : [a, ...d.articles],
+          articles: d.articles.some((x) => x.slug === a.slug)
+            ? d.articles.map((x) => (x.slug === a.slug ? a : x))
+            : [a, ...d.articles],
         }));
-        toast("مقاله ذخیره شد", { description: a.published ? "منتشر شد و در مجله دیده می‌شود." : "به‌صورت پیش‌نویس ماند." });
+        toast("مقاله ذخیره شد", {
+          description: a.published
+            ? "منتشر شد و در مجله دیده می‌شود."
+            : "به‌صورت پیش‌نویس ماند.",
+        });
       },
       removeArticle: (slug) => {
-        setDb((d) => ({ ...d, articles: d.articles.filter((x) => x.slug !== slug) }));
+        setDb((d) => ({
+          ...d,
+          articles: d.articles.filter((x) => x.slug !== slug),
+        }));
         toast("مقاله حذف شد");
       },
       saveMessages: (list) => {
@@ -272,7 +329,9 @@ export function AdminStore({ children }: { children: ReactNode }) {
       saveBanner: (b) => {
         setDb((d) => ({
           ...d,
-          banners: d.banners.some((x) => x.id === b.id) ? d.banners.map((x) => (x.id === b.id ? b : x)) : [b, ...d.banners],
+          banners: d.banners.some((x) => x.id === b.id)
+            ? d.banners.map((x) => (x.id === b.id ? b : x))
+            : [b, ...d.banners],
         }));
         toast("بنر ذخیره شد");
       },
@@ -287,7 +346,9 @@ export function AdminStore({ children }: { children: ReactNode }) {
           /* 🪶 No-op. */
         }
         setDb(seedAdminDb());
-        toast("داده‌ها بازنشانی شد", { description: "همه‌چیز به حالت اولیه برگشت." });
+        toast("داده‌ها بازنشانی شد", {
+          description: "همه‌چیز به حالت اولیه برگشت.",
+        });
       },
     };
   }, [db, hydrated, router, session]);

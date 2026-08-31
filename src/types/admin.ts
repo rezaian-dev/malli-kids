@@ -4,10 +4,18 @@
 import type { Product } from "./product";
 import type { FestiveBanner } from "./festive";
 
-export type OrderStatus = "جدید" | "در حال آماده‌سازی" | "ارسال‌شده" | "تحویل‌شده" | "مرجوعی";
+export type OrderStatus =
+  "جدید" | "در حال آماده‌سازی" | "ارسال‌شده" | "تحویل‌شده" | "مرجوعی";
 export type PayStatus = "پرداخت‌شده" | "در انتظار" | "ناموفق";
 
-export type AdminOrderItem = { id: number; name: string; img: string; size: string; qty: number; price: number };
+export type AdminOrderItem = {
+  id: number;
+  name: string;
+  img: string;
+  size: string;
+  qty: number;
+  price: number;
+};
 
 export type AdminOrder = {
   id: string;
@@ -37,12 +45,12 @@ export type AdminCustomer = {
   orders: number;
   spent: number;
   childName?: string;
-  
+
   avatar?: string;
   joined: string;
-  
+
   role?: "user" | "admin";
-  
+
   status?: "فعال" | "مسدود";
 };
 
@@ -72,9 +80,9 @@ export type AdminArticle = {
   tag: string;
   title: string;
   excerpt: string;
-  
+
   body?: string;
-  
+
   cover?: string;
   published: boolean;
   date: string;
@@ -90,11 +98,10 @@ export type AdminMessage = {
 };
 
 export type AdminCampaign = {
-  
   active: boolean;
-  
+
   percent: number;
-  
+
   title: string;
 };
 

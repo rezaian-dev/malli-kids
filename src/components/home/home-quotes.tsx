@@ -66,14 +66,19 @@ function Stars({ n }: { n: number }) {
   return (
     <div className="flex shrink-0 gap-0.5" aria-label={`${n} از ۵`}>
       {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className={`size-3.5 ${i < n ? "fill-gold text-gold" : "text-ivory/25"}`} />
+        <Star
+          key={i}
+          className={`size-3.5 ${i < n ? "fill-gold text-gold" : "text-ivory/25"}`}
+        />
       ))}
     </div>
   );
 }
 
 export function HomeQuotes() {
-  const autoplay = useRef(Autoplay({ delay: 5600, stopOnInteraction: false, stopOnMouseEnter: true }));
+  const autoplay = useRef(
+    Autoplay({ delay: 5600, stopOnInteraction: false, stopOnMouseEnter: true }),
+  );
   const [emblaRef, embla] = useEmblaCarousel(
     { loop: true, align: "center", direction: "rtl", containScroll: false },
     [autoplay.current],
@@ -104,39 +109,67 @@ export function HomeQuotes() {
             const thanks = liked[r.name];
             const count = r.helpful + (thanks ? 1 : 0);
             return (
-              <div key={r.name} className="box-border flex min-w-0 shrink-0 basis-[min(100%,22rem)] px-1.5 sm:basis-[78%] sm:px-2.5 lg:basis-[62%]">
+              <div
+                key={r.name}
+                className="box-border flex min-w-0 shrink-0 basis-[min(100%,22rem)] px-1.5 sm:basis-[78%] sm:px-2.5 lg:basis-[62%]"
+              >
                 <article
-                  className={`relative flex h-full w-full flex-col overflow-hidden rounded-[22px] bg-navy p-4 text-ivory shadow-lg transition-opacity duration-500 sm:rounded-[28px] sm:p-6 dark:bg-dusk-deep dark:ring-1 dark:ring-gold/30 ${on ? "opacity-100" : "opacity-55"}`}
+                  className={`bg-navy text-ivory dark:bg-dusk-deep dark:ring-gold/30 relative flex h-full w-full flex-col overflow-hidden rounded-[22px] p-4 shadow-lg transition-opacity duration-500 sm:rounded-[28px] sm:p-6 dark:ring-1 ${on ? "opacity-100" : "opacity-55"}`}
                 >
-                  <Quote className="pointer-events-none absolute top-3 inset-e-3 size-12 text-gold/15 sm:size-16" strokeWidth={1.15} />
+                  <Quote
+                    className="text-gold/15 pointer-events-none absolute inset-e-3 top-3 size-12 sm:size-16"
+                    strokeWidth={1.15}
+                  />
                   <div className="relative flex min-h-0 flex-1 flex-col gap-4 sm:flex-row">
                     <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-2xl sm:h-auto sm:w-28">
                       {}
-                      <Image src={r.img} alt="" fill sizes="(min-width: 640px) 7rem, 100vw" className="object-cover" />
-                      <div className="absolute inset-0 bg-linear-to-t from-navy/55 to-transparent" />
+                      <Image
+                        src={r.img}
+                        alt=""
+                        fill
+                        sizes="(min-width: 640px) 7rem, 100vw"
+                        className="object-cover"
+                      />
+                      <div className="from-navy/55 absolute inset-0 bg-linear-to-t to-transparent" />
                     </div>
                     <div className="relative flex min-w-0 flex-1 flex-col">
                       <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                        {r.featured ? <span className="rounded-full bg-gold px-2 py-0.5 text-[10px] font-black text-navy-deep">نظر منتخب</span> : null}
-                        <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 text-[10px] font-bold text-gold-glow">
+                        {r.featured ? (
+                          <span className="bg-gold text-navy-deep rounded-full px-2 py-0.5 text-[10px] font-black">
+                            نظر منتخب
+                          </span>
+                        ) : null}
+                        <span className="text-gold-glow inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 text-[10px] font-bold">
                           <BadgeCheck className="size-3.5" /> تأییدشده
                         </span>
                         <Stars n={r.rate} />
                       </div>
-                      <p className="line-clamp-3 min-h-18 text-sm leading-6 font-medium text-ivory sm:min-h-21 sm:leading-7">«{r.text}»</p>
+                      <p className="text-ivory line-clamp-3 min-h-18 text-sm leading-6 font-medium sm:min-h-21 sm:leading-7">
+                        «{r.text}»
+                      </p>
                       <div className="mt-auto flex flex-col gap-3 border-t border-white/10 pt-3 min-[420px]:flex-row min-[420px]:items-center min-[420px]:justify-between">
                         <div className="flex min-w-0 items-center gap-2.5">
-                          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gold text-sm font-black text-navy-deep">{r.initial}</span>
+                          <span className="bg-gold text-navy-deep flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-black">
+                            {r.initial}
+                          </span>
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-black text-white">{r.name}</p>
-                            <p className="mt-0.5 truncate text-[11px] text-wheat">{r.product}</p>
-                            <p className="mt-0.5 text-[10px] text-taupe">{r.date}</p>
+                            <p className="truncate text-sm font-black text-white">
+                              {r.name}
+                            </p>
+                            <p className="text-wheat mt-0.5 truncate text-[11px]">
+                              {r.product}
+                            </p>
+                            <p className="text-taupe mt-0.5 text-[10px]">
+                              {r.date}
+                            </p>
                           </div>
                         </div>
                         <button
                           type="button"
-                          onClick={() => setLiked((s) => ({ ...s, [r.name]: !s[r.name] }))}
-                          className={`inline-flex min-h-9 w-max shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold ${thanks ? "border-gold bg-gold text-navy-deep" : "border-white/20 bg-white/10 text-ivory"}`}
+                          onClick={() =>
+                            setLiked((s) => ({ ...s, [r.name]: !s[r.name] }))
+                          }
+                          className={`inline-flex min-h-9 w-max shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold ${thanks ? "border-gold bg-gold text-navy-deep" : "text-ivory border-white/20 bg-white/10"}`}
                         >
                           <ThumbsUp className="size-3.5" />
                           {thanks ? "مفید بود" : "مفید"} ({count})
@@ -154,12 +187,26 @@ export function HomeQuotes() {
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex max-w-full flex-wrap items-center gap-1.5">
           {Array.from({ length: n }).map((_, k) => (
-            <button key={k} type="button" aria-label={`نظر ${k + 1}`} onClick={() => embla?.scrollTo(k)} className={`rounded-full ${k === i ? "h-1.5 w-8 bg-gold" : "h-1.5 w-2 bg-navy/20 dark:bg-gold-glow/35"}`} />
+            <button
+              key={k}
+              type="button"
+              aria-label={`نظر ${k + 1}`}
+              onClick={() => embla?.scrollTo(k)}
+              className={`rounded-full ${k === i ? "bg-gold h-1.5 w-8" : "bg-navy/20 dark:bg-gold-glow/35 h-1.5 w-2"}`}
+            />
           ))}
         </div>
         <div className="flex gap-2">
-          <SliderArrow direction="prev" label="نظر قبلی" onClick={() => embla?.scrollPrev()} />
-          <SliderArrow direction="next" label="نظر بعدی" onClick={() => embla?.scrollNext()} />
+          <SliderArrow
+            direction="prev"
+            label="نظر قبلی"
+            onClick={() => embla?.scrollPrev()}
+          />
+          <SliderArrow
+            direction="next"
+            label="نظر بعدی"
+            onClick={() => embla?.scrollNext()}
+          />
         </div>
       </div>
     </div>

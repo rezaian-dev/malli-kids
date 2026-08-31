@@ -17,7 +17,7 @@ export function ProductDetailsTabs({ product }: { product: Product }) {
   return (
     <section className="mt-16">
       <Tabs defaultValue="info" dir="rtl">
-        <TabsList className="mb-6 h-auto w-max max-w-full gap-1 overflow-x-auto rounded-full border border-navy/5 bg-white p-1.5 dark:border-gold/30 dark:bg-slate">
+        <TabsList className="border-navy/5 dark:border-gold/30 dark:bg-slate mb-6 h-auto w-max max-w-full gap-1 overflow-x-auto rounded-full border bg-white p-1.5">
           <TabsTrigger value="info" className={TRIGGER}>
             معرفی
           </TabsTrigger>
@@ -30,9 +30,11 @@ export function ProductDetailsTabs({ product }: { product: Product }) {
         </TabsList>
 
         <TabsContent value="info">
-          <div className="max-w-3xl rounded-3xl border border-navy/5 bg-white p-6 text-sm leading-8 text-navy/70 dark:border-gold/30 dark:bg-slate dark:text-wheat">
+          <div className="border-navy/5 text-navy/70 dark:border-gold/30 dark:bg-slate dark:text-wheat max-w-3xl rounded-3xl border bg-white p-6 text-sm leading-8">
             <LiveDesc product={product} />
-            <p className="mt-3">دوخت ایرانی، پارچه گواهی‌شده و پرو مجازی پیش از خرید.</p>
+            <p className="mt-3">
+              دوخت ایرانی، پارچه گواهی‌شده و پرو مجازی پیش از خرید.
+            </p>
           </div>
         </TabsContent>
 

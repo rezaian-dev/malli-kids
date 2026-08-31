@@ -15,7 +15,11 @@ type Resolved = "light" | "dark";
 
 const KEY = "theme";
 
-const Ctx = createContext<{ theme: Theme; resolvedTheme: Resolved; setTheme: (t: Theme) => void }>({
+const Ctx = createContext<{
+  theme: Theme;
+  resolvedTheme: Resolved;
+  setTheme: (t: Theme) => void;
+}>({
   theme: "system",
   resolvedTheme: "light",
   setTheme: () => {},
@@ -55,13 +59,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setTheme = useCallback((t: Theme) => {
     try {
       localStorage.setItem(KEY, t);
-    } catch {
-      
-    }
+    } catch {}
     setThemeState(t);
   }, []);
 
-  const value = useMemo(() => ({ theme, resolvedTheme: resolved, setTheme }), [theme, resolved, setTheme]);
+  const value = useMemo(
+    () => ({ theme, resolvedTheme: resolved, setTheme }),
+    [theme, resolved, setTheme],
+  );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

@@ -11,12 +11,14 @@ export function ArticlesList({ initial }: { initial: JournalArticle[] }) {
 
   useEffect(() => {
     const live = loadPublishedArticles();
-    setArticles((prev) => (JSON.stringify(prev) === JSON.stringify(live) ? prev : live));
+    setArticles((prev) =>
+      JSON.stringify(prev) === JSON.stringify(live) ? prev : live,
+    );
   }, []);
 
   if (articles.length === 0) {
     return (
-      <p className="rounded-3xl border border-dashed border-navy/15 bg-sand px-5 py-4 text-sm text-navy/55 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat">
+      <p className="border-navy/15 bg-sand text-navy/55 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat rounded-3xl border border-dashed px-5 py-4 text-sm">
         هنوز مقاله‌ای منتشر نشده است.
       </p>
     );
@@ -25,20 +27,36 @@ export function ArticlesList({ initial }: { initial: JournalArticle[] }) {
   return (
     <>
       {articles.map((a) => (
-        <Link key={a.slug} href={`/articles/${a.slug}`} className="flex gap-4 rounded-3xl bg-white dark:bg-dusk border border-navy/10 dark:border-gold/30 p-4 transition hover:border-gold/50 sm:p-6">
+        <Link
+          key={a.slug}
+          href={`/articles/${a.slug}`}
+          className="dark:bg-dusk border-navy/10 dark:border-gold/30 hover:border-gold/50 flex gap-4 rounded-3xl border bg-white p-4 transition sm:p-6"
+        >
           {a.cover ? (
             /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin article covers can be raw data URLs. */
-            <img src={a.cover} alt="" className="h-24 w-24 shrink-0 rounded-2xl object-cover sm:h-32 sm:w-40" />
+            <img
+              src={a.cover}
+              alt=""
+              className="h-24 w-24 shrink-0 rounded-2xl object-cover sm:h-32 sm:w-40"
+            />
           ) : (
-            <span className="grid h-24 w-24 shrink-0 place-items-center rounded-2xl bg-linear-to-br from-sand to-gold/25 text-gold-deep dark:from-navy-mid dark:to-gold/15 sm:h-32 sm:w-40">
+            <span className="from-sand to-gold/25 text-gold-deep dark:from-navy-mid dark:to-gold/15 grid h-24 w-24 shrink-0 place-items-center rounded-2xl bg-linear-to-br sm:h-32 sm:w-40">
               <Newspaper className="size-7" />
             </span>
           )}
           <div className="min-w-0">
             <Badge variant="secondary">{a.tag}</Badge>
-            <h2 className="font-black text-lg mt-3 text-navy dark:text-ivory">{a.title}</h2>
-            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{a.excerpt}</p>
-            {a.date ? <p className="mt-2 text-[11px] font-bold text-navy/40 dark:text-wheat">{a.date}</p> : null}
+            <h2 className="text-navy dark:text-ivory mt-3 text-lg font-black">
+              {a.title}
+            </h2>
+            <p className="text-muted-foreground mt-2 line-clamp-2 text-sm">
+              {a.excerpt}
+            </p>
+            {a.date ? (
+              <p className="text-navy/40 dark:text-wheat mt-2 text-[11px] font-bold">
+                {a.date}
+              </p>
+            ) : null}
           </div>
         </Link>
       ))}

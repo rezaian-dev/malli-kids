@@ -16,7 +16,15 @@ export function isRetiredCategory(category: string) {
   return (RETIRED_CATS as readonly string[]).includes(category);
 }
 
-export const CATS = ["همه", "دخترانه", "پسرانه", "سیسمونی", "لباس مشاغل", "اکسسوری", "دستدوز"] as const;
+export const CATS = [
+  "همه",
+  "دخترانه",
+  "پسرانه",
+  "سیسمونی",
+  "لباس مشاغل",
+  "اکسسوری",
+  "دستدوز",
+] as const;
 
 export { SEASONS } from "@/lib/data/products";
 

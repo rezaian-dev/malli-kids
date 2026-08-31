@@ -6,9 +6,20 @@ import { BRAND, STORAGE } from "./constants";
 import { faNow } from "./format";
 import { notify } from "./notifications";
 
-export const ORDER_FLOW: OrderStatus[] = ["جدید", "در حال آماده‌سازی", "ارسال‌شده", "تحویل‌شده", "مرجوعی"];
+export const ORDER_FLOW: OrderStatus[] = [
+  "جدید",
+  "در حال آماده‌سازی",
+  "ارسال‌شده",
+  "تحویل‌شده",
+  "مرجوعی",
+];
 
-export const ORDER_STAGES = ["ثبت و پرداخت", "آماده‌سازی", "ارسال", "تحویل"] as const;
+export const ORDER_STAGES = [
+  "ثبت و پرداخت",
+  "آماده‌سازی",
+  "ارسال",
+  "تحویل",
+] as const;
 
 export function stageIndex(status: OrderStatus): number {
   switch (status) {
@@ -21,17 +32,24 @@ export function stageIndex(status: OrderStatus): number {
     case "تحویل‌شده":
       return 3;
     default:
-      return -1; 
+      return -1;
   }
 }
 
 export const SHIPPING_FEE = 95_000;
 
-export type OrderItem = { id: number; name: string; img: string; size: string; qty: number; price: number };
+export type OrderItem = {
+  id: number;
+  name: string;
+  img: string;
+  size: string;
+  qty: number;
+  price: number;
+};
 
 export type Order = {
   id: string;
-  
+
   owner: string;
   customer: string;
   phone: string;
@@ -64,7 +82,15 @@ function persist(list: Order[]) {
   window.dispatchEvent(new Event(EVENT));
 }
 
-export function createOrder(input: { owner: string; customer: string; phone: string; city: string; address: string; items: OrderItem[]; discount?: number }): Order {
+export function createOrder(input: {
+  owner: string;
+  customer: string;
+  phone: string;
+  city: string;
+  address: string;
+  items: OrderItem[];
+  discount?: number;
+}): Order {
   const subtotal = input.items.reduce((s, it) => s + it.price * it.qty, 0);
   const shipping = subtotal >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
   const discount = Math.min(input.discount ?? 0, subtotal);
@@ -84,7 +110,11 @@ export function createOrder(input: { owner: string; customer: string; phone: str
     status: "جدید",
   };
   persist([order, ...loadOrders()]);
-  notify(order.owner, "order", `سفارش ${order.id} ثبت شد؛ وضعیتش را از پنل کاربری پیگیری کنید.`);
+  notify(
+    order.owner,
+    "order",
+    `سفارش ${order.id} ثبت شد؛ وضعیتش را از پنل کاربری پیگیری کنید.`,
+  );
   return order;
 }
 
@@ -92,7 +122,11 @@ export function setOrderStatus(id: string, status: OrderStatus) {
   const target = loadOrders().find((o) => o.id === id);
   persist(loadOrders().map((o) => (o.id === id ? { ...o, status } : o)));
   if (target && target.owner) {
-    notify(target.owner, "order", `وضعیت سفارش ${id} به «${status}» تغییر کرد.`);
+    notify(
+      target.owner,
+      "order",
+      `وضعیت سفارش ${id} به «${status}» تغییر کرد.`,
+    );
   }
 }
 

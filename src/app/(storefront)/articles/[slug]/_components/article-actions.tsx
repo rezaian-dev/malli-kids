@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export function ArticleActions() {
   return (
-    <div className="flex flex-wrap gap-2 mt-8">
+    <div className="mt-8 flex flex-wrap gap-2">
       <Button asChild className="rounded-full">
         <Link href="/shop">فروشگاه</Link>
       </Button>

@@ -18,7 +18,12 @@ export type CollabRequest = {
 const KEY = "malli_collab";
 const EVENT = "collab:change";
 
-export const COLLAB_KINDS = ["خرید عمده و نمایندگی", "همکاری در دوخت و تولید", "تولید محتوا و بلاگر", "عکاسی و مدلینگ"] as const;
+export const COLLAB_KINDS = [
+  "خرید عمده و نمایندگی",
+  "همکاری در دوخت و تولید",
+  "تولید محتوا و بلاگر",
+  "عکاسی و مدلینگ",
+] as const;
 
 export function loadCollabs(): CollabRequest[] {
   if (typeof window === "undefined") return [];
@@ -35,8 +40,18 @@ function persist(list: CollabRequest[]) {
   window.dispatchEvent(new Event(EVENT));
 }
 
-export function submitCollab(input: { name: string; phone: string; kind: string; text: string }): CollabRequest {
-  const r: CollabRequest = { id: `c-${Date.now().toString(36)}`, ...input, at: faNow(), status: "در انتظار بررسی" };
+export function submitCollab(input: {
+  name: string;
+  phone: string;
+  kind: string;
+  text: string;
+}): CollabRequest {
+  const r: CollabRequest = {
+    id: `c-${Date.now().toString(36)}`,
+    ...input,
+    at: faNow(),
+    status: "در انتظار بررسی",
+  };
   persist([r, ...loadCollabs()]);
   return r;
 }

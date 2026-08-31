@@ -21,7 +21,7 @@ export type ShopState = {
 };
 
 function readText(value: SearchValue) {
-  return Array.isArray(value) ? value[0] ?? "" : value ?? "";
+  return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
 }
 
 function readNumber(value: SearchValue, fallback: number) {
@@ -39,7 +39,10 @@ export function parseShopState(params: Record<string, SearchValue>): ShopState {
 
   return {
     cat: (CATS as readonly string[]).includes(cat) ? cat : "همه",
-    season: season && (SEASONS as readonly string[]).includes(season) ? season : "همه",
+    season:
+      season && (SEASONS as readonly string[]).includes(season)
+        ? season
+        : "همه",
     page: Math.max(1, readNumber(params.page, 1)),
     sort: sort && Object.hasOwn(SORTS, sort) ? sort : "new",
     view: readText(params.view) === "list" ? "list" : "grid",

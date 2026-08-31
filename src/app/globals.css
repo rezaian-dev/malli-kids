@@ -116,7 +116,8 @@
   --animate-orn-sway: ornSway 3.6s ease-in-out infinite;
   --animate-orn-pulse: ornPulse 2.8s ease-in-out infinite;
   --animate-style-in: styleCardIn 0.7s cubic-bezier(0.22, 1, 0.32, 1) both;
-  --animate-gold-draw: goldDraw 1.15s cubic-bezier(0.22, 1, 0.32, 1) 0.2s forwards;
+  --animate-gold-draw: goldDraw 1.15s cubic-bezier(0.22, 1, 0.32, 1) 0.2s
+    forwards;
   --animate-shimmer: shimmer 3.6s ease-in-out infinite;
   --animate-fade-up: fadeUp 0.55s cubic-bezier(0.22, 1, 0.32, 1) both;
   --animate-twinkle: twinkle 2.4s ease-in-out infinite;
@@ -125,118 +126,268 @@
   --animate-accordion-up: accordionUp 0.3s cubic-bezier(0.22, 1, 0.32, 1);
   --animate-drawer-in: drawerIn 0.34s cubic-bezier(0.22, 1, 0.32, 1);
   --animate-overlay-in: overlayIn 0.3s ease both;
-  --animate-admin-reveal: adminReveal 520ms cubic-bezier(.22, 1, .36, 1) both;
-  --animate-admin-content-in: adminContentIn 520ms cubic-bezier(.22, 1, .36, 1) both;
-  --animate-admin-row-in: adminRowIn 520ms cubic-bezier(.22, 1, .36, 1) both;
+  --animate-admin-reveal: adminReveal 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-admin-content-in: adminContentIn 520ms
+    cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-admin-row-in: adminRowIn 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-admin-orbit: adminOrbit 28s linear infinite;
   --animate-admin-glow: adminGlow 7s ease-in-out infinite alternate;
   --animate-arrow-ripple: arrow-ripple 0.5s ease-out;
 
   /* 🪄 Keyframes (referenced by the tokens above) */
   @keyframes adminReveal {
-    from { opacity: 0; transform: translateY(14px) scale(.992); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.992);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
   @keyframes adminContentIn {
-    from { opacity: 0; transform: translateY(9px); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(9px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
   @keyframes adminRowIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
-  @keyframes adminOrbit { to { transform: rotate(360deg); } }
+  @keyframes adminOrbit {
+    to {
+      transform: rotate(360deg);
+    }
+  }
   @keyframes adminGlow {
-    from { opacity: .45; transform: translate3d(0, -12px, 0) scale(.92); }
-    to { opacity: 1; transform: translate3d(18px, 14px, 0) scale(1.08); }
+    from {
+      opacity: 0.45;
+      transform: translate3d(0, -12px, 0) scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(18px, 14px, 0) scale(1.08);
+    }
   }
   @keyframes userMenuIn {
-    from { opacity: 0; transform: translateY(-12px) scale(0.94); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(-12px) scale(0.94);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
   @keyframes stPulse {
-    0%, 100% { transform: scale(1); opacity: 0.7; }
-    50% { transform: scale(1.08); opacity: 0.15; }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    50% {
+      transform: scale(1.08);
+      opacity: 0.15;
+    }
   }
   @keyframes stBob {
-    0%, 100% { transform: translateY(2px); }
-    50% { transform: translateY(-3px); }
+    0%,
+    100% {
+      transform: translateY(2px);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
   }
-  @keyframes goldDraw { to { stroke-dashoffset: 0; } }
+  @keyframes goldDraw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
   @keyframes heroIn {
-    from { opacity: 0; transform: translateY(22px); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
   @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
   }
   @keyframes floaty {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
   @keyframes scanline {
-    0% { top: -10%; }
-    100% { top: 110%; }
+    0% {
+      top: -10%;
+    }
+    100% {
+      top: 110%;
+    }
   }
   @keyframes heroKen {
-    from { transform: scale(1); }
-    to { transform: scale(1.1) translate3d(-2%, 1.5%, 0); }
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.1) translate3d(-2%, 1.5%, 0);
+    }
   }
   @keyframes ornSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
   @keyframes ornSway {
-    0%, 100% { transform: rotate(-8deg); }
-    50% { transform: rotate(8deg); }
+    0%,
+    100% {
+      transform: rotate(-8deg);
+    }
+    50% {
+      transform: rotate(8deg);
+    }
   }
   @keyframes ornPulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.12); opacity: 0.7; }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.12);
+      opacity: 0.7;
+    }
   }
   @keyframes styleCardIn {
-    from { opacity: 0; transform: translateY(28px) scale(0.92); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(28px) scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
   @keyframes shimmer {
-    0%, 58% { transform: translateX(120%); }
-    82%, 100% { transform: translateX(-120%); }
+    0%,
+    58% {
+      transform: translateX(120%);
+    }
+    82%,
+    100% {
+      transform: translateX(-120%);
+    }
   }
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
   @keyframes twinkle {
-    0%, 100% { transform: scale(1); opacity: 0.9; }
-    50% { transform: scale(1.4); opacity: 0.3; }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    50% {
+      transform: scale(1.4);
+      opacity: 0.3;
+    }
   }
   @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-5px); }
-    40% { transform: translateX(5px); }
-    60% { transform: translateX(-3px); }
-    80% { transform: translateX(3px); }
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-5px);
+    }
+    40% {
+      transform: translateX(5px);
+    }
+    60% {
+      transform: translateX(-3px);
+    }
+    80% {
+      transform: translateX(3px);
+    }
   }
   @keyframes accordionDown {
-    from { height: 0; opacity: 0.4; }
-    to { height: var(--radix-accordion-content-height); opacity: 1; }
+    from {
+      height: 0;
+      opacity: 0.4;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
   }
   @keyframes accordionUp {
-    from { height: var(--radix-accordion-content-height); opacity: 1; }
-    to { height: 0; opacity: 0.4; }
+    from {
+      height: var(--radix-accordion-content-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0.4;
+    }
   }
   @keyframes drawerIn {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
   }
   @keyframes overlayIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   @keyframes arrow-ripple {
-    from { box-shadow: 0 0 0 0 rgb(193 147 87 / 0.55); }
-    to { box-shadow: 0 0 0 18px rgb(193 147 87 / 0); }
+    from {
+      box-shadow: 0 0 0 0 rgb(193 147 87 / 0.55);
+    }
+    to {
+      box-shadow: 0 0 0 18px rgb(193 147 87 / 0);
+    }
   }
 }
 
@@ -334,7 +485,7 @@
 
   /* 🧍 Body — cream bg + subtle grain & ambient glows (light/dark aware) */
   body {
-    @apply min-h-dvh max-w-full overflow-x-hidden text-navy antialiased dark:text-ivory;
+    @apply text-navy dark:text-ivory min-h-dvh max-w-full overflow-x-hidden antialiased;
     font-family: var(--font-vazir), Vazirmatn, Tahoma, sans-serif;
     background-color: var(--color-cream);
     background-image: none;

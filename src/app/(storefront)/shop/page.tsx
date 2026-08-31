@@ -4,9 +4,17 @@ import { buildMetadata } from "@/lib/seo";
 import { parseShopState, type ShopPageSearchParams } from "./_lib/shop-state";
 import { ShopExplorer } from "./_components/shop-explorer";
 
-export async function generateMetadata({ searchParams }: { searchParams: ShopPageSearchParams }): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: ShopPageSearchParams;
+}): Promise<Metadata> {
   const state = parseShopState(await searchParams);
-  const filters = [state.cat !== "همه" ? state.cat : "", state.season !== "همه" ? state.season : "", state.q].filter(Boolean);
+  const filters = [
+    state.cat !== "همه" ? state.cat : "",
+    state.season !== "همه" ? state.season : "",
+    state.q,
+  ].filter(Boolean);
   const hasFilters =
     state.cat !== "همه" ||
     state.season !== "همه" ||
@@ -23,14 +31,19 @@ export async function generateMetadata({ searchParams }: { searchParams: ShopPag
 
   return buildMetadata({
     title: filters.length ? `فروشگاه ${filters.join(" · ")}` : "فروشگاه",
-    description: "کالکشن کامل پوشاک کودک ملی کیدز با فیلتر دسته، فصل، قیمت و موجودی.",
+    description:
+      "کالکشن کامل پوشاک کودک ملی کیدز با فیلتر دسته، فصل، قیمت و موجودی.",
     path: "/shop",
     noIndex: hasFilters,
     keywords: ["فروشگاه پوشاک کودک", "خرید لباس بچه", "کالکشن کودک"],
   });
 }
 
-export default async function ShopPage({ searchParams }: { searchParams: ShopPageSearchParams }) {
+export default async function ShopPage({
+  searchParams,
+}: {
+  searchParams: ShopPageSearchParams;
+}) {
   const state = parseShopState(await searchParams);
 
   return <ShopExplorer state={state} />;

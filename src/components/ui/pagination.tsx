@@ -8,16 +8,20 @@ import { cn } from "@/lib/utils";
 import type { Paged } from "@/types";
 
 type PaginationProps = {
-  
   pg: Paged<unknown>;
-  
+
   unit?: string;
-  
+
   siblings?: number;
   className?: string;
 };
 
-export function Pagination({ pg, unit = "مورد", siblings = 1, className }: PaginationProps) {
+export function Pagination({
+  pg,
+  unit = "مورد",
+  siblings = 1,
+  className,
+}: PaginationProps) {
   const { page, pageCount, setPage: onPage, total, from, to } = pg;
   const hasSummary = total > 0;
   if (pageCount <= 1 && !hasSummary) return null;
@@ -28,13 +32,17 @@ export function Pagination({ pg, unit = "مورد", siblings = 1, className }: P
     <nav
       aria-label="صفحه‌بندی نتایج"
       className={cn(
-        "admin-pagination mt-5 flex flex-col items-center justify-between gap-3 rounded-2xl border border-navy/8 bg-white/55 px-3 py-3 sm:flex-row sm:px-4 dark:border-gold/14 dark:bg-white/2.5",
+        "admin-pagination border-navy/8 dark:border-gold/14 mt-5 flex flex-col items-center justify-between gap-3 rounded-2xl border bg-white/55 px-3 py-3 sm:flex-row sm:px-4 dark:bg-white/2.5",
         className,
       )}
     >
       {hasSummary ? (
-        <p className="text-[11px] font-bold text-navy/55 dark:text-wheat" aria-live="polite">
-          نمایش {toFaDigits(from)} تا {toFaDigits(to)} از {toFaDigits(total)} {unit}
+        <p
+          className="text-navy/55 dark:text-wheat text-[11px] font-bold"
+          aria-live="polite"
+        >
+          نمایش {toFaDigits(from)} تا {toFaDigits(to)} از {toFaDigits(total)}{" "}
+          {unit}
         </p>
       ) : (
         <span />
@@ -43,35 +51,57 @@ export function Pagination({ pg, unit = "مورد", siblings = 1, className }: P
       {pageCount > 1 ? (
         <>
           {}
-          <ul className="flex w-full items-center justify-center gap-2 sm:hidden" data-slot="pagination-mobile">
+          <ul
+            className="flex w-full items-center justify-center gap-2 sm:hidden"
+            data-slot="pagination-mobile"
+          >
             <li>
-              <PageButton aria-label="صفحه قبل" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+              <PageButton
+                aria-label="صفحه قبل"
+                disabled={page <= 1}
+                onClick={() => onPage(page - 1)}
+              >
                 <ChevronRight className="size-4" />
               </PageButton>
             </li>
             <li>
-              <span className="flex h-9 min-w-28 items-center justify-center rounded-xl border border-navy/10 bg-white px-3 text-[10px] font-black text-navy dark:border-gold/18 dark:bg-navy-mid/70 dark:text-ivory">
+              <span className="border-navy/10 text-navy dark:border-gold/18 dark:bg-navy-mid/70 dark:text-ivory flex h-9 min-w-28 items-center justify-center rounded-xl border bg-white px-3 text-[10px] font-black">
                 صفحه {toFaDigits(page)} از {toFaDigits(pageCount)}
               </span>
             </li>
             <li>
-              <PageButton aria-label="صفحه بعد" disabled={page >= pageCount} onClick={() => onPage(page + 1)}>
+              <PageButton
+                aria-label="صفحه بعد"
+                disabled={page >= pageCount}
+                onClick={() => onPage(page + 1)}
+              >
                 <ChevronLeft className="size-4" />
               </PageButton>
             </li>
           </ul>
 
           {}
-          <ul className="hidden items-center gap-1.5 sm:flex" data-slot="pagination-desktop">
+          <ul
+            className="hidden items-center gap-1.5 sm:flex"
+            data-slot="pagination-desktop"
+          >
             <li>
-              <PageButton aria-label="صفحه قبل" disabled={page <= 1} onClick={() => onPage(page - 1)}>
+              <PageButton
+                aria-label="صفحه قبل"
+                disabled={page <= 1}
+                onClick={() => onPage(page - 1)}
+              >
                 <ChevronRight className="size-4" />
               </PageButton>
             </li>
 
             {tokens.map((token, index) =>
               token === "…" ? (
-                <li key={`gap-${index}`} aria-hidden="true" className="grid size-9 place-items-center text-navy/38 dark:text-wheat/60">
+                <li
+                  key={`gap-${index}`}
+                  aria-hidden="true"
+                  className="text-navy/38 dark:text-wheat/60 grid size-9 place-items-center"
+                >
                   <MoreHorizontal className="size-4" />
                 </li>
               ) : (
@@ -89,30 +119,40 @@ export function Pagination({ pg, unit = "مورد", siblings = 1, className }: P
             )}
 
             <li>
-              <PageButton aria-label="صفحه بعد" disabled={page >= pageCount} onClick={() => onPage(page + 1)}>
+              <PageButton
+                aria-label="صفحه بعد"
+                disabled={page >= pageCount}
+                onClick={() => onPage(page + 1)}
+              >
                 <ChevronLeft className="size-4" />
               </PageButton>
             </li>
           </ul>
         </>
       ) : (
-        <span className="text-[10px] font-bold text-navy/35 dark:text-wheat/45">تنها صفحه</span>
+        <span className="text-navy/35 dark:text-wheat/45 text-[10px] font-bold">
+          تنها صفحه
+        </span>
       )}
     </nav>
   );
 }
 
-function PageButton({ active, className, ...props }: React.ComponentProps<"button"> & { active?: boolean }) {
+function PageButton({
+  active,
+  className,
+  ...props
+}: React.ComponentProps<"button"> & { active?: boolean }) {
   return (
     <button
       type="button"
       className={cn(
-        "grid size-9 select-none place-items-center rounded-xl border text-xs font-black transition",
-        "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-gold/50",
+        "grid size-9 place-items-center rounded-xl border text-xs font-black transition select-none",
+        "focus-visible:ring-gold/50 focus-visible:ring-2 focus-visible:outline-hidden",
         "disabled:pointer-events-none disabled:opacity-35",
         active
-          ? "border-transparent bg-navy text-ivory shadow-sm dark:bg-gold dark:text-navy-deep"
-          : "border-navy/12 bg-white text-navy hover:border-gold/40 hover:text-gold-deep dark:border-gold/20 dark:bg-navy-mid/70 dark:text-ivory dark:hover:border-gold/50 dark:hover:text-gold-soft",
+          ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep border-transparent shadow-sm"
+          : "border-navy/12 text-navy hover:border-gold/40 hover:text-gold-deep dark:border-gold/20 dark:bg-navy-mid/70 dark:text-ivory dark:hover:border-gold/50 dark:hover:text-gold-soft bg-white",
         className,
       )}
       {...props}

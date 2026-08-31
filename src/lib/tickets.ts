@@ -14,13 +14,13 @@ export type TicketReply = {
 
 export type Ticket = {
   id: string;
-  
+
   owner: string;
   name: string;
   subject: string;
   status: TicketStatus;
   createdAt: string;
-  
+
   replies: TicketReply[];
 };
 
@@ -44,7 +44,12 @@ function persist(list: Ticket[]) {
 
 export { faNow };
 
-export function createTicket(input: { owner: string; name: string; subject: string; message: string }): Ticket {
+export function createTicket(input: {
+  owner: string;
+  name: string;
+  subject: string;
+  message: string;
+}): Ticket {
   const at = faNow();
   const ticket: Ticket = {
     id: `t-${Date.now().toString(36)}`,
@@ -59,11 +64,20 @@ export function createTicket(input: { owner: string; name: string; subject: stri
   return ticket;
 }
 
-export function replyTicket(id: string, from: "user" | "support", text: string) {
+export function replyTicket(
+  id: string,
+  from: "user" | "support",
+  text: string,
+) {
   const at = faNow();
   if (from === "support") {
     const t = loadTickets().find((x) => x.id === id);
-    if (t) notify(t.owner, "ticket", `به تیکت «${t.subject}» پاسخ داده شد؛ پاسخ را در پنل خودتان ببینید.`);
+    if (t)
+      notify(
+        t.owner,
+        "ticket",
+        `به تیکت «${t.subject}» پاسخ داده شد؛ پاسخ را در پنل خودتان ببینید.`,
+      );
   }
   persist(
     loadTickets().map((t) =>
@@ -71,7 +85,8 @@ export function replyTicket(id: string, from: "user" | "support", text: string) 
         ? {
             ...t,
             replies: [...t.replies, { from, text: text.trim(), at }],
-            status: from === "support" ? ("answered" as const) : ("open" as const),
+            status:
+              from === "support" ? ("answered" as const) : ("open" as const),
           }
         : t,
     ),

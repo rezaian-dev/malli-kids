@@ -23,7 +23,7 @@ export function BackToTop() {
       aria-label="بازگشت به ابتدای صفحه"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       className={cn(
-        "fixed bottom-6 inset-e-6 z-60 size-12 rounded-full shadow-lg shadow-gold/40",
+        "shadow-gold/40 fixed inset-e-6 bottom-6 z-60 size-12 rounded-full shadow-lg",
         "transition-all duration-500 ease-out",
         show
           ? "translate-y-0 opacity-100 focus-visible:opacity-100"

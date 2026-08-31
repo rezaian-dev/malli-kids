@@ -1,5 +1,12 @@
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 const SIZE_TABLE = [
@@ -18,12 +25,18 @@ const HEADS = ["سایز", "قد کودک (سانتی‌متر)", "سن تقری
 export function ProductSizeTable() {
   return (
     <div className="grid items-start gap-5 lg:grid-cols-[1fr_280px]">
-      <div className="overflow-x-auto rounded-[28px] border border-navy/8 bg-white dark:border-gold/30 dark:bg-slate">
+      <div className="border-navy/8 dark:border-gold/30 dark:bg-slate overflow-x-auto rounded-[28px] border bg-white">
         <Table className="min-w-130 text-right text-sm">
           <TableHeader>
-            <TableRow className="border-0 bg-navy text-[11px] hover:bg-navy">
+            <TableRow className="bg-navy hover:bg-navy border-0 text-[11px]">
               {HEADS.map((h, i) => (
-                <TableHead key={h} className={cn("h-auto p-4 text-right text-cream", i === 0 ? "font-black" : "font-bold")}>
+                <TableHead
+                  key={h}
+                  className={cn(
+                    "text-cream h-auto p-4 text-right",
+                    i === 0 ? "font-black" : "font-bold",
+                  )}
+                >
                   {h}
                 </TableHead>
               ))}
@@ -33,12 +46,21 @@ export function ProductSizeTable() {
             {SIZE_TABLE.map((r, i) => (
               <TableRow
                 key={r[0]}
-                className={cn("border-navy/5", r[0] === "۹۸" ? "bg-gold-pale" : i % 2 ? "bg-sand" : "bg-white")}
+                className={cn(
+                  "border-navy/5",
+                  r[0] === "۹۸"
+                    ? "bg-gold-pale"
+                    : i % 2
+                      ? "bg-sand"
+                      : "bg-white",
+                )}
               >
-                <TableCell className="p-4 font-black text-navy dark:text-ivory">
+                <TableCell className="text-navy dark:text-ivory p-4 font-black">
                   {r[0]}
                   {r[0] === "۹۸" ? (
-                    <Badge className="ms-1 rounded-full border-0 bg-gold/20 text-[10px] font-bold text-gold">پیشنهادی</Badge>
+                    <Badge className="bg-gold/20 text-gold ms-1 rounded-full border-0 text-[10px] font-bold">
+                      پیشنهادی
+                    </Badge>
                   ) : null}
                 </TableCell>
                 <TableCell className="p-4">{r[1]}</TableCell>
@@ -50,9 +72,9 @@ export function ProductSizeTable() {
         </Table>
       </div>
 
-      <aside className="rounded-[28px] bg-navy p-5 text-cream sm:p-6">
-        <p className="text-xs font-bold text-gold-light">چطور اندازه بگیریم؟</p>
-        <ul className="mt-4 space-y-3 text-[13px] leading-6 text-cream/75">
+      <aside className="bg-navy text-cream rounded-[28px] p-5 sm:p-6">
+        <p className="text-gold-light text-xs font-bold">چطور اندازه بگیریم؟</p>
+        <ul className="text-cream/75 mt-4 space-y-3 text-[13px] leading-6">
           <li>قد را بدون کفش، از فرق سر تا کف پا بگیرید.</li>
           <li>دور سینه را از پهن‌ترین قسمت با متر نرم اندازه بزنید.</li>
           <li>اگر بین دو سایز بودید، سایز بزرگ‌تر را انتخاب کنید.</li>

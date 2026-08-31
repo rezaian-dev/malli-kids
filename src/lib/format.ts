@@ -1,13 +1,12 @@
-
 const faInt = new Intl.NumberFormat("fa-IR", { useGrouping: false });
 const faGrouped = new Intl.NumberFormat("fa-IR");
 
 export function toFaDigits(value: string | number): string {
   if (value == null || value === "") return "";
   const s = String(value);
-  
+
   if (!/[^\d]/.test(s)) return faInt.format(Number(s));
-  
+
   return s.replace(/[0-9]/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
 }
 
@@ -29,7 +28,12 @@ export function givenName(name: string): string {
 }
 
 export function fullName(first?: string, last?: string): string {
-  return [first, last].filter((p) => (p || "").trim()).join(" ").trim() || givenName(first || "");
+  return (
+    [first, last]
+      .filter((p) => (p || "").trim())
+      .join(" ")
+      .trim() || givenName(first || "")
+  );
 }
 
 export function parseFaPrice(fa: string): number {
@@ -37,5 +41,8 @@ export function parseFaPrice(fa: string): number {
 }
 
 export function faNow(): string {
-  return new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium", timeStyle: "short" }).format(new Date());
+  return new Intl.DateTimeFormat("fa-IR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date());
 }

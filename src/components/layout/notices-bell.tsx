@@ -1,12 +1,28 @@
 "use client";
 
-import { Bell, BellOff, CheckCheck, Headphones, PackageCheck, Sparkles } from "lucide-react";
+import {
+  Bell,
+  BellOff,
+  CheckCheck,
+  Headphones,
+  PackageCheck,
+  Sparkles,
+} from "lucide-react";
 import { useStore } from "@/providers/store-provider";
-import { markAllRead, markRead, useNotices, type NoticeKind } from "@/lib/notifications";
+import {
+  markAllRead,
+  markRead,
+  useNotices,
+  type NoticeKind,
+} from "@/lib/notifications";
 import { toFaDigits } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { ICON_BTN } from "./header-styles";
 
@@ -30,10 +46,12 @@ export function NoticesBell() {
       <DropdownMenuTrigger asChild>
         <Button
           size="icon"
-          aria-label={unread ? `اعلان‌ها (${toFaDigits(unread)} نخوانده)` : "اعلان‌ها"}
+          aria-label={
+            unread ? `اعلان‌ها (${toFaDigits(unread)} نخوانده)` : "اعلان‌ها"
+          }
           className={cn(
             ICON_BTN,
-            "group relative border-2 border-gold/70 bg-gold/12 transition-colors hover:border-gold hover:bg-gold hover:text-navy-deep",
+            "group border-gold/70 bg-gold/12 hover:border-gold hover:bg-gold hover:text-navy-deep relative border-2 transition-colors",
             "dark:border-gold/60 dark:bg-gold/15 dark:hover:bg-gold dark:hover:text-navy-deep",
           )}
         >
@@ -41,7 +59,7 @@ export function NoticesBell() {
           {unread > 0 ? (
             <Badge
               aria-hidden
-              className="pointer-events-none absolute -inset-e-1 -top-1 grid size-5 place-items-center rounded-full border-2 border-cream bg-rose p-0 text-[10px] font-black text-white dark:border-navy-deep"
+              className="border-cream bg-rose dark:border-navy-deep pointer-events-none absolute -inset-e-1 -top-1 grid size-5 place-items-center rounded-full border-2 p-0 text-[10px] font-black text-white"
             >
               {unread > 9 ? "+۹" : toFaDigits(unread)}
             </Badge>
@@ -52,17 +70,17 @@ export function NoticesBell() {
       <DropdownMenuContent
         align="end"
         sideOffset={12}
-        className="z-80 w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border border-gold bg-paper p-0 dark:border-gold/50 dark:bg-dusk"
+        className="border-gold bg-paper dark:border-gold/50 dark:bg-dusk z-80 w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border p-0"
       >
-        <div className="flex items-center justify-between gap-2 border-b border-gold bg-linear-to-br from-navy to-navy-mid px-4 py-3 dark:border-gold/40">
+        <div className="border-gold from-navy to-navy-mid dark:border-gold/40 flex items-center justify-between gap-2 border-b bg-linear-to-br px-4 py-3">
           <p className="m-0 flex items-center gap-2 text-sm font-black text-white">
-            <Bell className="size-4 text-gold" /> اعلان‌ها
+            <Bell className="text-gold size-4" /> اعلان‌ها
           </p>
           {unread > 0 ? (
             <Button
               type="button"
               variant="ghost"
-              className="h-8 rounded-full px-3 text-[10px] font-black text-gold-soft hover:bg-white/10 hover:text-gold"
+              className="text-gold-soft hover:text-gold h-8 rounded-full px-3 text-[10px] font-black hover:bg-white/10"
               onClick={() => markAllRead(owner)}
             >
               <CheckCheck className="size-3.5" /> خواندنِ همه
@@ -72,14 +90,16 @@ export function NoticesBell() {
 
         {notices.length === 0 ? (
           <div className="px-6 py-10 text-center">
-            <BellOff className="mx-auto size-8 text-gold/60" />
-            <p className="mt-3 text-sm font-black text-navy dark:text-ivory">اعلانی ندارید</p>
-            <p className="mt-1 text-[11px] font-bold leading-5 text-navy/50 dark:text-wheat">
+            <BellOff className="text-gold/60 mx-auto size-8" />
+            <p className="text-navy dark:text-ivory mt-3 text-sm font-black">
+              اعلانی ندارید
+            </p>
+            <p className="text-navy/50 dark:text-wheat mt-1 text-[11px] leading-5 font-bold">
               پاسخِ تیکت و وضعیتِ سفارش‌هایتان این‌جا خبرتان می‌کند.
             </p>
           </div>
         ) : (
-          <ul className="max-h-96 overflow-y-auto p-2 scrollbar-thin">
+          <ul className="max-h-96 scrollbar-thin overflow-y-auto p-2">
             {notices.slice(0, 12).map((n) => {
               const Icon = KIND_ICON[n.kind];
               return (
@@ -88,19 +108,28 @@ export function NoticesBell() {
                     type="button"
                     onClick={() => markRead(n.id)}
                     className={cn(
-                      "flex w-full items-start gap-3 rounded-2xl px-3 py-3 text-start transition-colors hover:bg-gold/10",
+                      "hover:bg-gold/10 flex w-full items-start gap-3 rounded-2xl px-3 py-3 text-start transition-colors",
                       !n.read && "bg-gold/8 dark:bg-gold/10",
                     )}
                     title="علامت به‌عنوان خوانده‌شده"
                   >
-                    <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-gold/15 text-gold">
+                    <span className="bg-gold/15 text-gold grid size-9 shrink-0 place-items-center rounded-xl">
                       <Icon className="size-4" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[12px] font-bold leading-6 text-navy dark:text-ivory">{n.text}</span>
-                      <span className="mt-0.5 block text-[10px] font-bold text-navy/40 dark:text-wheat">{n.at}</span>
+                      <span className="text-navy dark:text-ivory block text-[12px] leading-6 font-bold">
+                        {n.text}
+                      </span>
+                      <span className="text-navy/40 dark:text-wheat mt-0.5 block text-[10px] font-bold">
+                        {n.at}
+                      </span>
                     </span>
-                    {!n.read ? <span className="mt-1.5 size-2 shrink-0 rounded-full bg-rose" aria-label="نخوانده" /> : null}
+                    {!n.read ? (
+                      <span
+                        className="bg-rose mt-1.5 size-2 shrink-0 rounded-full"
+                        aria-label="نخوانده"
+                      />
+                    ) : null}
                   </button>
                 </li>
               );

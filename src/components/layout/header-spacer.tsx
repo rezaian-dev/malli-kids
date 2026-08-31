@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-const GAP = 28; 
+const GAP = 28;
 
 export function HeaderSpacer() {
   const ref = useRef<HTMLDivElement>(null);
@@ -21,6 +21,5 @@ export function HeaderSpacer() {
     return () => ro.disconnect();
   }, []);
 
-  
   return <div ref={ref} aria-hidden className="h-45.25 sm:h-41.5" />;
 }

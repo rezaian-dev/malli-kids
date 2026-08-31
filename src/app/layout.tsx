@@ -51,7 +51,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body
-        className={`${vazir.className} min-h-dvh text-navy antialiased dark:text-ivory data-scroll-locked:mr-0!`}
+        className={`${vazir.className} text-navy dark:text-ivory min-h-dvh antialiased data-scroll-locked:mr-0!`}
         suppressHydrationWarning
       >
         <JsonLd data={organizationSchema()} />

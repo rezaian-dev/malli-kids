@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@fal-ai/client": "^1.10.1",
@@ -51,6 +53,8 @@
     "playwright": "^1.62.1",
     "playwright-core": "^1.62.1",
     "postcss": "8.5.26",
+    "prettier": "^3.9.6",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3"
   }

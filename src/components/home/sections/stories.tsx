@@ -9,17 +9,24 @@ export function Stories() {
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="text-xs font-bold tracking-[0.2em] text-gold">JOURNAL</p>
-            <h2 className="mt-2 text-[clamp(1.5rem,4vw,2.3rem)] font-black text-navy dark:text-ivory">
+            <p className="text-gold text-xs font-bold tracking-[0.2em]">
+              JOURNAL
+            </p>
+            <h2 className="text-navy dark:text-ivory mt-2 text-[clamp(1.5rem,4vw,2.3rem)] font-black">
               مجله{" "}
-              <span className="relative inline-block text-gold">
+              <span className="text-gold relative inline-block">
                 ملی‌کیدز
-                <OrnStitch className="absolute -bottom-2 right-0 w-14" />
+                <OrnStitch className="absolute right-0 -bottom-2 w-14" />
               </span>
             </h2>
-            <p className="mt-2 text-sm text-navy/50 dark:text-wheat">خواندنی‌های کوتاه برای خرید و استایل کوچولو</p>
+            <p className="text-navy/50 dark:text-wheat mt-2 text-sm">
+              خواندنی‌های کوتاه برای خرید و استایل کوچولو
+            </p>
           </div>
-          <Link href="/articles" className="text-sm font-black text-gold hover:underline">
+          <Link
+            href="/articles"
+            className="text-gold text-sm font-black hover:underline"
+          >
             همه مقالات
           </Link>
         </div>

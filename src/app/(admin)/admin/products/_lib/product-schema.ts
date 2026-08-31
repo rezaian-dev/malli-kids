@@ -1,6 +1,13 @@
 import { z } from "zod";
 import { CATS, SEASONS } from "@/lib/constants";
-import { amount, longText, optAmount, optText, parseFaNumber, text } from "@/lib/forms";
+import {
+  amount,
+  longText,
+  optAmount,
+  optText,
+  parseFaNumber,
+  text,
+} from "@/lib/forms";
 import type { Product } from "@/types";
 
 export const CAT_OPTIONS: string[] = CATS.filter((c) => c !== "همه");
@@ -26,13 +33,21 @@ export const productSchema = z
     const now = parseFaNumber(v.price);
     const before = parseFaNumber(v.old);
     if (v.old !== "" && before <= now) {
-      ctx.addIssue({ code: "custom", path: ["old"], message: "قیمتِ قبل باید بیشتر از قیمتِ فعلی باشد" });
+      ctx.addIssue({
+        code: "custom",
+        path: ["old"],
+        message: "قیمتِ قبل باید بیشتر از قیمتِ فعلی باشد",
+      });
     }
     const off = v.disc.trim();
     if (off) {
       const n = parseFaNumber(off.replace(/[٪%\s]/g, ""));
       if (!Number.isFinite(n) || n < 1 || n > 99) {
-        ctx.addIssue({ code: "custom", path: ["disc"], message: "تخفیف را عدد بنویسید، مثل «۱۷٪»" });
+        ctx.addIssue({
+          code: "custom",
+          path: ["disc"],
+          message: "تخفیف را عدد بنویسید، مثل «۱۷٪»",
+        });
       }
     }
   });

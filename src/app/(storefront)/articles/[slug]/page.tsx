@@ -18,7 +18,11 @@ export function generateStaticParams() {
   return loadPublishedArticles().map((article) => ({ slug: article.slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
   const article = findPublishedArticle(decode(slug));
 
@@ -43,16 +47,33 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   });
 }
 
-export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ArticlePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const decoded = decode(slug);
   const article = findPublishedArticle(decoded) ?? null;
 
   return (
     <>
-      {article ? <JsonLd data={breadcrumbSchema([{ name: "خانه", path: "/" }, { name: "مجله", path: "/articles" }, { name: article.title, path: `/articles/${article.slug}` }])} /> : null}
+      {article ? (
+        <JsonLd
+          data={breadcrumbSchema([
+            { name: "خانه", path: "/" },
+            { name: "مجله", path: "/articles" },
+            { name: article.title, path: `/articles/${article.slug}` },
+          ])}
+        />
+      ) : null}
       {article ? <JsonLd data={articleSchema(article)} /> : null}
-      <ArticleView slug={decoded} initial={article} missing={<ArticleMissing />} actions={<ArticleActions />} />
+      <ArticleView
+        slug={decoded}
+        initial={article}
+        missing={<ArticleMissing />}
+        actions={<ArticleActions />}
+      />
     </>
   );
 }

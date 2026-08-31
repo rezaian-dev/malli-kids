@@ -261,7 +261,9 @@ export function productSchema(product: Product) {
       url: absoluteUrl(`/product/${product.id}`),
       priceCurrency: "IRR",
       price: String(product.price * 10),
-      availability: product.stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      availability: product.stock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
       seller: {
         "@type": "Organization",
@@ -272,7 +274,9 @@ export function productSchema(product: Product) {
 }
 
 // 📰 Article schema covers editorial content pages.
-export function articleSchema(article: Pick<JournalArticle, "slug" | "title" | "excerpt" | "cover">) {
+export function articleSchema(
+  article: Pick<JournalArticle, "slug" | "title" | "excerpt" | "cover">,
+) {
   const image = article.cover || SEO.defaultImage;
 
   return {
@@ -300,7 +304,8 @@ export function articleSchema(article: Pick<JournalArticle, "slug" | "title" | "
 
 function toFullTitle(title?: string) {
   if (!title) return SEO.defaultTitle;
-  if (title.includes(SEO.siteNamePlainFa) || title.includes(SEO.siteNameFa)) return title;
+  if (title.includes(SEO.siteNamePlainFa) || title.includes(SEO.siteNameFa))
+    return title;
   return `${title} | ${SEO.siteNamePlainFa}`;
 }
 

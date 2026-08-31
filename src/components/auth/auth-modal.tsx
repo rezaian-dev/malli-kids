@@ -1,18 +1,51 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { ArrowLeft, Eye, EyeOff, Lock, Mail, Phone, User, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  Phone,
+  User,
+  X,
+} from "lucide-react";
 import { useStore } from "@/providers/store-provider";
 import { RE, phoneDigits, toLatinDigits } from "@/lib/forms";
 import { AppForm, Field, InsetField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { AuthAside } from "./auth-aside";
 import { TrustNote } from "./trust-note";
-import { OTP_LEN, loginDefaults, loginSchema, registerDefaults, registerSchema, smsAccount, smsCodeDefaults, smsCodeSchema, smsStartDefaults, smsStartSchema, type LoginValues, type RegisterValues, type SmsCodeValues, type SmsStartValues } from "./schema";
+import {
+  OTP_LEN,
+  loginDefaults,
+  loginSchema,
+  registerDefaults,
+  registerSchema,
+  smsAccount,
+  smsCodeDefaults,
+  smsCodeSchema,
+  smsStartDefaults,
+  smsStartSchema,
+  type LoginValues,
+  type RegisterValues,
+  type SmsCodeValues,
+  type SmsStartValues,
+} from "./schema";
 
 const TAB_TRIGGER = cn(
   "min-w-0 rounded-xl py-2.5 text-[13px] font-extrabold transition-colors",
@@ -26,7 +59,11 @@ const SUBMIT_NAVY =
 const SUBMIT_GOLD =
   "h-12 w-full gap-2 rounded-full bg-gold font-black text-navy-deep shadow-[0_10px_24px_-12px] shadow-gold/60 transition-transform hover:bg-gold-light active:scale-[0.99]";
 
-const TITLES = { login: "ورود به حساب", otp: "ورود با پیامک", register: "ساخت حساب" } as const;
+const TITLES = {
+  login: "ورود به حساب",
+  otp: "ورود با پیامک",
+  register: "ساخت حساب",
+} as const;
 type Tab = keyof typeof TITLES;
 
 const digits = (v: string) => phoneDigits(v);
@@ -44,7 +81,10 @@ function useCooldown() {
 }
 
 function useSmsFlow() {
-  const code = useAppForm({ schema: smsCodeSchema, defaultValues: smsCodeDefaults });
+  const code = useAppForm({
+    schema: smsCodeSchema,
+    defaultValues: smsCodeDefaults,
+  });
   const cd = useCooldown();
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
@@ -73,12 +113,33 @@ function useSmsFlow() {
 
 type SmsFlow = ReturnType<typeof useSmsFlow>;
 
-function CodeStep({ flow, submitLabel, onVerify }: { flow: SmsFlow; submitLabel: string; onVerify: (v: SmsCodeValues) => void }) {
+function CodeStep({
+  flow,
+  submitLabel,
+  onVerify,
+}: {
+  flow: SmsFlow;
+  submitLabel: string;
+  onVerify: (v: SmsCodeValues) => void;
+}) {
   return (
-    <AppForm form={flow.code} onSubmit={onVerify} ariaLabel="تأیید کد پیامکی" className="space-y-4" notify>
-      <Field name="code" label={`کد ${OTP_LEN} رقمی پیامک‌شده`} skin="inset" noShell>
+    <AppForm
+      form={flow.code}
+      onSubmit={onVerify}
+      ariaLabel="تأیید کد پیامکی"
+      className="space-y-4"
+      notify
+    >
+      <Field
+        name="code"
+        label={`کد ${OTP_LEN} رقمی پیامک‌شده`}
+        skin="inset"
+        noShell
+      >
         {({ field, invalid }) => (
-          <div className={cn("flex justify-center", invalid && "animate-shake")}>
+          <div
+            className={cn("flex justify-center", invalid && "animate-shake")}
+          >
             <InputOTP
               maxLength={OTP_LEN}
               value={String(field.value ?? "")}
@@ -93,11 +154,11 @@ function CodeStep({ flow, submitLabel, onVerify }: { flow: SmsFlow; submitLabel:
                     key={i}
                     index={i}
                     className={cn(
-                      "size-12 rounded-xl border bg-white text-lg font-black text-navy transition-[border-color,box-shadow] duration-200 first:rounded-s-xl last:rounded-e-xl",
+                      "text-navy size-12 rounded-xl border bg-white text-lg font-black transition-[border-color,box-shadow] duration-200 first:rounded-s-xl last:rounded-e-xl",
                       "dark:bg-navy-deep/60 dark:text-ivory",
                       invalid
-                        ? "border-rose data-[active=true]:border-rose data-[active=true]:ring-2 data-[active=true]:ring-rose/20 dark:border-rose"
-                        : "border-tan dark:border-white/12 data-[active=true]:border-gold data-[active=true]:ring-2 data-[active=true]:ring-gold/25",
+                        ? "border-rose data-[active=true]:border-rose data-[active=true]:ring-rose/20 dark:border-rose data-[active=true]:ring-2"
+                        : "border-tan data-[active=true]:border-gold data-[active=true]:ring-gold/25 data-[active=true]:ring-2 dark:border-white/12",
                     )}
                   />
                 ))}
@@ -116,7 +177,7 @@ function CodeStep({ flow, submitLabel, onVerify }: { flow: SmsFlow; submitLabel:
           <Button
             type="button"
             variant="link"
-            className="h-auto p-0 text-[11px] font-bold text-gold"
+            className="text-gold h-auto p-0 text-[11px] font-bold"
             onClick={() => flow.cd.restart()}
           >
             ارسالِ دوبارهٔ کد
@@ -125,7 +186,7 @@ function CodeStep({ flow, submitLabel, onVerify }: { flow: SmsFlow; submitLabel:
         <Button
           type="button"
           variant="link"
-          className="h-auto p-0 text-[11px] font-bold text-navy/50 dark:text-linen/60"
+          className="text-navy/50 dark:text-linen/60 h-auto p-0 text-[11px] font-bold"
           onClick={flow.back}
         >
           تغییرِ شماره
@@ -139,11 +200,19 @@ function CodeStep({ flow, submitLabel, onVerify }: { flow: SmsFlow; submitLabel:
   );
 }
 
-function LockedCard({ title, children }: { title: string; children: ReactNode }) {
+function LockedCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
-    <div className="rounded-2xl border border-gold/30 bg-sand/80 px-3.5 py-3 dark:border-gold/25 dark:bg-navy-deep/60">
-      <p className="text-[11px] font-black text-gold">{title}</p>
-      <div className="mt-1 text-sm font-black text-navy dark:text-ivory">{children}</div>
+    <div className="border-gold/30 bg-sand/80 dark:border-gold/25 dark:bg-navy-deep/60 rounded-2xl border px-3.5 py-3">
+      <p className="text-gold text-[11px] font-black">{title}</p>
+      <div className="text-navy dark:text-ivory mt-1 text-sm font-black">
+        {children}
+      </div>
     </div>
   );
 }
@@ -151,7 +220,10 @@ function LockedCard({ title, children }: { title: string; children: ReactNode })
 function LoginPanel({ onOtp }: { onOtp: () => void }) {
   const { login, showToast } = useStore();
   const [show, setShow] = useState(false);
-  const form = useAppForm({ schema: loginSchema, defaultValues: loginDefaults });
+  const form = useAppForm({
+    schema: loginSchema,
+    defaultValues: loginDefaults,
+  });
 
   function onValid({ identifier }: LoginValues) {
     const id = identifier.trim();
@@ -164,11 +236,16 @@ function LoginPanel({ onOtp }: { onOtp: () => void }) {
     });
     showToast("خوش آمدید ✨");
     form.reset();
-    
   }
 
   return (
-    <AppForm form={form} onSubmit={onValid} ariaLabel="ورود با رمز عبور" className="space-y-3.5" notify>
+    <AppForm
+      form={form}
+      onSubmit={onValid}
+      ariaLabel="ورود با رمز عبور"
+      className="space-y-3.5"
+      notify
+    >
       <InsetField
         name="identifier"
         label="ایمیل یا موبایل"
@@ -195,7 +272,7 @@ function LoginPanel({ onOtp }: { onOtp: () => void }) {
             type="button"
             variant="ghost"
             size="icon"
-            className="me-1 size-8 shrink-0 text-gold hover:bg-gold/10 hover:text-gold"
+            className="text-gold hover:bg-gold/10 hover:text-gold me-1 size-8 shrink-0"
             onClick={() => setShow((s) => !s)}
             aria-label={show ? "پنهان کردنِ رمز" : "نمایشِ رمز"}
           >
@@ -208,7 +285,12 @@ function LoginPanel({ onOtp }: { onOtp: () => void }) {
         ورود به حساب <ArrowLeft className="size-4" />
       </Button>
 
-      <Button type="button" variant="link" className="w-full text-xs font-bold text-gold" onClick={onOtp}>
+      <Button
+        type="button"
+        variant="link"
+        className="text-gold w-full text-xs font-bold"
+        onClick={onOtp}
+      >
         ورود بدونِ رمز، با پیامک
       </Button>
 
@@ -220,17 +302,20 @@ function LoginPanel({ onOtp }: { onOtp: () => void }) {
 function OtpPanel() {
   const { login, showToast } = useStore();
   const flow = useSmsFlow();
-  const start = useAppForm({ schema: smsStartSchema, defaultValues: smsStartDefaults });
+  const start = useAppForm({
+    schema: smsStartSchema,
+    defaultValues: smsStartDefaults,
+  });
 
   function send(v: SmsStartValues) {
     flow.send(digits(v.phone));
-    
+
     showToast("کد ۵ رقمی به شمارهٔ شما پیامک شد");
   }
 
   function verify(v: SmsCodeValues) {
     const code = onlyDigits(v.code);
-    
+
     if (code.length !== OTP_LEN) return;
     login({ firstName: "کاربر", ...smsAccount(flow.phone) });
     showToast("با پیامک وارد شدید ✨");
@@ -245,7 +330,7 @@ function OtpPanel() {
             <p className="font-black tracking-wide" dir="ltr">
               {flow.phone}
             </p>
-            <p className="mt-1 text-[11px] font-bold text-navy/45 dark:text-linen/55">
+            <p className="text-navy/45 dark:text-linen/55 mt-1 text-[11px] font-bold">
               برای عوض کردنِ شماره، اول «تغییرِ شماره» را بزنید.
             </p>
           </LockedCard>
@@ -253,7 +338,13 @@ function OtpPanel() {
         </>
       ) : (
         <>
-          <AppForm form={start} onSubmit={send} ariaLabel="درخواستِ کد پیامکی" className="space-y-4" notify>
+          <AppForm
+            form={start}
+            onSubmit={send}
+            ariaLabel="درخواستِ کد پیامکی"
+            className="space-y-4"
+            notify
+          >
             <InsetField
               name="phone"
               label="شمارهٔ موبایل"
@@ -269,7 +360,7 @@ function OtpPanel() {
               دریافتِ کد پیامک <ArrowLeft className="size-4" />
             </Button>
           </AppForm>
-          <p className="text-center text-[11px] font-bold text-navy/50 dark:text-linen/60">
+          <p className="text-navy/50 dark:text-linen/60 text-center text-[11px] font-bold">
             یک کد ۵ رقمی برای شما پیامک می‌شود. بدونِ نیاز به رمز عبور.
           </p>
           <TrustNote />
@@ -282,16 +373,18 @@ function OtpPanel() {
 function RegisterPanel() {
   const { login, showToast } = useStore();
   const flow = useSmsFlow();
-  const start = useAppForm({ schema: registerSchema, defaultValues: registerDefaults });
+  const start = useAppForm({
+    schema: registerSchema,
+    defaultValues: registerDefaults,
+  });
 
   function send(v: RegisterValues) {
     flow.send(digits(v.phone), v.name.trim());
-    
+
     showToast("کد ۵ رقمی به موبایل شما پیامک شد");
   }
 
   function verify() {
-    
     login({ firstName: flow.name || "کاربر", ...smsAccount(flow.phone) });
     showToast(`حسابِ «${flow.name || "کاربر"}» ساخته شد ✨`);
     flow.back();
@@ -305,16 +398,29 @@ function RegisterPanel() {
           <LockedCard title="ساختِ حساب برای">
             <p className="font-black">
               {flow.name}{" "}
-              <span className="font-bold text-navy/45 dark:text-linen/55" dir="ltr">
+              <span
+                className="text-navy/45 dark:text-linen/55 font-bold"
+                dir="ltr"
+              >
                 — {flow.phone}
               </span>
             </p>
           </LockedCard>
-          <CodeStep flow={flow} submitLabel="تأیید و ساختِ حساب" onVerify={verify} />
+          <CodeStep
+            flow={flow}
+            submitLabel="تأیید و ساختِ حساب"
+            onVerify={verify}
+          />
         </>
       ) : (
         <>
-          <AppForm form={start} onSubmit={send} ariaLabel="ثبت‌نام" className="space-y-3.5" notify>
+          <AppForm
+            form={start}
+            onSubmit={send}
+            ariaLabel="ثبت‌نام"
+            className="space-y-3.5"
+            notify
+          >
             <InsetField
               name="name"
               label="نام و نام خانوادگی"
@@ -338,7 +444,7 @@ function RegisterPanel() {
               دریافتِ کد تأیید <ArrowLeft className="size-4" />
             </Button>
           </AppForm>
-          <p className="text-center text-[11px] font-bold text-navy/50 dark:text-linen/60">
+          <p className="text-navy/50 dark:text-linen/60 text-center text-[11px] font-bold">
             یک کد ۵ رقمی برای تأیید به موبایل شما پیامک می‌شود.
           </p>
           <TrustNote />
@@ -359,10 +465,9 @@ export function AuthModal() {
         dir="rtl"
         showCloseButton={false}
         className={cn(
-          
-          "z-100 block max-h-[94dvh] w-[calc(100%-1.5rem)] max-w-104 gap-0 overflow-y-auto overflow-x-hidden overscroll-contain p-0 sm:max-w-104",
-          "rounded-[28px] bg-paper text-navy ring-0",
-          "border border-gold/35 shadow-[0_28px_80px_-20px_rgba(4,20,39,.55)]",
+          "z-100 block max-h-[94dvh] w-[calc(100%-1.5rem)] max-w-104 gap-0 overflow-x-hidden overflow-y-auto overscroll-contain p-0 sm:max-w-104",
+          "bg-paper text-navy rounded-[28px] ring-0",
+          "border-gold/35 border shadow-[0_28px_80px_-20px_rgba(4,20,39,.55)]",
           "dark:border-gold/40 dark:bg-dusk dark:text-ivory",
           "lg:flex lg:max-w-216 lg:flex-row-reverse",
         )}
@@ -370,9 +475,9 @@ export function AuthModal() {
         {}
         <DialogClose
           className={cn(
-            "absolute top-4 inset-s-4 z-20 inline-flex size-9 items-center justify-center rounded-full",
-            "text-navy/60 transition-colors hover:bg-sand hover:text-navy",
-            "focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
+            "absolute inset-s-4 top-4 z-20 inline-flex size-9 items-center justify-center rounded-full",
+            "text-navy/60 hover:bg-sand hover:text-navy transition-colors",
+            "focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none",
             "dark:text-ivory/70 dark:hover:bg-dusk-mid dark:hover:text-ivory",
           )}
         >
@@ -382,14 +487,23 @@ export function AuthModal() {
 
         <AuthAside />
 
-        <div className="flex max-h-[94dvh] min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-paper p-5 pt-14 sm:p-7 sm:pt-14 dark:bg-dusk">
+        <div className="bg-paper dark:bg-dusk flex max-h-[94dvh] min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-5 pt-14 sm:p-7 sm:pt-14">
           <div className="mb-4 shrink-0">
-            <p className="text-[11px] font-black tracking-[0.2em] text-gold">MALLI KIDS</p>
-            <DialogTitle className="mt-1 text-lg font-black">{TITLES[tab]}</DialogTitle>
+            <p className="text-gold text-[11px] font-black tracking-[0.2em]">
+              MALLI KIDS
+            </p>
+            <DialogTitle className="mt-1 text-lg font-black">
+              {TITLES[tab]}
+            </DialogTitle>
           </div>
 
-          <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} dir="rtl" className="min-h-0 flex-1 gap-0">
-            <TabsList className="grid h-auto w-full min-w-0 shrink-0 grid-cols-3 gap-1 rounded-2xl bg-sand p-1 ring-1 ring-navy/5 dark:bg-navy-deep/70 dark:ring-white/10">
+          <Tabs
+            value={tab}
+            onValueChange={(v) => setTab(v as Tab)}
+            dir="rtl"
+            className="min-h-0 flex-1 gap-0"
+          >
+            <TabsList className="bg-sand ring-navy/5 dark:bg-navy-deep/70 grid h-auto w-full min-w-0 shrink-0 grid-cols-3 gap-1 rounded-2xl p-1 ring-1 dark:ring-white/10">
               <TabsTrigger value="login" className={TAB_TRIGGER}>
                 ورود
               </TabsTrigger>
@@ -401,7 +515,7 @@ export function AuthModal() {
               </TabsTrigger>
             </TabsList>
 
-            <div className="auth-fields -mx-2 min-h-0 flex-1 overflow-y-auto overflow-x-clip overscroll-contain px-2 scrollbar-thin">
+            <div className="auth-fields -mx-2 min-h-0 flex-1 scrollbar-thin overflow-x-clip overflow-y-auto overscroll-contain px-2">
               <TabsContent value="login" className="mt-5">
                 <LoginPanel onOtp={() => setTab("otp")} />
               </TabsContent>

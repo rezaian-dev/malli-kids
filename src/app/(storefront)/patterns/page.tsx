@@ -5,7 +5,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "الگوهای آماده دوخت",
-  description: "الگوهای آماده دوخت کودک با سایزبندی دقیق، راهنمای برش و مسیر ساده‌تر برای دوخت خانگی.",
+  description:
+    "الگوهای آماده دوخت کودک با سایزبندی دقیق، راهنمای برش و مسیر ساده‌تر برای دوخت خانگی.",
   path: "/patterns",
   keywords: ["الگوی لباس کودک", "الگوی آماده دوخت", "خیاطی کودک"],
 });
@@ -13,7 +14,12 @@ export const metadata = buildMetadata({
 export default function PatternsPage() {
   return (
     <>
-      <Intro crumb="الگوهای آماده" kicker="ATELIER PATTERNS" title="الگوهای آماده دوخت" lead="هر الگو سایزبندی ۸۰ تا ۱۲۲ دارد و با فیلم برش کوتاه همراه است." />
+      <Intro
+        crumb="الگوهای آماده"
+        kicker="ATELIER PATTERNS"
+        title="الگوهای آماده دوخت"
+        lead="هر الگو سایزبندی ۸۰ تا ۱۲۲ دارد و با فیلم برش کوتاه همراه است."
+      />
       <ProductCatalog items={PATTERNS} cta="خرید الگو" />
     </>
   );

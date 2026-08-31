@@ -18,7 +18,13 @@ const SAMPLE_MODELS = CORE_PRODUCTS.slice(0, 4).map((p) => p.img);
 
 function sizeForHeight(h: number): string {
   const table: [number, string][] = [
-    [80, "۸۰"], [86, "۸۶"], [92, "۹۲"], [98, "۹۸"], [104, "۱۰۴"], [110, "۱۱۰"], [116, "۱۱۶"],
+    [80, "۸۰"],
+    [86, "۸۶"],
+    [92, "۹۲"],
+    [98, "۹۸"],
+    [104, "۱۰۴"],
+    [110, "۱۱۰"],
+    [116, "۱۱۶"],
   ];
   for (const [max, label] of table) if (h < max) return label;
   return "۱۲۲";
@@ -35,7 +41,8 @@ export function Studio() {
   const size = useMemo(() => sizeForHeight(Number(height) || 0), [height]);
 
   function onUpload(file: File) {
-    if (!file.type.startsWith("image/")) return toast("فقط فایل تصویری (JPG/PNG)");
+    if (!file.type.startsWith("image/"))
+      return toast("فقط فایل تصویری (JPG/PNG)");
     const reader = new FileReader();
     reader.onload = () => {
       setPerson(String(reader.result));
@@ -53,10 +60,14 @@ export function Studio() {
       const start = await fetch("/api/tryon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modelImage: person, garmentImage: CORE_PRODUCTS[garment].img }),
+        body: JSON.stringify({
+          modelImage: person,
+          garmentImage: CORE_PRODUCTS[garment].img,
+        }),
       });
       const started = await start.json();
-      if (!start.ok) throw new Error(started.error || "شروع پرو مجازی ناموفق بود.");
+      if (!start.ok)
+        throw new Error(started.error || "شروع پرو مجازی ناموفق بود.");
 
       // 🔁 Free mode returns an image now; paid mode returns a job id.
       if (started.image) {
@@ -65,7 +76,8 @@ export function Studio() {
         toast("پرو مجازی آماده شد ✨");
         return;
       }
-      if (!started.id) throw new Error(started.error || "پاسخ نامعتبر از سرویس.");
+      if (!started.id)
+        throw new Error(started.error || "پاسخ نامعتبر از سرویس.");
 
       const deadline = Date.now() + 90_000;
       while (Date.now() < deadline) {
@@ -78,7 +90,8 @@ export function Studio() {
           toast("پرو مجازی آماده شد ✨");
           return;
         }
-        if (state.status === "failed") throw new Error(state.error || "تولید تصویر ناموفق بود.");
+        if (state.status === "failed")
+          throw new Error(state.error || "تولید تصویر ناموفق بود.");
       }
       throw new Error("پردازش طولانی شد؛ لطفاً دوباره تلاش کنید.");
     } catch (e) {
@@ -92,44 +105,84 @@ export function Studio() {
   return (
     <div className="container mx-auto grid w-full max-w-6xl gap-8 px-4 sm:px-5 lg:grid-cols-2 lg:px-7">
       {/* 🖼️ Live preview panel. */}
-      <div className="rounded-[28px] border border-navy/10 bg-white p-5 dark:border-gold/30 dark:bg-dusk">
+      <div className="border-navy/10 dark:border-gold/30 dark:bg-dusk rounded-[28px] border bg-white p-5">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-black text-gold">پیش‌نمایش زنده</p>
-          {result ? <span className="rounded-full bg-gold/15 px-2.5 py-1 text-[10px] font-black text-gold-deep dark:text-gold-soft">ساخته‌شده با هوش مصنوعی</span> : null}
+          <p className="text-gold text-xs font-black">پیش‌نمایش زنده</p>
+          {result ? (
+            <span className="bg-gold/15 text-gold-deep dark:text-gold-soft rounded-full px-2.5 py-1 text-[10px] font-black">
+              ساخته‌شده با هوش مصنوعی
+            </span>
+          ) : null}
         </div>
 
-        <div className="relative mt-3 aspect-4/5 overflow-hidden rounded-2xl bg-sand">
+        <div className="bg-sand relative mt-3 aspect-4/5 overflow-hidden rounded-2xl">
           {shown ? (
             // eslint-disable-next-line @next/next/no-img-element -- 🪶 Data URLs need a raw img.
-            <img src={shown} alt="پیش‌نمایش پرو مجازی" className="size-full object-cover" />
+            <img
+              src={shown}
+              alt="پیش‌نمایش پرو مجازی"
+              className="size-full object-cover"
+            />
           ) : (
             <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-              <p className="font-black text-navy dark:text-ivory">آماده دریافت عکس</p>
-              <p className="mt-2 text-sm text-muted-foreground">عکس تمام‌قد کوچولو، یا یک مدل نمونه را انتخاب کنید.</p>
+              <p className="text-navy dark:text-ivory font-black">
+                آماده دریافت عکس
+              </p>
+              <p className="text-muted-foreground mt-2 text-sm">
+                عکس تمام‌قد کوچولو، یا یک مدل نمونه را انتخاب کنید.
+              </p>
             </div>
           )}
 
           {/* ✨ Progress overlay while AI is running. */}
           {phase === "running" ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-navy-deep/70 backdrop-blur-sm">
-              <Loader2 className="size-8 animate-spin text-gold" />
-              <p className="text-sm font-black text-ivory">هوش مصنوعی در حال پرو کردن لباس…</p>
-              <p className="text-[11px] text-wheat">معمولاً ۱۰ تا ۴۰ ثانیه</p>
+            <div className="bg-navy-deep/70 absolute inset-0 flex flex-col items-center justify-center gap-3 backdrop-blur-sm">
+              <Loader2 className="text-gold size-8 animate-spin" />
+              <p className="text-ivory text-sm font-black">
+                هوش مصنوعی در حال پرو کردن لباس…
+              </p>
+              <p className="text-wheat text-[11px]">معمولاً ۱۰ تا ۴۰ ثانیه</p>
             </div>
           ) : null}
 
           {/* current garment chip */}
-          { }
-          <Image src={CORE_PRODUCTS[garment].img} alt="" width={80} height={96} className="absolute bottom-3 inset-e-3 h-24 w-20 rounded-xl border-2 border-white object-cover shadow-lg" />
+          {}
+          <Image
+            src={CORE_PRODUCTS[garment].img}
+            alt=""
+            width={80}
+            height={96}
+            className="absolute inset-e-3 bottom-3 h-24 w-20 rounded-xl border-2 border-white object-cover shadow-lg"
+          />
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && onUpload(e.target.files[0])} />
-          <Button type="button" variant="secondary" className="flex-1 rounded-full" onClick={() => fileRef.current?.click()}>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => e.target.files?.[0] && onUpload(e.target.files[0])}
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            className="flex-1 rounded-full"
+            onClick={() => fileRef.current?.click()}
+          >
             <Upload className="size-4" /> آپلود عکس
           </Button>
-          <Button type="button" className="flex-1 rounded-full" disabled={!person || phase === "running"} onClick={runTryOn}>
-            {phase === "running" ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+          <Button
+            type="button"
+            className="flex-1 rounded-full"
+            disabled={!person || phase === "running"}
+            onClick={runTryOn}
+          >
+            {phase === "running" ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Sparkles className="size-4" />
+            )}
             پرو با هوش مصنوعی
           </Button>
           {result ? (
@@ -142,7 +195,9 @@ export function Studio() {
         </div>
 
         {/* sample models — no need to upload a child's photo to try the feature */}
-        <p className="mt-4 text-[11px] font-black text-navy/50 dark:text-wheat">یا یک مدل نمونه:</p>
+        <p className="text-navy/50 dark:text-wheat mt-4 text-[11px] font-black">
+          یا یک مدل نمونه:
+        </p>
         <div className="mt-2 flex gap-2">
           {SAMPLE_MODELS.map((src) => (
             <button
@@ -153,23 +208,31 @@ export function Studio() {
                 setResult(null);
                 setPhase("idle");
               }}
-              className={`overflow-hidden rounded-xl border-2 transition ${person === src ? "border-gold" : "border-transparent hover:border-gold/40"}`}
+              className={`overflow-hidden rounded-xl border-2 transition ${person === src ? "border-gold" : "hover:border-gold/40 border-transparent"}`}
             >
-              { }
-              <Image src={src} alt="مدل نمونه" width={56} height={72} className="h-18 w-14 object-cover" />
+              {}
+              <Image
+                src={src}
+                alt="مدل نمونه"
+                width={56}
+                height={72}
+                className="h-18 w-14 object-cover"
+              />
             </button>
           ))}
         </div>
 
-        <p className="mt-4 text-[11px] leading-6 text-muted-foreground">
-          حریم خصوصی: عکس فقط برای ساخت همین پیش‌نمایش به سرویس هوش مصنوعی ارسال می‌شود و نزد ما ذخیره نمی‌گردد. آپلود عکس کودک با رضایت والدین انجام شود.
+        <p className="text-muted-foreground mt-4 text-[11px] leading-6">
+          حریم خصوصی: عکس فقط برای ساخت همین پیش‌نمایش به سرویس هوش مصنوعی ارسال
+          می‌شود و نزد ما ذخیره نمی‌گردد. آپلود عکس کودک با رضایت والدین انجام
+          شود.
         </p>
       </div>
 
       {/* 👕 Garment and size controls. */}
       <div>
-        <h2 className="mb-3 flex items-center gap-2 text-lg font-black text-navy dark:text-ivory">
-          <Shirt className="size-5 text-gold" /> لباس کالکشن
+        <h2 className="text-navy dark:text-ivory mb-3 flex items-center gap-2 text-lg font-black">
+          <Shirt className="text-gold size-5" /> لباس کالکشن
         </h2>
         <div className="grid grid-cols-4 gap-2">
           {CORE_PRODUCTS.map((p, i) => (
@@ -177,21 +240,35 @@ export function Studio() {
               key={p.id}
               type="button"
               onClick={() => setGarment(i)}
-              className={`overflow-hidden rounded-xl border-2 transition ${garment === i ? "border-gold" : "border-transparent hover:border-gold/40"}`}
+              className={`overflow-hidden rounded-xl border-2 transition ${garment === i ? "border-gold" : "hover:border-gold/40 border-transparent"}`}
             >
-              { }
-              <Image src={p.img} alt={p.name} width={60} height={80} className="aspect-3/4 w-full object-cover" />
+              {}
+              <Image
+                src={p.img}
+                alt={p.name}
+                width={60}
+                height={80}
+                className="aspect-3/4 w-full object-cover"
+              />
             </button>
           ))}
         </div>
 
-        <div className="mt-6 space-y-3 rounded-3xl border border-navy/10 bg-white p-5 dark:border-gold/30 dark:bg-dusk">
-          <h2 className="font-black text-navy dark:text-ivory">اندازه برای پیشنهاد سایز</h2>
+        <div className="border-navy/10 dark:border-gold/30 dark:bg-dusk mt-6 space-y-3 rounded-3xl border bg-white p-5">
+          <h2 className="text-navy dark:text-ivory font-black">
+            اندازه برای پیشنهاد سایز
+          </h2>
           <div>
             <Label htmlFor="h">قد (سانتی‌متر)</Label>
-            <Input id="h" inputMode="numeric" value={height} onChange={(e) => setHeight(e.target.value)} className="mt-1 rounded-2xl" />
+            <Input
+              id="h"
+              inputMode="numeric"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              className="mt-1 rounded-2xl"
+            />
           </div>
-          <div className="rounded-2xl bg-gold/10 px-4 py-3 text-sm font-black text-gold-deep dark:text-gold-soft">
+          <div className="bg-gold/10 text-gold-deep dark:text-gold-soft rounded-2xl px-4 py-3 text-sm font-black">
             سایز پیشنهادی: {size}
           </div>
         </div>

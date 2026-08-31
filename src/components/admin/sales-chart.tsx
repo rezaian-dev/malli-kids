@@ -5,7 +5,13 @@ import { ArrowDownRight, ArrowUpRight, TrendingUp } from "lucide-react";
 import type { AdminOrder } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { dailySeries, monthlySeries, type SalesPoint } from "@/lib/admin/sales";
 
 type Range = "month" | "week";
@@ -45,7 +51,8 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
   const [dash, setDash] = useState(0);
 
   const points: SalesPoint[] = useMemo(
-    () => (range === "month" ? monthlySeries(orders, 6) : dailySeries(orders, 7)),
+    () =>
+      range === "month" ? monthlySeries(orders, 6) : dailySeries(orders, 7),
     [orders, range],
   );
 
@@ -70,7 +77,9 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
   // ✨ Draw the path in, while respecting reduced motion.
   useEffect(() => {
     setActive(null);
-    const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const len = lineRef.current?.getTotalLength?.() ?? 0;
     setDash(len);
     setReveal(false);
@@ -78,7 +87,9 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
       setReveal(true);
       return;
     }
-    const t = requestAnimationFrame(() => requestAnimationFrame(() => setReveal(true)));
+    const t = requestAnimationFrame(() =>
+      requestAnimationFrame(() => setReveal(true)),
+    );
     return () => cancelAnimationFrame(t);
   }, [linePath]);
 
@@ -97,30 +108,41 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
     const relX = (e.clientX - rect.left) / rect.width;
     const plotStart = PAD.left / W;
     const plotEnd = (W - PAD.right) / W;
-    const f = Math.min(1, Math.max(0, (relX - plotStart) / (plotEnd - plotStart)));
+    const f = Math.min(
+      1,
+      Math.max(0, (relX - plotStart) / (plotEnd - plotStart)),
+    );
     setActive(n === 1 ? 0 : Math.round(f * (n - 1)));
   }
 
   const gridY = [0, 0.25, 0.5, 0.75, 1].map((t) => PAD.top + t * PLOT_H);
   const activePoint = active !== null ? points[active] : null;
   const activeCoord = active !== null ? coords[active] : null;
-  const tooltipLeft = activeCoord ? Math.min(88, Math.max(12, (activeCoord.x / W) * 100)) : 50;
+  const tooltipLeft = activeCoord
+    ? Math.min(88, Math.max(12, (activeCoord.x / W) * 100))
+    : 50;
 
   return (
-    <section className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] p-5 sm:p-6">
+    <section className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border p-5 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] sm:p-6 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h2 className="flex items-center gap-2 font-black text-navy dark:text-ivory">
-            <TrendingUp className="size-4 text-gold" /> روند فروش
+          <h2 className="text-navy dark:text-ivory flex items-center gap-2 font-black">
+            <TrendingUp className="text-gold size-4" /> روند فروش
           </h2>
           {delta !== null ? (
             <span
               className={cn(
                 "inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[11px] font-black",
-                delta >= 0 ? "bg-emerald-500/12 text-emerald-600 dark:text-emerald-400" : "bg-rose/15 text-rose",
+                delta >= 0
+                  ? "bg-emerald-500/12 text-emerald-600 dark:text-emerald-400"
+                  : "bg-rose/15 text-rose",
               )}
             >
-              {delta >= 0 ? <ArrowUpRight className="size-3" /> : <ArrowDownRight className="size-3" />}
+              {delta >= 0 ? (
+                <ArrowUpRight className="size-3" />
+              ) : (
+                <ArrowDownRight className="size-3" />
+              )}
               {toFaDigits(Math.abs(delta))}٪
             </span>
           ) : null}
@@ -128,11 +150,22 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
 
         <div className="flex items-center gap-3">
           <div className="hidden text-left sm:block">
-            <p className="text-[10px] font-bold text-navy/45 dark:text-wheat">مجموع بازه</p>
-            <p className="text-sm font-black text-gold-deep dark:text-gold-soft">{formatToman(total)} ت</p>
+            <p className="text-navy/45 dark:text-wheat text-[10px] font-bold">
+              مجموع بازه
+            </p>
+            <p className="text-gold-deep dark:text-gold-soft text-sm font-black">
+              {formatToman(total)} ت
+            </p>
           </div>
-          <Select value={range} onValueChange={(value) => setRange(value as Range)} dir="rtl">
-            <SelectTrigger className="h-9 w-28 rounded-xl bg-white text-[10px] shadow-none dark:bg-navy-deep/45" aria-label="بازه نمودار فروش">
+          <Select
+            value={range}
+            onValueChange={(value) => setRange(value as Range)}
+            dir="rtl"
+          >
+            <SelectTrigger
+              className="dark:bg-navy-deep/45 h-9 w-28 rounded-xl bg-white text-[10px] shadow-none"
+              aria-label="بازه نمودار فروش"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">
@@ -144,17 +177,40 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
       </div>
 
       {n === 0 ? (
-        <div className="grid h-44 place-items-center rounded-2xl bg-navy/4 text-sm font-bold text-navy/45 dark:bg-navy-deep/50 dark:text-wheat">
+        <div className="bg-navy/4 text-navy/45 dark:bg-navy-deep/50 dark:text-wheat grid h-44 place-items-center rounded-2xl text-sm font-bold">
           هنوز فروش پرداخت‌شده‌ای برای نمایش ثبت نشده است.
         </div>
       ) : (
-        <div className="relative w-full" dir="ltr" onPointerMove={onMove} onPointerLeave={() => setActive(null)}>
-          <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: "auto" }} role="img" aria-label="نمودار روند فروش">
+        <div
+          className="relative w-full"
+          dir="ltr"
+          onPointerMove={onMove}
+          onPointerLeave={() => setActive(null)}
+        >
+          <svg
+            viewBox={`0 0 ${W} ${H}`}
+            className="w-full"
+            style={{ height: "auto" }}
+            role="img"
+            aria-label="نمودار روند فروش"
+          >
             <defs>
               <linearGradient id={`area-${gid}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--color-gold)" stopOpacity="0.42" />
-                <stop offset="55%" stopColor="var(--color-gold)" stopOpacity="0.14" />
-                <stop offset="100%" stopColor="var(--color-gold)" stopOpacity="0" />
+                <stop
+                  offset="0%"
+                  stopColor="var(--color-gold)"
+                  stopOpacity="0.42"
+                />
+                <stop
+                  offset="55%"
+                  stopColor="var(--color-gold)"
+                  stopOpacity="0.14"
+                />
+                <stop
+                  offset="100%"
+                  stopColor="var(--color-gold)"
+                  stopOpacity="0"
+                />
               </linearGradient>
               <clipPath id={`plot-${gid}`}>
                 <rect x="0" y="0" width={W} height={BASELINE + 1} />
@@ -181,7 +237,10 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
               d={areaPath}
               fill={`url(#area-${gid})`}
               clipPath={`url(#plot-${gid})`}
-              style={{ opacity: reveal ? 1 : 0, transition: "opacity 700ms ease-out" }}
+              style={{
+                opacity: reveal ? 1 : 0,
+                transition: "opacity 700ms ease-out",
+              }}
             />
 
             {/* line */}
@@ -214,12 +273,17 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
                   strokeWidth="1"
                   strokeDasharray="3 4"
                 />
-                <circle cx={activeCoord.x} cy={activeCoord.y} r="7" className="fill-gold/20" />
+                <circle
+                  cx={activeCoord.x}
+                  cy={activeCoord.y}
+                  r="7"
+                  className="fill-gold/20"
+                />
                 <circle
                   cx={activeCoord.x}
                   cy={activeCoord.y}
                   r="4"
-                  className="fill-white stroke-gold-deep dark:fill-navy-deep dark:stroke-gold"
+                  className="stroke-gold-deep dark:fill-navy-deep dark:stroke-gold fill-white"
                   strokeWidth="2.5"
                 />
               </>
@@ -234,7 +298,9 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
                 textAnchor="middle"
                 className={cn(
                   "text-[11px] font-bold",
-                  i === active ? "fill-gold-deep dark:fill-gold-soft" : "fill-navy/45 dark:fill-wheat",
+                  i === active
+                    ? "fill-gold-deep dark:fill-gold-soft"
+                    : "fill-navy/45 dark:fill-wheat",
                 )}
               >
                 {points[i].label}
@@ -245,16 +311,29 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
           {/* tooltip */}
           {activePoint && activeCoord ? (
             <div
-              className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-2xl border border-gold/30 bg-white/95 px-3 py-2 shadow-lg backdrop-blur-sm dark:bg-navy-deep/95"
-              style={{ left: `${tooltipLeft}%`, top: `${(activeCoord.y / H) * 100}%`, transform: "translate(-50%, calc(-100% - 12px))" }}
+              className="border-gold/30 dark:bg-navy-deep/95 pointer-events-none absolute z-10 -translate-x-1/2 rounded-2xl border bg-white/95 px-3 py-2 shadow-lg backdrop-blur-sm"
+              style={{
+                left: `${tooltipLeft}%`,
+                top: `${(activeCoord.y / H) * 100}%`,
+                transform: "translate(-50%, calc(-100% - 12px))",
+              }}
               dir="rtl"
             >
-              <p className="text-[11px] font-black text-navy dark:text-ivory">
+              <p className="text-navy dark:text-ivory text-[11px] font-black">
                 {activePoint.label}
-                {activePoint.sub ? <span className="text-navy/40 dark:text-wheat"> {activePoint.sub}</span> : null}
+                {activePoint.sub ? (
+                  <span className="text-navy/40 dark:text-wheat">
+                    {" "}
+                    {activePoint.sub}
+                  </span>
+                ) : null}
               </p>
-              <p className="mt-0.5 text-sm font-black text-gold-deep dark:text-gold-soft">{formatToman(activePoint.value)} ت</p>
-              <p className="text-[10px] font-bold text-navy/45 dark:text-wheat">{toFaDigits(activePoint.count)} سفارش</p>
+              <p className="text-gold-deep dark:text-gold-soft mt-0.5 text-sm font-black">
+                {formatToman(activePoint.value)} ت
+              </p>
+              <p className="text-navy/45 dark:text-wheat text-[10px] font-bold">
+                {toFaDigits(activePoint.count)} سفارش
+              </p>
             </div>
           ) : null}
         </div>

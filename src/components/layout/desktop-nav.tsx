@@ -41,14 +41,14 @@ export function DesktopNav() {
         {MAIN_LINKS.map((n) => {
           const Icon = navIcon(n.icon);
           return (
-          <NavigationMenuItem key={n.href}>
-            <NavigationMenuLink asChild>
-              <NavActiveLink href={n.href} className={NAV_LINK}>
-                <Icon className="size-4 text-current" />
-                {n.label}
-              </NavActiveLink>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
+            <NavigationMenuItem key={n.href}>
+              <NavigationMenuLink asChild>
+                <NavActiveLink href={n.href} className={NAV_LINK}>
+                  <Icon className="size-4 text-current" />
+                  {n.label}
+                </NavActiveLink>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
           );
         })}
       </NavigationMenuList>

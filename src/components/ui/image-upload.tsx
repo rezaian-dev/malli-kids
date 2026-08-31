@@ -22,7 +22,10 @@ type Props = {
 };
 
 /** 🪶 Compress a picked image into a light data URL. */
-export async function compressToDataUrl(file: File, opts?: { maxSizeMB?: number; maxWidthOrHeight?: number }): Promise<string> {
+export async function compressToDataUrl(
+  file: File,
+  opts?: { maxSizeMB?: number; maxWidthOrHeight?: number },
+): Promise<string> {
   const compressed = await imageCompression(file, {
     maxSizeMB: opts?.maxSizeMB ?? 0.8,
     maxWidthOrHeight: opts?.maxWidthOrHeight ?? 1280,
@@ -54,7 +57,9 @@ export function ImageUpload({
       if (!file) return;
       setBusy(true);
       try {
-        onChange(await compressToDataUrl(file, { maxSizeMB, maxWidthOrHeight }));
+        onChange(
+          await compressToDataUrl(file, { maxSizeMB, maxWidthOrHeight }),
+        );
       } catch {
         toast("پردازش عکس ناموفق بود؛ دوباره تلاش کنید.");
       } finally {
@@ -79,41 +84,59 @@ export function ImageUpload({
         aria-label="آپلود عکس"
         className={cn(
           "group relative flex cursor-pointer items-center justify-center overflow-hidden border-2 border-dashed text-center transition",
-          isDragActive ? "border-gold bg-gold/10" : "border-navy/20 hover:border-gold/50 dark:border-gold/30",
+          isDragActive
+            ? "border-gold bg-gold/10"
+            : "border-navy/20 hover:border-gold/50 dark:border-gold/30",
           isAvatar ? "size-28 rounded-full" : "aspect-video w-full rounded-2xl",
-          value ? "border-solid" : "bg-white/60 dark:bg-navy-mid/50",
+          value ? "border-solid" : "dark:bg-navy-mid/50 bg-white/60",
         )}
       >
         <input {...getInputProps()} />
 
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element -- 🪶 Local previews can use a raw img.
-          <img src={value} alt="" className="absolute inset-0 size-full object-cover" />
+          <img
+            src={value}
+            alt=""
+            className="absolute inset-0 size-full object-cover"
+          />
         ) : fallback ? (
           fallback
         ) : (
           <div className="p-4">
-            {isAvatar ? <ImagePlus className="mx-auto size-6 text-gold" /> : <Upload className="mx-auto size-7 text-gold" />}
-            {!isAvatar ? <p className="mt-2 text-xs font-bold text-navy/60 dark:text-wheat">{label}</p> : null}
+            {isAvatar ? (
+              <ImagePlus className="text-gold mx-auto size-6" />
+            ) : (
+              <Upload className="text-gold mx-auto size-7" />
+            )}
+            {!isAvatar ? (
+              <p className="text-navy/60 dark:text-wheat mt-2 text-xs font-bold">
+                {label}
+              </p>
+            ) : null}
           </div>
         )}
 
         {/* hover hint when an image already exists */}
         {value && !busy ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-navy-deep/40 opacity-0 transition group-hover:opacity-100">
-            <Upload className="size-6 text-ivory" />
+          <div className="bg-navy-deep/40 absolute inset-0 flex items-center justify-center opacity-0 transition group-hover:opacity-100">
+            <Upload className="text-ivory size-6" />
           </div>
         ) : null}
 
         {busy ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-navy-deep/60 backdrop-blur-sm">
-            <Loader2 className="size-6 animate-spin text-gold" />
+          <div className="bg-navy-deep/60 absolute inset-0 flex items-center justify-center backdrop-blur-sm">
+            <Loader2 className="text-gold size-6 animate-spin" />
           </div>
         ) : null}
       </div>
 
       {value && onClear ? (
-        <button type="button" onClick={onClear} className="mt-2 inline-flex items-center gap-1 text-[11px] font-black text-rose hover:underline">
+        <button
+          type="button"
+          onClick={onClear}
+          className="text-rose mt-2 inline-flex items-center gap-1 text-[11px] font-black hover:underline"
+        >
           <Trash2 className="size-3.5" /> حذف عکس
         </button>
       ) : null}

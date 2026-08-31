@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import type { Product } from "@/types";
 import { findCatalogProduct } from "@/lib/admin-sync";
 
@@ -28,7 +34,9 @@ export function ProductLiveProvider({
 }
 
 export function useLiveProduct(fallback: Product): Product;
-export function useLiveProduct<T extends Pick<Product, "id">>(fallback: T): Product | T;
+export function useLiveProduct<T extends Pick<Product, "id">>(
+  fallback: T,
+): Product | T;
 export function useLiveProduct(fallback: { id: number }) {
   const live = useContext(LiveCtx);
   return live && live.id === fallback.id ? live : fallback;

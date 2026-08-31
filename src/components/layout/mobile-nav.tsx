@@ -36,13 +36,11 @@ export function MobileNav() {
           variant="ghost"
           size="icon"
           aria-label="منو"
-          
-          
+
           className={cn(
             ICON_BTN,
-            "group/menu relative md:hidden hover:bg-gold/15",
-            
-            
+            "group/menu hover:bg-gold/15 relative md:hidden",
+
             "aria-expanded:bg-gold/25 aria-expanded:text-gold-deep dark:aria-expanded:text-gold-light",
           )}
         >
@@ -51,46 +49,64 @@ export function MobileNav() {
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="right" dir="rtl" showCloseButton={false} className={cn(PANEL, "w-[min(20rem,90vw)]")}>
-        <SheetHeader className={cn(PANEL_HEAD, "relative pe-14 py-4")}>
-          <SheetClose asChild className="absolute inset-e-3.5 top-1/2 -translate-y-1/2">
+      <SheetContent
+        side="right"
+        dir="rtl"
+        showCloseButton={false}
+        className={cn(PANEL, "w-[min(20rem,90vw)]")}
+      >
+        <SheetHeader className={cn(PANEL_HEAD, "relative py-4 pe-14")}>
+          <SheetClose
+            asChild
+            className="absolute inset-e-3.5 top-1/2 -translate-y-1/2"
+          >
             <Button
               size="icon-sm"
               variant="ghost"
               aria-label="بستن منو"
-              className="rounded-full text-cream transition-transform duration-300 ease-out hover:scale-105 hover:bg-white/15 hover:text-gold-light"
+              className="text-cream hover:text-gold-light rounded-full transition-transform duration-300 ease-out hover:scale-105 hover:bg-white/15"
             >
               <X className="size-5 text-current" />
             </Button>
           </SheetClose>
-          <SheetTitle className="text-start text-sm font-black text-cream">منوی ملی‌کیدز</SheetTitle>
+          <SheetTitle className="text-cream text-start text-sm font-black">
+            منوی ملی‌کیدز
+          </SheetTitle>
         </SheetHeader>
 
         <nav className="flex flex-col overflow-y-auto px-3 py-2">
           <SheetClose asChild>
             <Link
               href="/shop"
-              className="flex items-center gap-2 border-b border-navy/5 px-2 py-3 text-sm font-bold text-navy dark:border-gold/10 dark:text-ivory"
+              className="border-navy/5 text-navy dark:border-gold/10 dark:text-ivory flex items-center gap-2 border-b px-2 py-3 text-sm font-bold"
             >
-              <LayoutGrid className="size-4 text-gold" /> دسته‌بندی محصولات
+              <LayoutGrid className="text-gold size-4" /> دسته‌بندی محصولات
             </Link>
           </SheetClose>
 
-          <Accordion type="single" collapsible className="border-b border-navy/5 dark:border-gold/10">
+          <Accordion
+            type="single"
+            collapsible
+            className="border-navy/5 dark:border-gold/10 border-b"
+          >
             <AccordionItem value="cats" className="border-0">
-              <AccordionTrigger className="px-2 py-3 text-sm font-bold text-navy hover:no-underline dark:text-ivory">
+              <AccordionTrigger className="text-navy dark:text-ivory px-2 py-3 text-sm font-bold hover:no-underline">
                 <span className="flex items-center gap-2">
-                  <LayoutGrid className="size-4 text-gold" /> زیردسته‌ها
+                  <LayoutGrid className="text-gold size-4" /> زیردسته‌ها
                 </span>
               </AccordionTrigger>
-              <AccordionContent className="pb-2 ps-6">
+              <AccordionContent className="ps-6 pb-2">
                 <div className="flex flex-col">
                   {CAT_LINKS.map((c) => {
                     const Icon = navIcon(c.icon);
                     return (
                       <SheetClose asChild key={c.href}>
-                        <Link href={c.href} className="flex items-center gap-2 py-2.5 text-sm text-navy/70 dark:text-wheat">
-                          <Icon className="size-4 text-gold/80 dark:text-gold" /> {c.label}
+                        <Link
+                          href={c.href}
+                          className="text-navy/70 dark:text-wheat flex items-center gap-2 py-2.5 text-sm"
+                        >
+                          <Icon className="text-gold/80 dark:text-gold size-4" />{" "}
+                          {c.label}
                         </Link>
                       </SheetClose>
                     );
@@ -107,12 +123,12 @@ export function MobileNav() {
                 <Link
                   href={n.href}
                   className={cn(
-                    "flex items-center gap-2 border-b border-navy/5 px-2 py-3 text-sm font-bold text-navy last:border-0",
+                    "border-navy/5 text-navy flex items-center gap-2 border-b px-2 py-3 text-sm font-bold last:border-0",
                     "dark:border-gold/10 dark:text-ivory",
                     isActive(path, n.href) && "text-gold dark:text-gold-light",
                   )}
                 >
-                  <Icon className="size-4 text-gold" /> {n.label}
+                  <Icon className="text-gold size-4" /> {n.label}
                 </Link>
               </SheetClose>
             );

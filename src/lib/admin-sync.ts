@@ -3,7 +3,12 @@ import { seedAdminDb } from "@/lib/admin/admin-data";
 import { CATALOG } from "@/lib/data/products";
 import type { AdminCoupon, AdminReview, FestiveBanner, Product } from "@/types";
 
-type Saved = { products?: Product[]; coupons?: AdminCoupon[]; banners?: FestiveBanner[]; reviews?: AdminReview[] };
+type Saved = {
+  products?: Product[];
+  coupons?: AdminCoupon[];
+  banners?: FestiveBanner[];
+  reviews?: AdminReview[];
+};
 
 function read(): Saved | null {
   if (typeof window === "undefined") return null;

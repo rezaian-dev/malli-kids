@@ -1,5 +1,9 @@
 export { AdminShell, AdminPageHeader } from "./admin-shell";
-export { AdminFilterBar, AdminFilterSelect, AdminStatStrip } from "./admin-filters";
+export {
+  AdminFilterBar,
+  AdminFilterSelect,
+  AdminStatStrip,
+} from "./admin-filters";
 export type { AdminFilterOption, AdminStatItem } from "./admin-filters";
 export { AdminTable } from "./admin-table";
 export type { AdminCol } from "./admin-table";
