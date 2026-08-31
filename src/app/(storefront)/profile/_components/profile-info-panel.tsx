@@ -64,7 +64,7 @@ function isIranianNationalId(value: string) {
 
 function inputClass(error?: string) {
   return [
-    "field-autofill scheme-light h-11 w-full rounded-2xl border bg-transparent px-4 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
+    "h-11 w-full rounded-2xl border bg-transparent px-4 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
     error
       ? "border-rose"
       : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
@@ -73,7 +73,7 @@ function inputClass(error?: string) {
 
 function textAreaClass(error?: string) {
   return [
-    "field-autofill scheme-light min-h-28 w-full rounded-2xl border bg-transparent px-4 py-3 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
+    "min-h-28 w-full rounded-2xl border bg-transparent px-4 py-3 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
     error
       ? "border-rose"
       : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",

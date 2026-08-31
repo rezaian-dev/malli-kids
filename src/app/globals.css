@@ -423,36 +423,18 @@
   }
 }
 
-/* 🖋️ Chrome autofill paints its own fill (yellow, or a dark bar when
-   `color-scheme: dark`). Clip that paint to glyphs so the field stays
-   glassy; text follows `currentColor` from the input itself. */
-@utility field-autofill {
-  color-scheme: light;
-  &:-webkit-autofill,
-  &:-webkit-autofill:hover,
-  &:-webkit-autofill:focus,
-  &:-webkit-autofill:active,
-  &:autofill {
-    caret-color: currentColor;
-    -webkit-text-fill-color: currentColor;
-    background-color: transparent !important;
-    background-image: none !important;
-    -webkit-background-clip: text !important;
-    background-clip: text !important;
-  }
-}
-
 /* ─────────────────────────── 🧱 Base layer ────────────────────────────── */
 @layer base {
   /* 📜 Page scaffold */
   html {
-    @apply bg-atelier max-w-full overflow-x-hidden scroll-smooth;
+    @apply max-w-full overflow-x-hidden scroll-smooth;
     scroll-padding-top: 110px;
     color-scheme: light;
+    background-color: var(--color-atelier);
   }
   html.dark {
-    @apply bg-navy-deep;
     color-scheme: dark;
+    background-color: var(--color-navy-deep);
   }
   main {
     @apply min-w-0 overflow-x-clip;
@@ -460,31 +442,55 @@
 
   /* 🖱️ Selection & focus */
   ::selection {
-    @apply bg-gold/55 text-navy-deep;
+    background: color-mix(in srgb, var(--color-gold) 55%, transparent);
+    color: var(--color-navy-deep);
   }
   .dark ::selection {
-    @apply bg-gold-glow/45 text-ivory;
+    background: color-mix(in srgb, var(--color-gold-glow) 45%, transparent);
+    color: var(--color-ivory);
   }
   :focus-visible {
-    @apply outline-gold outline-2 outline-offset-[3px];
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
   }
 
-  /* 🧍 Body — linen atelier canvas. Grain + graphic live on BackgroundScene. */
+  /* 🧍 Body — linen atelier canvas; grain sits above. Scene paints the graphic. */
   body {
-    @apply bg-atelier text-navy dark:bg-navy-deep dark:text-ivory min-h-dvh max-w-full overflow-x-hidden antialiased;
+    @apply text-navy dark:text-ivory min-h-dvh max-w-full overflow-x-hidden antialiased;
     font-family: var(--font-vazir), Vazirmatn, Tahoma, sans-serif;
+    background-color: var(--color-atelier);
+    background-image: none;
+  }
+  .dark body {
+    background-color: var(--color-navy-deep);
+    background-image: none;
+  }
+  body::before {
+    content: "";
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .dark body::before {
+    opacity: 0.14;
   }
 
   /* 🔽 Scrollbar */
   ::-webkit-scrollbar {
-    @apply size-2.5;
+    width: 10px;
+    height: 10px;
   }
   ::-webkit-scrollbar-thumb {
-    @apply rounded-full border-2 border-transparent bg-clip-padding;
     background: color-mix(in srgb, var(--color-gold) 70%, var(--color-navy));
+    border-radius: 99px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    background: transparent;
   }
 
   * {
@@ -498,13 +504,8 @@
   }
 }
 
-/* 🖋️ Unlayered so it beats Chrome's UA `!important` autofill fill.
-   `color-scheme: light` stops the dark-mode inner bar; clip + currentColor
-   keep the field glassy and the text in the input's own color. */
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-textarea {
-  color-scheme: light;
-}
+/* 🖋️ Autofill — cancel Chrome's fill (author !important beats UA fill).
+   Input stays glassy; text color follows theme. No color-scheme override. */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -512,12 +513,42 @@ input:-webkit-autofill:active,
 input:autofill,
 textarea:-webkit-autofill,
 textarea:autofill {
-  caret-color: currentColor;
-  -webkit-text-fill-color: currentColor !important;
+  -webkit-text-fill-color: var(--color-navy);
+  caret-color: var(--color-navy);
   background-color: transparent !important;
   background-image: none !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
+  transition:
+    background-color 9999s ease-in-out 0s,
+    color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active,
+.dark input:autofill,
+.dark textarea:-webkit-autofill,
+.dark textarea:autofill {
+  -webkit-text-fill-color: var(--color-ivory);
+  caret-color: var(--color-ivory);
+  background-color: transparent !important;
+  background-image: none !important;
+}
+input.newsletter-field:-webkit-autofill,
+input.newsletter-field:-webkit-autofill:hover,
+input.newsletter-field:-webkit-autofill:focus,
+input.newsletter-field:-webkit-autofill:active,
+input.newsletter-field:autofill {
+  -webkit-text-fill-color: var(--color-cream);
+  caret-color: var(--color-cream);
+  background-color: transparent !important;
+  background-image: none !important;
+  transition:
+    background-color 9999s ease-in-out 0s,
+    color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 /* 🔄 nextjs-toploader — gold gradient anchored to the right (RTL-friendly) */
