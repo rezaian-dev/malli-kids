@@ -93,7 +93,7 @@ export default async function ProductPage({
           <div className={shell}>
             <nav
               aria-label="مسیر محصول"
-              className={`${pdpCard} mb-6 px-4 py-1.5 sm:mb-8 sm:px-5`}
+              className={`${pdpCard} mb-4 px-3 py-1.5 sm:mb-8 sm:px-5`}
             >
               <ol className="text-navy/45 dark:text-wheat flex flex-wrap items-center gap-1.5 text-xs font-bold">
                 <li>
@@ -126,17 +126,17 @@ export default async function ProductPage({
 
             {related.length ? (
               <section
-                className={`${pdpCard} mt-10 p-5 sm:mt-12 sm:p-7`}
+                className={`${pdpCard} mt-8 p-4 sm:mt-12 sm:p-7`}
                 aria-labelledby="related-products-heading"
               >
                 <p className={pdpKicker}>COMPLETE THE LOOK</p>
                 <h2
                   id="related-products-heading"
-                  className="text-navy dark:text-ivory mt-1 mb-6 text-xl font-black"
+                  className="text-navy dark:text-ivory mt-1 mb-4 text-lg font-black sm:mb-6 sm:text-xl"
                 >
                   مدل‌های مشابه
                 </h2>
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4">
+                <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] sm:gap-4">
                   {related.map((item) => (
                     <ProductCard key={item.id} p={item} view="grid" />
                   ))}

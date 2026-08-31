@@ -55,7 +55,7 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
 
   if (!user || !purchased) {
     return (
-      <p className="border-navy/15 bg-sand text-navy/55 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat rounded-3xl border border-dashed px-5 py-4 text-sm">
+      <p className="border-navy/15 bg-sand text-navy/55 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat rounded-2xl border border-dashed px-4 py-4 text-sm leading-7 sm:rounded-3xl sm:px-5">
         ثبت نظر فقط پس از خرید و ورود ممکن است.
       </p>
     );

@@ -135,10 +135,10 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
   const go = (n: number) => setSlide((n + gallery.length) % gallery.length);
 
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-[1.08fr_.92fr] lg:gap-8">
+    <div className="grid min-w-0 items-start gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,.92fr)] lg:gap-8">
       <div className="min-w-0 lg:sticky lg:top-24">
         <div
-          className="border-navy/10 bg-sand/55 ring-gold/35 dark:border-gold/30 dark:bg-dusk relative aspect-4/5 overflow-hidden rounded-[28px] border shadow-[0_28px_60px_-32px_rgba(14,42,71,.42)] ring-1 select-none sm:rounded-[36px]"
+          className="border-navy/10 bg-sand/55 ring-gold/35 dark:border-gold/30 dark:bg-dusk relative aspect-4/5 overflow-hidden rounded-[22px] border shadow-[0_28px_60px_-32px_rgba(14,42,71,.42)] ring-1 select-none sm:rounded-[36px]"
           onTouchStart={(e) => {
             e.currentTarget.dataset.x = String(e.changedTouches[0].clientX);
           }}
@@ -148,10 +148,10 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
             if (Math.abs(dx) > 40) go(slide + (dx > 0 ? -1 : 1));
           }}
         >
-          <span className="border-gold/70 pointer-events-none absolute top-4 right-4 z-10 h-8 w-8 rounded-tr-lg border-t-2 border-r-2 sm:top-5 sm:right-5" />
-          <span className="border-gold/70 pointer-events-none absolute top-4 left-4 z-10 h-8 w-8 rounded-tl-lg border-t-2 border-l-2 sm:top-5 sm:left-5" />
-          <span className="border-gold/70 pointer-events-none absolute right-4 bottom-4 z-10 h-8 w-8 rounded-br-lg border-r-2 border-b-2 sm:right-5 sm:bottom-5" />
-          <span className="border-gold/70 pointer-events-none absolute bottom-4 left-4 z-10 h-8 w-8 rounded-bl-lg border-b-2 border-l-2 sm:bottom-5 sm:left-5" />
+          <span className="border-gold/70 pointer-events-none absolute top-3 right-3 z-10 hidden h-6 w-6 rounded-tr-lg border-t-2 border-r-2 min-[400px]:block sm:top-5 sm:right-5 sm:h-8 sm:w-8" />
+          <span className="border-gold/70 pointer-events-none absolute top-3 left-3 z-10 hidden h-6 w-6 rounded-tl-lg border-t-2 border-l-2 min-[400px]:block sm:top-5 sm:left-5 sm:h-8 sm:w-8" />
+          <span className="border-gold/70 pointer-events-none absolute right-3 bottom-3 z-10 hidden h-6 w-6 rounded-br-lg border-r-2 border-b-2 min-[400px]:block sm:right-5 sm:bottom-5 sm:h-8 sm:w-8" />
+          <span className="border-gold/70 pointer-events-none absolute bottom-3 left-3 z-10 hidden h-6 w-6 rounded-bl-lg border-b-2 border-l-2 min-[400px]:block sm:bottom-5 sm:left-5 sm:h-8 sm:w-8" />
           <div
             className="absolute inset-0 flex h-full transition-transform duration-500"
             style={{ transform: `translateX(${-slide * 100}%)` }}
@@ -170,7 +170,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
               />
             ))}
           </div>
-          <div className="pointer-events-none absolute inset-x-12 top-5 z-10 flex justify-between sm:inset-x-14">
+          <div className="pointer-events-none absolute inset-x-3 top-3 z-10 flex justify-between min-[400px]:inset-x-12 min-[400px]:top-5 sm:inset-x-14">
             {product.disc ? (
               <span className="bg-rose rounded-full px-3 py-1.5 text-[11px] font-black text-white">
                 {product.disc} تخفیف
@@ -219,7 +219,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
                 key={src}
                 type="button"
                 onClick={() => go(i)}
-                className={`h-18 w-18 shrink-0 overflow-hidden rounded-2xl border-2 ${i === slide ? "border-gold ring-gold/30 ring-2" : "border-navy/10 opacity-70 dark:border-gold/20"}`}
+                className={`size-14 shrink-0 overflow-hidden rounded-xl border-2 sm:size-[4.5rem] sm:rounded-2xl ${i === slide ? "border-gold ring-gold/30 ring-2" : "border-navy/10 opacity-70 dark:border-gold/20"}`}
               >
                 <Image
                   src={src}
@@ -234,12 +234,12 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
         </div>
       </div>
 
-      <div className={`${pdpCard} p-5 sm:p-7`}>
+      <div className={`${pdpCard} p-4 sm:p-7`}>
         <p className={pdpKicker}>{product.cat}</p>
-        <h1 className="text-navy dark:text-ivory mt-2 text-[clamp(1.5rem,4vw,2.25rem)] leading-snug font-black">
+        <h1 className="text-navy dark:text-ivory mt-2 text-[clamp(1.25rem,6.4vw,2.25rem)] leading-snug font-black">
           {product.name}
         </h1>
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="flex gap-0.5" aria-hidden>
             {[0, 1, 2, 3, 4].map((n) => (
               <Star key={n} className="fill-gold text-gold size-4" />
@@ -300,7 +300,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
                 key={s}
                 type="button"
                 onClick={() => setSize(s)}
-                className={`rounded-xl border-2 px-3.5 py-2 text-xs font-bold ${size === s ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep" : "border-navy/10 text-navy/60 dark:border-gold/30 dark:text-ivory"}`}
+                className={`min-h-10 min-w-10 rounded-xl border-2 px-2.5 py-2 text-[11px] font-bold sm:px-3.5 sm:text-xs ${size === s ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep" : "border-navy/10 text-navy/60 dark:border-gold/30 dark:text-ivory"}`}
               >
                 {s}
               </button>
@@ -337,7 +337,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
               type="button"
               variant="navy"
               disabled={!product.stock}
-              className="h-12 w-full rounded-2xl font-black"
+              className="h-auto min-h-12 w-full rounded-2xl px-3 py-3 text-[13px] leading-5 font-black whitespace-normal sm:text-sm"
               onClick={() => {
                 if (!product.stock)
                   return showToast("به محض موجود شدن خبرتان می‌کنیم");
@@ -357,7 +357,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
             type="button"
             variant="gold"
             disabled={!product.stock}
-            className="mt-2.5 h-12 w-full rounded-2xl font-black"
+            className="mt-2.5 h-auto min-h-12 w-full rounded-2xl px-3 py-3 text-[13px] leading-5 font-black whitespace-normal sm:text-sm"
             onClick={openCheckout}
           >
             <BadgeCheck className="size-4" /> ثبت سفارش — پرداخت هنگامِ تحویل
@@ -365,7 +365,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
           <Button
             asChild
             variant="outline"
-            className="border-gold text-gold hover:bg-gold hover:text-navy-deep mt-2.5 h-12 w-full rounded-2xl border-2 font-black"
+            className="border-gold text-gold hover:bg-gold hover:text-navy-deep mt-2.5 h-auto min-h-12 w-full rounded-2xl border-2 px-3 py-3 text-[13px] leading-5 font-black whitespace-normal sm:text-sm"
           >
             <Link href="/tryon">
               <Sparkles className="size-4" /> پرو مجازی این لباس
