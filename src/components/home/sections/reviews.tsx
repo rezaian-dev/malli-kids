@@ -9,8 +9,8 @@ export function Reviews() {
       id="testimonials"
       className={`${wash.navy} py-12 sm:py-16 lg:py-20`}
     >
-      <div className="bg-gold/15 pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl" />
-      <div className="bg-navy/10 pointer-events-none absolute -bottom-28 -left-20 h-80 w-80 rounded-full blur-3xl" />
+      <div className="bg-gold/15 pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl dark:hidden" />
+      <div className="bg-navy/10 pointer-events-none absolute -bottom-28 -left-20 h-80 w-80 rounded-full blur-3xl dark:hidden" />
       <span className="font-display pointer-events-none absolute bottom-8 left-8 hidden -rotate-6 text-[110px] leading-none text-transparent select-none [-webkit-text-stroke:1.5px_rgba(193,147,87,.55)] xl:block">
         loved
       </span>

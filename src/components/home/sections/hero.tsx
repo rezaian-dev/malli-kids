@@ -11,7 +11,7 @@ export function Hero() {
       id="heroSection"
       className={`${wash.gold} pt-8 pb-14 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24`}
     >
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden dark:hidden">
         <div className="animate-silk-glow bg-gold/32 xs:size-88 pointer-events-none absolute -inset-s-16 -top-28 size-72 rounded-full blur-[56px]" />
         <div className="bg-navy/16 xs:size-96 pointer-events-none absolute -inset-e-20 top-24 size-80 rounded-full blur-[64px]" />
         <div className="animate-silk-glow bg-gold-soft/24 pointer-events-none absolute inset-s-[28%] bottom-[-10%] size-72 rounded-full blur-[52px] [animation-delay:-7s]" />
