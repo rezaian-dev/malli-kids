@@ -123,8 +123,18 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
           }}
         >
           <div className="absolute inset-0 flex h-full transition-transform duration-500" style={{ transform: `translateX(${-slide * 100}%)` }}>
-            {gallery.map((src) => (
-              <Image key={src} src={src} alt={product.name} width={900} height={1200} className="h-full w-full shrink-0 object-cover" />
+            {gallery.map((src, index) => (
+              <Image
+                key={src}
+                src={src}
+                alt={product.name}
+                width={900}
+                height={1200}
+                preload={index === 0}
+                loading={index === 0 ? "eager" : "lazy"}
+                sizes="(max-width: 1023px) 100vw, 44vw"
+                className="h-full w-full shrink-0 object-cover"
+              />
             ))}
           </div>
           <div className="pointer-events-none absolute inset-x-4 top-4 z-10 flex justify-between">

@@ -5,7 +5,14 @@ export function Find() {
   return (
     <section id="searchHome" className="relative overflow-visible py-16 sm:py-24">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <Image src="/brand/search-bg.jpg" alt="" width={1600} height={900} loading="eager" className="absolute inset-0 h-full w-full scale-105 object-cover" />
+          <Image
+            src="/brand/search-bg.jpg"
+            alt=""
+            width={1600}
+            height={900}
+            sizes="100vw"
+            className="absolute inset-0 h-full w-full scale-105 object-cover"
+          />
           <div className="absolute inset-0 bg-navy-deep/45" />
           <div className="absolute inset-0 bg-linear-to-l from-navy/60 via-navy/25 to-navy/60" />
         </div>

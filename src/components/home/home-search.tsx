@@ -1,15 +1,12 @@
 "use client";
 
 import Image from "next/image";
-
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Baby, Flame, Search as SearchIcon, Shirt, Sparkles, TrendingUp } from "lucide-react";
 import { CORE_PRODUCTS } from "@/lib/data/products";
 import { cn } from "@/lib/utils";
 import { formatToman } from "@/lib/format";
-import { AppForm, ERROR_TEXT, useAppForm } from "@/components/form";
-import { searchDefaults, searchSchema, type SearchValues } from "./schema";
 
 const CHIPS = [
   { q: "پیراهن", Icon: Shirt },
@@ -18,40 +15,57 @@ const CHIPS = [
   { q: "دستدوز", Icon: Sparkles },
 ];
 
+const MIN_QUERY = 2;
+const MAX_QUERY = 60;
+const ERROR_TEXT = "mt-2 text-xs font-bold text-rose-200";
+
+// 🔎 Tiny home search without form-runtime overhead.
 export function HomeSearch() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const form = useAppForm({ schema: searchSchema, defaultValues: searchDefaults, mode: "onSubmit" });
-  const q = form.watch("q");
-  const errors = form.formState.errors;
-  const qField = form.register("q");
+  const [query, setQuery] = useState("");
+  const [error, setError] = useState("");
+  const q = query.trim();
 
   const hits = useMemo(() => {
-    const s = q.trim();
-    if (!s) return [];
-    return CORE_PRODUCTS.filter((p) => p.name.includes(s) || p.cat.includes(s)).slice(0, 5);
+    if (!q) return [];
+    return CORE_PRODUCTS.filter((p) => p.name.includes(q) || p.cat.includes(q)).slice(0, 5);
   }, [q]);
 
-  /** جست‌وجوی دستی با Enter یا دکمه؛ اعتبارسنجی فرم برای عبارت تایپ‌شده حفظ می‌شود. */
-  function goShop({ q: value }: SearchValues) {
-    const v = value.trim();
-    router.push(v ? `/shop?q=${encodeURIComponent(v)}` : "/shop");
+  function goShop(value: string) {
+    const next = value.trim();
+
+    if (next !== "" && next.length < MIN_QUERY) {
+      setError("برای جستجو حداقل ۲ حرف بنویسید");
+      return;
+    }
+
+    setError("");
+    router.push(next ? `/shop?q=${encodeURIComponent(next)}` : "/shop");
   }
 
-  /** انتخاب پیشنهاد یک اقدام قطعی است و بدون Submit دوم مستقیماً نتایج را باز می‌کند. */
   function selectSuggestion(value: string) {
-    const v = value.trim();
-    if (!v) return;
-    form.setValue("q", v, { shouldDirty: true });
-    form.clearErrors("q");
+    const next = value.trim();
+    if (!next) return;
+
+    setQuery(next);
+    setError("");
     setOpen(false);
-    router.push(`/shop?q=${encodeURIComponent(v)}`);
+    router.push(`/shop?q=${encodeURIComponent(next)}`);
   }
 
   return (
     <div className="mt-8 text-right">
       <div className="relative">
-        <AppForm form={form} onSubmit={goShop} ariaLabel="جستجوی محصولات" role="search" className="relative z-20">
+        <form
+          role="search"
+          aria-label="جستجوی محصولات"
+          className="relative z-20"
+          onSubmit={(event) => {
+            event.preventDefault();
+            goShop(query);
+          }}
+        >
           <div className="flex items-center gap-1.5 rounded-3xl border border-gold/40 bg-white/85 p-1.5 shadow-[0_18px_50px_-18px_rgba(193,147,87,.55)] backdrop-blur-xl sm:p-2.5 xs:gap-2 xs:p-2">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-gold/25 to-gold/10 text-gold-deep ring-1 ring-gold/30">
               <SearchIcon className="size-5" />
@@ -61,38 +75,37 @@ export function HomeSearch() {
               type="search"
               autoComplete="off"
               aria-label="جستجوی محصولات"
-              aria-invalid={Boolean(errors.q) || undefined}
-              aria-describedby={errors.q ? "homeSearch-msg" : undefined}
+              aria-invalid={Boolean(error) || undefined}
+              aria-describedby={error ? "homeSearch-msg" : undefined}
+              maxLength={MAX_QUERY}
               placeholder="پیراهن، سیسمونی…"
-              {...qField}
-              onChange={(e) => {
-                qField.onChange(e);
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setError("");
                 setOpen(true);
               }}
               onFocus={() => setOpen(true)}
-              onBlur={(e) => {
-                qField.onBlur(e);
-                window.setTimeout(() => setOpen(false), 180);
-              }}
+              onBlur={() => window.setTimeout(() => setOpen(false), 180)}
               className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-navy outline-none placeholder:text-navy/40 sm:text-base"
             />
             <button type="submit" className="shrink-0 rounded-2xl bg-navy px-4 py-3 text-xs font-black text-ivory sm:px-6 sm:text-sm">
               جستجو
             </button>
           </div>
-          {errors.q ? (
+          {error ? (
             <p id="homeSearch-msg" role="alert" className={cn(ERROR_TEXT, "text-ivory/90 dark:text-ivory")}>
-              {errors.q.message}
+              {error}
             </p>
           ) : null}
-        </AppForm>
+        </form>
 
         <div
           className={`absolute inset-x-0 top-full z-30 mt-2 rounded-2xl border border-gold/35 bg-paper shadow-xl dark:border-gold/40 dark:bg-dusk ${
             open ? "visible opacity-100" : "pointer-events-none invisible opacity-0"
           }`}
         >
-          {!q.trim() ? (
+          {!q ? (
             <div className="p-4">
               <p className="mb-3 flex items-center gap-1.5 text-[11px] font-bold text-navy/50 dark:text-gold-soft">
                 <TrendingUp className="size-4 text-gold" /> جستجوهای پرتکرار
@@ -113,7 +126,7 @@ export function HomeSearch() {
               </div>
             </div>
           ) : hits.length === 0 ? (
-            <p className="px-5 py-6 text-center text-sm font-bold text-navy/55 dark:text-wheat">نتیجه‌ای برای «{q.trim()}» نیست</p>
+            <p className="px-5 py-6 text-center text-sm font-bold text-navy/55 dark:text-wheat">نتیجه‌ای برای «{q}» نیست</p>
           ) : (
             <ul className="max-h-72 overflow-y-auto py-1">
               {hits.map((p) => (
@@ -124,7 +137,7 @@ export function HomeSearch() {
                     onClick={() => selectSuggestion(p.name)}
                     className="flex w-full items-center gap-3 px-3.5 py-2.5 text-start hover:bg-gold/10 focus-visible:bg-gold/10"
                   >
-                    <Image src={p.img} alt="" width={40} height={48} className="h-12 w-10 shrink-0 rounded-lg object-cover" />
+                    <Image src={p.img} alt="" width={40} height={48} sizes="40px" className="h-12 w-10 shrink-0 rounded-lg object-cover" />
                     <span className="min-w-0 flex-1 text-start">
                       <span className="block truncate text-sm font-black text-navy dark:text-ivory">{p.name}</span>
                       <span className="block text-[11px] text-navy/45 dark:text-wheat">{p.cat}</span>

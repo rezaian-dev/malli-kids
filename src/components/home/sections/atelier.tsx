@@ -24,7 +24,14 @@ export function Atelier() {
             <Image src="/brand/cat-girl-portrait.jpg" alt="مدل دوخته‌شده با الگوی آماده" width={922} height={1152} quality={95} className="h-44 w-full object-cover object-top min-[420px]:h-52 sm:h-75" />
           </div>
           <div className="absolute top-4 left-1 z-20 h-20 w-20 animate-floaty overflow-hidden rounded-xl border-4 border-white shadow-xl rotate-6 min-[420px]:h-24 min-[420px]:w-24 sm:top-6 sm:left-8 sm:h-28 sm:w-28 sm:rounded-2xl">
-            <Image src="/brand/look-knit-portrait.jpg" alt="نمونه بافت" width={768} height={1152} quality={95} className="h-full w-full object-cover object-top" />
+            <Image
+              src="/brand/look-knit-portrait.jpg"
+              alt="نمونه بافت"
+              width={768}
+              height={1152}
+              sizes="(max-width: 639px) 5rem, 7rem"
+              className="h-full w-full object-cover object-top"
+            />
           </div>
           <div className="absolute -bottom-1 right-4 z-20 flex items-center gap-2 rounded-xl bg-navy px-4 py-2.5 text-cream shadow-xl sm:-bottom-2 sm:right-12 sm:rounded-2xl sm:px-5 sm:py-3">
             <Scissors className="h-4 w-4 shrink-0 text-gold" />

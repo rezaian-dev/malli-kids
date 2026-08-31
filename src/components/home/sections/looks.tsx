@@ -12,7 +12,14 @@ export function Looks() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           {LOOKS.map((c) => (
             <a key={c.t} href={c.href} className="group relative min-h-50 overflow-hidden rounded-[28px] border border-white/0 bg-navy shadow-[0_18px_40px_-22px_rgba(14,42,71,.45)] transition-all duration-500 hover:-translate-y-2 hover:border-gold/50 hover:shadow-[0_24px_50px_-18px_rgba(193,147,87,.35)] sm:min-h-65">
-              <Image src={c.img} alt={c.t} width={600} height={800} className="absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-700 group-hover:scale-105" />
+              <Image
+                src={c.img}
+                alt={c.t}
+                width={600}
+                height={800}
+                sizes="(max-width: 639px) calc(100vw - 2rem), 33vw"
+                className="absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-700 group-hover:scale-105"
+              />
               <div className="absolute inset-0 bg-linear-to-t from-navy-deep via-navy/35 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-5">
                 <p className="text-[10px] font-bold tracking-[0.2em] text-gold-light">{c.k}</p>

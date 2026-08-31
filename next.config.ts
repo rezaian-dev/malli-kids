@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // 🧪 Skip dev gzip to avoid noisy upstream listener warnings in Next 16.
+  compress: process.env.NODE_ENV === "production",
   // 🔐 Allow local and Arena preview origins in dev.
   allowedDevOrigins: ["*.e2b.app", "127.0.0.1", "localhost"],
   images: {

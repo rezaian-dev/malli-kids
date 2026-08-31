@@ -57,7 +57,14 @@ export function TryOn() {
             </div>
             <div className="relative mt-2 lg:mt-0">
               <div className="relative overflow-hidden rounded-2xl border border-white/15 shadow-2xl sm:rounded-[28px]">
-                <Image src="/brand/look-tryon.jpg" alt="پرو مجازی با هوش مصنوعی" width={800} height={600} className="aspect-4/3 h-full w-full object-cover" />
+                <Image
+                  src="/brand/look-tryon.jpg"
+                  alt="پرو مجازی با هوش مصنوعی"
+                  width={800}
+                  height={600}
+                  sizes="(max-width: 1023px) 100vw, 44vw"
+                  className="aspect-4/3 h-full w-full object-cover"
+                />
                 <div className="absolute inset-0 bg-linear-to-t from-navy-deep/80 via-transparent to-navy/20" />
                 <div className="absolute inset-x-0 h-16 animate-scan bg-linear-to-b from-transparent via-gold/25 to-transparent" />
                 <div className="absolute top-4 right-4 h-8 w-8 rounded-tr-lg border-t-2 border-r-2 border-gold-light sm:top-5 sm:right-5 sm:h-10 sm:w-10" />

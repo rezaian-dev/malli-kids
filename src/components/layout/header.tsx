@@ -11,7 +11,7 @@ import { NoticesBell } from "./notices-bell";
 import { CartSheet } from "./cart-sheet";
 import { MobileNav } from "./mobile-nav";
 
-// 🧭 Server shell with small client islands for interactive actions.
+// 🧭 Server shell with small client islands.
 export function Header() {
   return (
     <header dir="rtl" className="fixed inset-x-0 top-0 z-[70]">
@@ -31,7 +31,7 @@ export function Header() {
               alt="لوگوی ملی‌کیدز"
               width={36}
               height={36}
-              priority
+              sizes="36px"
               className="size-8 object-contain sm:size-9 dark:hidden"
             />
             <Image
@@ -40,7 +40,7 @@ export function Header() {
               aria-hidden
               width={36}
               height={36}
-              priority
+              sizes="36px"
               className="hidden size-8 object-contain sm:size-9 dark:block"
             />
             <span className="hidden leading-none min-[480px]:block md:hidden lg:block">
@@ -49,10 +49,10 @@ export function Header() {
             </span>
           </Link>
 
-          {/* ناوبری دسکتاپ — جزیرهٔ client؛ با تغییر مسیر منو را می‌بندد */}
+          {/* 🧭 Desktop nav closes itself on route change. */}
           <DesktopNav />
 
-          {/* خوشهٔ اکشن‌ها */}
+          {/* ⚡ Interactive actions stay isolated in tiny islands. */}
           <div className="ms-auto flex shrink-0 items-center gap-1.5 min-[360px]:gap-2 md:gap-1.5 lg:gap-2">
             <UserMenu />
 

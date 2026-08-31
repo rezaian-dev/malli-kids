@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowDownNarrowWide, ArrowUpDown, ArrowUpNarrowWide, Check, LayoutGrid, List, Search, SlidersHorizontal, Sparkles, Star, Tag, X } from "lucide-react";
 import { CATALOG, SEASONS } from "@/lib/data/products";
 import { loadCatalog } from "@/lib/admin-sync";
@@ -10,8 +10,7 @@ import { formatToman, toFaDigits } from "@/lib/format";
 import { ProductCard } from "@/components/product";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AppForm, Field, useAppForm } from "@/components/form";
-import { shopFiltersSchema, type ShopFiltersValues } from "../_lib/shop-schema";
+import { toShopHref, type ShopState } from "../_lib/shop-state";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
@@ -35,7 +34,7 @@ const SORT_META = [
   { k: "rate", label: "بیشترین امتیاز", hint: "محبوب مادران", Icon: Star },
 ] as const;
 
-const STATUS: { label: string; key: keyof State; hint: string }[] = [
+const STATUS: { label: string; key: keyof ShopState; hint: string }[] = [
   { label: "فقط موجود", key: "stock", hint: "کالاهای آمادهٔ ارسال" },
   { label: "تخفیف‌دار", key: "disc", hint: "دارای قیمت ویژه" },
   { label: "پرفروش", key: "hot", hint: "منتخب مادران" },
@@ -45,80 +44,30 @@ const STATUS: { label: string; key: keyof State; hint: string }[] = [
 const PRICE_STEP = 50_000;
 const SECTION_LABEL = "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-gold uppercase";
 
-type State = {
-  cat: string;
-  season: string;
-  page: number;
-  sort: string;
-  view: "grid" | "list";
-  stock: boolean;
-  disc: boolean;
-  hot: boolean;
-  onlyNew: boolean;
-  q: string;
-  min: number;
-  max: number;
-};
-
-export function ShopExplorer() {
+export function ShopExplorer({ state }: { state: ShopState }) {
   const [catalog, setCatalog] = useState(CATALOG);
-  useEffect(() => setCatalog(loadCatalog()), []);
-  const params = useSearchParams();
   const router = useRouter();
-  const path = usePathname();
   const [filterOpen, setFilterOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [sortPopOpen, setSortPopOpen] = useState(false);
-  const requestedCategory = params.get("cat");
-  const activeCategory = requestedCategory && CATS.some((category) => category === requestedCategory) ? requestedCategory : "همه";
+  const [query, setQuery] = useState(state.q);
 
-  const state = useMemo<State>(
-    () => ({
-      cat: activeCategory,
-      season: params.get("season") || "همه",
-      page: parseInt(params.get("page") || "1", 10) || 1,
-      sort: params.get("sort") || "new",
-      view: params.get("view") === "list" ? "list" : "grid",
-      stock: params.get("stock") === "1",
-      disc: params.get("disc") === "1",
-      hot: params.get("hot") === "1",
-      onlyNew: params.get("new") === "1",
-      q: (params.get("q") || "").trim(),
-      min: parseInt(params.get("min") || "0", 10) || 0,
-      max: parseInt(params.get("max") || String(PRICE_CAP), 10),
-    }),
-    [activeCategory, params],
+  useEffect(() => setCatalog(loadCatalog()), []);
+
+  const push = useCallback(
+    (next: Partial<ShopState>) => {
+      router.push(toShopHref({ ...state, ...next }), { scroll: false });
+    },
+    [router, state],
   );
 
-  // Local slider range for smooth dragging; committed to the URL on release.
+  // 🎚️ Keep slider drag smooth, then commit on release.
   const [range, setRange] = useState<[number, number]>([state.min, state.max]);
   useEffect(() => setRange([state.min, state.max]), [state.min, state.max]);
 
-  // 🔎 Keep the search box and URL in sync.
-  const filters = useAppForm({
-    schema: shopFiltersSchema,
-    defaultValues: { q: state.q },
-    mode: "onSubmit",
-  });
-  const typedQ = (filters.watch("q") || "").trim();
-
-  function push(next: Partial<State>) {
-    const s = { ...state, ...next };
-    const usp = new URLSearchParams();
-    if (s.cat !== "همه") usp.set("cat", s.cat);
-    if (s.season !== "همه") usp.set("season", s.season);
-    if (s.page > 1) usp.set("page", String(s.page));
-    if (s.sort !== "new") usp.set("sort", s.sort);
-    if (s.view === "list") usp.set("view", "list");
-    if (s.stock) usp.set("stock", "1");
-    if (s.disc) usp.set("disc", "1");
-    if (s.hot) usp.set("hot", "1");
-    if (s.onlyNew) usp.set("new", "1");
-    if (s.q) usp.set("q", s.q);
-    if (s.min) usp.set("min", String(s.min));
-    if (s.max !== PRICE_CAP) usp.set("max", String(s.max));
-    router.push(`${path}?${usp}`, { scroll: false });
-  }
+  // 🔎 Keep the search input synced with the URL.
+  useEffect(() => setQuery(state.q), [state.q]);
+  const typedQ = query.trim();
 
   const filtered = useMemo(() => {
     const list = catalog.filter((p) => {
@@ -157,25 +106,20 @@ export function ShopExplorer() {
 
   const activeN = activeChips.length;
 
-  /** «Enter» یعنی ثبتِ فیلترِ جستجو: به صفحهٔ اول می‌رویم و پنلِ موبایل بسته می‌شود */
-  function commitFilters(v: ShopFiltersValues) {
-    push({ q: v.q.trim(), page: 1 });
+  function commitQuery() {
+    if (typedQ.length === 1) return;
+    push({ q: typedQ, page: 1 });
     setFilterOpen(false);
   }
 
-  /** آدرس از بیرون عوض شد (لینک، دکمهٔ «پاک کردن»، بازگشت) → فرم هم‌راستا می‌شود */
   useEffect(() => {
-    if (state.q !== filters.getValues("q")) filters.reset({ q: state.q });
-  }, [state.q, filters]);
-
-  /** تایپِ معتبر → URL. یک‌حرفی هنوز معتبر نیست، پس آدرس دست‌نخورده می‌ماند. */
-  useEffect(() => {
-    if (typedQ.length === 1) return;
-    if (typedQ !== state.q) push({ q: typedQ, page: 1 });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [typedQ]);
+    if (typedQ.length === 1 || typedQ === state.q) return;
+    const id = window.setTimeout(() => push({ q: typedQ, page: 1 }), 180);
+    return () => window.clearTimeout(id);
+  }, [typedQ, state.q, push]);
 
   function reset() {
+    setQuery("");
     push({ cat: "همه", season: "همه", q: "", stock: false, disc: false, hot: false, onlyNew: false, min: 0, max: PRICE_CAP, page: 1 });
   }
 
@@ -221,43 +165,31 @@ export function ShopExplorer() {
 
   /* ---------- Filter body (shared by desktop sidebar + mobile Sheet) ---------- */
   const filterBody = (
-    <AppForm
-      form={filters}
-      onSubmit={commitFilters}
-      ariaLabel="فیلتر محصولات"
-      className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-5"
-    >
-      {/* Search */}
+    <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-5">
+      {/* 🔎 Search */}
       <div className="space-y-2.5">
-        <Field name="q" skin="soft" noShell label={<><Search className="size-3.5" /> جستجو</>} labelClassName={SECTION_LABEL}>
-          {({ field, invalid, id, describedBy }) => (
-            <span className="relative block">
-              <Search className="pointer-events-none absolute end-3.5 top-1/2 size-4 -translate-y-1/2 text-gold" />
-              <Input
-                id={id}
-                type="search"
-                inputMode="search"
-                autoComplete="off"
-                placeholder="پیراهن، سیسمونی…"
-                aria-invalid={invalid || undefined}
-                aria-describedby={describedBy}
-                name={field.name}
-                value={(field.value as string) ?? ""}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-                onKeyDown={(e) => {
-                  // فرمِ فیلترها دکمهٔ submit ندارد، پس «Enter» را خودکار می‌فرستیم
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    void filters.handleSubmit(commitFilters)();
-                  }
-                }}
-                ref={field.ref}
-                className="h-12 rounded-2xl border-navy/12 bg-white pe-11 ps-4 text-sm font-bold text-navy shadow-inner placeholder:text-navy/35 dark:border-gold/30 dark:bg-navy-mid dark:text-ivory dark:placeholder:text-wheat"
-              />
-            </span>
-          )}
-        </Field>
+        <label htmlFor="shop-search" className={SECTION_LABEL}>
+          <Search className="size-3.5" /> جستجو
+        </label>
+        <span className="relative block">
+          <Search className="pointer-events-none absolute end-3.5 top-1/2 size-4 -translate-y-1/2 text-gold" />
+          <Input
+            id="shop-search"
+            type="search"
+            inputMode="search"
+            autoComplete="off"
+            maxLength={60}
+            placeholder="پیراهن، سیسمونی…"
+            value={query}
+            onChange={(event) => setQuery(event.target.value.slice(0, 60))}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter") return;
+              event.preventDefault();
+              commitQuery();
+            }}
+            className="h-12 rounded-2xl border-navy/12 bg-white pe-11 ps-4 text-sm font-bold text-navy shadow-inner placeholder:text-navy/35 dark:border-gold/30 dark:bg-navy-mid dark:text-ivory dark:placeholder:text-wheat"
+          />
+        </span>
       </div>
 
       {/* Category */}
@@ -271,8 +203,6 @@ export function ShopExplorer() {
           onValueChange={(c) => {
             if (!c) return;
             push({ cat: c, page: 1 });
-            // روی موبایل فیلترها در Sheet بازند؛ با انتخابِ دسته، sheet بسته می‌شود
-            // تا کاربر مستقیم روی صفحهٔ لیستِ محصولات فرود بیاید.
             setFilterOpen(false);
           }}
           className="flex flex-wrap justify-start gap-1.5"
@@ -392,7 +322,7 @@ export function ShopExplorer() {
           ))}
         </ToggleGroup>
       </div>
-    </AppForm>
+    </div>
   );
 
   const filterHead = (
@@ -509,8 +439,8 @@ export function ShopExplorer() {
 
           {/* Grid / List */}
           <div className={state.view === "list" ? "flex flex-col gap-4" : "grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4"}>
-            {slice.map((p) => (
-              <ProductCard key={p.id} p={p} view={state.view} priority={slice.slice(0, 4).some((aboveFold) => aboveFold.img === p.img)} />
+            {slice.map((p, index) => (
+              <ProductCard key={p.id} p={p} view={state.view} aboveFold={index < (state.view === "list" ? 2 : 4)} />
             ))}
           </div>
 
