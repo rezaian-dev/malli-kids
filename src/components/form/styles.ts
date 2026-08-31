@@ -29,7 +29,7 @@ export const LABEL: Record<Skin, string> = {
 export const SHELL: Partial<Record<Skin, string>> = {
   bare: "flex items-center gap-3 border-b-2 pb-2 transition-colors",
   inset:
-    "flex h-12 items-center rounded-xl border bg-white transition-[border-color,box-shadow] duration-200 border-tan dark:border-white/12 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/25 data-[invalid=true]:border-rose data-[invalid=true]:dark:border-rose data-[invalid=true]:focus-within:border-rose data-[invalid=true]:focus-within:ring-2 data-[invalid=true]:focus-within:ring-rose/25 dark:bg-navy-deep/60",
+    "flex h-12 items-center rounded-xl border border-tan bg-white/80 shadow-[0_14px_40px_-18px_rgba(14,42,71,0.22),0_0_24px_-10px_rgba(193,147,87,0.2)] backdrop-blur-md transition-[border-color,box-shadow] duration-200 focus-within:border-gold focus-within:shadow-[0_16px_44px_-16px_rgba(193,147,87,0.38),0_0_28px_-12px_rgba(14,42,71,0.16)] focus-within:ring-2 focus-within:ring-gold/25 data-[invalid=true]:border-rose data-[invalid=true]:focus-within:border-rose data-[invalid=true]:focus-within:ring-2 data-[invalid=true]:focus-within:ring-rose/25 data-[invalid=true]:dark:border-rose dark:border-white/12 dark:bg-navy-deep/60 dark:shadow-[0_16px_44px_-18px_rgba(0,0,0,0.45),0_0_24px_-12px_rgba(193,147,87,0.18)]",
 };
 
 export const LEAD: Partial<Record<Skin, string>> = {

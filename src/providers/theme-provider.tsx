@@ -32,30 +32,46 @@ const Ctx = createContext<{
   setTheme: () => {},
 });
 
-function readClientTheme(fallback: Theme) {
+function readStoredTheme(fallback: Theme) {
   if (typeof window === "undefined") return fallback;
 
   try {
-    return readThemePreference(window.localStorage.getItem(THEME_KEY) ?? undefined);
+    return readThemePreference(
+      window.localStorage.getItem(THEME_KEY) ?? undefined,
+    );
   } catch {
     return fallback;
   }
 }
 
-function readClientResolvedTheme(fallback: Resolved) {
-  if (typeof document === "undefined") return fallback;
-  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+function systemPrefersDark() {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+function disableThemeTransitions() {
+  const root = document.documentElement;
+  root.classList.add("theme-transitioning");
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      root.classList.remove("theme-transitioning");
+    });
+  });
 }
 
 function applyTheme(nextTheme: Theme, nextResolved: Resolved) {
   const root = document.documentElement;
-  root.classList.toggle("dark", nextResolved === "dark");
-  root.style.colorScheme = nextResolved;
+  const isDark = nextResolved === "dark";
+  if (root.classList.contains("dark") !== isDark) {
+    disableThemeTransitions();
+    root.classList.toggle("dark", isDark);
+  }
+  if (root.style.colorScheme !== nextResolved) {
+    root.style.colorScheme = nextResolved;
+  }
   writeCookie(THEME_KEY, encodeURIComponent(nextTheme));
   writeCookie(THEME_RESOLVED_KEY, nextResolved);
 }
 
-// 🌗 Keep SSR, first paint and later toggles in the same theme lane. ✨
 export function ThemeProvider({
   children,
   initialTheme = "system",
@@ -65,37 +81,46 @@ export function ThemeProvider({
   initialTheme?: Theme;
   initialResolved?: Resolved;
 }) {
-  const [theme, setThemeState] = useState<Theme>(() => readClientTheme(initialTheme));
-  const [resolved, setResolved] = useState<Resolved>(() =>
-    readClientResolvedTheme(initialResolved),
-  );
+  const [theme, setThemeState] = useState<Theme>(initialTheme);
+  const [resolved, setResolved] = useState<Resolved>(initialResolved);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
 
-    const sync = () => {
-      const nextTheme = readClientTheme(initialTheme);
+    const sync = (nextTheme: Theme) => {
       const nextResolved = resolveThemePreference(nextTheme, mq.matches);
       applyTheme(nextTheme, nextResolved);
       setThemeState(nextTheme);
       setResolved(nextResolved);
     };
 
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, [initialResolved, initialTheme]);
+    sync(readStoredTheme(initialTheme));
+
+    const onScheme = () => {
+      const current = readStoredTheme(initialTheme);
+      if (current !== "system") return;
+      sync(current);
+    };
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== THEME_KEY) return;
+      sync(readStoredTheme(initialTheme));
+    };
+
+    mq.addEventListener("change", onScheme);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      mq.removeEventListener("change", onScheme);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, [initialTheme]);
 
   const setTheme = useCallback((nextTheme: Theme) => {
     try {
       window.localStorage.setItem(THEME_KEY, nextTheme);
     } catch {}
 
-    const nextResolved = resolveThemePreference(
-      nextTheme,
-      window.matchMedia("(prefers-color-scheme: dark)").matches,
-    );
-
+    const nextResolved = resolveThemePreference(nextTheme, systemPrefersDark());
     applyTheme(nextTheme, nextResolved);
     setThemeState(nextTheme);
     setResolved(nextResolved);

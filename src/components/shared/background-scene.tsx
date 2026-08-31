@@ -8,21 +8,112 @@ const DELAYS = [
   "[animation-delay:-3.2s]",
 ];
 
+function LightAtelier() {
+  return (
+    <div className="absolute inset-0 dark:hidden">
+      <div className="absolute inset-0 bg-linear-to-br from-[#fff9f1] via-[#f6ead6] to-[#efe0c8]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-8%,rgba(193,147,87,0.34),transparent_52%),radial-gradient(ellipse_at_100%_8%,rgba(14,42,71,0.12),transparent_46%),radial-gradient(ellipse_at_0%_100%,rgba(14,42,71,0.10),transparent_48%),radial-gradient(ellipse_at_82%_88%,rgba(232,197,122,0.26),transparent_42%)]" />
+
+      <div className="border-gold/25 absolute -top-36 left-1/2 size-120 -translate-x-1/2 rounded-full border md:size-168" />
+      <div className="border-gold/20 absolute -top-20 left-1/2 size-88 -translate-x-1/2 rounded-full border md:size-136" />
+      <div className="border-navy/10 absolute -top-6 left-1/2 size-56 -translate-x-1/2 rounded-full border md:size-88" />
+
+      <div className="absolute top-8 left-1/2 size-64 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(232,197,122,0.32),transparent_68%)] blur-3xl md:size-104" />
+      <div className="absolute -inset-s-24 -bottom-16 size-88 rounded-full bg-[radial-gradient(circle,rgba(14,42,71,0.10),transparent_70%)] blur-3xl" />
+      <div className="absolute -inset-e-16 top-1/3 size-72 rounded-full bg-[radial-gradient(circle,rgba(193,147,87,0.16),transparent_68%)] blur-3xl" />
+
+      <svg
+        className="absolute inset-0 h-full w-full"
+        viewBox="0 0 1200 800"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden
+      >
+        <defs>
+          <linearGradient id="mk-gold-line" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#c19357" stopOpacity="0" />
+            <stop offset="0.45" stopColor="#c19357" stopOpacity="0.45" />
+            <stop offset="1" stopColor="#0e2a47" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+
+        <path
+          d="M600 92c-28 0-52 18-64 44-12-26-36-44-64-44-40 0-72 32-72 72 0 86 136 148 136 148s136-62 136-148c0-40-32-72-72-72Z"
+          fill="#c19357"
+          fillOpacity="0.09"
+        />
+        <path
+          d="M600 108c-22 0-41 14-50 35-9-21-28-35-50-35-31 0-56 25-56 56 0 68 106 116 106 116s106-48 106-116c0-31-25-56-56-56Z"
+          fill="none"
+          stroke="#c19357"
+          strokeOpacity="0.28"
+          strokeWidth="1.4"
+        />
+
+        <circle
+          cx="600"
+          cy="210"
+          r="210"
+          fill="none"
+          stroke="#c19357"
+          strokeOpacity="0.16"
+          strokeWidth="1.1"
+        />
+        <circle
+          cx="600"
+          cy="210"
+          r="148"
+          fill="none"
+          stroke="#0e2a47"
+          strokeOpacity="0.08"
+          strokeWidth="1"
+        />
+        <circle
+          cx="600"
+          cy="210"
+          r="92"
+          fill="none"
+          stroke="#c19357"
+          strokeOpacity="0.22"
+          strokeWidth="1.2"
+        />
+
+        <path
+          d="M80 620C260 480 420 700 600 560s340-160 520 40"
+          fill="none"
+          stroke="url(#mk-gold-line)"
+          strokeWidth="1.15"
+        />
+        <path
+          d="M40 240C220 120 380 280 560 160s360-40 600 120"
+          fill="none"
+          stroke="#0e2a47"
+          strokeOpacity="0.08"
+          strokeWidth="1"
+        />
+
+        <g fill="#c19357" fillOpacity="0.28">
+          <circle cx="180" cy="140" r="2.2" />
+          <circle cx="980" cy="120" r="1.8" />
+          <circle cx="160" cy="430" r="1.6" />
+          <circle cx="1040" cy="390" r="2" />
+          <circle cx="240" cy="700" r="1.7" />
+          <circle cx="920" cy="680" r="2.1" />
+          <circle cx="430" cy="80" r="1.5" />
+          <circle cx="760" cy="70" r="1.6" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 export function BackgroundScene() {
   return (
     <div
       aria-hidden="true"
       className="bg-cream dark:bg-ink pointer-events-none fixed inset-0 -z-10 overflow-hidden"
     >
-      {/* Light: a vivid, logo-inspired blend — navy·gold·cream with warm coral
-          & sky accents, plus a soft golden ring echoing the brand mark. */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_18%_16%,color-mix(in_srgb,var(--color-gold)_30%,transparent),transparent_48%),radial-gradient(ellipse_at_88%_8%,color-mix(in_srgb,var(--color-navy-soft)_22%,transparent),transparent_44%),radial-gradient(ellipse_at_86%_88%,color-mix(in_srgb,#f6cdc2_30%,transparent),transparent_46%),radial-gradient(ellipse_at_6%_86%,color-mix(in_srgb,#a9d4ec_26%,transparent),transparent_46%),radial-gradient(ellipse_at_50%_50%,color-mix(in_srgb,var(--color-cream)_58%,transparent),transparent_70%),linear-gradient(160deg,var(--color-paper-warm)_0%,var(--color-sand)_42%,var(--color-cream)_100%)] dark:hidden" />
-      {/* Golden halo ring — a soft echo of the circular gold mark in the logo. */}
-      <div className="border-gold/20 absolute -top-32 left-1/2 hidden size-168 -translate-x-1/2 rounded-full border-[1.5px] md:block dark:hidden" />
-      <div className="border-gold/15 absolute -top-20 left-1/2 hidden size-136 -translate-x-1/2 rounded-full border md:block dark:hidden" />
-      <div className="absolute -inset-e-40 top-10 hidden size-104 rounded-full bg-[radial-gradient(circle_at_40%_35%,color-mix(in_srgb,var(--color-gold)_22%,transparent),transparent_62%)] blur-2xl md:block dark:hidden" />
-      <div className="absolute -inset-s-40 bottom-0 hidden size-96 rounded-full bg-[radial-gradient(circle_at_45%_60%,color-mix(in_srgb,var(--color-navy-soft)_18%,transparent),transparent_62%)] blur-2xl md:block dark:hidden" />
-      {/* Dark: a completely different midnight-gallery direction. */}
+      <LightAtelier />
+
       <div className="absolute inset-0 hidden bg-[radial-gradient(ellipse_at_62%_10%,color-mix(in_srgb,var(--color-navy-light)_16%,transparent),transparent_32%),radial-gradient(ellipse_at_22%_82%,color-mix(in_srgb,var(--color-gold)_6%,transparent),transparent_34%),linear-gradient(135deg,var(--color-ink)_0%,var(--color-navy-deep)_46%,var(--color-night-deep)_100%)] dark:block" />
       <div className="absolute -inset-e-72 -top-72 hidden size-136 rounded-full bg-[radial-gradient(ellipse_at_50%_15%,color-mix(in_srgb,var(--color-gold)_7%,transparent),transparent_64%)] blur-3xl dark:block" />
       <div className="absolute -inset-s-56 -bottom-72 hidden size-152 rounded-full bg-[radial-gradient(ellipse_at_50%_20%,color-mix(in_srgb,var(--color-navy-light)_9%,transparent),transparent_62%)] blur-3xl dark:block" />
@@ -74,7 +165,6 @@ export function BackgroundScene() {
         />
       </svg>
 
-      {/* Dark constellation points */}
       <div className="absolute inset-0 hidden dark:block">
         {STARS.map((i) => {
           const x = (i * 43) % 100;
@@ -90,9 +180,8 @@ export function BackgroundScene() {
         })}
       </div>
 
-      {/* Header/footer blending */}
-      <div className="from-cream/95 dark:from-ink/90 absolute inset-x-0 top-0 h-28 bg-linear-to-b to-transparent" />
-      <div className="from-cream/85 dark:from-ink/80 absolute inset-x-0 bottom-0 h-36 bg-linear-to-t to-transparent" />
+      <div className="from-cream/90 dark:from-ink/90 absolute inset-x-0 top-0 h-28 bg-linear-to-b to-transparent" />
+      <div className="from-cream/80 dark:from-ink/80 absolute inset-x-0 bottom-0 h-36 bg-linear-to-t to-transparent" />
     </div>
   );
 }

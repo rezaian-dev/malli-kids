@@ -26,7 +26,7 @@ export function FestiveBannerFallback({ item }: { item: BannerItem | null }) {
           aria-hidden
         />
 
-        <div className="relative mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-4 gap-y-2 px-3 py-3.5 sm:flex-nowrap sm:justify-between sm:px-6 sm:py-4">
+        <div className="relative mx-auto flex h-12 max-w-7xl items-center justify-center gap-x-4 overflow-hidden px-3 whitespace-nowrap sm:h-13 sm:justify-between sm:px-6">
           <div className="flex min-w-0 items-center gap-3 sm:gap-4">
             <span className="bg-gold text-navy-deep shadow-gold/70 relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black shadow-[0_4px_14px_-4px] sm:px-3.5 sm:text-[11px]">
               <Gift className="size-3.5" />
@@ -74,7 +74,7 @@ export function FestiveBannerFallback({ item }: { item: BannerItem | null }) {
   return (
     <div className="from-navy via-navy-mid to-navy text-ivory relative isolate overflow-hidden bg-linear-to-l">
       <FestiveDecor />
-      <div className="relative mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 px-4 py-3.5 text-center sm:py-4">
+      <div className="relative mx-auto flex h-12 max-w-7xl items-center justify-center gap-x-3 overflow-hidden px-4 text-center whitespace-nowrap sm:h-13">
         <Sparkles className="text-gold size-4.5 shrink-0" />
         <p className="text-xs font-bold sm:text-[13px]">
           <span className="text-gold-light font-black">ارسال رایگان</span> برای
@@ -83,7 +83,7 @@ export function FestiveBannerFallback({ item }: { item: BannerItem | null }) {
         <Link
           href="/shipping"
           prefetch={false}
-          className="group inline-flex items-center gap-1 text-[11px] font-black text-gold-light underline-offset-4 hover:underline sm:text-xs"
+          className="group text-gold-light inline-flex items-center gap-1 text-[11px] font-black underline-offset-4 hover:underline sm:text-xs"
         >
           جزئیات
           <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />

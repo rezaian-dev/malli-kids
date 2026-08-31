@@ -7,21 +7,18 @@ import { cn } from "@/lib/utils";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// 🪶 Tiny footer form without heavy form libs.
 export function NewsletterForm({ className }: { className?: string }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const trimmed = email.trim();
-
-  const bad = submitted
-    ? trimmed === "" || !EMAIL_RE.test(trimmed)
-    : trimmed !== "" && !EMAIL_RE.test(trimmed);
+  const invalid = trimmed !== "" && !EMAIL_RE.test(trimmed);
+  const bad = submitted && invalid;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!trimmed) return;
     setSubmitted(true);
-
-    if (!trimmed || !EMAIL_RE.test(trimmed)) return;
+    if (!EMAIL_RE.test(trimmed)) return;
 
     toast.success(`عضو خبرنامه شدید — کد ۱۰٪ تخفیف به ${trimmed} فرستاده شد`);
     setEmail("");
@@ -39,11 +36,11 @@ export function NewsletterForm({ className }: { className?: string }) {
     >
       <span
         className={cn(
-          "flex items-center rounded-full border p-1.5 transition-all duration-300",
-          "focus-within:border-gold/60 focus-within:bg-white/10 focus-within:shadow-[0_0_0_4px_rgba(196,147,87,.18)]",
-          bad
-            ? "border-rose focus-within:border-rose bg-white/10 focus-within:shadow-[0_0_0_4px_rgba(225,29,72,.16)]"
-            : "border-white/20 bg-white/5",
+          "flex h-13 items-center rounded-full border p-1.5 backdrop-blur-md",
+          "bg-white/10 shadow-[0_18px_50px_-18px_rgba(193,147,87,0.55),0_8px_28px_-16px_rgba(0,0,0,0.55)]",
+          "transition-[border-color,box-shadow] duration-300",
+          "focus-within:border-gold/55 focus-within:shadow-[0_20px_56px_-16px_rgba(193,147,87,0.7),0_8px_28px_-14px_rgba(0,0,0,0.5)]",
+          bad ? "border-rose focus-within:border-rose" : "border-white/20",
         )}
       >
         <input
@@ -56,13 +53,17 @@ export function NewsletterForm({ className }: { className?: string }) {
           placeholder="ایمیل شما…"
           aria-invalid={bad || undefined}
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          onBlur={() => setSubmitted(true)}
-          className="newsletter-field text-cream placeholder:text-taupe h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-right text-sm outline-none autofill:bg-transparent autofill:shadow-[0_0_0_1000px_transparent_inset] autofill:[-webkit-text-fill-color:var(--color-cream)]"
+          onChange={(event) => {
+            setEmail(event.target.value);
+            if (submitted && event.target.value.trim() === "") {
+              setSubmitted(false);
+            }
+          }}
+          className="newsletter-field caret-cream text-cream placeholder:text-taupe h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-right text-sm outline-none autofill:shadow-[inset_0_0_0_1000px_rgb(14_42_71_/_0.96)] autofill:[-webkit-text-fill-color:var(--color-cream)]"
         />
         <button
           type="submit"
-          className="group/nl bg-gold text-navy-deep inline-flex h-10 shrink-0 items-center gap-1 rounded-full px-5 text-[13px] font-black transition-transform duration-200 hover:scale-[1.03] active:scale-95"
+          className="group/nl bg-gold text-navy-deep inline-flex h-10 shrink-0 items-center gap-1 rounded-full px-5 text-[13px] font-black shadow-[0_10px_24px_-12px_rgba(193,147,87,0.9)] transition-transform duration-200 hover:scale-[1.03] active:scale-95"
         >
           عضویت{" "}
           <ArrowLeft className="size-4 transition-transform duration-200 group-hover/nl:-translate-x-0.5" />

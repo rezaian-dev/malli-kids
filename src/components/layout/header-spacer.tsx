@@ -1,25 +1,5 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-
-const GAP = 28;
-
+// 📐 Static offset for the fixed header: banner (h-12 / sm:h-13) + bar (h-14 /
+// sm:h-16) + 28px gap. No JS — height never jumps after hydration.
 export function HeaderSpacer() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (!header || !ref.current) return;
-    const update = () => {
-      if (ref.current) {
-        ref.current.style.height = `${header.getBoundingClientRect().height + GAP}px`;
-      }
-    };
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(header);
-    return () => ro.disconnect();
-  }, []);
-
-  return <div ref={ref} aria-hidden className="h-45.25 sm:h-41.5" />;
+  return <div aria-hidden className="h-[8.25rem] sm:h-36" />;
 }

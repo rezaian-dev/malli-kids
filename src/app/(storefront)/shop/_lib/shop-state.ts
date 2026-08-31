@@ -1,5 +1,6 @@
 import { CATS, PRICE_CAP, SORTS } from "@/lib/constants";
 import { SEASONS } from "@/lib/data/products";
+import { applyShopSearchIntent } from "@/lib/shop-query";
 
 type SearchValue = string | string[] | undefined;
 
@@ -47,8 +48,7 @@ export function parseShopState(params: Record<string, SearchValue>): ShopState {
   const min = Math.max(0, readNumber(readAlias(params, "minPrice", "min"), 0));
   const rawMax = readNumber(readAlias(params, "maxPrice", "max"), PRICE_CAP);
   const max = Math.max(min, Math.min(PRICE_CAP, rawMax));
-
-  return {
+  const parsed: ShopState = {
     cat: (CATS as readonly string[]).includes(cat) ? cat : "همه",
     season:
       season && (SEASONS as readonly string[]).includes(season)
@@ -61,27 +61,38 @@ export function parseShopState(params: Record<string, SearchValue>): ShopState {
     disc: readText(readAlias(params, "onSale", "disc")) === "1",
     hot: readText(readAlias(params, "topRated", "hot")) === "1",
     onlyNew: readText(readAlias(params, "newest", "new")) === "1",
-    q: readText(readAlias(params, "query", "q")).trim().slice(0, 60),
+    q: readText(readAlias(params, "query", "q"))
+      .trim()
+      .slice(0, 60),
     min,
     max,
   };
+  const next = applyShopSearchIntent(parsed);
+  const intentChanged =
+    next.cat !== parsed.cat ||
+    next.season !== parsed.season ||
+    next.q !== parsed.q;
+
+  return intentChanged ? { ...next, page: 1 } : next;
 }
 
 export function toShopHref(state: ShopState) {
+  const canonical = applyShopSearchIntent(state);
   const params = new URLSearchParams();
 
-  if (state.cat !== "همه") params.set("category", state.cat);
-  if (state.season !== "همه") params.set("season", state.season);
-  if (state.page > 1) params.set("page", String(state.page));
-  if (state.sort !== "new") params.set("sort", state.sort);
-  if (state.view === "list") params.set("view", "list");
-  if (state.stock) params.set("inStock", "1");
-  if (state.disc) params.set("onSale", "1");
-  if (state.hot) params.set("topRated", "1");
-  if (state.onlyNew) params.set("newest", "1");
-  if (state.q) params.set("query", state.q);
-  if (state.min) params.set("minPrice", String(state.min));
-  if (state.max !== PRICE_CAP) params.set("maxPrice", String(state.max));
+  if (canonical.cat !== "همه") params.set("category", canonical.cat);
+  if (canonical.season !== "همه") params.set("season", canonical.season);
+  if (canonical.page > 1) params.set("page", String(canonical.page));
+  if (canonical.sort !== "new") params.set("sort", canonical.sort);
+  if (canonical.view === "list") params.set("view", "list");
+  if (canonical.stock) params.set("inStock", "1");
+  if (canonical.disc) params.set("onSale", "1");
+  if (canonical.hot) params.set("topRated", "1");
+  if (canonical.onlyNew) params.set("newest", "1");
+  if (canonical.q) params.set("query", canonical.q);
+  if (canonical.min) params.set("minPrice", String(canonical.min));
+  if (canonical.max !== PRICE_CAP)
+    params.set("maxPrice", String(canonical.max));
 
   const query = params.toString();
   return query ? `/shop?${query}` : "/shop";

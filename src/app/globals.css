@@ -1,8 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* 🎨 Dark mode = `.dark` ancestor (Tailwind v4 @custom-variant) */
-@custom-variant dark (&:is(.dark *));
+/* 🎨 Dark mode = `.dark` class on html (Tailwind v4 class strategy) */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* 📐 Orientation variants used by shadcn Tabs (`tabs.tsx`) —
    not in Tailwind defaults; without them TabsContent collapses to 0 width. */
@@ -218,11 +218,9 @@
   @keyframes heroIn {
     from {
       opacity: 0;
-      transform: translateY(22px);
     }
     to {
       opacity: 1;
-      transform: none;
     }
   }
   @keyframes marquee {
@@ -289,11 +287,9 @@
   @keyframes styleCardIn {
     from {
       opacity: 0;
-      transform: translateY(28px) scale(0.92);
     }
     to {
       opacity: 1;
-      transform: none;
     }
   }
   @keyframes shimmer {
@@ -393,6 +389,7 @@
 
 /* ─────────────────────────── 🌗 Theme vars ─────────────────────────────── */
 :root {
+  color-scheme: light;
   --background: #faf6ef;
   --foreground: #0e2a47;
   --card: #fffefb;
@@ -416,6 +413,7 @@
 
 /* 🌙 Dark palette */
 .dark {
+  color-scheme: dark;
   --background: #041427;
   --foreground: #fff8ec;
   --card: #3d536c;
@@ -464,6 +462,12 @@
   html {
     @apply max-w-full overflow-x-hidden scroll-smooth;
     scroll-padding-top: 110px;
+    color-scheme: light;
+    background-color: var(--color-cream);
+  }
+  html.dark {
+    color-scheme: dark;
+    background-color: var(--color-navy-deep);
   }
   main {
     @apply min-w-0 overflow-x-clip;
@@ -525,19 +529,6 @@
     background: transparent;
   }
 
-  /* 📮 Newsletter field sits on the dark footer; browser autofill would paint
-     an opaque square and break the pill's corners — keep it transparent. */
-  .newsletter-field:-webkit-autofill,
-  .newsletter-field:-webkit-autofill:hover,
-  .newsletter-field:-webkit-autofill:focus,
-  .newsletter-field:-webkit-autofill:active,
-  .newsletter-field:autofill {
-    -webkit-text-fill-color: var(--color-cream);
-    caret-color: var(--color-cream);
-    border-radius: 9999px;
-    transition: background-color 9999s ease-in-out 0s;
-  }
-
   * {
     @apply border-border;
   }
@@ -577,6 +568,17 @@ textarea:autofill {
   -webkit-text-fill-color: var(--color-ivory);
   caret-color: var(--color-ivory);
 }
+input.newsletter-field:-webkit-autofill,
+input.newsletter-field:-webkit-autofill:hover,
+input.newsletter-field:-webkit-autofill:focus,
+input.newsletter-field:-webkit-autofill:active,
+input.newsletter-field:autofill {
+  -webkit-text-fill-color: var(--color-cream);
+  caret-color: var(--color-cream);
+  box-shadow: inset 0 0 0 1000px rgb(14 42 71 / 0.96);
+  border-radius: 9999px;
+  transition: background-color 9999s ease-in-out 0s;
+}
 
 /* 🔄 nextjs-toploader — gold gradient anchored to the right (RTL-friendly) */
 #nprogress .bar {
@@ -600,4 +602,13 @@ html[data-auth="user"] .header-account-shell[data-shell="guest"] {
 }
 html[data-auth="user"] .header-account-shell[data-shell="user"] {
   display: flex;
+}
+
+/* 🌗 Kill color/background transitions while the theme class is swapping. */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: none !important;
+  animation: none !important;
 }

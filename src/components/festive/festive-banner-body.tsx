@@ -25,7 +25,12 @@ function BannerFrame({
   topLine?: string;
 }) {
   return (
-    <div className={cn("relative isolate overflow-hidden bg-linear-to-l", className)}>
+    <div
+      className={cn(
+        "relative isolate overflow-hidden bg-linear-to-l",
+        className,
+      )}
+    >
       <FestiveDecor />
       <span
         className={cn(
@@ -34,7 +39,7 @@ function BannerFrame({
         )}
         aria-hidden
       />
-      <div className="relative mx-auto flex min-h-12 max-w-7xl flex-wrap items-center justify-center gap-x-4 gap-y-2 px-3 py-3.5 text-center sm:min-h-13 sm:flex-nowrap sm:justify-between sm:px-6 sm:py-4">
+      <div className="relative mx-auto flex h-12 max-w-7xl items-center justify-center gap-x-4 overflow-hidden px-3 text-center whitespace-nowrap sm:h-13 sm:justify-between sm:px-6">
         {children}
       </div>
     </div>
@@ -53,9 +58,9 @@ export function FestiveBannerBody() {
       >
         <div className="flex min-w-0 items-center justify-center gap-3 sm:gap-4">
           <PartyPopper className="size-4.5 shrink-0" />
-          <p className="text-xs font-black sm:text-[13px]">
-            {campaign.title || "جشنواره"} — {toFaDigits(campaign.percent)}٪ تخفیف روی
-            همهٔ محصولات
+          <p className="truncate text-xs font-black sm:text-[13px]">
+            {campaign.title || "جشنواره"} — {toFaDigits(campaign.percent)}٪
+            تخفیف روی همهٔ محصولات
           </p>
         </div>
         <Link
@@ -74,7 +79,7 @@ export function FestiveBannerBody() {
     return (
       <BannerFrame className={cn("text-ivory", TONE[banner.theme])}>
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-          <span className="relative inline-flex shrink-0 items-center gap-1.5 rounded-full bg-gold px-3 py-1.5 text-[10px] font-black text-navy-deep shadow-[0_4px_14px_-4px] shadow-gold/70 sm:px-3.5 sm:text-[11px]">
+          <span className="bg-gold text-navy-deep shadow-gold/70 relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black shadow-[0_4px_14px_-4px] sm:px-3.5 sm:text-[11px]">
             <Gift className="size-3.5" />
             {banner.occasion}
             <span
@@ -86,7 +91,7 @@ export function FestiveBannerBody() {
             <p className="truncate text-[13px] font-black tracking-tight sm:text-[15px]">
               {banner.title}
             </p>
-            <p className="mt-0.5 hidden truncate text-[11px] font-bold text-ivory/70 min-[560px]:block sm:text-xs">
+            <p className="text-ivory/70 mt-0.5 hidden truncate text-[11px] font-bold min-[560px]:block sm:text-xs">
               {banner.subtitle}
             </p>
           </div>
@@ -95,7 +100,7 @@ export function FestiveBannerBody() {
         <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
           {banner.coupon ? (
             <span
-              className="hidden items-center gap-1.5 rounded-lg border border-dashed border-gold/60 bg-gold/10 px-3 py-1.5 text-[11px] font-black tracking-[0.14em] text-gold-light md:inline-flex"
+              className="border-gold/60 bg-gold/10 text-gold-light hidden items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 text-[11px] font-black tracking-[0.14em] md:inline-flex"
               title="کد تخفیف را در صفحهٔ پرداخت وارد کنید"
             >
               <Ticket className="size-3.5" />
@@ -105,7 +110,7 @@ export function FestiveBannerBody() {
           <Link
             href={banner.href}
             prefetch={false}
-            className="group relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-gold px-4 py-2 text-[11px] font-black text-navy-deep shadow-lg shadow-gold/30 transition-all hover:scale-[1.04] hover:shadow-gold/50 sm:px-5 sm:text-xs"
+            className="group bg-gold text-navy-deep shadow-gold/30 hover:shadow-gold/50 relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full px-4 py-2 text-[11px] font-black shadow-lg transition-all hover:scale-[1.04] sm:px-5 sm:text-xs"
           >
             <span className="relative z-10">{banner.cta}</span>
             <ArrowLeft className="relative z-10 size-3.5 transition-transform group-hover:-translate-x-0.5" />
@@ -119,16 +124,16 @@ export function FestiveBannerBody() {
   return (
     <BannerFrame className="from-navy via-navy-mid to-navy text-ivory">
       <div className="flex min-w-0 items-center justify-center gap-3 sm:gap-4">
-        <Sparkles className="size-4.5 shrink-0 text-gold motion-reduce:animate-none" />
-        <p className="text-xs font-bold sm:text-[13px]">
-          <span className="font-black text-gold-light">ارسال رایگان</span> برای
+        <Sparkles className="text-gold size-4.5 shrink-0 motion-reduce:animate-none" />
+        <p className="truncate text-xs font-bold sm:text-[13px]">
+          <span className="text-gold-light font-black">ارسال رایگان</span> برای
           خریدهای بالای ۱٬۵۰۰٬۰۰۰ تومان
         </p>
       </div>
       <Link
         href="/shipping"
         prefetch={false}
-        className="group inline-flex shrink-0 items-center gap-1 text-[11px] font-black text-gold-light underline-offset-4 hover:underline sm:text-xs"
+        className="group text-gold-light inline-flex shrink-0 items-center gap-1 text-[11px] font-black underline-offset-4 hover:underline sm:text-xs"
       >
         جزئیات
         <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />

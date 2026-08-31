@@ -12,6 +12,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { CORE_PRODUCTS } from "@/lib/data/products";
+import { shopHrefFromSearch } from "@/lib/shop-query";
 import { cn } from "@/lib/utils";
 import { formatToman } from "@/lib/format";
 
@@ -50,7 +51,7 @@ export function HomeSearch() {
     }
 
     setError("");
-    router.push(next ? `/shop?q=${encodeURIComponent(next)}` : "/shop");
+    router.push(shopHrefFromSearch(next));
   }
 
   function selectSuggestion(value: string) {
@@ -60,7 +61,7 @@ export function HomeSearch() {
     setQuery(next);
     setError("");
     setOpen(false);
-    router.push(`/shop?q=${encodeURIComponent(next)}`);
+    router.push(shopHrefFromSearch(next));
   }
 
   return (

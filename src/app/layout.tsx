@@ -43,13 +43,19 @@ const playfair = localFont({
 
 export const metadata = getRootMetadata();
 
-export const viewport: Viewport = {
-  colorScheme: "light dark",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fcf7ef" },
-    { media: "(prefers-color-scheme: dark)", color: "#061728" },
-  ],
-};
+export async function generateViewport(): Promise<Viewport> {
+  const cookieStore = await cookies();
+  const theme = readThemePreference(cookieStore.get(THEME_KEY)?.value);
+  const resolved = resolveInitialTheme(
+    theme,
+    readResolvedTheme(cookieStore.get(THEME_RESOLVED_KEY)?.value),
+  );
+
+  return {
+    colorScheme: resolved,
+    themeColor: resolved === "dark" ? "#061728" : "#fcf7ef",
+  };
+}
 
 // 🌗 Hydrate from cookies first so the shell matches before React wakes up. ✨
 export default async function RootLayout({
@@ -63,7 +69,9 @@ export default async function RootLayout({
     initialTheme,
     readResolvedTheme(cookieStore.get(THEME_RESOLVED_KEY)?.value),
   );
-  const initialState = readStoreBootstrap((name) => cookieStore.get(name)?.value);
+  const initialState = readStoreBootstrap(
+    (name) => cookieStore.get(name)?.value,
+  );
 
   return (
     <html
@@ -77,11 +85,11 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <style>{`html{background:#faf6ef;color:#0e2a47;color-scheme:light}html.dark{background:#041427;color:#fff8ec;color-scheme:dark}body{background:inherit;color:inherit}`}</style>
+        <style>{`html{background:#f6ead6;color:#0e2a47;color-scheme:light}html.dark{background:#041427;color:#fff8ec;color-scheme:dark}body{background:inherit;color:inherit}`}</style>
         <script dangerouslySetInnerHTML={{ __html: buildThemeScript() }} />
       </head>
       <body
-        className={`${vazir.className} min-h-dvh text-navy antialiased dark:text-ivory data-scroll-locked:mr-0!`}
+        className={`${vazir.className} text-navy dark:text-ivory min-h-dvh antialiased data-scroll-locked:mr-0!`}
         suppressHydrationWarning
       >
         <JsonLd data={organizationSchema()} />

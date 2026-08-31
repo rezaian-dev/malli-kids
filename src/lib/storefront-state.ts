@@ -4,7 +4,11 @@ import type { FestiveBanner as BannerItem, User } from "@/types";
 export type ThemePreference = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
 export type StoredCartItem = { id: number; size: string; qty: number };
-export type StoredCampaign = { active: boolean; percent: number; title: string };
+export type StoredCampaign = {
+  active: boolean;
+  percent: number;
+  title: string;
+};
 
 export type StoreBootstrap = {
   user: User | null;
@@ -76,7 +80,8 @@ export function sanitizeUser(value: unknown): User | null {
   if (!value || typeof value !== "object") return null;
 
   const user = value as Record<string, unknown>;
-  const firstName = typeof user.firstName === "string" ? user.firstName.trim() : "";
+  const firstName =
+    typeof user.firstName === "string" ? user.firstName.trim() : "";
   const email = typeof user.email === "string" ? user.email.trim() : "";
 
   if (!firstName || !email) return null;
@@ -84,17 +89,22 @@ export function sanitizeUser(value: unknown): User | null {
   return {
     firstName,
     email,
-    lastName: typeof user.lastName === "string" ? user.lastName.trim() : undefined,
+    lastName:
+      typeof user.lastName === "string" ? user.lastName.trim() : undefined,
     phone: typeof user.phone === "string" ? user.phone.trim() : undefined,
     avatar: typeof user.avatar === "string" ? user.avatar.trim() : undefined,
     nationalId:
       typeof user.nationalId === "string" ? user.nationalId.trim() : undefined,
     city: typeof user.city === "string" ? user.city.trim() : undefined,
     address: typeof user.address === "string" ? user.address.trim() : undefined,
-    childName: typeof user.childName === "string" ? user.childName.trim() : undefined,
-    childAge: typeof user.childAge === "string" ? user.childAge.trim() : undefined,
+    childName:
+      typeof user.childName === "string" ? user.childName.trim() : undefined,
+    childAge:
+      typeof user.childAge === "string" ? user.childAge.trim() : undefined,
     childGender:
-      typeof user.childGender === "string" ? user.childGender.trim() : undefined,
+      typeof user.childGender === "string"
+        ? user.childGender.trim()
+        : undefined,
   };
 }
 
@@ -161,7 +171,8 @@ export function sanitizeBanner(value: unknown): BannerItem | null {
     subtitle: banner.subtitle.trim(),
     cta: banner.cta.trim(),
     href: banner.href.trim(),
-    coupon: typeof banner.coupon === "string" ? banner.coupon.trim() : undefined,
+    coupon:
+      typeof banner.coupon === "string" ? banner.coupon.trim() : undefined,
     theme,
     from: banner.from.trim(),
     to: banner.to.trim(),
@@ -170,7 +181,9 @@ export function sanitizeBanner(value: unknown): BannerItem | null {
   };
 }
 
-export function readStoreBootstrap(getCookie: (name: string) => string | undefined) {
+export function readStoreBootstrap(
+  getCookie: (name: string) => string | undefined,
+) {
   const userCookie = getCookie(STORAGE.user);
   const cartCookie = getCookie(STORAGE.cart);
   const campaignCookie = getCookie(STORAGE.campaign);
@@ -207,11 +220,14 @@ export function buildThemeScript() {
     const themeKey = ${JSON.stringify(THEME_KEY)};
     const resolvedKey = ${JSON.stringify(THEME_RESOLVED_KEY)};
     const userKey = ${JSON.stringify(STORAGE.user)};
+    const cookieAge = ${COOKIE_AGE};
     const readCookie = (key) => {
       const hit = document.cookie
         .split('; ')
         .find((part) => part.startsWith(key + '='));
-      return hit ? decodeURIComponent(hit.slice(key.length + 1)) : '';
+      if (!hit) return '';
+      try { return decodeURIComponent(hit.slice(key.length + 1)); }
+      catch { return hit.slice(key.length + 1); }
     };
 
     try {
@@ -223,8 +239,8 @@ export function buildThemeScript() {
       root.classList.toggle('dark', dark);
       root.style.colorScheme = resolved;
       root.dataset.auth = localStorage.getItem(userKey) || readCookie(userKey) ? 'user' : 'guest';
-      document.cookie = themeKey + '=' + encodeURIComponent(theme) + '; path=/; max-age=${COOKIE_AGE}; samesite=lax';
-      document.cookie = resolvedKey + '=' + resolved + '; path=/; max-age=${COOKIE_AGE}; samesite=lax';
+      document.cookie = themeKey + '=' + encodeURIComponent(theme) + '; path=/; max-age=' + cookieAge + '; samesite=lax';
+      document.cookie = resolvedKey + '=' + resolved + '; path=/; max-age=' + cookieAge + '; samesite=lax';
     } catch {
       document.documentElement.dataset.auth = 'guest';
     }

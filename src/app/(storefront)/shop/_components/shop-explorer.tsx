@@ -85,6 +85,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
   const [sortOpen, setSortOpen] = useState(false);
   const [sortPopOpen, setSortPopOpen] = useState(false);
   const [query, setQuery] = useState(state.q);
+  const [range, setRange] = useState<[number, number]>([state.min, state.max]);
 
   useEffect(() => setCatalog(loadCatalog()), []);
 
@@ -95,8 +96,25 @@ export function ShopExplorer({ state }: { state: ShopState }) {
     [router, state],
   );
 
-  // 🎚️ Keep slider drag smooth, then commit on release.
-  const [range, setRange] = useState<[number, number]>([state.min, state.max]);
+  useEffect(() => {
+    const href = toShopHref(state);
+    const current = `${window.location.pathname}${window.location.search}`;
+    if (href === current) return;
+
+    const currentParams = new URLSearchParams(window.location.search);
+    const nextParams = new URLSearchParams(href.split("?")[1] ?? "");
+    const currentQuery =
+      currentParams.get("query") ?? currentParams.get("q") ?? "";
+    const nextQuery = nextParams.get("query") ?? "";
+    const currentCat =
+      currentParams.get("category") ?? currentParams.get("cat") ?? "";
+    const nextCat = nextParams.get("category") ?? "";
+
+    if (currentQuery !== nextQuery || currentCat !== nextCat) {
+      router.replace(href, { scroll: false });
+    }
+  }, [router, state]);
+
   useEffect(() => setRange([state.min, state.max]), [state.min, state.max]);
 
   // 🔎 Keep the search input synced with the URL.
