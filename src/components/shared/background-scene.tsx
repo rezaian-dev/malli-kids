@@ -13,7 +13,13 @@ function LightAtelier() {
   return (
     <div className="absolute inset-0 dark:hidden">
       <div className="absolute inset-0 bg-[#ece6dc]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_18%,rgba(250,246,239,0.72),transparent_42%),radial-gradient(ellipse_at_50%_8%,rgba(193,147,87,0.26),transparent_36%),radial-gradient(ellipse_at_0%_0%,rgba(14,42,71,0.16),transparent_38%),radial-gradient(ellipse_at_100%_0%,rgba(14,42,71,0.14),transparent_36%),radial-gradient(ellipse_at_0%_100%,rgba(14,42,71,0.18),transparent_44%),radial-gradient(ellipse_at_100%_100%,rgba(193,147,87,0.16),transparent_40%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(168deg,#d8cfc2_0%,#ece6dc_18%,#f5efe6_34%,#ead9bc_52%,#d7c09a_70%,#c4ad88_86%,#b7a27c_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(108deg,rgba(14,42,71,0.22)_0%,rgba(14,42,71,0.06)_22%,rgba(250,246,239,0.28)_46%,rgba(193,147,87,0.26)_68%,rgba(193,147,87,0.08)_86%,rgba(14,42,71,0.14)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_58%_at_50%_-8%,rgba(193,147,87,0.42),transparent_58%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_52%_40%_at_50%_36%,rgba(250,246,239,0.55),transparent_72%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_0%_100%,rgba(14,42,71,0.26),transparent_58%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_64%_50%_at_100%_92%,rgba(193,147,87,0.3),transparent_56%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_32%_at_100%_0%,rgba(14,42,71,0.14),transparent_50%)]" />
 
       <svg
         className="absolute inset-0 h-full w-full"
@@ -31,7 +37,7 @@ function LightAtelier() {
             <path
               d="M36 10c-5.2 0-9.6 3.4-11.6 8.4C22.4 13.4 18 10 12.8 10 5.6 10 0 15.8 0 23c0 16 36 28 36 28s36-12 36-28c0-7.2-5.6-13-12.8-13Z"
               fill="#c19357"
-              fillOpacity="0.09"
+              fillOpacity="0.055"
             />
             <path
               d="M36 42L48 63L36 84L24 63Z"
@@ -50,9 +56,11 @@ function LightAtelier() {
           </pattern>
           <linearGradient id="mk-silk" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#0e2a47" stopOpacity="0" />
-            <stop offset="0.28" stopColor="#c19357" stopOpacity="0.55" />
-            <stop offset="0.5" stopColor="#faf6ef" stopOpacity="0.35" />
-            <stop offset="0.72" stopColor="#c19357" stopOpacity="0.5" />
+            <stop offset="0.22" stopColor="#0e2a47" stopOpacity="0.28" />
+            <stop offset="0.4" stopColor="#c19357" stopOpacity="0.7" />
+            <stop offset="0.5" stopColor="#faf6ef" stopOpacity="0.55" />
+            <stop offset="0.62" stopColor="#c19357" stopOpacity="0.68" />
+            <stop offset="0.82" stopColor="#0e2a47" stopOpacity="0.22" />
             <stop offset="1" stopColor="#0e2a47" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="mk-navy-silk" x1="1" y1="0" x2="0" y2="1">
@@ -60,13 +68,13 @@ function LightAtelier() {
             <stop offset="0.5" stopColor="#0e2a47" stopOpacity="0.18" />
             <stop offset="1" stopColor="#c19357" stopOpacity="0" />
           </linearGradient>
-          <radialGradient id="mk-cream-well" cx="50%" cy="28%" r="42%">
-            <stop offset="0" stopColor="#faf6ef" stopOpacity="0.55" />
-            <stop offset="0.45" stopColor="#f0e2cc" stopOpacity="0.16" />
+          <radialGradient id="mk-cream-well" cx="50%" cy="28%" r="48%">
+            <stop offset="0" stopColor="#faf6ef" stopOpacity="0.42" />
+            <stop offset="0.4" stopColor="#f0e2cc" stopOpacity="0.18" />
             <stop offset="1" stopColor="#ece6dc" stopOpacity="0" />
           </radialGradient>
-          <radialGradient id="mk-gold-halo" cx="50%" cy="22%" r="28%">
-            <stop offset="0" stopColor="#c19357" stopOpacity="0.28" />
+          <radialGradient id="mk-gold-halo" cx="50%" cy="18%" r="34%">
+            <stop offset="0" stopColor="#c19357" stopOpacity="0.22" />
             <stop offset="1" stopColor="#c19357" stopOpacity="0" />
           </radialGradient>
         </defs>

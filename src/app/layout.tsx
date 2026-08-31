@@ -53,7 +53,7 @@ export async function generateViewport(): Promise<Viewport> {
 
   return {
     colorScheme: resolved,
-    themeColor: resolved === "dark" ? "#061728" : "#e8eef4",
+    themeColor: resolved === "dark" ? "#061728" : "#ece6dc",
   };
 }
 
