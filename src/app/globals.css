@@ -53,7 +53,7 @@
   --color-gold-pale: #f0e2cc;
 
   /* 🧺 Cream / paper / sand family */
-  --color-atelier: #e8eef4;
+  --color-atelier: #ece6dc;
   --color-cream: #faf6ef;
   --color-ivory: #fff8ec;
   --color-linen: #f7f4ee;
@@ -391,7 +391,7 @@
 /* ─────────────────────────── 🌗 Theme vars ─────────────────────────────── */
 :root {
   color-scheme: light;
-  --background: #e8eef4;
+  --background: #ece6dc;
   --foreground: #0e2a47;
   --card: #fffefb;
   --card-foreground: #0e2a47;
@@ -488,7 +488,7 @@
     outline-offset: 3px;
   }
 
-  /* 🧍 Body — cool atelier canvas; grain sits above. Scene paints the graphic. */
+  /* 🧍 Body — linen atelier canvas; grain sits above. Scene paints the graphic. */
   body {
     @apply text-navy dark:text-ivory min-h-dvh max-w-full overflow-x-hidden antialiased;
     font-family: var(--font-vazir), Vazirmatn, Tahoma, sans-serif;
