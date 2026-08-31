@@ -105,7 +105,14 @@ export function MobileNav() {
                           href={c.href}
                           className="text-navy/70 dark:text-wheat flex items-center gap-2 py-2.5 text-sm"
                         >
-                          <Icon className="text-gold/80 dark:text-gold size-4" />{" "}
+                          <span
+                            className={cn(
+                              "grid size-7 shrink-0 place-items-center rounded-lg",
+                              c.swatch,
+                            )}
+                          >
+                            <Icon className="size-3.5 text-current" />
+                          </span>
                           {c.label}
                         </Link>
                       </SheetClose>

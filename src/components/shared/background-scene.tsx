@@ -12,15 +12,16 @@ const RAYS = Array.from({ length: 32 }, (_, i) => i);
 function LightAtelier() {
   return (
     <div className="absolute inset-0 dark:hidden">
-      <div className="absolute inset-0 bg-[#ece6dc]" />
-      <div className="absolute inset-0 bg-[linear-gradient(158deg,#cfc3b3_0%,#ece6dc_16%,#f6efe4_30%,#e8d4b0_48%,#d4b585_64%,#c19357_80%,#b7a07c_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(118deg,rgba(14,42,71,0.30)_0%,rgba(14,42,71,0.10)_20%,rgba(250,246,239,0.34)_42%,rgba(193,147,87,0.40)_64%,rgba(193,147,87,0.12)_82%,rgba(14,42,71,0.18)_100%)]" />
-      <div className="absolute inset-[-16%] blur-[52px]">
-        <div className="absolute top-[-8%] left-[20%] h-[44%] w-[52%] rounded-full bg-[rgba(193,147,87,0.34)]" />
-        <div className="absolute top-[10%] right-[-8%] h-[40%] w-[44%] rounded-full bg-[rgba(14,42,71,0.14)]" />
-        <div className="absolute bottom-[-10%] left-[-10%] h-[48%] w-[54%] rounded-full bg-[rgba(14,42,71,0.16)]" />
-        <div className="absolute right-[10%] bottom-[8%] h-[38%] w-[42%] rounded-full bg-[rgba(250,246,239,0.48)]" />
-        <div className="absolute top-[34%] left-[36%] h-[34%] w-[36%] rounded-full bg-[rgba(193,147,87,0.18)]" />
+      <div className="absolute inset-0 bg-[#e6d7c4]" />
+      <div className="absolute inset-0 bg-[linear-gradient(152deg,#6f8499_0%,#a9b4c2_10%,#d7cbb8_22%,#ece6dc_34%,#f7f0e4_44%,#e8c57a_56%,#c19357_68%,#d9b77f_80%,#8a9aab_92%,#c4ad88_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(112deg,rgba(14,42,71,0.48)_0%,rgba(14,42,71,0.18)_16%,rgba(250,246,239,0.42)_34%,rgba(193,147,87,0.55)_52%,rgba(232,197,122,0.38)_68%,rgba(14,42,71,0.28)_86%,rgba(14,42,71,0.12)_100%)]" />
+      <div className="absolute inset-[-18%] blur-[46px]">
+        <div className="absolute top-[-12%] left-[8%] h-[52%] w-[58%] rounded-full bg-[rgba(193,147,87,0.58)]" />
+        <div className="absolute top-[-4%] right-[-12%] h-[46%] w-[50%] rounded-full bg-[rgba(14,42,71,0.28)]" />
+        <div className="absolute bottom-[-14%] left-[-12%] h-[56%] w-[60%] rounded-full bg-[rgba(14,42,71,0.36)]" />
+        <div className="absolute right-[6%] top-[28%] h-[42%] w-[46%] rounded-full bg-[rgba(250,246,239,0.62)]" />
+        <div className="absolute right-[-8%] bottom-[4%] h-[40%] w-[44%] rounded-full bg-[rgba(232,197,122,0.42)]" />
+        <div className="absolute top-[38%] left-[30%] h-[36%] w-[40%] rounded-full bg-[rgba(193,147,87,0.32)]" />
       </div>
 
       <svg

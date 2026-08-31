@@ -81,9 +81,8 @@ export function CategoryMenu() {
                     >
                       <span
                         className={cn(
-                          "flex size-10 shrink-0 items-center justify-center rounded-2xl",
-                          "bg-navy text-gold",
-                          "dark:bg-gold dark:text-navy-deep",
+                          "flex size-10 shrink-0 items-center justify-center rounded-2xl transition-[transform,box-shadow] duration-300 group-hover:scale-105",
+                          c.swatch,
                         )}
                       >
                         <Icon className="size-5 text-current" />

@@ -514,8 +514,10 @@
   }
 }
 
-/* 🖋️ Autofill — cancel Chrome's fill (author !important beats UA fill).
-   Input stays glassy; text color follows theme. No color-scheme override. */
+/* 🖋️ Autofill — do not set background-color here. Author transparent
+   !important lets Chromium start the 9999s clock from its Field/yellow
+   paint and locks the inner bar. Delay the UA fill instead; text stays
+   on-theme. No color-scheme override, no clip:text, no inset color fill. */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -525,13 +527,9 @@ textarea:-webkit-autofill,
 textarea:autofill {
   -webkit-text-fill-color: var(--color-navy);
   caret-color: var(--color-navy);
-  background-color: transparent !important;
   background-image: none !important;
-  transition:
-    background-color 9999s ease-in-out 0s,
-    color 0.2s,
-    border-color 0.2s,
-    box-shadow 0.2s;
+  box-shadow: none !important;
+  transition: background-color 9999s ease-out 0s;
 }
 .dark input:-webkit-autofill,
 .dark input:-webkit-autofill:hover,
@@ -542,7 +540,12 @@ textarea:autofill {
 .dark textarea:autofill {
   -webkit-text-fill-color: var(--color-ivory);
   caret-color: var(--color-ivory);
-  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+input:-internal-autofill-selected,
+textarea:-internal-autofill-selected {
+  appearance: none !important;
   background-image: none !important;
 }
 
@@ -589,8 +592,9 @@ textarea:autofill {
 [data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:focus,
 [data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:active,
 [data-field-shell][data-skin="inset"] :is(input, textarea):autofill {
-  background-color: transparent !important;
   background-image: none !important;
+  box-shadow: none !important;
+  transition: background-color 9999s ease-out 0s;
 }
 input.newsletter-field:-webkit-autofill,
 input.newsletter-field:-webkit-autofill:hover,
@@ -599,13 +603,9 @@ input.newsletter-field:-webkit-autofill:active,
 input.newsletter-field:autofill {
   -webkit-text-fill-color: var(--color-cream);
   caret-color: var(--color-cream);
-  background-color: transparent !important;
   background-image: none !important;
-  transition:
-    background-color 9999s ease-in-out 0s,
-    color 0.2s,
-    border-color 0.2s,
-    box-shadow 0.2s;
+  box-shadow: none !important;
+  transition: background-color 9999s ease-out 0s;
 }
 
 /* 🔄 nextjs-toploader — gold gradient anchored to the right (RTL-friendly) */
