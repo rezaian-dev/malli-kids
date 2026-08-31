@@ -1,20 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import { ClickProgress } from "./click-progress";
+import { BackToTop } from "./back-to-top";
+import { AuthModalMount } from "@/components/auth";
 
-const ClickProgress = dynamic(
-  () => import("./click-progress").then((mod) => mod.ClickProgress),
-  { ssr: false },
-);
-const BackToTop = dynamic(() => import("./back-to-top").then((mod) => mod.BackToTop), {
-  ssr: false,
-});
-const AuthModalMount = dynamic(
-  () => import("@/components/auth").then((mod) => mod.AuthModalMount),
-  { ssr: false },
-);
-
-// ✨ Delay non-critical storefront helpers until hydration.
+// ✨ Keep storefront helpers ready without visual fallback swaps. 🪶
 export function StorefrontEnhancements() {
   return (
     <>

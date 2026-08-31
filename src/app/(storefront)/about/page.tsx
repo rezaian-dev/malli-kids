@@ -23,6 +23,8 @@ export default function AboutPage() {
         kicker={ABOUT.kicker}
         title={ABOUT.title}
         lead={ABOUT.lead}
+        path="/about"
+        schemaType="AboutPage"
       />
 
       <div className="container mx-auto mb-10 flex max-w-5xl flex-wrap gap-3 px-3 sm:px-5 lg:px-7">

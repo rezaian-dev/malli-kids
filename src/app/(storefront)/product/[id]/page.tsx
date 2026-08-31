@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
+
 import { ProductCard } from "@/components/product";
 import { JsonLd } from "@/components/shared/json-ld";
-import { CORE_PRODUCTS, getProductById, pdpHref } from "@/lib/data/products";
+import {
+  CORE_PRODUCTS,
+  getProductById,
+  parseProductRouteId,
+  pdpHref,
+} from "@/lib/data/products";
 import { breadcrumbSchema, buildMetadata, productSchema } from "@/lib/seo";
 import { shell } from "@/lib/utils";
 import { ProductBuyPanel } from "./_components/product-buy-panel";
@@ -14,7 +20,7 @@ import {
 } from "./_components/product-live-context";
 
 export function generateStaticParams() {
-  return CORE_PRODUCTS.map((_, i) => ({ id: String(i) }));
+  return CORE_PRODUCTS.map((product) => ({ id: pdpHref(product.id).split("/").pop()! }));
 }
 
 export async function generateMetadata({
@@ -23,7 +29,8 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const product = getProductById(Number(id));
+  const productId = parseProductRouteId(id);
+  const product = getProductById(productId);
 
   if (!product) {
     return buildMetadata({
@@ -36,7 +43,7 @@ export async function generateMetadata({
 
   return buildMetadata({
     title: product.name,
-    description: `${product.desc} خرید آنلاین از ملی کیدز با راهنمای سایز و ارسال سریع.`,
+    description: `${product.desc} خرید آنلاین از ملی‌کیدز با راهنمای سایز و ارسال سریع.`,
     path: pdpHref(product.id),
     image: product.img,
     imageAlt: product.name,
@@ -50,10 +57,17 @@ export default async function ProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const num = Number(id);
-  const product = getProductById(num);
+  const productId = parseProductRouteId(id);
+  const product = getProductById(productId);
 
   if (!product) notFound();
+
+  const canonicalPath = pdpHref(product.id);
+  const requestedPath = `/product/${id}`;
+
+  if (requestedPath !== canonicalPath) {
+    permanentRedirect(canonicalPath);
+  }
 
   const related = CORE_PRODUCTS.filter(
     (item) => item.id !== product.id && item.cat === product.cat,
@@ -65,13 +79,13 @@ export default async function ProductPage({
         data={breadcrumbSchema([
           { name: "خانه", path: "/" },
           { name: "فروشگاه", path: "/shop" },
-          { name: product.name, path: pdpHref(product.id) },
+          { name: product.name, path: canonicalPath },
         ])}
       />
       <JsonLd data={productSchema(product)} />
       <ProductLiveProvider
         product={product}
-        requestedId={Number.isFinite(num) ? num : undefined}
+        requestedId={Number.isFinite(productId) ? productId : undefined}
       >
         <div className={shell}>
           <nav aria-label="مسیر محصول" className="mb-8">

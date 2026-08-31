@@ -33,6 +33,7 @@ export default function ShippingPage() {
         crumb="ارسال و بازگشت"
         kicker="سیاست فروشگاه"
         title="ارسال سریع، بازگشت آسان"
+        path="/shipping"
       />
       <div className="container mx-auto grid w-full max-w-5xl gap-4 px-4 sm:px-5 md:grid-cols-3 lg:px-7">
         {cards.map((c) => (

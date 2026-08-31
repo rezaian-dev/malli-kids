@@ -42,6 +42,7 @@ export default function CollabPage() {
         kicker="با هم بزرگ می‌شویم"
         title="همکاری با ملی‌کیدز"
         lead="از خیاط‌خانه‌های تهران تا بلاگرهای مادر؛ اگر دلتان برای قصه کوچولوها می‌تپد، جایتان در کنار ما خالی است."
+        path="/collab"
       />
 
       <div className="container mx-auto w-full max-w-5xl space-y-9 px-4 sm:px-5 lg:px-7">

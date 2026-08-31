@@ -44,7 +44,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
-      lang="fa"
+      lang="fa-IR"
       dir="rtl"
       data-scroll-behavior="smooth"
       className={`${vazir.variable} ${playfair.variable} scrollbar-gutter-stable`}

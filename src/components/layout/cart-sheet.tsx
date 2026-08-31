@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
 import { toFaDigits, formatToman } from "@/lib/format";
-import { getProductById } from "@/lib/data/products";
+import { getProductById, pdpHref } from "@/lib/data/products";
 import { BRAND } from "@/lib/constants";
 import { SHIPPING_FEE } from "@/lib/orders";
 import { Badge } from "@/components/ui/badge";
@@ -207,7 +207,7 @@ export function CartSheet() {
                 >
                   <SheetClose asChild>
                     <Link
-                      href={`/product/${product.id}`}
+                      href={pdpHref(product.id)}
                       className="border-navy/8 bg-sand dark:border-gold/20 dark:bg-dusk relative block size-16 shrink-0 overflow-hidden rounded-xl border sm:size-20"
                     >
                       <Image
@@ -224,7 +224,7 @@ export function CartSheet() {
                     <div className="flex items-start justify-between gap-2">
                       <SheetClose asChild>
                         <Link
-                          href={`/product/${product.id}`}
+                          href={pdpHref(product.id)}
                           className="text-navy hover:text-gold dark:text-ivory dark:hover:text-gold-light line-clamp-1 text-[13px] font-black sm:text-sm"
                         >
                           {product.name}

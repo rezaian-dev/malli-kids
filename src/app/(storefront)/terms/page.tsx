@@ -17,6 +17,7 @@ export default function TermsPage() {
         kicker="حقوق و تعهدات"
         title="قوانین و مقررات ملی‌کیدز"
         lead="خرید از ملی‌کیدز به‌معنای پذیرش این شرایط است."
+        path="/terms"
       />
       <div className="container mx-auto w-full max-w-3xl space-y-4 px-4 sm:px-5 lg:px-7">
         {[

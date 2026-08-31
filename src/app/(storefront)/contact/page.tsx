@@ -1,17 +1,19 @@
 import Link from "next/link";
 import { ArrowLeft, Clock, Headphones, MapPin, Phone } from "lucide-react";
+
 import { Intro } from "@/components/shared/intro";
+import { JsonLd } from "@/components/shared/json-ld";
 import { Button } from "@/components/ui/button";
 import { BRAND } from "@/lib/constants";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, contactPageSchema } from "@/lib/seo";
 import { ContactMap } from "./_components/contact-map";
 
 export const metadata = buildMetadata({
   title: "تماس با ما",
   description:
-    "راه‌های ارتباط با ملی کیدز، آدرس گالری، ساعت پاسخ‌گویی و پشتیبانی سفارش‌ها از طریق سایت.",
+    "راه‌های ارتباط با ملی‌کیدز، آدرس گالری، ساعت پاسخ‌گویی و پشتیبانی سفارش‌ها از طریق سایت.",
   path: "/contact",
-  keywords: ["تماس با ملی کیدز", "آدرس گالری ملی‌کیدز", "پشتیبانی سفارش کودک"],
+  keywords: ["تماس با ملی‌کیدز", "آدرس گالری ملی‌کیدز", "پشتیبانی سفارش کودک"],
 });
 
 export default function ContactPage() {
@@ -22,7 +24,10 @@ export default function ContactPage() {
         kicker="گالری و پشتیبانی"
         title="کنارتان هستیم"
         lead="پشتیبانی ما فقط از طریق سایت است؛ هر سوالی بپرسید، پاسخش را در پنل کاربری خودتان می‌بینید. برای دیدن لباس‌ها از نزدیک هم گالری ولیعصر میزبان شماست."
+        path="/contact"
+        schemaType="ContactPage"
       />
+      <JsonLd data={contactPageSchema()} />
 
       <div className="container mx-auto w-full max-w-5xl space-y-9 px-4 sm:px-5 lg:px-7">
         <section className="from-navy via-navy-mid to-navy-light overflow-hidden rounded-[28px] bg-linear-to-br px-6 py-8 shadow-[0_24px_60px_-30px_rgba(4,20,39,.6)] sm:px-10 sm:py-10">

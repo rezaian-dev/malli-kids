@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { loadPublishedArticles } from "@/lib/articles";
-import { CORE_PRODUCTS } from "@/lib/data/products";
+import { CORE_PRODUCTS, pdpHref } from "@/lib/data/products";
 import { absoluteUrl } from "@/lib/seo";
 
 const now = new Date();
@@ -97,16 +97,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.3,
     },
-    {
-      url: absoluteUrl("/tryon"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
   ];
 
   const productRoutes: MetadataRoute.Sitemap = CORE_PRODUCTS.map((product) => ({
-    url: absoluteUrl(`/product/${product.id}`),
+    url: absoluteUrl(pdpHref(product.id)),
     lastModified: now,
     changeFrequency: "weekly",
     priority: 0.75,

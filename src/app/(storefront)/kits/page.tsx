@@ -19,6 +19,8 @@ export default function KitsPage() {
         kicker="MAKE AT HOME"
         title="کیت‌های آماده دوخت"
         lead="هدیه به مادر خوش‌سلیقه؛ همه‌چیز داخل جعبه است."
+        path="/kits"
+        schemaType="CollectionPage"
       />
       <ProductCatalog items={KITS} cta="سفارش کیت" />
     </>

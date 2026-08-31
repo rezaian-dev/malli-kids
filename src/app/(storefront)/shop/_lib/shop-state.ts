@@ -24,17 +24,28 @@ function readText(value: SearchValue) {
   return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
 }
 
+function readAlias(
+  params: Record<string, SearchValue>,
+  ...keys: string[]
+): SearchValue {
+  for (const key of keys) {
+    const value = params[key];
+    if (value !== undefined) return value;
+  }
+  return undefined;
+}
+
 function readNumber(value: SearchValue, fallback: number) {
   const parsed = Number.parseInt(readText(value), 10);
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
 export function parseShopState(params: Record<string, SearchValue>): ShopState {
-  const cat = readText(params.cat);
+  const cat = readText(readAlias(params, "category", "cat"));
   const season = readText(params.season);
   const sort = readText(params.sort);
-  const min = Math.max(0, readNumber(params.min, 0));
-  const rawMax = readNumber(params.max, PRICE_CAP);
+  const min = Math.max(0, readNumber(readAlias(params, "minPrice", "min"), 0));
+  const rawMax = readNumber(readAlias(params, "maxPrice", "max"), PRICE_CAP);
   const max = Math.max(min, Math.min(PRICE_CAP, rawMax));
 
   return {
@@ -46,11 +57,11 @@ export function parseShopState(params: Record<string, SearchValue>): ShopState {
     page: Math.max(1, readNumber(params.page, 1)),
     sort: sort && Object.hasOwn(SORTS, sort) ? sort : "new",
     view: readText(params.view) === "list" ? "list" : "grid",
-    stock: readText(params.stock) === "1",
-    disc: readText(params.disc) === "1",
-    hot: readText(params.hot) === "1",
-    onlyNew: readText(params.new) === "1",
-    q: readText(params.q).trim().slice(0, 60),
+    stock: readText(readAlias(params, "inStock", "stock")) === "1",
+    disc: readText(readAlias(params, "onSale", "disc")) === "1",
+    hot: readText(readAlias(params, "topRated", "hot")) === "1",
+    onlyNew: readText(readAlias(params, "newest", "new")) === "1",
+    q: readText(readAlias(params, "query", "q")).trim().slice(0, 60),
     min,
     max,
   };
@@ -59,18 +70,18 @@ export function parseShopState(params: Record<string, SearchValue>): ShopState {
 export function toShopHref(state: ShopState) {
   const params = new URLSearchParams();
 
-  if (state.cat !== "همه") params.set("cat", state.cat);
+  if (state.cat !== "همه") params.set("category", state.cat);
   if (state.season !== "همه") params.set("season", state.season);
   if (state.page > 1) params.set("page", String(state.page));
   if (state.sort !== "new") params.set("sort", state.sort);
   if (state.view === "list") params.set("view", "list");
-  if (state.stock) params.set("stock", "1");
-  if (state.disc) params.set("disc", "1");
-  if (state.hot) params.set("hot", "1");
-  if (state.onlyNew) params.set("new", "1");
-  if (state.q) params.set("q", state.q);
-  if (state.min) params.set("min", String(state.min));
-  if (state.max !== PRICE_CAP) params.set("max", String(state.max));
+  if (state.stock) params.set("inStock", "1");
+  if (state.disc) params.set("onSale", "1");
+  if (state.hot) params.set("topRated", "1");
+  if (state.onlyNew) params.set("newest", "1");
+  if (state.q) params.set("query", state.q);
+  if (state.min) params.set("minPrice", String(state.min));
+  if (state.max !== PRICE_CAP) params.set("maxPrice", String(state.max));
 
   const query = params.toString();
   return query ? `/shop?${query}` : "/shop";

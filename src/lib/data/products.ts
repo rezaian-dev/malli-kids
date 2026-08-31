@@ -147,8 +147,35 @@ export function getProductById(id: number): Product | undefined {
   );
 }
 
+export function parseProductRouteId(value: string) {
+  const match = /^(\d+)/.exec(value);
+  if (!match) return Number.NaN;
+  return Number(match[1]);
+}
+
+const PRODUCT_SLUGS = [
+  "almas-talayi-party-dress",
+  "camel-beret-coat",
+  "classic-shirt-suspenders-set",
+  "maryam-baby-set",
+  "pink-princess-tutu-dress",
+  "beige-linen-romper",
+  "gold-sequin-dress",
+  "minimal-summer-romper",
+] as const;
+
+export function productSlug(id: number) {
+  const safeId = ((id % CORE_PRODUCTS.length) + CORE_PRODUCTS.length) % CORE_PRODUCTS.length;
+  return PRODUCT_SLUGS[safeId] ?? `product-${safeId}`;
+}
+
+export function productRouteParam(id: number) {
+  const safeId = ((id % CORE_PRODUCTS.length) + CORE_PRODUCTS.length) % CORE_PRODUCTS.length;
+  return `${safeId}-${productSlug(safeId)}`;
+}
+
 export function pdpHref(id: number) {
-  return `/product/${id % 8}`;
+  return `/product/${productRouteParam(id)}`;
 }
 
 void parseFaPrice;

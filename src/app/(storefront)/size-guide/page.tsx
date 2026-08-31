@@ -28,6 +28,7 @@ export default function SizeGuidePage() {
         kicker="FIT GUIDE"
         title="راهنمای سایز"
         lead="قد را بدون کفش بگیرید. عددها به سانتی‌متر است. اگر بین دو سایز بودید، برای لباس رویی سایز بزرگ‌تر را بردارید."
+        path="/size-guide"
       />
       <div className="container mx-auto w-full max-w-4xl px-4 sm:px-5 lg:px-7">
         <div className="border-navy/10 dark:border-gold/35 dark:bg-dusk overflow-x-auto rounded-3xl border bg-white shadow-sm">

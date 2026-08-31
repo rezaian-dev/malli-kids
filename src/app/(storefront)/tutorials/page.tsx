@@ -19,6 +19,8 @@ export default function TutorialsPage() {
         kicker="ACADEMY"
         title="آموزش‌های آتلیه"
         lead="درس‌های کوتاه؛ از اولین کوک تا چین دامن جشن."
+        path="/tutorials"
+        schemaType="CollectionPage"
       />
       <ProductCatalog items={TUTORIALS} cta="دیدن الگو" />
     </>

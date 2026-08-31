@@ -3,10 +3,12 @@ import { SEO } from "@/lib/seo";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: "/",
     name: SEO.siteNamePlainFa,
     short_name: SEO.siteNameFa,
     description: SEO.defaultDescription,
     start_url: "/",
+    scope: "/",
     display: "standalone",
     background_color: "#fcf7ef",
     theme_color: "#061728",

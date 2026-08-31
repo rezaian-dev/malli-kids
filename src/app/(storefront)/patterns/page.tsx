@@ -19,6 +19,8 @@ export default function PatternsPage() {
         kicker="ATELIER PATTERNS"
         title="الگوهای آماده دوخت"
         lead="هر الگو سایزبندی ۸۰ تا ۱۲۲ دارد و با فیلم برش کوتاه همراه است."
+        path="/patterns"
+        schemaType="CollectionPage"
       />
       <ProductCatalog items={PATTERNS} cta="خرید الگو" />
     </>

@@ -24,6 +24,7 @@ export default function TryOnPage() {
         kicker="VIRTUAL FITTING ROOM"
         title="اتاق پرو دیجیتال ملی‌کیدز"
         lead="لباس‌های کالکشن را روی تن کوچولو ببینید و سایز مناسب را پیدا کنید — این تجربه به‌زودی ارائه می‌شود."
+        path="/tryon"
       />
       <TryOnComingSoon />
     </>

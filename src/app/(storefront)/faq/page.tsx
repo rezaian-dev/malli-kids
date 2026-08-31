@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { Intro } from "@/components/shared/intro";
+
 import { Faq } from "@/components/shared/faq";
-import { buildMetadata } from "@/lib/seo";
+import { Intro } from "@/components/shared/intro";
+import { JsonLd } from "@/components/shared/json-ld";
+import { FAQ } from "@/lib/data/pages";
+import { buildMetadata, faqSchema } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "سوال‌های پرتکرار",
@@ -23,7 +26,10 @@ export default function FaqPage() {
         kicker="پشتیبانی ملی‌کیدز"
         title="قبل از خرید، این‌ها را بخوانید"
         lead="پاسخ سوال‌های پرتکرار مادرها درباره سایز، ارسال، بازگشت و پرو مجازی."
+        path="/faq"
+        schemaType="FAQPage"
       />
+      <JsonLd data={faqSchema(FAQ)} />
       <div className="container mx-auto w-full max-w-3xl px-4 sm:px-5 lg:px-7">
         <Faq />
         <div className="border-navy/8 hover:border-gold/50 dark:border-gold/30 dark:bg-slate/60 mt-10 rounded-[26px] border bg-white/94 p-6 text-center shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]">

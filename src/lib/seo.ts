@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BRAND } from "@/lib/constants";
+import { pdpHref } from "@/lib/data/products";
 import type { JournalArticle } from "@/lib/articles";
 import type { Product } from "@/types";
 
@@ -14,11 +15,13 @@ export const SEO = {
   siteNameFa: BRAND.nameFa,
   siteNamePlainFa: "ملی کیدز",
   siteNameEn: BRAND.nameEn,
-  defaultTitle: "ملی کیدز | پوشاک کودک",
-  titleTemplate: "%s | ملی کیدز",
+  defaultTitle: "ملی‌کیدز | فروشگاه اینترنتی پوشاک کودک",
+  titleTemplate: "%s | ملی‌کیدز",
   defaultDescription:
-    "فروشگاه اینترنتی پوشاک کودک ملی کیدز با کالکشن‌های دخترانه، پسرانه، سیسمونی و دستدوز، راهنمای سایز دقیق و تجربه خرید امن.",
-  defaultImage: "/brand/hero-dress-editorial.jpg",
+    "فروشگاه اینترنتی پوشاک کودک ملی‌کیدز با کالکشن‌های دخترانه، پسرانه، سیسمونی و دستدوز، راهنمای سایز دقیق، دوخت ظریف و تجربه خرید امن.",
+  defaultImage: "/opengraph-image",
+  defaultImageAlt:
+    "ملی‌کیدز، بوتیک آنلاین پوشاک کودک با کالکشن‌های خاص و تجربه خرید امن",
   locale: "fa_IR",
   keywords: [
     "ملی کیدز",
@@ -29,10 +32,24 @@ export const SEO = {
     "فروشگاه لباس کودک",
     "راهنمای سایز کودک",
     "پرو مجازی لباس کودک",
+    "لباس دخترانه کودک",
+    "لباس پسرانه کودک",
+    "سیسمونی",
+    "دستدوز کودک",
   ],
+  themeColorLight: "#fcf7ef",
+  themeColorDark: "#061728",
+  searchParam: "query",
 } as const;
 
 type PageType = "website" | "article";
+type PageSchemaType =
+  | "WebPage"
+  | "AboutPage"
+  | "ContactPage"
+  | "CollectionPage"
+  | "FAQPage"
+  | "Article";
 
 type PageMetadataInput = {
   title?: string;
@@ -45,9 +62,27 @@ type PageMetadataInput = {
   type?: PageType;
 };
 
+type PageSchemaInput = {
+  title: string;
+  description?: string;
+  path: string;
+  type?: PageSchemaType;
+};
+
 type BreadcrumbItem = {
   name: string;
   path: string;
+};
+
+type FaqItem = {
+  q: string;
+  a: string;
+};
+
+type ItemListEntry = {
+  name: string;
+  path: string;
+  image?: string;
 };
 
 // 🌐 Read the public site URL from env with a safe local fallback.
@@ -71,6 +106,22 @@ export function getSiteUrl() {
 export function absoluteUrl(path = "/") {
   const safePath = path.startsWith("/") ? path : `/${path}`;
   return new URL(safePath, `${getSiteUrl()}/`).toString();
+}
+
+// 🖼️ Keep OG images consistent and explicit.
+export function buildOgImage(
+  image: string = SEO.defaultImage,
+  alt: string = SEO.defaultImageAlt,
+) {
+  return {
+    url: image,
+    alt,
+    type: image.endsWith(".jpg") || image.endsWith(".jpeg")
+      ? "image/jpeg"
+      : image.endsWith(".webp")
+        ? "image/webp"
+        : "image/png",
+  } as const;
 }
 
 // 🛡️ Keep robots rules consistent across public and private pages.
@@ -116,6 +167,7 @@ export function buildMetadata({
   type = "website",
 }: PageMetadataInput = {}): Metadata {
   const fullTitle = toFullTitle(title);
+  const fullImageAlt = imageAlt ?? fullTitle;
 
   return {
     title,
@@ -126,6 +178,7 @@ export function buildMetadata({
     category: "shopping",
     creator: SEO.siteNamePlainFa,
     publisher: SEO.siteNamePlainFa,
+    authors: [{ name: SEO.siteNamePlainFa, url: absoluteUrl("/") }],
     openGraph: {
       title: fullTitle,
       description,
@@ -133,7 +186,7 @@ export function buildMetadata({
       siteName: SEO.siteNamePlainFa,
       locale: SEO.locale,
       type,
-      images: [{ url: image, alt: imageAlt ?? fullTitle }],
+      images: [buildOgImage(image, fullImageAlt)],
     },
     twitter: {
       card: "summary_large_image",
@@ -157,8 +210,14 @@ export function getRootMetadata(): Metadata {
     category: "shopping",
     creator: SEO.siteNamePlainFa,
     publisher: SEO.siteNamePlainFa,
+    authors: [{ name: SEO.siteNamePlainFa, url: absoluteUrl("/") }],
     keywords: [...SEO.keywords],
     manifest: "/manifest.webmanifest",
+    icons: {
+      icon: [{ url: "/icon.png", sizes: "512x512", type: "image/png" }],
+      apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+      shortcut: ["/icon.png"],
+    },
     openGraph: {
       title: SEO.defaultTitle,
       description: SEO.defaultDescription,
@@ -166,7 +225,7 @@ export function getRootMetadata(): Metadata {
       siteName: SEO.siteNamePlainFa,
       locale: SEO.locale,
       type: "website",
-      images: [{ url: SEO.defaultImage, alt: SEO.siteNamePlainFa }],
+      images: [buildOgImage()],
     },
     twitter: {
       card: "summary_large_image",
@@ -178,6 +237,11 @@ export function getRootMetadata(): Metadata {
       capable: true,
       statusBarStyle: "default",
       title: SEO.siteNamePlainFa,
+    },
+    formatDetection: {
+      telephone: false,
+      email: false,
+      address: false,
     },
   };
 }
@@ -215,8 +279,31 @@ export function websiteSchema() {
     inLanguage: "fa-IR",
     potentialAction: {
       "@type": "SearchAction",
-      target: `${absoluteUrl("/shop")}?q={search_term_string}`,
+      target: `${absoluteUrl("/shop")}?${SEO.searchParam}={search_term_string}`,
       "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+// 📄 Generic page schema for public informational pages.
+export function pageSchema({
+  title,
+  description = SEO.defaultDescription,
+  path,
+  type = "WebPage",
+}: PageSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": type,
+    name: title,
+    headline: title,
+    description,
+    url: absoluteUrl(path),
+    inLanguage: "fa-IR",
+    isPartOf: {
+      "@type": "WebSite",
+      name: SEO.siteNamePlainFa,
+      url: absoluteUrl("/"),
     },
   };
 }
@@ -232,6 +319,61 @@ export function breadcrumbSchema(items: BreadcrumbItem[]) {
       name: item.name,
       item: absoluteUrl(item.path),
     })),
+  };
+}
+
+// 🛒 ItemList schema supports collection and landing pages.
+export function itemListSchema(items: ItemListEntry[], title?: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: title,
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: absoluteUrl(item.path),
+      name: item.name,
+      image: item.image ? absoluteUrl(item.image) : undefined,
+    })),
+  };
+}
+
+// ❓ FAQ schema powers rich FAQ results.
+export function faqSchema(items: FaqItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+}
+
+// ☎️ Contact page schema keeps business contact details explicit.
+export function contactPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: "تماس با ملی‌کیدز",
+    description: "راه‌های تماس، آدرس گالری و ساعت پاسخ‌گویی ملی‌کیدز",
+    url: absoluteUrl("/contact"),
+    mainEntity: {
+      "@type": "ClothingStore",
+      name: SEO.siteNamePlainFa,
+      url: absoluteUrl("/"),
+      telephone: BRAND.phone,
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "IR",
+        addressLocality: "تهران",
+        streetAddress: BRAND.address,
+      },
+    },
   };
 }
 
@@ -258,7 +400,7 @@ export function productSchema(product: Product) {
     },
     offers: {
       "@type": "Offer",
-      url: absoluteUrl(`/product/${product.id}`),
+      url: absoluteUrl(pdpHref(product.id)),
       priceCurrency: "IRR",
       price: String(product.price * 10),
       availability: product.stock
@@ -304,8 +446,9 @@ export function articleSchema(
 
 function toFullTitle(title?: string) {
   if (!title) return SEO.defaultTitle;
-  if (title.includes(SEO.siteNamePlainFa) || title.includes(SEO.siteNameFa))
+  if (title.includes(SEO.siteNamePlainFa) || title.includes(SEO.siteNameFa)) {
     return title;
+  }
   return `${title} | ${SEO.siteNamePlainFa}`;
 }
 
