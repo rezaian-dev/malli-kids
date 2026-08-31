@@ -28,7 +28,7 @@ export function Pagination({ pg, unit = "مورد", siblings = 1, className }: P
     <nav
       aria-label="صفحه‌بندی نتایج"
       className={cn(
-        "admin-pagination mt-5 flex flex-col items-center justify-between gap-3 rounded-2xl border border-navy/8 bg-white/55 px-3 py-3 sm:flex-row sm:px-4 dark:border-gold/14 dark:bg-white/[0.025]",
+        "admin-pagination mt-5 flex flex-col items-center justify-between gap-3 rounded-2xl border border-navy/8 bg-white/55 px-3 py-3 sm:flex-row sm:px-4 dark:border-gold/14 dark:bg-white/2.5",
         className,
       )}
     >

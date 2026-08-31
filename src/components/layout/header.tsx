@@ -14,14 +14,14 @@ import { MobileNav } from "./mobile-nav";
 // 🧭 Server shell with small client islands.
 export function Header() {
   return (
-    <header dir="rtl" className="fixed inset-x-0 top-0 z-[70]">
+    <header dir="rtl" className="fixed inset-x-0 top-0 z-70">
       <FestiveBanner />
 
       <div
         className={cn(
           "border-b border-navy/10 bg-cream/80 shadow-[0_8px_24px_-16px_rgba(14,42,71,.2)]",
-          "backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-cream/65",
-          "dark:border-gold/20 dark:bg-navy-deep/55 dark:backdrop-blur-xl dark:supports-[backdrop-filter]:bg-navy-deep/50",
+          "backdrop-blur-xl backdrop-saturate-150 supports-backdrop-filter:bg-cream/65",
+          "dark:border-gold/20 dark:bg-navy-deep/55 dark:backdrop-blur-xl dark:supports-backdrop-filter:bg-navy-deep/50",
         )}
       >
         <div className={cn(shell, "flex h-14 items-center gap-1 sm:h-16 sm:gap-2")}>
@@ -58,7 +58,7 @@ export function Header() {
 
             <Separator
               orientation="vertical"
-              className="mx-1 hidden !h-5 w-px data-vertical:self-center bg-navy/15 min-[480px]:block md:hidden lg:block dark:bg-gold/25"
+              className="mx-1 hidden h-5! w-px data-vertical:self-center bg-navy/15 min-[480px]:block md:hidden lg:block dark:bg-gold/25"
             />
 
             <ModeToggle className={ICON_BTN} />

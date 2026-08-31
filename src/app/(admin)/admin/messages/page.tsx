@@ -144,7 +144,7 @@ export default function AdminMessages() {
 
                   <div className="mt-4 space-y-2">
                     {ticket.replies.map((item, replyIndex) => (
-                      <div key={`${item.at}-${replyIndex}`} className={cn("max-w-[92%] rounded-2xl px-3.5 py-2.5 text-xs leading-6 sm:max-w-[82%]", item.from === "support" ? "ms-auto border border-gold/18 bg-gold/8 text-navy dark:text-ivory" : "me-auto bg-navy/[0.045] text-navy/80 dark:bg-white/[0.04] dark:text-ivory/80")}>
+                      <div key={`${item.at}-${replyIndex}`} className={cn("max-w-[92%] rounded-2xl px-3.5 py-2.5 text-xs leading-6 sm:max-w-[82%]", item.from === "support" ? "ms-auto border border-gold/18 bg-gold/8 text-navy dark:text-ivory" : "me-auto bg-navy/4.5 text-navy/80 dark:bg-white/4 dark:text-ivory/80")}>
                         <div className="mb-0.5 flex items-center justify-between gap-4 text-[9px] font-black">
                           <span className={item.from === "support" ? "text-gold-deep dark:text-gold-soft" : "text-navy/45 dark:text-wheat"}>{item.from === "support" ? "پشتیبانی ملی‌کیدز" : "کاربر"}</span>
                           <span className="font-bold text-navy/30 dark:text-wheat/45">{item.at}</span>
@@ -168,9 +168,9 @@ export default function AdminMessages() {
                 </div>
 
                 {replying ? (
-                  <div className="border-t border-navy/7 bg-navy/[0.02] p-3.5 dark:border-gold/12 dark:bg-white/[0.02] sm:p-5">
+                  <div className="border-t border-navy/7 bg-navy/2 p-3.5 dark:border-gold/12 dark:bg-white/2 sm:p-5">
                     <label className="mb-2 flex items-center gap-1.5 text-[11px] font-black text-gold" htmlFor={`reply-${ticket.id}`}><Mail className="size-3.5" /> پاسخ به {ticket.name}</label>
-                    <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+                    <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                       {["سلام، ممنون از پیام شما.", "شماره سفارش را لطفاً ارسال کنید.", "موضوع در حال بررسی است و به‌زودی اطلاع می‌دهیم."].map((text) => (
                         <button key={text} type="button" onClick={() => setReply((current) => current ? `${current}\n${text}` : text)} className="shrink-0 rounded-xl border border-navy/8 bg-white/70 px-3 py-1.5 text-[10px] font-bold text-navy/60 transition hover:border-gold/40 dark:border-gold/14 dark:bg-navy-deep/35 dark:text-wheat">{text}</button>
                       ))}

@@ -52,7 +52,7 @@ export function NoticesBell() {
       <DropdownMenuContent
         align="end"
         sideOffset={12}
-        className="z-[80] w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border border-gold bg-paper p-0 dark:border-gold/50 dark:bg-dusk"
+        className="z-80 w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border border-gold bg-paper p-0 dark:border-gold/50 dark:bg-dusk"
       >
         <div className="flex items-center justify-between gap-2 border-b border-gold bg-linear-to-br from-navy to-navy-mid px-4 py-3 dark:border-gold/40">
           <p className="m-0 flex items-center gap-2 text-sm font-black text-white">
@@ -79,7 +79,7 @@ export function NoticesBell() {
             </p>
           </div>
         ) : (
-          <ul className="max-h-96 overflow-y-auto p-2 [scrollbar-width:thin]">
+          <ul className="max-h-96 overflow-y-auto p-2 scrollbar-thin">
             {notices.slice(0, 12).map((n) => {
               const Icon = KIND_ICON[n.kind];
               return (

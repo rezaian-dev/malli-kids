@@ -40,7 +40,7 @@ export function ClickProgress() {
   return (
     <div
       aria-hidden={phase === "idle"}
-      className="pointer-events-none fixed top-0 inset-x-0 z-[95] h-[3px]"
+      className="pointer-events-none fixed top-0 inset-x-0 z-95 h-0.75"
       style={{ opacity: phase === "done" ? 0 : phase === "run" ? 1 : 0, transition: "opacity .35s ease" }}
     >
       <div

@@ -123,7 +123,7 @@ export function HomeQuotes() {
                         </span>
                         <Stars n={r.rate} />
                       </div>
-                      <p className="line-clamp-3 min-h-[4.5rem] text-sm leading-6 font-medium text-ivory sm:min-h-[5.25rem] sm:leading-7">«{r.text}»</p>
+                      <p className="line-clamp-3 min-h-18 text-sm leading-6 font-medium text-ivory sm:min-h-21 sm:leading-7">«{r.text}»</p>
                       <div className="mt-auto flex flex-col gap-3 border-t border-white/10 pt-3 min-[420px]:flex-row min-[420px]:items-center min-[420px]:justify-between">
                         <div className="flex min-w-0 items-center gap-2.5">
                           <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gold text-sm font-black text-navy-deep">{r.initial}</span>

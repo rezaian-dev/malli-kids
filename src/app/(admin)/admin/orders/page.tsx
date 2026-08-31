@@ -123,7 +123,7 @@ export default function AdminOrders() {
       {list.length > 0 ? <Pagination pg={pg} unit="سفارش" /> : null}
 
       <Sheet open={!!open} onOpenChange={(value) => !value && setOpen(null)}>
-        <SheetContent side="right" className="w-full max-w-full gap-3 overflow-y-auto border-navy/10 bg-fog text-navy sm:w-[26rem] sm:max-w-[26rem] dark:border-gold/20 dark:bg-navy-deep dark:text-ivory">
+        <SheetContent side="right" className="w-full max-w-full gap-3 overflow-y-auto border-navy/10 bg-fog text-navy sm:w-104 sm:max-w-104 dark:border-gold/20 dark:bg-navy-deep dark:text-ivory">
           {open ? (
             <>
               <SheetHeader className="text-start">

@@ -30,7 +30,7 @@ export function ArticlesList({ initial }: { initial: JournalArticle[] }) {
             /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin article covers can be raw data URLs. */
             <img src={a.cover} alt="" className="h-24 w-24 shrink-0 rounded-2xl object-cover sm:h-32 sm:w-40" />
           ) : (
-            <span className="grid h-24 w-24 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-sand to-gold/25 text-gold-deep dark:from-navy-mid dark:to-gold/15 sm:h-32 sm:w-40">
+            <span className="grid h-24 w-24 shrink-0 place-items-center rounded-2xl bg-linear-to-br from-sand to-gold/25 text-gold-deep dark:from-navy-mid dark:to-gold/15 sm:h-32 sm:w-40">
               <Newspaper className="size-7" />
             </span>
           )}

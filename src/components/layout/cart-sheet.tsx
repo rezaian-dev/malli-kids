@@ -109,7 +109,7 @@ export function CartSheet() {
             </span>
             <div>
               <p className="text-base font-black text-navy dark:text-ivory">سبد شما خالی است</p>
-              <p className="mx-auto mt-1.5 max-w-[15rem] text-xs leading-6 text-navy/50 dark:text-wheat/80">
+              <p className="mx-auto mt-1.5 max-w-60 text-xs leading-6 text-navy/50 dark:text-wheat/80">
                 کالکشن دوخت‌های تازه را ببینید؛ هر چه بپسندید همین‌جا برایتان نگه می‌داریم.
               </p>
             </div>
@@ -146,7 +146,7 @@ export function CartSheet() {
             </div>
 
             {}
-            <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-4 py-4 [scrollbar-width:thin]">
+            <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-4 py-4 scrollbar-thin">
               {rows.map(({ item, product }) => (
                 <div
                   key={`${item.id}-${item.size}`}

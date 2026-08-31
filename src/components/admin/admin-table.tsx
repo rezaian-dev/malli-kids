@@ -70,14 +70,14 @@ export function AdminTable<T extends { id: string | number }>({
         <>
           {}
           <div className="hidden min-[1360px]:block" role="grid" aria-label="جدول اطلاعات">
-            <div className="overflow-x-auto [scrollbar-width:thin] [scrollbar-color:rgba(193,147,87,0.78)_rgba(14,42,71,0.04)] [&::-webkit-scrollbar]:h-[9px] [&::-webkit-scrollbar-track]:bg-navy/[0.045] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-[linear-gradient(to_right,var(--color-gold-deep),var(--color-gold-light))] [&::-webkit-scrollbar-thumb]:bg-clip-padding dark:[&::-webkit-scrollbar-track]:bg-gold-soft/[0.04]">
+            <div className="overflow-x-auto scrollbar-thin [scrollbar-color:rgba(193,147,87,0.78)_rgba(14,42,71,0.04)] [&::-webkit-scrollbar]:h-2.25 [&::-webkit-scrollbar-track]:bg-navy/4.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-[linear-gradient(to_right,var(--color-gold-deep),var(--color-gold-light))] [&::-webkit-scrollbar-thumb]:bg-clip-padding dark:[&::-webkit-scrollbar-track]:bg-gold-soft/4">
               <div style={{ minWidth }}>
                 <div className="grid text-[rgba(255,248,236,0.9)] border-b border-[rgba(232,197,122,0.26)] bg-[linear-gradient(100deg,rgba(193,147,87,0.14),transparent_42%),var(--color-navy)] shadow-[inset_0_-1px_0_rgba(4,20,39,0.24)] dark:text-[rgba(255,248,236,0.88)] dark:border-[rgba(232,197,122,0.23)] dark:bg-[linear-gradient(100deg,rgba(193,147,87,0.12),transparent_45%),rgba(4,20,39,0.86)]" style={gridStyle} role="row">
                   {cols.map((column) => (
                     <div
                       key={column.key}
                       role="columnheader"
-                      className={cn("min-w-0 whitespace-nowrap px-3.5 py-3 text-[10px] font-black tracking-wide [&:not(:last-child)]:border-e [&:not(:last-child)]:border-[rgba(255,248,236,0.105)] dark:[&:not(:last-child)]:border-[rgba(232,197,122,0.12)]", ALIGN[column.align ?? "start"])}
+                      className={cn("min-w-0 whitespace-nowrap px-3.5 py-3 text-[10px] font-black tracking-wide not-last:border-e not-last:border-[rgba(255,248,236,0.105)] dark:not-last:border-[rgba(232,197,122,0.12)]", ALIGN[column.align ?? "start"])}
                     >
                       {column.title}
                     </div>
@@ -93,13 +93,13 @@ export function AdminTable<T extends { id: string | number }>({
                       style={{ ...gridStyle, "--row-index": index } as CSSProperties}
                       onClick={onRowClick ? () => onRowClick(row) : undefined}
                       onKeyDown={(event) => onKeyDown(event, row)}
-                      className={cn("relative grid min-h-[60px] items-stretch border-b border-[rgba(14,42,71,0.095)] bg-white/34 opacity-0 [animation:var(--animate-admin-row-in)] [animation-delay:calc(var(--row-index,0)*42ms)] transition-[background-color,box-shadow] duration-[220ms] ease-[cubic-bezier(.25,.1,.25,1)] even:bg-navy/[0.022] last:border-b-0 motion-reduce:opacity-100 motion-reduce:[animation:none] hover:z-10 hover:bg-gold/[0.09] hover:shadow-[inset_3px_0_0_var(--color-gold),inset_-3px_0_0_rgba(193,147,87,0.32),0_8px_24px_-20px_rgba(14,42,71,0.5)] focus-visible:z-10 focus-visible:bg-gold/[0.09] focus-visible:shadow-[inset_3px_0_0_var(--color-gold),inset_-3px_0_0_rgba(193,147,87,0.32),0_8px_24px_-20px_rgba(14,42,71,0.5)] dark:border-[rgba(232,197,122,0.125)] dark:bg-[rgba(4,20,39,0.17)] dark:even:bg-gold-soft/[0.024] dark:hover:bg-gold-soft/[0.07] dark:focus-visible:bg-gold-soft/[0.07]", onRowClick && "cursor-pointer")}
+                      className={cn("relative grid min-h-15 items-stretch border-b border-[rgba(14,42,71,0.095)] bg-white/34 opacity-0 animate-admin-row-in [animation-delay:calc(var(--row-index,0)*42ms)] transition-[background-color,box-shadow] duration-220 ease-[cubic-bezier(.25,.1,.25,1)] even:bg-navy/[0.022] last:border-b-0 motion-reduce:opacity-100 motion-reduce:animate-none hover:z-10 hover:bg-gold/9 hover:shadow-[inset_3px_0_0_var(--color-gold),inset_-3px_0_0_rgba(193,147,87,0.32),0_8px_24px_-20px_rgba(14,42,71,0.5)] focus-visible:z-10 focus-visible:bg-gold/9 focus-visible:shadow-[inset_3px_0_0_var(--color-gold),inset_-3px_0_0_rgba(193,147,87,0.32),0_8px_24px_-20px_rgba(14,42,71,0.5)] dark:border-[rgba(232,197,122,0.125)] dark:bg-[rgba(4,20,39,0.17)] dark:even:bg-gold-soft/[0.024] dark:hover:bg-gold-soft/[0.07] dark:focus-visible:bg-gold-soft/[0.07]", onRowClick && "cursor-pointer")}
                     >
                       {cols.map((column) => (
                         <div
                           key={column.key}
                           role="cell"
-                          className={cn("flex min-w-0 flex-col justify-center px-3.5 py-2.5 text-[12px] font-bold leading-5 text-navy [&:not(:last-child)]:border-e [&:not(:last-child)]:border-[rgba(14,42,71,0.075)] dark:text-ivory dark:[&:not(:last-child)]:border-[rgba(232,197,122,0.105)] 2xl:text-[13px]", ALIGN[column.align ?? "start"])}
+                          className={cn("flex min-w-0 flex-col justify-center px-3.5 py-2.5 text-[12px] font-bold leading-5 text-navy not-last:border-e not-last:border-[rgba(14,42,71,0.075)] dark:text-ivory dark:not-last:border-[rgba(232,197,122,0.105)] 2xl:text-[13px]", ALIGN[column.align ?? "start"])}
                         >
                           {column.render(row)}
                         </div>
@@ -118,7 +118,7 @@ export function AdminTable<T extends { id: string | number }>({
                 <div
                   key={column.key}
                   role="columnheader"
-                  className={cn("min-w-0 whitespace-nowrap px-3 py-3 text-[9px] font-black [&:not(:last-child)]:border-e [&:not(:last-child)]:border-[rgba(255,248,236,0.105)] dark:[&:not(:last-child)]:border-[rgba(232,197,122,0.12)]", ALIGN[column.align ?? "start"])}
+                  className={cn("min-w-0 whitespace-nowrap px-3 py-3 text-[9px] font-black not-last:border-e not-last:border-[rgba(255,248,236,0.105)] dark:not-last:border-[rgba(232,197,122,0.12)]", ALIGN[column.align ?? "start"])}
                 >
                   {column.title}
                 </div>
@@ -133,13 +133,13 @@ export function AdminTable<T extends { id: string | number }>({
                   style={{ ...tabletGridStyle, "--row-index": index } as CSSProperties}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                   onKeyDown={(event) => onKeyDown(event, row)}
-                  className={cn("relative grid min-h-[58px] items-stretch border-b border-[rgba(14,42,71,0.095)] bg-white/34 opacity-0 [animation:var(--animate-admin-row-in)] [animation-delay:calc(var(--row-index,0)*42ms)] transition-[background-color,box-shadow] duration-[220ms] ease-[cubic-bezier(.25,.1,.25,1)] even:bg-navy/[0.022] last:border-b-0 motion-reduce:opacity-100 motion-reduce:[animation:none] hover:z-10 hover:bg-gold/[0.09] hover:shadow-[inset_3px_0_0_var(--color-gold),inset_-3px_0_0_rgba(193,147,87,0.32),0_8px_24px_-20px_rgba(14,42,71,0.5)] focus-visible:z-10 focus-visible:bg-gold/[0.09] focus-visible:shadow-[inset_3px_0_0_var(--color-gold),inset_-3px_0_0_rgba(193,147,87,0.32),0_8px_24px_-20px_rgba(14,42,71,0.5)] dark:border-[rgba(232,197,122,0.125)] dark:bg-[rgba(4,20,39,0.17)] dark:even:bg-gold-soft/[0.024] dark:hover:bg-gold-soft/[0.07] dark:focus-visible:bg-gold-soft/[0.07]", onRowClick && "cursor-pointer")}
+                  className={cn("relative grid min-h-14.5 items-stretch border-b border-[rgba(14,42,71,0.095)] bg-white/34 opacity-0 animate-admin-row-in [animation-delay:calc(var(--row-index,0)*42ms)] transition-[background-color,box-shadow] duration-220 ease-[cubic-bezier(.25,.1,.25,1)] even:bg-navy/[0.022] last:border-b-0 motion-reduce:opacity-100 motion-reduce:animate-none hover:z-10 hover:bg-gold/9 hover:shadow-[inset_3px_0_0_var(--color-gold),inset_-3px_0_0_rgba(193,147,87,0.32),0_8px_24px_-20px_rgba(14,42,71,0.5)] focus-visible:z-10 focus-visible:bg-gold/9 focus-visible:shadow-[inset_3px_0_0_var(--color-gold),inset_-3px_0_0_rgba(193,147,87,0.32),0_8px_24px_-20px_rgba(14,42,71,0.5)] dark:border-[rgba(232,197,122,0.125)] dark:bg-[rgba(4,20,39,0.17)] dark:even:bg-gold-soft/[0.024] dark:hover:bg-gold-soft/[0.07] dark:focus-visible:bg-gold-soft/[0.07]", onRowClick && "cursor-pointer")}
                 >
                   {tabletCols.map((column) => (
                     <div
                       key={column.key}
                       role="cell"
-                      className={cn("flex min-w-0 flex-col justify-center px-3 py-2 text-[11px] font-bold leading-5 text-navy [&:not(:last-child)]:border-e [&:not(:last-child)]:border-[rgba(14,42,71,0.075)] dark:text-ivory dark:[&:not(:last-child)]:border-[rgba(232,197,122,0.105)]", ALIGN[column.align ?? "start"])}
+                      className={cn("flex min-w-0 flex-col justify-center px-3 py-2 text-[11px] font-bold leading-5 text-navy not-last:border-e not-last:border-[rgba(14,42,71,0.075)] dark:text-ivory dark:not-last:border-[rgba(232,197,122,0.105)]", ALIGN[column.align ?? "start"])}
                     >
                       {column.render(row)}
                     </div>
@@ -150,7 +150,7 @@ export function AdminTable<T extends { id: string | number }>({
           </div>
 
           {}
-          <div className="grid gap-2 p-2 bg-[linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),rgba(14,42,71,0.018)] bg-[size:100%_34px] dark:bg-[linear-gradient(rgba(232,197,122,0.022)_1px,transparent_1px),rgba(4,20,39,0.24)] sm:p-2.5 min-[700px]:hidden">
+          <div className="grid gap-2 p-2 bg-[linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),rgba(14,42,71,0.018)] bg-size-[100%_34px] dark:bg-[linear-gradient(rgba(232,197,122,0.022)_1px,transparent_1px),rgba(4,20,39,0.24)] sm:p-2.5 min-[700px]:hidden">
             {rows.map((row, index) => (
               <article
                 key={row.id}
@@ -158,11 +158,11 @@ export function AdminTable<T extends { id: string | number }>({
                 tabIndex={onRowClick ? 0 : undefined}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 onKeyDown={(event) => onKeyDown(event, row)}
-                className={cn("overflow-hidden border border-[rgba(14,42,71,0.14)] rounded-[14px] bg-[rgba(255,255,255,0.86)] shadow-[0_10px_24px_-22px_rgba(14,42,71,0.52),inset_0_1px_0_rgba(255,255,255,0.85)] opacity-0 [animation:var(--animate-admin-row-in)] [animation-delay:calc(var(--row-index,0)*45ms)] transition-[transform,border-color,box-shadow] duration-[220ms] ease-[cubic-bezier(.25,.1,.25,1)] hover:-translate-y-0.5 hover:border-[rgba(193,147,87,0.48)] hover:shadow-[0_22px_42px_-28px_rgba(14,42,71,0.56)] focus-visible:-translate-y-0.5 focus-visible:border-[rgba(193,147,87,0.48)] focus-visible:shadow-[0_22px_42px_-28px_rgba(14,42,71,0.56)] motion-reduce:opacity-100 motion-reduce:[animation:none] dark:border-[rgba(232,197,122,0.22)] dark:bg-[rgba(4,20,39,0.68)] dark:shadow-[0_18px_42px_-27px_rgba(0,0,0,0.94),inset_0_1px_0_rgba(255,255,255,0.04)]", onRowClick && "cursor-pointer")}
+                className={cn("overflow-hidden border border-[rgba(14,42,71,0.14)] rounded-[14px] bg-[rgba(255,255,255,0.86)] shadow-[0_10px_24px_-22px_rgba(14,42,71,0.52),inset_0_1px_0_rgba(255,255,255,0.85)] opacity-0 animate-admin-row-in [animation-delay:calc(var(--row-index,0)*45ms)] transition-[transform,border-color,box-shadow] duration-220 ease-[cubic-bezier(.25,.1,.25,1)] hover:-translate-y-0.5 hover:border-[rgba(193,147,87,0.48)] hover:shadow-[0_22px_42px_-28px_rgba(14,42,71,0.56)] focus-visible:-translate-y-0.5 focus-visible:border-[rgba(193,147,87,0.48)] focus-visible:shadow-[0_22px_42px_-28px_rgba(14,42,71,0.56)] motion-reduce:opacity-100 motion-reduce:animate-none dark:border-[rgba(232,197,122,0.22)] dark:bg-[rgba(4,20,39,0.68)] dark:shadow-[0_18px_42px_-27px_rgba(0,0,0,0.94),inset_0_1px_0_rgba(255,255,255,0.04)]", onRowClick && "cursor-pointer")}
                 style={{ "--row-index": index } as CSSProperties}
               >
                 {primary ? (
-                  <div className="flex min-w-0 items-center justify-between gap-2.5 px-3 py-2.5 min-h-[3.75rem] border-b border-[rgba(14,42,71,0.115)] bg-[linear-gradient(to_left,rgba(193,147,87,0.09),transparent_55%),rgba(14,42,71,0.025)] dark:border-[rgba(232,197,122,0.17)] dark:bg-[linear-gradient(to_left,rgba(193,147,87,0.085),transparent_58%),rgba(255,255,255,0.018)] sm:px-3.5">
+                  <div className="flex min-w-0 items-center justify-between gap-2.5 px-3 py-2.5 min-h-15 border-b border-[rgba(14,42,71,0.115)] bg-[linear-gradient(to_left,rgba(193,147,87,0.09),transparent_55%),rgba(14,42,71,0.025)] dark:border-[rgba(232,197,122,0.17)] dark:bg-[linear-gradient(to_left,rgba(193,147,87,0.085),transparent_58%),rgba(255,255,255,0.018)] sm:px-3.5">
                     <span className="sr-only">{primary.title}</span>
                     <div className={cn("min-w-0 flex-1 text-[13px] font-black text-navy dark:text-ivory", ALIGN[primary.align ?? "start"])}>
                       {(primary.renderMobile ?? primary.render)(row)}
@@ -176,9 +176,9 @@ export function AdminTable<T extends { id: string | number }>({
                 {details.length > 0 ? (
                   <dl className="grid grid-cols-2 bg-[rgba(14,42,71,0.025)] dark:bg-[rgba(4,20,39,0.28)]">
                     {details.map((column) => (
-                      <div key={column.key} className="min-w-0 px-3 py-2 min-h-[2.75rem] border-b border-[rgba(14,42,71,0.105)] bg-[rgba(255,255,255,0.44)] transition-[background-color] duration-[180ms] odd:border-e odd:border-[rgba(14,42,71,0.105)] [&:last-child:nth-child(odd)]:col-span-full [&:last-child:nth-child(odd)]:border-e-0 [&>dd>*]:ms-auto hover:bg-gold/[0.075] dark:border-[rgba(232,197,122,0.145)] dark:bg-[rgba(16,43,70,0.22)] dark:odd:border-[rgba(232,197,122,0.145)] dark:hover:bg-gold-soft/[0.055] max-[340px]:flex max-[340px]:min-h-[2.65rem] max-[340px]:items-center max-[340px]:justify-between max-[340px]:gap-3">
+                      <div key={column.key} className="min-w-0 px-3 py-2 min-h-11 border-b border-[rgba(14,42,71,0.105)] bg-[rgba(255,255,255,0.44)] transition-[background-color] duration-180 odd:border-e odd:border-[rgba(14,42,71,0.105)] [&:last-child:nth-child(odd)]:col-span-full [&:last-child:nth-child(odd)]:border-e-0 [&>dd>*]:ms-auto hover:bg-gold/7.5 dark:border-[rgba(232,197,122,0.145)] dark:bg-[rgba(16,43,70,0.22)] dark:odd:border-[rgba(232,197,122,0.145)] dark:hover:bg-gold-soft/5.5 max-[340px]:flex max-[340px]:min-h-[2.65rem] max-[340px]:items-center max-[340px]:justify-between max-[340px]:gap-3">
                         <dt className="mb-0.5 text-[8px] font-black leading-4 text-navy/52 dark:text-wheat/72 max-[340px]:mb-0 max-[340px]:flex-none">{column.title}</dt>
-                        <dd className="min-w-0 break-words text-[11px] font-extrabold leading-5 text-navy dark:text-ivory max-[340px]:min-w-0 max-[340px]:flex-1 max-[340px]:text-end">
+                        <dd className="min-w-0 wrap-break-word text-[11px] font-extrabold leading-5 text-navy dark:text-ivory max-[340px]:min-w-0 max-[340px]:flex-1 max-[340px]:text-end">
                           {(column.renderMobile ?? column.render)(row)}
                         </dd>
                       </div>

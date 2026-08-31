@@ -22,5 +22,5 @@ export function HeaderSpacer() {
   }, []);
 
   
-  return <div ref={ref} aria-hidden className="h-[181px] sm:h-[166px]" />;
+  return <div ref={ref} aria-hidden className="h-45.25 sm:h-41.5" />;
 }

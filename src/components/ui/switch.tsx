@@ -26,7 +26,7 @@ function Switch({
         "data-[state=checked]:border-gold-deep/60",
         "data-[state=checked]:bg-linear-to-l data-[state=checked]:from-gold-deep data-[state=checked]:via-gold data-[state=checked]:to-gold-light",
         "data-[state=checked]:shadow-[0_0_16px_-2px_var(--color-gold)]",
-        "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
+        "data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className,
       )}
       {...props}

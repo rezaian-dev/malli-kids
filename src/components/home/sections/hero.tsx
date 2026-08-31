@@ -64,7 +64,7 @@ export function Hero() {
             </div>
           </div>
         </div>
-        <div className="group/hero relative mx-auto w-full max-w-[18rem] animate-hero-in px-2 delay-200 xs:max-w-[20rem] xs:px-4 sm:max-w-[27.5rem] sm:px-0">
+        <div className="group/hero relative mx-auto w-full max-w-[18rem] animate-hero-in px-2 delay-200 xs:max-w-[20rem] xs:px-4 sm:max-w-110 sm:px-0">
           <div className="relative aspect-3/4 overflow-hidden rounded-b-4xl rounded-t-[999px] border-8 border-white bg-sand shadow-2xl shadow-navy/20 dark:border-linen sm:rounded-b-[40px] sm:border-10">
             <Image
               src="/brand/hero-dress.jpg"

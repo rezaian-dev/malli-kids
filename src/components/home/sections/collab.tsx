@@ -24,7 +24,7 @@ export function Collab() {
                 </p>
                 <ul className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
                   {WAYS.map(({ Icon, t }) => (
-                    <li key={t} className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.06] px-3 py-1.5 text-[11px] font-bold text-cream/80 sm:text-xs">
+                    <li key={t} className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/6 px-3 py-1.5 text-[11px] font-bold text-cream/80 sm:text-xs">
                       <Icon className="h-3.5 w-3.5 text-gold-light" />
                       {t}
                     </li>

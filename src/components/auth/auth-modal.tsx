@@ -360,11 +360,11 @@ export function AuthModal() {
         showCloseButton={false}
         className={cn(
           
-          "z-[100] block max-h-[94dvh] w-[calc(100%-1.5rem)] max-w-[26rem] gap-0 overflow-y-auto overflow-x-hidden overscroll-contain p-0 sm:max-w-[26rem]",
+          "z-100 block max-h-[94dvh] w-[calc(100%-1.5rem)] max-w-104 gap-0 overflow-y-auto overflow-x-hidden overscroll-contain p-0 sm:max-w-104",
           "rounded-[28px] bg-paper text-navy ring-0",
           "border border-gold/35 shadow-[0_28px_80px_-20px_rgba(4,20,39,.55)]",
           "dark:border-gold/40 dark:bg-dusk dark:text-ivory",
-          "lg:flex lg:max-w-[54rem] lg:flex-row-reverse",
+          "lg:flex lg:max-w-216 lg:flex-row-reverse",
         )}
       >
         {}
@@ -401,7 +401,7 @@ export function AuthModal() {
               </TabsTrigger>
             </TabsList>
 
-            <div className="auth-fields -mx-2 min-h-0 flex-1 overflow-y-auto overflow-x-clip overscroll-contain px-2 [scrollbar-width:thin]">
+            <div className="auth-fields -mx-2 min-h-0 flex-1 overflow-y-auto overflow-x-clip overscroll-contain px-2 scrollbar-thin">
               <TabsContent value="login" className="mt-5">
                 <LoginPanel onOtp={() => setTab("otp")} />
               </TabsContent>

@@ -360,7 +360,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
 
       <div className="grid items-start gap-5 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-7">
         {/* Desktop sidebar filter */}
-        <aside className="sticky top-[7.5rem] hidden overflow-hidden rounded-[28px] border border-navy/10 bg-sand-deep/60 shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm dark:border-gold/40 dark:bg-filter-night lg:flex lg:flex-col">
+        <aside className="sticky top-30 hidden overflow-hidden rounded-[28px] border border-navy/10 bg-sand-deep/60 shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm dark:border-gold/40 dark:bg-filter-night lg:flex lg:flex-col">
           {filterHead}
           {filterBody}
         </aside>
@@ -386,7 +386,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
                     <Button
                       type="button"
                       variant="outline"
-                      className="h-auto min-w-[11rem] justify-between rounded-full border-navy/12 bg-sand px-4 py-2.5 text-xs font-black text-navy hover:border-gold/50 aria-expanded:border-gold dark:border-gold/40 dark:bg-dusk-mid dark:text-linen"
+                      className="h-auto min-w-44 justify-between rounded-full border-navy/12 bg-sand px-4 py-2.5 text-xs font-black text-navy hover:border-gold/50 aria-expanded:border-gold dark:border-gold/40 dark:bg-dusk-mid dark:text-linen"
                     >
                       <span className="flex items-center gap-1.5">
                         <ArrowUpDown className="size-4 text-gold-soft" /> {sortLabel}
@@ -404,7 +404,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
               <Button
                 type="button"
                 variant="outline"
-                className="h-auto min-w-0 flex-1 justify-between rounded-full border-navy/12 bg-sand px-3 py-2.5 text-xs font-black text-navy xs:min-w-[9rem] xs:flex-none lg:hidden dark:border-gold/40 dark:bg-dusk-mid dark:text-linen"
+                className="h-auto min-w-0 flex-1 justify-between rounded-full border-navy/12 bg-sand px-3 py-2.5 text-xs font-black text-navy xs:min-w-36 xs:flex-none lg:hidden dark:border-gold/40 dark:bg-dusk-mid dark:text-linen"
                 onClick={() => setSortOpen(true)}
               >
                 <span className="flex items-center gap-1.5 truncate">
@@ -485,7 +485,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
 
       {/* Mobile filter — right Sheet */}
       <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
-        <SheetContent side="right" showCloseButton={false} className="inset-y-0 right-0 flex h-dvh w-[min(88vw,360px)] max-w-[360px] flex-col gap-0 border-s border-navy/10 bg-sand-deep p-0 sm:max-w-[360px] dark:border-gold/40 dark:bg-filter-night">
+        <SheetContent side="right" showCloseButton={false} className="inset-y-0 right-0 flex h-dvh w-[min(88vw,360px)] max-w-90 flex-col gap-0 border-s border-navy/10 bg-sand-deep p-0 sm:max-w-90 dark:border-gold/40 dark:bg-filter-night">
           <SheetHeader className="gap-0 p-0">
             <div className="flex items-center justify-between px-4 py-4">
               <div className="flex items-center gap-2.5">
@@ -523,8 +523,8 @@ export function ShopExplorer({ state }: { state: ShopState }) {
 
       {/* Mobile sort — bottom Sheet */}
       <Sheet open={sortOpen} onOpenChange={setSortOpen}>
-        <SheetContent side="bottom" showCloseButton={false} className="mx-auto max-w-[32.5rem] gap-0 rounded-t-[28px] border-t border-gold/30 bg-linen p-0 dark:border-gold/40 dark:bg-sort-sheet">
-          <div className="mx-auto mt-3 mb-1 h-[5px] w-11 rounded-full bg-gold-light" aria-hidden />
+        <SheetContent side="bottom" showCloseButton={false} className="mx-auto max-w-130 gap-0 rounded-t-[28px] border-t border-gold/30 bg-linen p-0 dark:border-gold/40 dark:bg-sort-sheet">
+          <div className="mx-auto mt-3 mb-1 h-1.25 w-11 rounded-full bg-gold-light" aria-hidden />
           <SheetHeader className="gap-0 px-5 pt-1 pb-3">
             <SheetTitle className="text-base font-black text-navy dark:text-linen">مرتب‌سازی کالاها</SheetTitle>
           </SheetHeader>

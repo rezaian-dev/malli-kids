@@ -296,7 +296,7 @@ function OrdersPanel() {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.map(({ Icon, k, v }) => (
-          <div key={k} className="rounded-2xl border border-navy/10 bg-navy/[0.02] px-4 py-3.5 text-center dark:border-gold/25 dark:bg-white/[0.03]">
+          <div key={k} className="rounded-2xl border border-navy/10 bg-navy/2 px-4 py-3.5 text-center dark:border-gold/25 dark:bg-white/3">
             <Icon className="mx-auto size-4 text-gold" />
             <p className="mt-2 truncate text-sm font-black text-navy dark:text-ivory" dir="ltr">
               {v}
@@ -339,7 +339,7 @@ function OrdersPanel() {
           </Button>
         </div>
       ) : list.length === 0 ? (
-        <p className="rounded-2xl bg-navy/[0.03] px-4 py-6 text-center text-xs font-bold text-navy/50 dark:bg-white/[0.04] dark:text-wheat">سفارشی با این وضعیت ندارید.</p>
+        <p className="rounded-2xl bg-navy/3 px-4 py-6 text-center text-xs font-bold text-navy/50 dark:bg-white/4 dark:text-wheat">سفارشی با این وضعیت ندارید.</p>
       ) : (
         <ul className="space-y-4">
           {list.map((o) => (
@@ -355,7 +355,7 @@ function OrderCard({ order }: { order: Order }) {
   const stage = stageIndex(order.status);
   return (
     <li className="overflow-hidden rounded-2xl border border-navy/10 dark:border-gold/25">
-      <div className="flex flex-wrap items-center gap-2 border-b border-navy/8 bg-navy/[0.02] px-4 py-3 dark:border-gold/15 dark:bg-white/[0.02]">
+      <div className="flex flex-wrap items-center gap-2 border-b border-navy/8 bg-navy/2 px-4 py-3 dark:border-gold/15 dark:bg-white/2">
         <p className="text-sm font-black text-navy dark:text-ivory" dir="ltr">
           {order.id}
         </p>
@@ -518,7 +518,7 @@ function SupportPanel() {
               <li key={t.id} className="overflow-hidden rounded-2xl border border-navy/10 dark:border-gold/25">
                 <button
                   type="button"
-                  className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-start transition-colors hover:bg-navy/[0.03] dark:hover:bg-white/[0.04]"
+                  className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-start transition-colors hover:bg-navy/3 dark:hover:bg-white/4"
                   onClick={() => setOpenId(open ? null : t.id)}
                   aria-expanded={open}
                 >
@@ -550,7 +550,7 @@ function TicketThread({ ticket }: { ticket: Ticket }) {
   }
 
   return (
-    <div className="space-y-3 border-t border-navy/8 bg-navy/[0.02] px-4 py-4 dark:border-gold/15 dark:bg-white/[0.02]">
+    <div className="space-y-3 border-t border-navy/8 bg-navy/2 px-4 py-4 dark:border-gold/15 dark:bg-white/2">
       {ticket.replies.map((r, i) => (
         <div key={i} className={cn("flex", r.from === "support" ? "justify-end" : "justify-start")}>
           <div

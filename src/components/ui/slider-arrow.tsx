@@ -49,7 +49,7 @@ export function SliderArrow({
     >
       <Icon
         className={cn(
-          "size-[18px] transition-transform duration-300 group-active:scale-75",
+          "size-4.5 transition-transform duration-300 group-active:scale-75",
           
           direction === "next" ? "group-hover:-translate-x-1" : "group-hover:translate-x-1",
         )}

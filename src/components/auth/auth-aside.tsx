@@ -39,7 +39,7 @@ export function AuthAside() {
             <br />
             <span className="text-gold-light">کوچولوها</span>
           </h2>
-          <p className="mt-3 max-w-[15rem] text-sm leading-7 text-ivory/90">عضویت یعنی ۱۰٪ تخفیف، پرو مجازی و سایز دقیق.</p>
+          <p className="mt-3 max-w-60 text-sm leading-7 text-ivory/90">عضویت یعنی ۱۰٪ تخفیف، پرو مجازی و سایز دقیق.</p>
 
           <ul className="mt-5 space-y-2">
             <Perk icon={<Percent className="size-4" />} t="۱۰٪ تخفیف اولین خرید" d="همان لحظهٔ عضویت" />

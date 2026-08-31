@@ -64,7 +64,7 @@ export function UserMenu() {
           <span className="hidden max-w-20 truncate text-xs font-extrabold text-navy min-[480px]:inline md:hidden lg:inline dark:text-linen">
             {first}
           </span>
-          <ChevronDown className="hidden size-3.5 text-gold transition-transform min-[480px]:block md:hidden lg:block group-data-[state=open]:rotate-180" />
+          <ChevronDown className="hidden size-3.5 text-gold transition-transform min-[480px]:block md:hidden lg:block group-data-open:rotate-180" />
         </Button>
       </DropdownMenuTrigger>
 
@@ -72,7 +72,7 @@ export function UserMenu() {
         align="start"
         sideOffset={12}
         className={cn(
-          "z-[80] w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border border-gold bg-paper p-0",
+          "z-80 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border border-gold bg-paper p-0",
           "dark:border-gold/50 dark:bg-dusk",
         )}
       >

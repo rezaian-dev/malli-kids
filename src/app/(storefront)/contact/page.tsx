@@ -41,7 +41,7 @@ export default function ContactPage() {
                   ["۲", "تیکت بزنید", "در تب «پشتیبانی» پنل کاربری"],
                   ["۳", "پاسخ بگیرید", "همان‌جا، در پنل خودتان"],
                 ].map(([n, t, d]) => (
-                  <li key={n} className="rounded-2xl border border-white/12 bg-white/[0.06] px-4 py-4">
+                  <li key={n} className="rounded-2xl border border-white/12 bg-white/6 px-4 py-4">
                     <span className="grid size-8 place-items-center rounded-full bg-gold font-black text-navy-deep">{n}</span>
                     <p className="mt-3 text-sm font-black text-white">{t}</p>
                     <p className="mt-1 text-[11px] font-bold leading-5 text-white/60">{d}</p>

@@ -32,7 +32,7 @@ function Slider({
       min={min}
       max={max}
       className={cn(
-        "relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
+        "relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-vertical:h-full data-vertical:min-h-44 data-vertical:w-auto data-vertical:flex-col",
         className
       )}
       {...props}
@@ -40,13 +40,13 @@ function Slider({
       <SliderPrimitive.Track
         data-slot="slider-track"
         className={cn(
-          "relative grow overflow-hidden rounded-full bg-navy/12 data-[orientation=horizontal]:h-2 data-[orientation=vertical]:w-2 dark:bg-navy-deep/70"
+          "relative grow overflow-hidden rounded-full bg-navy/12 data-horizontal:h-2 data-vertical:w-2 dark:bg-navy-deep/70"
         )}
       >
         <SliderPrimitive.Range
           data-slot="slider-range"
           className={cn(
-            "absolute rounded-full bg-linear-to-l from-gold to-gold-light data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+            "absolute rounded-full bg-linear-to-l from-gold to-gold-light data-horizontal:h-full data-vertical:w-full"
           )}
         />
       </SliderPrimitive.Track>

@@ -19,7 +19,7 @@ import type { AdminArticle } from "@/types";
 const RichEditor = dynamic(() => import("@/components/admin/rich-editor").then((m) => m.RichEditor), {
   ssr: false,
   loading: () => (
-    <div className="grid min-h-[22rem] place-items-center rounded-3xl border border-dashed border-navy/15 text-sm font-bold text-navy/40 dark:border-gold/25 dark:text-wheat">
+    <div className="grid min-h-88 place-items-center rounded-3xl border border-dashed border-navy/15 text-sm font-bold text-navy/40 dark:border-gold/25 dark:text-wheat">
       در حال آماده‌سازی ویرایشگر…
     </div>
   ),

@@ -122,7 +122,7 @@ export default function AdminCoupons() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="truncate font-display text-lg font-bold tracking-[0.1em] text-navy dark:text-gold-soft" dir="ltr">{coupon.code}</p>
+                        <p className="truncate font-display text-lg font-bold tracking-widest text-navy dark:text-gold-soft" dir="ltr">{coupon.code}</p>
                         <span className={`rounded-lg px-2 py-1 text-[9px] font-black ${usable ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "bg-rose/10 text-rose"}`}>{usable ? "قابل استفاده" : coupon.used >= coupon.cap ? "سقف تکمیل" : "غیرفعال"}</span>
                       </div>
                       <p className="mt-1 truncate text-xs font-bold text-navy/65 dark:text-wheat">{coupon.title}</p>
@@ -140,7 +140,7 @@ export default function AdminCoupons() {
                     <div className="h-1.5 overflow-hidden rounded-full bg-navy/7 dark:bg-navy-deep"><div className={`h-full rounded-full transition-all duration-700 ${usage >= 90 ? "bg-rose" : "bg-linear-to-l from-gold to-gold-light"}`} style={{ width: `${usage}%` }} /></div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between border-t border-navy/6 bg-navy/[0.015] px-4 py-2.5 text-[10px] dark:border-gold/12 dark:bg-white/[0.015]"><span className="font-bold text-navy/40 dark:text-wheat">تاریخ انقضا</span><span className="font-black text-navy dark:text-ivory">{coupon.until}</span></div>
+                <div className="flex items-center justify-between border-t border-navy/6 bg-navy/1.5 px-4 py-2.5 text-[10px] dark:border-gold/12 dark:bg-white/1.5"><span className="font-bold text-navy/40 dark:text-wheat">تاریخ انقضا</span><span className="font-black text-navy dark:text-ivory">{coupon.until}</span></div>
               </article>
             );
           })}
@@ -151,9 +151,9 @@ export default function AdminCoupons() {
       {list.length > 0 ? <Pagination pg={pg} unit="کد" /> : null}
 
       {open ? (
-        <div className="fixed inset-0 z-[90] grid place-items-center overflow-y-auto p-3 sm:p-4">
+        <div className="fixed inset-0 z-90 grid place-items-center overflow-y-auto p-3 sm:p-4">
           <button type="button" className="fixed inset-0 bg-navy-deep/65 backdrop-blur-sm" onClick={close} aria-label="بستن" />
-          <AppForm form={form} onSubmit={add} ariaLabel="کد تخفیف جدید" className="relative z-10 my-auto w-full max-w-md space-y-3 rounded-[24px] border border-gold/18 bg-paper p-4 shadow-2xl dark:bg-navy-mid sm:p-6" notify>
+          <AppForm form={form} onSubmit={add} ariaLabel="کد تخفیف جدید" className="relative z-10 my-auto w-full max-w-md space-y-3 rounded-3xl border border-gold/18 bg-paper p-4 shadow-2xl dark:bg-navy-mid sm:p-6" notify>
             <div className="mb-4 flex items-center justify-between"><div><p className="text-[9px] font-black tracking-[.2em] text-gold">NEW PROMO</p><h3 className="mt-1 text-lg font-black">کد تخفیف جدید</h3></div><button type="button" onClick={close} className="grid size-9 place-items-center rounded-xl bg-navy/5 text-navy dark:bg-white/7 dark:text-ivory" aria-label="بستن"><X className="size-4" /></button></div>
             <TextField name="code" label="کد" placeholder="MALLI10" dir="ltr" maxLength={16} inputClassName="uppercase tracking-[0.12em]" hint="لاتین، ۴ تا ۱۶ نویسه" required />
             <TextField name="title" label="عنوان" placeholder="تخفیف عضویت" maxLength={60} required />

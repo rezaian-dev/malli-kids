@@ -233,7 +233,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
 
         {}
         <Dialog open={checkout} onOpenChange={setCheckout}>
-          <DialogContent dir="rtl" showCloseButton className="max-w-md rounded-[24px] border border-gold/40 bg-paper text-navy dark:border-gold/50 dark:bg-dusk dark:text-ivory">
+          <DialogContent dir="rtl" showCloseButton className="max-w-md rounded-3xl border border-gold/40 bg-paper text-navy dark:border-gold/50 dark:bg-dusk dark:text-ivory">
             <DialogTitle className="flex items-center gap-2 text-base font-black">
               <BadgeCheck className="size-5 text-gold" /> ثبت سفارش
             </DialogTitle>

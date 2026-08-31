@@ -95,7 +95,7 @@ export default function AdminBanners() {
                     <div className="flex flex-wrap items-center gap-2"><Badge className="rounded-lg border-0 bg-gold/15 text-gold-deep dark:text-gold-soft">{banner.occasion}</Badge>{banner.pinned ? <span className="inline-flex items-center gap-1 rounded-lg bg-sky-500/10 px-2 py-1 text-[9px] font-black text-sky-700 dark:text-sky-300"><Pin className="size-3" /> پین‌شده</span> : null}</div>
                     <p className="mt-2 text-[10px] font-bold text-navy/45 dark:text-wheat">بازه نمایش: {banner.from} تا {banner.to}</p>
                   </div>
-                  <div className="flex items-center gap-4 rounded-xl bg-navy/[0.03] px-3 py-2 dark:bg-white/[0.03]">
+                  <div className="flex items-center gap-4 rounded-xl bg-navy/3 px-3 py-2 dark:bg-white/3">
                     <label className="flex items-center gap-2 text-[10px] font-black"><span className="text-navy/55 dark:text-wheat">پین</span><Switch checked={banner.pinned} onCheckedChange={(value) => saveBanners(db.banners.map((item) => ({ ...item, pinned: item.id === banner.id ? value : false })))} /></label>
                     <span className="h-5 w-px bg-navy/8 dark:bg-gold/14" />
                     <label className="flex items-center gap-2 text-[10px] font-black"><span className={banner.active ? "text-emerald-600 dark:text-emerald-300" : "text-rose"}>{banner.active ? "فعال" : "خاموش"}</span><Switch checked={banner.active} onCheckedChange={(value) => saveBanners(db.banners.map((item) => item.id === banner.id ? { ...item, active: value } : item))} /></label>

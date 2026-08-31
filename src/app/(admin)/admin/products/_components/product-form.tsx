@@ -117,7 +117,7 @@ export function ProductForm({ product }: { product?: Product }) {
       </div>
 
       {}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-navy/8 bg-fog/90 px-4 py-3 backdrop-blur-xl dark:border-gold/20 dark:bg-navy-deep/90 lg:start-[272px]">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-navy/8 bg-fog/90 px-4 py-3 backdrop-blur-xl dark:border-gold/20 dark:bg-navy-deep/90 lg:inset-s-68">
         <div className="flex items-center justify-end gap-2">
           <Button asChild type="button" variant="outline" className="h-11 rounded-2xl">
             <Link href="/admin/products">انصراف</Link>

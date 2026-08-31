@@ -47,11 +47,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="fa"
       dir="rtl"
       data-scroll-behavior="smooth"
-      className={`${vazir.variable} ${playfair.variable} [scrollbar-gutter:stable]`}
+      className={`${vazir.variable} ${playfair.variable} scrollbar-gutter-stable`}
       suppressHydrationWarning
     >
       <body
-        className={`${vazir.className} min-h-dvh text-navy antialiased dark:text-ivory data-[scroll-locked]:mr-0!`}
+        className={`${vazir.className} min-h-dvh text-navy antialiased dark:text-ivory data-scroll-locked:mr-0!`}
         suppressHydrationWarning
       >
         <JsonLd data={organizationSchema()} />

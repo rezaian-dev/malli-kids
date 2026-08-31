@@ -32,15 +32,15 @@ export function CategoryMenu() {
         className={cn(
           "h-auto cursor-pointer gap-1 rounded-full bg-transparent px-2 py-2 text-[11px] font-medium transition-colors lg:gap-1.5 lg:px-3 lg:text-sm xl:px-4",
           "text-navy/80 hover:bg-gold/10 hover:text-gold focus:bg-gold/10 focus:text-gold",
-          "data-[state=open]:bg-gold/10 data-[state=open]:text-gold",
+          "data-open:bg-gold/10 data-open:text-gold",
           "dark:text-ivory dark:hover:bg-gold/15 dark:hover:text-gold-light",
-          "dark:data-[state=open]:bg-gold/15 dark:data-[state=open]:text-gold-light",
+          "dark:data-open:bg-gold/15 dark:data-open:text-gold-light",
           catOn &&
             cn(
               "bg-gold text-navy-deep hover:bg-gold hover:text-navy-deep focus:bg-gold focus:text-navy-deep",
-              "data-[state=open]:bg-gold data-[state=open]:text-navy-deep",
+              "data-open:bg-gold data-open:text-navy-deep",
               "dark:bg-gold dark:text-navy-deep dark:hover:bg-gold dark:hover:text-navy-deep",
-              "dark:data-[state=open]:bg-gold dark:data-[state=open]:text-navy-deep",
+              "dark:data-open:bg-gold dark:data-open:text-navy-deep",
             ),
         )}
       >
@@ -50,7 +50,7 @@ export function CategoryMenu() {
 
       <NavigationMenuContent
         className={cn(
-          "inset-s-0 inset-e-auto z-[80] p-0",
+          "inset-s-0 inset-e-auto z-80 p-0",
           "overflow-hidden rounded-2xl border border-navy/10 bg-paper shadow-xl",
           "dark:border-gold/25 dark:bg-dusk",
           "[&_a]:text-current [&_button]:text-current [&_svg]:text-current",

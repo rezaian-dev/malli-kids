@@ -122,7 +122,7 @@ export default function AdminProducts() {
             <article key={product.id} className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] group relative overflow-hidden" style={{ animationDelay: `${index * 45}ms` }}>
               <div className="absolute inset-x-0 top-0 z-10 h-px bg-linear-to-r from-transparent via-gold/55 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
               <div className="flex min-w-0 gap-3 p-3.5">
-                <div className="relative size-[5.25rem] shrink-0 overflow-hidden rounded-2xl bg-sand dark:bg-navy-deep">
+                <div className="relative size-21 shrink-0 overflow-hidden rounded-2xl bg-sand dark:bg-navy-deep">
                   <Image src={product.img} alt={product.name} fill sizes="84px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                   <span className={`absolute bottom-1.5 inset-e-1.5 size-2 rounded-full ring-2 ring-white dark:ring-navy-deep ${product.stock ? "bg-emerald-500" : "bg-rose"}`} />
                 </div>
@@ -140,7 +140,7 @@ export default function AdminProducts() {
                 </div>
               </div>
 
-              <div className="flex gap-2 border-t border-navy/6 bg-navy/[0.015] px-3.5 py-2.5 dark:border-gold/12 dark:bg-white/[0.015]">
+              <div className="flex gap-2 border-t border-navy/6 bg-navy/1.5 px-3.5 py-2.5 dark:border-gold/12 dark:bg-white/1.5">
                 <Button asChild variant="navy" className="h-9 flex-1 rounded-xl text-[10px]">
                   <Link href={`/admin/products/${product.id}/edit`}><Pencil className="size-3.5" /> ویرایش محصول</Link>
                 </Button>
