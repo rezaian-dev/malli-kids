@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { wash } from "@/components/home/section-wash";
 
 const LOOKS = [
   {
@@ -24,7 +25,7 @@ const LOOKS = [
 
 export function Looks() {
   return (
-    <section id="multi" className="py-10 sm:py-14">
+    <section id="multi" className={`${wash.silk} py-10 sm:py-14`}>
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           {LOOKS.map((card) => (

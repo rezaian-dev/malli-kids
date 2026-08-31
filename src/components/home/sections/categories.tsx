@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowDownLeft } from "lucide-react";
 import { OrnLeaf } from "@/components/home/home-ornaments";
+import { wash } from "@/components/home/section-wash";
 
 const BIG = [
   {
@@ -48,7 +49,7 @@ const SMALL = [
 
 export function Categories() {
   return (
-    <section id="categories" className="bg-transparent py-12 sm:py-16 lg:py-20">
+    <section id="categories" className={`${wash.navy} py-12 sm:py-16 lg:py-20`}>
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="mb-10 flex flex-col justify-between gap-4 transition-all duration-700 ease-out sm:mb-12 sm:flex-row sm:items-end">
           <div>

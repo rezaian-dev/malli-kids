@@ -25,7 +25,7 @@ const HEADS = ["سایز", "قد کودک (سانتی‌متر)", "سن تقری
 export function ProductSizeTable() {
   return (
     <div className="grid items-start gap-5 lg:grid-cols-[1fr_280px]">
-      <div className="border-navy/8 dark:border-gold/30 dark:bg-slate overflow-x-auto rounded-[28px] border bg-white">
+      <div className="border-navy/10 dark:border-gold/30 dark:bg-slate overflow-x-auto rounded-[28px] border bg-white/92 shadow-[0_18px_40px_-28px_rgba(14,42,71,.3)]">
         <Table className="min-w-130 text-right text-sm">
           <TableHeader>
             <TableRow className="bg-navy hover:bg-navy border-0 text-[11px]">
@@ -72,8 +72,11 @@ export function ProductSizeTable() {
         </Table>
       </div>
 
-      <aside className="bg-navy text-cream rounded-[28px] p-5 sm:p-6">
-        <p className="text-gold-light text-xs font-bold">چطور اندازه بگیریم؟</p>
+      <aside className="bg-navy text-cream ring-gold/25 rounded-[28px] p-5 ring-1 sm:p-6">
+        <p className="text-gold-light text-[11px] font-bold tracking-[0.18em]">
+          SIZE NOTES
+        </p>
+        <p className="mt-2 text-sm font-black">چطور اندازه بگیریم؟</p>
         <ul className="text-cream/75 mt-4 space-y-3 text-[13px] leading-6">
           <li>قد را بدون کفش، از فرق سر تا کف پا بگیرید.</li>
           <li>دور سینه را از پهن‌ترین قسمت با متر نرم اندازه بزنید.</li>

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Box, GraduationCap, Package, Scissors } from "lucide-react";
 import { OrnStitch } from "@/components/home/home-ornaments";
+import { wash } from "@/components/home/section-wash";
 
 const CARDS = [
   {
@@ -40,7 +41,7 @@ export function Atelier() {
   return (
     <section
       id="atelier"
-      className="relative overflow-hidden bg-transparent py-12 sm:py-16 lg:py-20"
+      className={`${wash.gold} py-12 sm:py-16 lg:py-20`}
     >
       <span className="font-display pointer-events-none absolute top-10 left-8 hidden -rotate-6 text-[120px] leading-none text-transparent select-none [-webkit-text-stroke:1.5px_rgba(193,147,87,.55)] xl:block">
         atelier

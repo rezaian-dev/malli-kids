@@ -3,12 +3,13 @@ import Link from "next/link";
 import { ArrowLeft, Scissors, ShieldCheck, Sparkles, Star } from "lucide-react";
 import heroDress from "../../../../public/brand/hero-dress.jpg";
 import { GoldMark, OrnStar } from "@/components/home/home-ornaments";
+import { wash } from "@/components/home/section-wash";
 
 export function Hero() {
   return (
     <section
       id="heroSection"
-      className="relative overflow-hidden bg-transparent pt-8 pb-14 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24"
+      className={`${wash.gold} pt-8 pb-14 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24`}
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="animate-silk-glow bg-gold/32 xs:size-88 pointer-events-none absolute -inset-s-16 -top-28 size-72 rounded-full blur-[56px]" />

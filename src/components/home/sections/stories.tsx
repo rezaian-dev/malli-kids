@@ -2,10 +2,11 @@ import Link from "next/link";
 import { HomeJournal } from "@/components/home/home-journal";
 import { HomeJournalSlides } from "@/components/home/home-journal-slides";
 import { OrnStitch } from "@/components/home/home-ornaments";
+import { wash } from "@/components/home/section-wash";
 
 export function Stories() {
   return (
-    <section id="articles" className="bg-transparent py-12 sm:py-16 lg:py-20">
+    <section id="articles" className={`${wash.silk} py-12 sm:py-16 lg:py-20`}>
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>

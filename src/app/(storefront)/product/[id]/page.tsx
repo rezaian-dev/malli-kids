@@ -12,12 +12,14 @@ import {
 } from "@/lib/data/products";
 import { breadcrumbSchema, buildMetadata, productSchema } from "@/lib/seo";
 import { shell } from "@/lib/utils";
+import { wash } from "@/components/home/section-wash";
 import { ProductBuyPanel } from "./_components/product-buy-panel";
 import { ProductDetailsMount } from "./_components/product-details-mount";
 import {
   LiveName,
   ProductLiveProvider,
 } from "./_components/product-live-context";
+import { pdpCard, pdpKicker } from "./_components/product-chrome";
 
 export function generateStaticParams() {
   return CORE_PRODUCTS.map((product) => ({ id: pdpHref(product.id).split("/").pop()! }));
@@ -87,55 +89,61 @@ export default async function ProductPage({
         product={product}
         requestedId={Number.isFinite(productId) ? productId : undefined}
       >
-        <div className={shell}>
-          <nav aria-label="مسیر محصول" className="mb-8">
-            <ol className="text-navy/45 dark:text-wheat flex flex-wrap items-center gap-1.5 text-xs font-bold">
-              <li>
-                <Link href="/" className="hover:text-gold inline-block py-1.5">
-                  خانه
-                </Link>
-              </li>
-              <li aria-hidden className="text-gold">
-                /
-              </li>
-              <li>
-                <Link
-                  href="/shop"
-                  className="hover:text-gold inline-block py-1.5"
-                >
-                  فروشگاه
-                </Link>
-              </li>
-              <li aria-hidden className="text-gold">
-                /
-              </li>
-              <li className="text-navy/60 dark:text-ivory/80">
-                <LiveName product={product} />
-              </li>
-            </ol>
-          </nav>
-
-          <ProductBuyPanel product={product} />
-          <ProductDetailsMount product={product} />
-
-          {related.length ? (
-            <section
-              className="mt-16"
-              aria-labelledby="related-products-heading"
+        <div className={`${wash.silk} pb-2`}>
+          <div className={shell}>
+            <nav
+              aria-label="مسیر محصول"
+              className={`${pdpCard} mb-6 px-4 py-1.5 sm:mb-8 sm:px-5`}
             >
-              <h2
-                id="related-products-heading"
-                className="text-navy dark:text-ivory mb-6 text-xl font-black"
+              <ol className="text-navy/45 dark:text-wheat flex flex-wrap items-center gap-1.5 text-xs font-bold">
+                <li>
+                  <Link href="/" className="hover:text-gold inline-block py-1.5">
+                    خانه
+                  </Link>
+                </li>
+                <li aria-hidden className="text-gold">
+                  /
+                </li>
+                <li>
+                  <Link
+                    href="/shop"
+                    className="hover:text-gold inline-block py-1.5"
+                  >
+                    فروشگاه
+                  </Link>
+                </li>
+                <li aria-hidden className="text-gold">
+                  /
+                </li>
+                <li className="text-navy/70 dark:text-ivory/80">
+                  <LiveName product={product} />
+                </li>
+              </ol>
+            </nav>
+
+            <ProductBuyPanel product={product} />
+            <ProductDetailsMount product={product} />
+
+            {related.length ? (
+              <section
+                className={`${pdpCard} mt-10 p-5 sm:mt-12 sm:p-7`}
+                aria-labelledby="related-products-heading"
               >
-                مدل‌های مشابه
-              </h2>
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4">
-                {related.map((item) => (
-                  <ProductCard key={item.id} p={item} view="grid" />
-                ))}
-              </div>
-            </section>
-          ) : null}
+                <p className={pdpKicker}>COMPLETE THE LOOK</p>
+                <h2
+                  id="related-products-heading"
+                  className="text-navy dark:text-ivory mt-1 mb-6 text-xl font-black"
+                >
+                  مدل‌های مشابه
+                </h2>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4">
+                  {related.map((item) => (
+                    <ProductCard key={item.id} p={item} view="grid" />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </div>
         </div>
       </ProductLiveProvider>
     </>

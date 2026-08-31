@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useLiveProduct } from "./product-live-context";
+import { pdpCard, pdpKicker, pdpWell } from "./product-chrome";
 
 const SIZES = ["۸۰", "۸۶", "۹۲", "۹۸", "۱۰۴", "۱۱۰", "۱۱۶", "۱۲۲"];
 
@@ -134,11 +135,10 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
   const go = (n: number) => setSlide((n + gallery.length) % gallery.length);
 
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
-      {}
+    <div className="grid items-start gap-6 lg:grid-cols-[1.08fr_.92fr] lg:gap-8">
       <div className="min-w-0 lg:sticky lg:top-24">
         <div
-          className="bg-sand shadow-navy/15 relative aspect-4/5 overflow-hidden rounded-[28px] shadow-2xl select-none sm:rounded-[36px]"
+          className="border-navy/10 bg-sand/55 ring-gold/35 dark:border-gold/30 dark:bg-dusk relative aspect-4/5 overflow-hidden rounded-[28px] border shadow-[0_28px_60px_-32px_rgba(14,42,71,.42)] ring-1 select-none sm:rounded-[36px]"
           onTouchStart={(e) => {
             e.currentTarget.dataset.x = String(e.changedTouches[0].clientX);
           }}
@@ -148,6 +148,10 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
             if (Math.abs(dx) > 40) go(slide + (dx > 0 ? -1 : 1));
           }}
         >
+          <span className="border-gold/70 pointer-events-none absolute top-4 right-4 z-10 h-8 w-8 rounded-tr-lg border-t-2 border-r-2 sm:top-5 sm:right-5" />
+          <span className="border-gold/70 pointer-events-none absolute top-4 left-4 z-10 h-8 w-8 rounded-tl-lg border-t-2 border-l-2 sm:top-5 sm:left-5" />
+          <span className="border-gold/70 pointer-events-none absolute right-4 bottom-4 z-10 h-8 w-8 rounded-br-lg border-r-2 border-b-2 sm:right-5 sm:bottom-5" />
+          <span className="border-gold/70 pointer-events-none absolute bottom-4 left-4 z-10 h-8 w-8 rounded-bl-lg border-b-2 border-l-2 sm:bottom-5 sm:left-5" />
           <div
             className="absolute inset-0 flex h-full transition-transform duration-500"
             style={{ transform: `translateX(${-slide * 100}%)` }}
@@ -166,7 +170,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
               />
             ))}
           </div>
-          <div className="pointer-events-none absolute inset-x-4 top-4 z-10 flex justify-between">
+          <div className="pointer-events-none absolute inset-x-12 top-5 z-10 flex justify-between sm:inset-x-14">
             {product.disc ? (
               <span className="bg-rose rounded-full px-3 py-1.5 text-[11px] font-black text-white">
                 {product.disc} تخفیف
@@ -196,7 +200,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
             onClick={() => go(slide + 1)}
             className="absolute inset-e-3 top-1/2 z-10 -translate-y-1/2"
           />
-          <div className="absolute inset-x-0 bottom-4 z-10 flex justify-center gap-1.5">
+          <div className="absolute inset-x-0 bottom-7 z-10 flex justify-center gap-1.5">
             {gallery.map((_, i) => (
               <button
                 key={i}
@@ -208,30 +212,30 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
             ))}
           </div>
         </div>
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-          {gallery.map((src, i) => (
-            <button
-              key={src}
-              type="button"
-              onClick={() => go(i)}
-              className={`h-18 w-18 shrink-0 overflow-hidden rounded-2xl border-2 ${i === slide ? "border-gold ring-gold/30 ring-2" : "border-transparent opacity-70"}`}
-            >
-              <Image
-                src={src}
-                alt=""
-                width={96}
-                height={96}
-                className="size-full object-cover"
-              />
-            </button>
-          ))}
+        <div className={`${pdpCard} mt-3 p-2`}>
+          <div className="flex gap-2 overflow-x-auto pb-0.5">
+            {gallery.map((src, i) => (
+              <button
+                key={src}
+                type="button"
+                onClick={() => go(i)}
+                className={`h-18 w-18 shrink-0 overflow-hidden rounded-2xl border-2 ${i === slide ? "border-gold ring-gold/30 ring-2" : "border-navy/10 opacity-70 dark:border-gold/20"}`}
+              >
+                <Image
+                  src={src}
+                  alt=""
+                  width={96}
+                  height={96}
+                  className="size-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div>
-        <p className="text-gold text-sm font-bold tracking-wide">
-          {product.cat}
-        </p>
+      <div className={`${pdpCard} p-5 sm:p-7`}>
+        <p className={pdpKicker}>{product.cat}</p>
         <h1 className="text-navy dark:text-ivory mt-2 text-[clamp(1.5rem,4vw,2.25rem)] leading-snug font-black">
           {product.name}
         </h1>
@@ -248,11 +252,24 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
             امتیاز خریداران تأییدشده
           </span>
         </div>
+        <ul className="mt-4 flex flex-wrap gap-1.5">
+          {product.season ? (
+            <li className="border-navy/10 bg-sand/80 text-navy dark:border-gold/25 dark:bg-night dark:text-ivory rounded-full border px-3 py-1 text-[11px] font-bold">
+              {product.season}
+            </li>
+          ) : null}
+          <li className="border-navy/10 bg-sand/80 text-navy dark:border-gold/25 dark:bg-night dark:text-ivory rounded-full border px-3 py-1 text-[11px] font-bold">
+            {product.stock ? "موجود در آتلیه" : "ناموجود"}
+          </li>
+          <li className="border-navy/10 bg-sand/80 text-navy dark:border-gold/25 dark:bg-night dark:text-ivory rounded-full border px-3 py-1 text-[11px] font-bold">
+            {toFaDigits(product.sold)} فروش
+          </li>
+        </ul>
         <p className="text-navy/60 dark:text-wheat mt-5 text-sm leading-8 sm:text-[15px]">
           {product.desc}
         </p>
 
-        <div className="border-navy/5 shadow-navy/5 dark:border-gold/30 dark:bg-dusk mt-6 rounded-[28px] border bg-white p-5 shadow-xl sm:p-6">
+        <div className={`${pdpWell} mt-6 p-4 sm:p-5`}>
           <p className="text-navy/40 dark:text-wheat mb-1 text-[11px] font-bold">
             قیمت
           </p>
@@ -356,7 +373,6 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
           </Button>
         </div>
 
-        {}
         <Dialog open={checkout} onOpenChange={setCheckout}>
           <DialogContent
             dir="rtl"
@@ -368,7 +384,6 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
             </DialogTitle>
 
             <div className="border-navy/10 dark:border-gold/25 dark:bg-navy-deep/50 flex items-center gap-3 rounded-2xl border bg-white p-3">
-              {}
               <Image
                 src={product.img}
                 alt=""
@@ -382,7 +397,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
                   سایز {size} × {toFaDigits(qty)}
                 </p>
               </div>
-              <span className="text-gold text-sm font-black">
+              <span className="text-gold text-sm fock">
                 {formatToman(subtotal)}
               </span>
             </div>
@@ -484,18 +499,20 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
           </DialogContent>
         </Dialog>
 
-        <ul className="text-navy/60 dark:text-wheat mt-5 grid grid-cols-3 gap-2 text-[11px]">
-          <li className="border-navy/8 hover:border-gold/50 dark:border-gold/30 dark:bg-slate/60 rounded-[26px] border bg-white/94 px-2 py-3 text-center shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:translate-y-0 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]">
+        <ul className={`${pdpWell} text-navy/65 dark:text-wheat mt-5 grid grid-cols-3 overflow-hidden text-[11px] font-bold`}>
+          <li className="border-navy/8 dark:border-gold/20 px-2 py-3.5 text-center not-last:border-e">
             <Truck className="text-gold mx-auto mb-1 size-4" /> ارسال ۲–۴ روز
           </li>
-          <li className="border-navy/8 hover:border-gold/50 dark:border-gold/30 dark:bg-slate/60 rounded-[26px] border bg-white/94 px-2 py-3 text-center shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:translate-y-0 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]">
+          <li className="border-navy/8 dark:border-gold/20 px-2 py-3.5 text-center not-last:border-e">
             <RotateCcw className="text-gold mx-auto mb-1 size-4" /> ۷ روز بازگشت
           </li>
-          <li className="border-navy/8 hover:border-gold/50 dark:border-gold/30 dark:bg-slate/60 rounded-[26px] border bg-white/94 px-2 py-3 text-center shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:translate-y-0 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]">
+          <li className="px-2 py-3.5 text-center">
             <ShieldCheck className="text-gold mx-auto mb-1 size-4" /> ضدحساسیت
           </li>
         </ul>
       </div>
     </div>
   );
+}
+ );
 }

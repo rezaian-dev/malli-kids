@@ -91,7 +91,7 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
       form={form}
       onSubmit={onValid}
       ariaLabel="ثبت نظر"
-      className="border-navy/8 dark:border-gold/30 dark:bg-slate space-y-4 rounded-3xl border bg-white p-5"
+      className="border-navy/8 dark:border-gold/30 dark:bg-slate space-y-4 rounded-3xl border bg-white/90 p-5 shadow-[0_16px_36px_-26px_rgba(14,42,71,.28)]"
     >
       <p className="text-navy dark:text-ivory text-sm font-black">
         تجربه‌تان از این خرید

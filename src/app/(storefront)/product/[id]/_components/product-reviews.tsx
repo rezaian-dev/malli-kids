@@ -15,7 +15,7 @@ export function ProductReviews({ product: seed }: { product: Product }) {
 
   if (list.length === 0) {
     return (
-      <p className="border-navy/15 bg-sand text-navy/55 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat rounded-3xl border border-dashed px-5 py-4 text-sm">
+      <p className="border-navy/12 bg-sand/70 text-navy/55 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat rounded-3xl border border-dashed px-5 py-5 text-sm">
         هنوز نظری برای این مدل ثبت نشده؛ اولین خریدار باشید ✨
       </p>
     );
@@ -26,12 +26,17 @@ export function ProductReviews({ product: seed }: { product: Product }) {
       {list.map((r) => (
         <article
           key={r.id}
-          className="border-navy/5 dark:border-gold/30 dark:bg-slate rounded-3xl border bg-white p-5"
+          className="border-navy/8 dark:border-gold/30 dark:bg-slate rounded-3xl border bg-white/90 p-5 shadow-[0_16px_36px_-26px_rgba(14,42,71,.28)]"
         >
-          <div className="flex flex-wrap justify-between gap-3">
-            <p className="text-navy dark:text-ivory text-sm font-black">
-              {r.author}
-            </p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="bg-gold/15 text-gold grid size-9 place-items-center rounded-full text-sm font-black">
+                {r.author.trim().charAt(0)}
+              </span>
+              <p className="text-navy dark:text-ivory text-sm font-black">
+                {r.author}
+              </p>
+            </div>
             <span className="text-navy/40 text-[11px]">
               تاریخ نظر: {r.date}
             </span>

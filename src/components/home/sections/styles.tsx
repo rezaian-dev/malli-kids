@@ -2,6 +2,7 @@ import { CORE_PRODUCTS } from "@/lib/data/products";
 import { ProductCard } from "@/components/product";
 import { OrnStar } from "@/components/home/home-ornaments";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { wash } from "@/components/home/section-wash";
 import { cn } from "@/lib/utils";
 
 const TABS = ["همه", "دخترانه", "پسرانه", "سیسمونی"] as const;
@@ -14,7 +15,7 @@ const TRIGGER = cn(
 
 export function Styles() {
   return (
-    <section id="styles" className="bg-transparent py-12 sm:py-16 lg:py-20">
+    <section id="styles" className={`${wash.silk} py-12 sm:py-16 lg:py-20`}>
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <Tabs defaultValue="همه" dir="rtl">
           <div className="mb-10 flex flex-col justify-between gap-5 sm:mb-12 sm:gap-6 lg:flex-row lg:items-end">

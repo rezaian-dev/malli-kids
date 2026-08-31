@@ -1,4 +1,5 @@
 import { Handshake, Megaphone, Scissors, Store } from "lucide-react";
+import { wash } from "@/components/home/section-wash";
 
 const WAYS = [
   { Icon: Store, t: "عمده و نمایندگی" },
@@ -8,7 +9,7 @@ const WAYS = [
 
 export function Collab() {
   return (
-    <section className="bg-transparent py-12 sm:py-16">
+    <section className={`${wash.cream} py-12 sm:py-16`}>
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="from-navy-deep via-navy to-navy-mid shadow-navy/20 relative overflow-hidden rounded-3xl bg-linear-to-l p-6 shadow-xl sm:rounded-[28px] sm:p-10">
           <div className="bg-gold/15 pointer-events-none absolute -top-24 -left-24 h-64 w-64 rounded-full blur-3xl" />

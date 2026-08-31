@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ScanFace, Sparkles, WandSparkles } from "lucide-react";
 import lookTryon from "../../../../public/brand/look-tryon.jpg";
 import { OrnRing } from "@/components/home/home-ornaments";
+import { wash } from "@/components/home/section-wash";
 
 const STEPS = [
   {
@@ -24,7 +25,7 @@ const STEPS = [
 
 export function TryOn() {
   return (
-    <section id="tryon" className="bg-transparent py-12 sm:py-16 lg:py-20">
+    <section id="tryon" className={`${wash.cream} py-12 sm:py-16 lg:py-20`}>
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="bg-navy shadow-navy/30 relative overflow-hidden rounded-3xl bg-[radial-gradient(rgba(255,255,255,.09)_1px,transparent_1px)] bg-size-[22px_22px] shadow-2xl transition-all duration-700 ease-out sm:rounded-[36px]">
           <div className="bg-gold/20 pointer-events-none absolute -top-40 -right-40 h-120 w-120 rounded-full blur-3xl" />
