@@ -546,20 +546,50 @@ textarea:autofill {
   background-image: none !important;
 }
 
-/* Inset shell owns the fill. Transparent on the native control reveals
-   Chromium's dark Field layer as a nested capsule — inherit the shell. */
-[data-field-shell][data-skin="inset"] :is(input, textarea) {
+/* Inset shell is the only visible box. Chromium paints Field a few px
+   inside the control — expand the input past the clip so that inner
+   radius never shows. No color-scheme override, no clip:text. */
+[data-field-shell][data-skin="inset"] {
+  isolation: isolate;
+}
+[data-field-shell][data-skin="inset"] input {
   appearance: none;
   -webkit-appearance: none;
-  background-color: inherit !important;
-  background-image: none !important;
+  position: absolute;
+  inset: -12px;
+  z-index: 0;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  outline: none;
+  line-height: 3rem;
+  padding-block: 12px;
+  padding-inline-start: 3.25rem;
+  padding-inline-end: 1.75rem;
+}
+[data-field-shell][data-skin="inset"]:not(:has([data-field-lead])) input {
+  padding-inline-start: 1.75rem;
+}
+[data-field-shell][data-skin="inset"]:has([data-field-trail]) input {
+  padding-inline-end: 3.5rem;
+}
+[data-field-shell][data-skin="inset"] input::-ms-reveal,
+[data-field-shell][data-skin="inset"] input::-ms-clear {
+  display: none;
 }
 [data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill,
 [data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:hover,
 [data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:focus,
 [data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:active,
 [data-field-shell][data-skin="inset"] :is(input, textarea):autofill {
-  background-color: inherit !important;
+  background-color: transparent !important;
   background-image: none !important;
 }
 input.newsletter-field:-webkit-autofill,

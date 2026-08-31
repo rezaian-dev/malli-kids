@@ -120,9 +120,20 @@ export function Field({
           )}
           data-invalid={invalid ? "true" : undefined}
         >
-          {icon ? <span className={cn(LEAD[skin])}>{icon}</span> : null}
+          {icon ? (
+            <span
+              data-field-lead
+              className={cn(LEAD[skin], "pointer-events-none relative z-10")}
+            >
+              {icon}
+            </span>
+          ) : null}
           {control}
-          {trailing}
+          {trailing ? (
+            <span data-field-trail className="relative z-10 shrink-0">
+              {trailing}
+            </span>
+          ) : null}
         </span>
       ) : (
         <>

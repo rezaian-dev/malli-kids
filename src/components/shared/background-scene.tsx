@@ -15,13 +15,12 @@ function LightAtelier() {
       <div className="absolute inset-0 bg-[#ece6dc]" />
       <div className="absolute inset-0 bg-[linear-gradient(158deg,#cfc3b3_0%,#ece6dc_16%,#f6efe4_30%,#e8d4b0_48%,#d4b585_64%,#c19357_80%,#b7a07c_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(118deg,rgba(14,42,71,0.30)_0%,rgba(14,42,71,0.10)_20%,rgba(250,246,239,0.34)_42%,rgba(193,147,87,0.40)_64%,rgba(193,147,87,0.12)_82%,rgba(14,42,71,0.18)_100%)]" />
-      {/* Logo mix (navy + gold + cream) as one silk wash — slightly less blur. */}
       <div className="absolute inset-[-16%] blur-[52px]">
-        <div className="absolute top-[-8%] left-[20%] h-[44%] w-[52%] rounded-full bg-[rgba(193,147,87,0.46)]" />
-        <div className="absolute top-[10%] right-[-8%] h-[40%] w-[44%] rounded-full bg-[rgba(14,42,71,0.18)]" />
-        <div className="absolute bottom-[-10%] left-[-10%] h-[48%] w-[54%] rounded-full bg-[rgba(14,42,71,0.22)]" />
-        <div className="absolute right-[10%] bottom-[8%] h-[38%] w-[42%] rounded-full bg-[rgba(250,246,239,0.58)]" />
-        <div className="absolute top-[34%] left-[36%] h-[34%] w-[36%] rounded-full bg-[rgba(193,147,87,0.24)]" />
+        <div className="absolute top-[-8%] left-[20%] h-[44%] w-[52%] rounded-full bg-[rgba(193,147,87,0.34)]" />
+        <div className="absolute top-[10%] right-[-8%] h-[40%] w-[44%] rounded-full bg-[rgba(14,42,71,0.14)]" />
+        <div className="absolute bottom-[-10%] left-[-10%] h-[48%] w-[54%] rounded-full bg-[rgba(14,42,71,0.16)]" />
+        <div className="absolute right-[10%] bottom-[8%] h-[38%] w-[42%] rounded-full bg-[rgba(250,246,239,0.48)]" />
+        <div className="absolute top-[34%] left-[36%] h-[34%] w-[36%] rounded-full bg-[rgba(193,147,87,0.18)]" />
       </div>
 
       <svg
@@ -40,22 +39,37 @@ function LightAtelier() {
             <path
               d="M36 10c-5.2 0-9.6 3.4-11.6 8.4C22.4 13.4 18 10 12.8 10 5.6 10 0 15.8 0 23c0 16 36 28 36 28s36-12 36-28c0-7.2-5.6-13-12.8-13Z"
               fill="#c19357"
-              fillOpacity="0.055"
+              fillOpacity="0.14"
             />
             <path
               d="M36 42L48 63L36 84L24 63Z"
               fill="none"
               stroke="#0e2a47"
-              strokeOpacity="0.05"
-              strokeWidth="0.7"
+              strokeOpacity="0.14"
+              strokeWidth="0.8"
             />
             <circle
               cx="36"
               cy="63"
-              r="1.15"
+              r="1.2"
               fill="#c19357"
-              fillOpacity="0.18"
+              fillOpacity="0.36"
             />
+          </pattern>
+          <pattern
+            id="mk-stitch"
+            width="56"
+            height="56"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M0 0L56 56M-14 14L14 -14M42 70L70 42"
+              fill="none"
+              stroke="#c19357"
+              strokeOpacity="0.16"
+              strokeWidth="0.55"
+            />
+            <circle cx="28" cy="28" r="1.1" fill="#0e2a47" fillOpacity="0.12" />
           </pattern>
           <linearGradient id="mk-silk" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#0e2a47" stopOpacity="0" />
@@ -72,8 +86,8 @@ function LightAtelier() {
             <stop offset="1" stopColor="#c19357" stopOpacity="0" />
           </linearGradient>
           <radialGradient id="mk-cream-well" cx="50%" cy="28%" r="48%">
-            <stop offset="0" stopColor="#faf6ef" stopOpacity="0.2" />
-            <stop offset="0.4" stopColor="#f0e2cc" stopOpacity="0.1" />
+            <stop offset="0" stopColor="#faf6ef" stopOpacity="0.16" />
+            <stop offset="0.4" stopColor="#f0e2cc" stopOpacity="0.08" />
             <stop offset="1" stopColor="#ece6dc" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="mk-gold-halo" cx="50%" cy="18%" r="34%">
@@ -83,6 +97,7 @@ function LightAtelier() {
         </defs>
 
         <rect width="1440" height="900" fill="url(#mk-damask)" />
+        <rect width="1440" height="900" fill="url(#mk-stitch)" />
         <rect width="1440" height="900" fill="url(#mk-cream-well)" />
         <rect width="1440" height="900" fill="url(#mk-gold-halo)" />
 
@@ -94,8 +109,8 @@ function LightAtelier() {
           rx="8"
           fill="none"
           stroke="#c19357"
-          strokeOpacity="0.28"
-          strokeWidth="1.1"
+          strokeOpacity="0.42"
+          strokeWidth="1.25"
         />
         <rect
           x="58"
@@ -105,13 +120,13 @@ function LightAtelier() {
           rx="4"
           fill="none"
           stroke="#0e2a47"
-          strokeOpacity="0.08"
-          strokeWidth="0.7"
+          strokeOpacity="0.16"
+          strokeWidth="0.8"
         />
 
         <g
           stroke="#c19357"
-          strokeOpacity="0.22"
+          strokeOpacity="0.36"
           fill="none"
           transform="translate(720 196)"
         >
@@ -133,15 +148,15 @@ function LightAtelier() {
           <circle
             r="48"
             stroke="#0e2a47"
-            strokeOpacity="0.12"
+            strokeOpacity="0.18"
             strokeWidth="1"
           />
-          <circle r="78" strokeOpacity="0.32" strokeWidth="1.15" />
-          <circle r="118" strokeOpacity="0.2" strokeWidth="0.9" />
+          <circle r="78" strokeOpacity="0.42" strokeWidth="1.15" />
+          <circle r="118" strokeOpacity="0.28" strokeWidth="0.9" />
           <circle
             r="158"
             stroke="#0e2a47"
-            strokeOpacity="0.08"
+            strokeOpacity="0.12"
             strokeDasharray="3 9"
             strokeWidth="0.8"
           />
@@ -150,26 +165,26 @@ function LightAtelier() {
         <path
           d="M720 148c-28 0-52 18-63 46-11-28-35-46-63-46-39 0-72 33-72 72 0 88 135 152 135 152s135-64 135-152c0-39-33-72-72-72Z"
           fill="#c19357"
-          fillOpacity="0.2"
+          fillOpacity="0.28"
         />
         <path
           d="M720 164c-22 0-41 14-50 36-9-22-28-36-50-36-31 0-56 26-56 57 0 70 106 121 106 121s106-51 106-121c0-31-25-57-56-57Z"
           fill="none"
           stroke="#c19357"
-          strokeOpacity="0.7"
+          strokeOpacity="0.8"
           strokeWidth="1.8"
         />
         <path
           d="M720 186c-14 0-26 9-32 24-6-15-18-24-32-24-20 0-36 17-36 37 0 46 68 80 68 80s68-34 68-80c0-20-16-37-36-37Z"
           fill="#faf6ef"
-          fillOpacity="0.35"
+          fillOpacity="0.4"
         />
 
         <text
           x="488"
           y="548"
           fill="#0e2a47"
-          fillOpacity="0.07"
+          fillOpacity="0.14"
           fontFamily="var(--font-display), 'Playfair Display', Georgia, serif"
           fontSize="268"
           fontWeight="700"
@@ -180,7 +195,7 @@ function LightAtelier() {
           x="738"
           y="612"
           fill="#0e2a47"
-          fillOpacity="0.07"
+          fillOpacity="0.14"
           fontFamily="var(--font-display), 'Playfair Display', Georgia, serif"
           fontSize="268"
           fontWeight="700"
@@ -208,51 +223,51 @@ function LightAtelier() {
           strokeWidth="1.4"
         />
 
-        <g fill="none" stroke="#c19357" strokeWidth="1.05">
+        <g fill="none" stroke="#c19357" strokeWidth="1.15">
           <path
             d="M86 86h96M86 86v96"
-            strokeOpacity="0.45"
+            strokeOpacity="0.7"
             strokeLinecap="square"
           />
-          <path d="M86 86l42 42" strokeOpacity="0.28" />
+          <path d="M86 86l42 42" strokeOpacity="0.42" />
           <path
             d="M86 128h38M128 86v38"
-            strokeOpacity="0.22"
+            strokeOpacity="0.34"
             strokeWidth="0.7"
           />
-          <circle cx="128" cy="128" r="5.5" strokeOpacity="0.4" />
+          <circle cx="128" cy="128" r="5.5" strokeOpacity="0.58" />
           <path
             d="M108 108l20-32 20 32-20 20Z"
-            strokeOpacity="0.22"
+            strokeOpacity="0.34"
             strokeWidth="0.7"
           />
 
           <path
             d="M1354 86h-96M1354 86v96"
-            strokeOpacity="0.45"
+            strokeOpacity="0.7"
             strokeLinecap="square"
           />
-          <path d="M1354 86l-42 42" strokeOpacity="0.28" />
-          <circle cx="1312" cy="128" r="5.5" strokeOpacity="0.4" />
+          <path d="M1354 86l-42 42" strokeOpacity="0.42" />
+          <circle cx="1312" cy="128" r="5.5" strokeOpacity="0.58" />
 
           <path
             d="M86 814h96M86 814v-96"
-            strokeOpacity="0.45"
+            strokeOpacity="0.7"
             strokeLinecap="square"
           />
-          <path d="M86 814l42-42" strokeOpacity="0.28" />
-          <circle cx="128" cy="772" r="5.5" strokeOpacity="0.4" />
+          <path d="M86 814l42-42" strokeOpacity="0.42" />
+          <circle cx="128" cy="772" r="5.5" strokeOpacity="0.58" />
 
           <path
             d="M1354 814h-96M1354 814v-96"
-            strokeOpacity="0.45"
+            strokeOpacity="0.7"
             strokeLinecap="square"
           />
-          <path d="M1354 814l-42-42" strokeOpacity="0.28" />
-          <circle cx="1312" cy="772" r="5.5" strokeOpacity="0.4" />
+          <path d="M1354 814l-42-42" strokeOpacity="0.42" />
+          <circle cx="1312" cy="772" r="5.5" strokeOpacity="0.58" />
         </g>
 
-        <g fill="#c19357" fillOpacity="0.38">
+        <g fill="#c19357" fillOpacity="0.5">
           <circle cx="220" cy="118" r="2.2" />
           <circle cx="1180" cy="96" r="1.8" />
           <circle cx="160" cy="430" r="1.7" />
@@ -263,7 +278,7 @@ function LightAtelier() {
           <circle cx="540" cy="820" r="1.5" />
           <circle cx="980" cy="800" r="1.7" />
         </g>
-        <g fill="#0e2a47" fillOpacity="0.12">
+        <g fill="#0e2a47" fillOpacity="0.18">
           <circle cx="400" cy="90" r="1.4" />
           <circle cx="1040" cy="140" r="1.3" />
           <circle cx="90" cy="560" r="1.5" />

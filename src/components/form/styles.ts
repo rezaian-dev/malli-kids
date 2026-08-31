@@ -6,7 +6,7 @@ export const INPUT: Record<Skin, string> = {
   admin: "h-11 rounded-2xl px-4",
   bare: "h-11 w-full bg-transparent px-2 text-base font-bold text-navy outline-none placeholder:text-navy/30 dark:text-ivory dark:placeholder:text-ivory/30",
   inset:
-    "h-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-4 py-0 shadow-none focus-visible:border-transparent focus-visible:ring-0 focus-visible:shadow-none aria-invalid:border-0 aria-invalid:ring-0",
+    "min-w-0 appearance-none rounded-none border-0 bg-transparent text-sm font-semibold text-navy shadow-none outline-none placeholder:text-brown focus-visible:border-transparent focus-visible:ring-0 focus-visible:shadow-none aria-invalid:border-0 aria-invalid:ring-0 dark:text-ivory dark:placeholder:text-cream-mute",
 };
 
 export const TEXTAREA: Record<Skin, string> = {
