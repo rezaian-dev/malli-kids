@@ -58,6 +58,7 @@ export function ProductCard({
       <article className="group border-navy/10 hover:border-gold/55 dark:border-gold-soft/35 dark:bg-slate/60 flex min-w-0 flex-row overflow-hidden rounded-[20px] border bg-white/94 transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_18px_36px_-16px_rgba(14,42,71,.28)]">
         <Link
           href={href}
+          prefetch={false}
           className="bg-sand relative block h-auto min-h-30 w-26 shrink-0 overflow-hidden"
         >
           <Image
@@ -83,6 +84,7 @@ export function ProductCard({
               </p>
               <Link
                 href={href}
+                prefetch={false}
                 className="text-navy dark:text-ivory block text-sm leading-snug font-black no-underline"
               >
                 {p.name}
@@ -93,7 +95,7 @@ export function ProductCard({
           <div className="mt-auto flex flex-wrap items-center gap-2">
             {price}
             <div className="ms-auto flex gap-1.5">
-              <Link href={href} className={`${VIEW} h-8 px-2.5 text-[11px]`}>
+              <Link href={href} prefetch={false} className={`${VIEW} h-8 px-2.5 text-[11px]`}>
                 <Eye width={14} height={14} /> مشاهده
               </Link>
               <AddToCartButton
@@ -149,6 +151,7 @@ export function ProductCard({
         <div className="absolute inset-x-2.5 bottom-2.5 z-4 hidden translate-y-[130%] flex-col gap-1.5 transition-all duration-500 ease-out group-hover:translate-y-0 pointer-fine:min-[520px]:flex">
           <Link
             href={href}
+            prefetch={false}
             className={`${VIEW} h-10 w-full rounded-[14px] text-xs shadow-md`}
           >
             <Eye width={16} height={16} /> مشاهده محصول
@@ -206,7 +209,7 @@ export function ProductCard({
         </div>
         {/* 📱 Keep actions visible under the price on narrow screens. */}
         <div className="mt-2.5 grid grid-cols-1 gap-1.5 @[10rem]:grid-cols-2 pointer-fine:min-[520px]:hidden">
-          <Link href={href} className={`${VIEW} h-9 min-w-0 text-[11px]`}>
+          <Link href={href} prefetch={false} className={`${VIEW} h-9 min-w-0 text-[11px]`}>
             <Eye width={13} height={13} className="shrink-0" />{" "}
             <span className="truncate">مشاهده</span>
           </Link>

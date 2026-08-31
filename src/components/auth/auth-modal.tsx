@@ -12,7 +12,8 @@ import {
   X,
 } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
-import { RE, phoneDigits, toLatinDigits } from "@/lib/forms";
+import { RE } from "@/lib/forms";
+import { phoneDigits, toLatinDigits } from "@/lib/digits";
 import { AppForm, Field, InsetField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import {

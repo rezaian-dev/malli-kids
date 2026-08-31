@@ -15,6 +15,7 @@ export function NavActiveLink({
   href,
   className,
   children,
+  prefetch = false,
   ...props
 }: { href: string } & Omit<ComponentProps<typeof Link>, "href">) {
   const path = usePathname();
@@ -25,7 +26,7 @@ export function NavActiveLink({
       active={isActive(path, href)}
       className={className}
     >
-      <Link href={href} {...props}>
+      <Link href={href} prefetch={prefetch} {...props}>
         {children}
       </Link>
     </NavigationMenuLink>
@@ -37,6 +38,7 @@ export function MobileActiveLink({
   className,
   activeClassName,
   children,
+  prefetch = false,
   ...props
 }: {
   href: string;
@@ -47,6 +49,7 @@ export function MobileActiveLink({
   return (
     <Link
       href={href}
+      prefetch={prefetch}
       className={cn(className, isActive(path, href) && activeClassName)}
       {...props}
     >

@@ -1,56 +1,86 @@
 "use client";
 
 import Image from "next/image";
-
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Lock, ShieldCheck, Sparkles, User } from "lucide-react";
+
 import { useAdmin } from "@/components/admin";
 import { ModeToggle } from "@/components/shared/mode-toggle";
-import { AppForm, TextField, useAppForm } from "@/components/form";
-import {
-  adminLoginDefaults,
-  adminLoginSchema,
-  type AdminLoginValues,
-} from "./_lib/login-schema";
+import { Input } from "@/components/ui/input";
+
+type LoginValues = {
+  user: string;
+  pass: string;
+};
+
+type LoginErrors = Partial<Record<keyof LoginValues | "root", string>>;
+
+const EMPTY_VALUES: LoginValues = {
+  user: "",
+  pass: "",
+};
 
 export default function AdminLogin() {
   const { login } = useAdmin();
   const router = useRouter();
-  const [shake, setShake] = useState(0);
-  const form = useAppForm({
-    schema: adminLoginSchema,
-    defaultValues: adminLoginDefaults,
-  });
-  const err = form.formState.errors.root?.message;
+  const [values, setValues] = useState<LoginValues>(EMPTY_VALUES);
+  const [errors, setErrors] = useState<LoginErrors>({});
 
-  function onSubmit({ user, pass }: AdminLoginValues) {
-    if (!login(user.trim(), pass)) {
-      form.setError("root", { message: "نام کاربری یا رمز نادرست است" });
-      setShake((n) => n + 1);
+  function updateValue(field: keyof LoginValues, value: string) {
+    setValues((current) => ({ ...current, [field]: value }));
+    setErrors((current) => ({ ...current, [field]: undefined, root: undefined }));
+  }
+
+  function validate(next: LoginValues): LoginErrors {
+    const issues: LoginErrors = {};
+
+    if (next.user.trim().length < 3 || next.user.trim().length > 40) {
+      issues.user = "شناسه باید بین ۳ تا ۴۰ نویسه باشد";
+    }
+
+    if (next.pass.length < 6) {
+      issues.pass = "رمز باید حداقل ۶ نویسه باشد";
+    }
+
+    return issues;
+  }
+
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const nextErrors = validate(values);
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
       return;
     }
-    form.clearErrors("root");
+
+    if (!login(values.user.trim(), values.pass)) {
+      setErrors({ root: "نام کاربری یا رمز نادرست است" });
+      return;
+    }
+
+    setErrors({});
     router.replace("/admin");
   }
 
   return (
     <div className="text-navy bg-fog dark:text-ivory grid min-h-dvh bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-size-[auto,auto,36px_36px,36px_36px] lg:grid-cols-[minmax(0,1fr)_minmax(20rem,42%)] dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-size-[auto,auto,42px_42px,42px_42px]">
-      {}
       <span
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-[0.22] max-[639px]:bg-size-[20rem] max-[639px]:opacity-[0.14] dark:opacity-[0.52] dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]"
+        className="pointer-events-none fixed inset-0 z-0 mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat bg-size-[min(44vw,38rem)] opacity-[0.22] max-[639px]:bg-size-[20rem] max-[639px]:opacity-[0.14] dark:opacity-[0.52] dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c19357' stroke-opacity='.28'%3E%3Ccircle cx='90' cy='90' r='42'/%3E%3Ccircle cx='90' cy='90' r='28' stroke-dasharray='3 7'/%3E%3Cpath d='M90 34v112M34 90h112M50 50l80 80M130 50l-80 80' stroke-opacity='.15'/%3E%3C/g%3E%3C/svg%3E\")",
         }}
       />
+
       <section className="relative flex flex-col justify-between px-6 py-8 sm:px-10 lg:px-16 lg:py-12">
         <header className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Image
-              src="/brand/logo-white.png"
+              src="/brand/logo-white.svg"
               alt=""
               width={44}
               height={44}
@@ -88,38 +118,61 @@ export default function AdminLogin() {
             پنل سفارش، موجودی و مجله — فقط برای همکاران ملی‌کیدز.
           </p>
 
-          <AppForm
-            form={form}
-            onSubmit={onSubmit}
-            ariaLabel="ورود به پنل مدیریت"
-            shakeSignal={shake}
-            className="mt-9 space-y-6"
-          >
-            {err ? (
+          <form onSubmit={onSubmit} noValidate className="mt-9 space-y-6">
+            {errors.root ? (
               <p role="alert" className="text-rose text-sm font-bold">
-                {err}
+                {errors.root}
               </p>
             ) : null}
 
-            <TextField
-              name="user"
-              label="شناسه"
-              icon={<User className="size-4" />}
-              placeholder="شناسه همکار"
-              autoComplete="username"
-              skin="bare"
-              required
-            />
-            <TextField
-              name="pass"
-              label="کلید دسترسی"
-              icon={<Lock className="size-4" />}
-              type="password"
-              placeholder="رمز اختصاصی پنل"
-              autoComplete="current-password"
-              skin="bare"
-              required
-            />
+            <div className="space-y-2">
+              <label className="text-navy/60 dark:text-wheat text-xs font-black" htmlFor="admin-user">
+                شناسه
+              </label>
+              <div className="relative">
+                <User className="text-navy/35 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 my-auto size-4" />
+                <Input
+                  id="admin-user"
+                  value={values.user}
+                  onChange={(event) => updateValue("user", event.target.value)}
+                  placeholder="شناسه همکار"
+                  autoComplete="username"
+                  aria-invalid={Boolean(errors.user)}
+                  className="h-14 rounded-3xl border-navy/12 bg-white/70 ps-11 pe-4 text-sm dark:border-gold/20 dark:bg-white/5"
+                  required
+                />
+              </div>
+              {errors.user ? (
+                <p role="alert" className="text-rose text-xs font-bold">
+                  {errors.user}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-navy/60 dark:text-wheat text-xs font-black" htmlFor="admin-pass">
+                کلید دسترسی
+              </label>
+              <div className="relative">
+                <Lock className="text-navy/35 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 my-auto size-4" />
+                <Input
+                  id="admin-pass"
+                  type="password"
+                  value={values.pass}
+                  onChange={(event) => updateValue("pass", event.target.value)}
+                  placeholder="رمز اختصاصی پنل"
+                  autoComplete="current-password"
+                  aria-invalid={Boolean(errors.pass)}
+                  className="h-14 rounded-3xl border-navy/12 bg-white/70 ps-11 pe-4 text-sm dark:border-gold/20 dark:bg-white/5"
+                  required
+                />
+              </div>
+              {errors.pass ? (
+                <p role="alert" className="text-rose text-xs font-bold">
+                  {errors.pass}
+                </p>
+              ) : null}
+            </div>
 
             <button
               type="submit"
@@ -130,7 +183,7 @@ export default function AdminLogin() {
                 <ArrowLeft className="size-4" />
               </span>
             </button>
-          </AppForm>
+          </form>
         </div>
 
         <ul className="text-navy/60 dark:text-wheat grid max-w-md grid-cols-3 gap-3 text-[11px] font-bold">
@@ -146,7 +199,6 @@ export default function AdminLogin() {
         </ul>
       </section>
 
-      {/* Image panel — intentionally rich in both themes */}
       <aside className="bg-navy relative hidden min-h-72 overflow-hidden lg:block">
         <Image
           src="/brand/hero-dress.jpg"

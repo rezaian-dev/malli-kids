@@ -1,7 +1,7 @@
 import { pickBanner } from "@/lib/festive/occasions";
 import { getBanners } from "@/lib/data";
-import { FestiveBannerBody } from "./festive-banner-body";
+import { FestiveBannerMount } from "./festive-banner-mount";
 
 export function FestiveBanner() {
-  return <FestiveBannerBody item={pickBanner(getBanners()) ?? null} />;
+  return <FestiveBannerMount item={pickBanner(getBanners()) ?? null} />;
 }

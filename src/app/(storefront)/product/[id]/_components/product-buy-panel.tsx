@@ -21,7 +21,7 @@ import type { Product } from "@/types";
 import { formatToman, fullName, toFaDigits } from "@/lib/format";
 import { useStore } from "@/providers/store-provider";
 import { CORE_PRODUCTS } from "@/lib/data/products";
-import { phoneDigits, toLatinDigits } from "@/lib/forms";
+import { phoneDigits, toLatinDigits } from "@/lib/digits";
 import { loadCoupons } from "@/lib/admin-sync";
 import { Ticket } from "lucide-react";
 import { BRAND } from "@/lib/constants";

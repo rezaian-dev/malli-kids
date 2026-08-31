@@ -53,7 +53,6 @@ export function Atelier() {
               alt="پارچه‌های آتلیه ملی‌کیدز"
               width={768}
               height={1152}
-              quality={95}
               className="h-56 w-full object-cover object-center min-[420px]:h-64 sm:h-90"
             />
           </div>
@@ -63,7 +62,6 @@ export function Atelier() {
               alt="مدل دوخته‌شده با الگوی آماده"
               width={922}
               height={1152}
-              quality={95}
               className="h-44 w-full object-cover object-top min-[420px]:h-52 sm:h-75"
             />
           </div>
@@ -104,6 +102,7 @@ export function Atelier() {
               <Link
                 key={card.t}
                 href={card.href}
+                prefetch={false}
                 className={`group border-navy/5 hover:border-gold/50 hover:shadow-gold/10 dark:border-gold/25 dark:bg-slate/55 relative rounded-2xl border bg-white/92 p-5 transition-all hover:-translate-y-1 hover:shadow-xl sm:rounded-3xl sm:p-6 ${card.shift ? "min-[480px]:translate-y-5" : ""}`}
               >
                 <span className="bg-gold/15 text-gold absolute top-4 left-4 rounded-full px-2.5 py-1 text-[10px] font-black sm:top-5 sm:left-5">
@@ -123,6 +122,7 @@ export function Atelier() {
           </div>
           <Link
             href="/about"
+            prefetch={false}
             className="border-gold text-navy hover:text-gold dark:text-ivory mt-10 inline-flex min-h-11 items-center gap-2 border-b-2 pb-1 text-sm font-black transition-colors min-[480px]:mt-14 sm:text-base"
           >
             ورود به آتلیه

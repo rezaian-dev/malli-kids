@@ -7,7 +7,7 @@ import { CORE_PRODUCTS, getProductById, pdpHref } from "@/lib/data/products";
 import { breadcrumbSchema, buildMetadata, productSchema } from "@/lib/seo";
 import { shell } from "@/lib/utils";
 import { ProductBuyPanel } from "./_components/product-buy-panel";
-import { ProductDetailsTabs } from "./_components/product-details-tabs";
+import { ProductDetailsMount } from "./_components/product-details-mount";
 import {
   LiveName,
   ProductLiveProvider,
@@ -102,7 +102,7 @@ export default async function ProductPage({
           </nav>
 
           <ProductBuyPanel product={product} />
-          <ProductDetailsTabs product={product} />
+          <ProductDetailsMount product={product} />
 
           {related.length ? (
             <section

@@ -151,7 +151,7 @@ export function Footer() {
         <div className="min-w-0">
           <div className="flex items-center gap-3">
             <Image
-              src="/brand/logo-white.png"
+              src="/brand/logo-white.svg"
               alt="لوگوی ملی‌کیدز"
               width={56}
               height={56}

@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import {
   ArrowRight,
   Eye,
@@ -21,7 +21,6 @@ import {
   AdminPageHeader,
   useAdmin,
 } from "@/components/admin";
-import { fileToDataUrl } from "@/components/admin/rich-editor";
 import { toFaDigits } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -207,11 +206,12 @@ export default function AdminArticles() {
     setDraft(null);
   }
 
-  async function onCover(e: React.ChangeEvent<HTMLInputElement>) {
+  async function onCover(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
     try {
+      const { fileToDataUrl } = await import("@/components/admin/rich-editor");
       set("cover", await fileToDataUrl(file));
     } catch {
       toast.error("آپلود تصویر ناموفق بود");
@@ -546,4 +546,5 @@ export default function AdminArticles() {
       {filteredArticles.length > 0 ? <Pagination pg={pg} unit="مقاله" /> : null}
     </div>
   );
+
 }

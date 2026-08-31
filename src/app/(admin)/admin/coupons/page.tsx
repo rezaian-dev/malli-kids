@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ComponentProps, type FormEvent } from "react";
 import {
   CircleCheck,
   CircleOff,
@@ -11,8 +11,8 @@ import {
   X,
 } from "lucide-react";
 
-import { AppForm, MoneyField, TextField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -23,18 +23,76 @@ import {
   useAdmin,
 } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
+import { parseFaNumber, toLatinDigits } from "@/lib/digits";
 import { formatToman, toFaDigits } from "@/lib/format";
-import { parseFaNumber } from "@/lib/forms";
+import { isJalaliFuture, jalaliParts } from "@/lib/jalali";
 import type { AdminCoupon } from "@/types";
-import {
-  couponDefaults,
-  couponSchema,
-  type CouponValues,
-} from "./_lib/coupon-schema";
 
 const PER_PAGE = 8;
 type StatusFilter = "all" | "active" | "inactive" | "full";
 type SortFilter = "default" | "usage" | "discount" | "expiry";
+
+type CouponFormValues = {
+  code: string;
+  title: string;
+  rate: string;
+  cap: string;
+  min: string;
+  until: string;
+};
+
+type CouponFormErrors = Partial<Record<keyof CouponFormValues, string>>;
+
+const COUPON_DEFAULTS: CouponFormValues = {
+  code: "",
+  title: "",
+  rate: "10",
+  cap: "200",
+  min: "0",
+  until: "",
+};
+
+function validateCouponForm(values: CouponFormValues): CouponFormErrors {
+  const errors: CouponFormErrors = {};
+  const code = values.code.trim().toUpperCase();
+  const title = values.title.trim();
+  const rate = parseFaNumber(values.rate);
+  const cap = parseFaNumber(values.cap);
+  const minimum = values.min.trim();
+  const normalizedDate = toLatinDigits(values.until)
+    .trim()
+    .replace(/[.\u200c\-]/g, "/");
+
+  if (!/^[A-Za-z0-9_-]{4,16}$/.test(code)) {
+    errors.code = "فقط حروف و عدد لاتین، بین ۴ تا ۱۶ نویسه";
+  }
+
+  if (title.length < 3) errors.title = "عنوان باید حداقل ۳ حرف باشد";
+  else if (title.length > 60) errors.title = "عنوان حداکثر ۶۰ نویسه است";
+
+  if (!Number.isInteger(rate) || rate < 1 || rate > 90) {
+    errors.rate = "درصد تخفیف باید بین ۱ تا ۹۰ باشد";
+  }
+
+  if (!Number.isInteger(cap) || cap < 1 || cap > 100_000) {
+    errors.cap = "سقف استفاده باید بین ۱ تا ۱۰۰٬۰۰۰ باشد";
+  }
+
+  if (minimum) {
+    const minValue = parseFaNumber(minimum);
+    if (!Number.isFinite(minValue) || minValue < 0 || minValue > 500_000_000) {
+      errors.min = "حداقل خرید باید بین ۰ تا ۵۰۰٬۰۰۰٬۰۰۰ باشد";
+    }
+  }
+
+  if (!jalaliParts(normalizedDate)) {
+    errors.until = "تاریخ شمسی را کامل بنویسید؛ ماه ۰۱ تا ۱۲ و روز تا ۳۱";
+  } else if (!isJalaliFuture(normalizedDate)) {
+    errors.until = "انقضا باید بعد ازِ امروز باشد";
+  }
+
+  return errors;
+}
 
 export default function AdminCoupons() {
   const { db, saveCoupons } = useAdmin();
@@ -42,10 +100,9 @@ export default function AdminCoupons() {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [sort, setSort] = useState<SortFilter>("default");
-  const form = useAppForm({
-    schema: couponSchema,
-    defaultValues: couponDefaults,
-  });
+  const [formValues, setFormValues] =
+    useState<CouponFormValues>(COUPON_DEFAULTS);
+  const [formErrors, setFormErrors] = useState<CouponFormErrors>({});
 
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
@@ -66,8 +123,9 @@ export default function AdminCoupons() {
         return matchesSearch && matchesStatus;
       })
       .sort((a, b) => {
-        if (sort === "usage")
+        if (sort === "usage") {
           return b.used / Math.max(1, b.cap) - a.used / Math.max(1, a.cap);
+        }
         if (sort === "discount") return b.rate - a.rate;
         if (sort === "expiry") return a.until.localeCompare(b.until, "fa");
         return db.coupons.indexOf(a) - db.coupons.indexOf(b);
@@ -83,28 +141,48 @@ export default function AdminCoupons() {
   const activeFilters =
     Number(!!q.trim()) + Number(status !== "all") + Number(sort !== "default");
 
-  function add(values: CouponValues) {
-    const next: AdminCoupon = {
-      code: values.code.toUpperCase(),
-      title: values.title.trim(),
-      rate: parseFaNumber(values.rate) / 100,
-      used: 0,
-      cap: parseFaNumber(values.cap),
-      active: true,
-      min: parseFaNumber(values.min) || 0,
-      until: values.until,
-    };
-    if (db.coupons.some((coupon) => coupon.code === next.code)) {
-      form.setError("code", { message: "این کد از قبل در فهرست است" });
+  function updateFormField<K extends keyof CouponFormValues>(
+    field: K,
+    value: CouponFormValues[K],
+  ) {
+    setFormValues((current) => ({ ...current, [field]: value }));
+    setFormErrors((current) => ({ ...current, [field]: undefined }));
+  }
+
+  function addCoupon(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const nextErrors = validateCouponForm(formValues);
+    const nextCode = formValues.code.trim().toUpperCase();
+
+    if (db.coupons.some((coupon) => coupon.code === nextCode)) {
+      nextErrors.code = "این کد از قبل در فهرست است";
+    }
+
+    if (Object.keys(nextErrors).length > 0) {
+      setFormErrors(nextErrors);
       return;
     }
+
+    const next: AdminCoupon = {
+      code: nextCode,
+      title: formValues.title.trim(),
+      rate: parseFaNumber(formValues.rate) / 100,
+      used: 0,
+      cap: parseFaNumber(formValues.cap),
+      active: true,
+      min: parseFaNumber(formValues.min) || 0,
+      until: toLatinDigits(formValues.until).trim().replace(/[.\u200c\-]/g, "/"),
+    };
+
     saveCoupons([next, ...db.coupons]);
     close();
   }
 
   function close() {
     setOpen(false);
-    form.reset({ ...couponDefaults });
+    setFormValues(COUPON_DEFAULTS);
+    setFormErrors({});
   }
 
   return (
@@ -264,8 +342,7 @@ export default function AdminCoupons() {
                   <div className="mt-4">
                     <div className="text-navy/45 dark:text-wheat mb-1.5 flex items-center justify-between text-[9px] font-bold">
                       <span>
-                        مصرف {toFaDigits(coupon.used)} از{" "}
-                        {toFaDigits(coupon.cap)}
+                        مصرف {toFaDigits(coupon.used)} از {toFaDigits(coupon.cap)}
                       </span>
                       <span>{toFaDigits(usage)}٪</span>
                     </div>
@@ -307,12 +384,11 @@ export default function AdminCoupons() {
             onClick={close}
             aria-label="بستن"
           />
-          <AppForm
-            form={form}
-            onSubmit={add}
-            ariaLabel="کد تخفیف جدید"
+          <form
+            onSubmit={addCoupon}
+            noValidate
+            aria-label="کد تخفیف جدید"
             className="border-gold/18 bg-paper dark:bg-navy-mid relative z-10 my-auto w-full max-w-md space-y-3 rounded-3xl border p-4 shadow-2xl sm:p-6"
-            notify
           >
             <div className="mb-4 flex items-center justify-between">
               <div>
@@ -330,63 +406,115 @@ export default function AdminCoupons() {
                 <X className="size-4" />
               </button>
             </div>
-            <TextField
-              name="code"
+
+            <CouponField
+              id="coupon-code"
               label="کد"
+              value={formValues.code}
+              onChange={(value) => updateFormField("code", value.toUpperCase())}
               placeholder="MALLI10"
               dir="ltr"
               maxLength={16}
-              inputClassName="uppercase tracking-[0.12em]"
-              hint="لاتین، ۴ تا ۱۶ نویسه"
+              error={formErrors.code}
+              className="uppercase tracking-[0.12em]"
               required
             />
-            <TextField
-              name="title"
+            <CouponField
+              id="coupon-title"
               label="عنوان"
+              value={formValues.title}
+              onChange={(value) => updateFormField("title", value)}
               placeholder="تخفیف عضویت"
               maxLength={60}
+              error={formErrors.title}
               required
             />
+
             <div className="grid grid-cols-2 gap-3">
-              <TextField
-                name="rate"
+              <CouponField
+                id="coupon-rate"
                 label="درصد تخفیف"
+                value={formValues.rate}
+                onChange={(value) => updateFormField("rate", value)}
                 inputMode="numeric"
                 placeholder="10"
-                hint="۱ تا ۹۰"
+                error={formErrors.rate}
                 required
               />
-              <TextField
-                name="cap"
+              <CouponField
+                id="coupon-cap"
                 label="سقف استفاده"
+                value={formValues.cap}
+                onChange={(value) => updateFormField("cap", value)}
                 inputMode="numeric"
                 placeholder="200"
-                hint="حداکثر ۱۰۰٬۰۰۰"
+                error={formErrors.cap}
                 required
               />
             </div>
-            <MoneyField
-              name="min"
+
+            <CouponField
+              id="coupon-min"
               label="حداقل خرید (تومان)"
-              hint="خالی = بدون حداقل"
+              value={formValues.min}
+              onChange={(value) => updateFormField("min", value)}
+              inputMode="numeric"
+              placeholder="0"
+              error={formErrors.min}
             />
-            <TextField
-              name="until"
+            <CouponField
+              id="coupon-until"
               label="انقضا"
+              value={formValues.until}
+              onChange={(value) => updateFormField("until", value)}
               dir="ltr"
               placeholder="1405/12/29"
-              hint="تاریخ شمسی"
+              error={formErrors.until}
               required
             />
-            <Button
-              type="submit"
-              variant="navy"
-              className="h-11 w-full rounded-xl"
-            >
+
+            <Button type="submit" variant="navy" className="h-11 w-full rounded-xl">
               <Percent className="size-4" /> ذخیره کد
             </Button>
-          </AppForm>
+          </form>
         </div>
+      ) : null}
+    </div>
+  );
+}
+
+function CouponField({
+  id,
+  label,
+  value,
+  onChange,
+  error,
+  className,
+  ...props
+}: Omit<ComponentProps<typeof Input>, "value" | "onChange"> & {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-navy/55 dark:text-wheat text-xs font-black" htmlFor={id}>
+        {label}
+      </label>
+      <Input
+        id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        aria-invalid={Boolean(error)}
+        className={`h-11 rounded-2xl border-navy/12 bg-white/70 px-4 text-sm dark:border-gold/20 dark:bg-white/5 ${className ?? ""}`}
+        {...props}
+      />
+      {error ? (
+        <p role="alert" className="text-rose text-xs font-bold">
+          {error}
+        </p>
       ) : null}
     </div>
   );

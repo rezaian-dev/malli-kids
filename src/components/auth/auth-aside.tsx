@@ -32,7 +32,7 @@ export function AuthAside() {
       <div className="relative flex h-full min-h-0 flex-col justify-between p-7 pe-8">
         <div className="flex items-center gap-3">
           <Image
-            src="/brand/logo-white.png"
+            src="/brand/logo-white.svg"
             alt=""
             width={44}
             height={44}

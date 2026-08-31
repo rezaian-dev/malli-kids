@@ -18,18 +18,5 @@ export function AuthModalMount() {
     if (authOpen) setMounted(true);
   }, [authOpen]);
 
-  useEffect(() => {
-    if (mounted) return;
-    const preload = () => void import("./auth-modal");
-    const idle = typeof window.requestIdleCallback === "function";
-    const id = idle
-      ? window.requestIdleCallback(preload, { timeout: 4000 })
-      : window.setTimeout(preload, 2500);
-    return () => {
-      if (idle) window.cancelIdleCallback(id);
-      else window.clearTimeout(id);
-    };
-  }, [mounted]);
-
   return mounted ? <AuthModal /> : null;
 }

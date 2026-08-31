@@ -51,7 +51,7 @@ const BRAND = (
   <div className="flex min-w-0 items-center gap-3">
     <span className="bg-navy ring-gold/25 relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-2xl shadow-[0_12px_28px_-14px_rgba(4,20,39,.8)] ring-1 dark:bg-white/8">
       <Image
-        src="/brand/logo-white.png"
+        src="/brand/logo-white.svg"
         alt="ملی کیدز"
         width={42}
         height={42}
