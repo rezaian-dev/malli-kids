@@ -151,15 +151,17 @@ export function MobileNav() {
 
           {MAIN_LINKS.map((n) => {
             const Icon = navIcon(n.icon);
+            const active = isActive(path, n.href);
             return (
               <SheetClose asChild key={n.href}>
                 <Link
                   href={n.href}
+                  aria-current={active ? "page" : undefined}
                   className={cn(
                     "flex items-center gap-2 px-2 py-3 last:border-0",
                     "border-navy/5 text-navy border-b text-sm font-bold",
                     "dark:border-gold/10 dark:text-ivory",
-                    isActive(path, n.href) && "text-gold dark:text-gold-light",
+                    active && "text-gold dark:text-gold-light",
                   )}
                 >
                   <Icon className="text-gold size-4" /> {n.label}
