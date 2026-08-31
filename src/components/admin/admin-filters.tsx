@@ -172,7 +172,7 @@ export function AdminStatStrip({ items, className }: { items: AdminStatItem[]; c
       {items.map((item, index) => (
         <article
           key={item.label}
-          className="flex min-w-0 items-center gap-[0.65rem] min-h-[4.75rem] p-3 border border-navy/8 rounded-[18px] bg-paper/88 shadow-[0_16px_35px_-30px_rgba(14,42,71,0.45)] backdrop-blur-[14px] transition-[transform,border-color] duration-[260ms] ease-[cubic-bezier(.25,.1,.25,1)] hover:-translate-y-0.5 hover:border-gold/34 dark:border-gold-soft/13 dark:bg-[rgba(16,43,70,0.62)] dark:shadow-[0_18px_40px_-30px_rgba(0,0,0,0.8)] animate-admin-reveal motion-reduce:animate-none"
+          className="flex min-w-0 items-center gap-[0.65rem] min-h-19 p-3 border border-navy/8 rounded-[18px] bg-paper/88 shadow-[0_16px_35px_-30px_rgba(14,42,71,0.45)] backdrop-blur-[14px] transition-[transform,border-color] duration-260 ease-[cubic-bezier(.25,.1,.25,1)] hover:-translate-y-0.5 hover:border-gold/34 dark:border-gold-soft/13 dark:bg-[rgba(16,43,70,0.62)] dark:shadow-[0_18px_40px_-30px_rgba(0,0,0,0.8)] animate-admin-reveal motion-reduce:animate-none"
           style={{ animationDelay: `${Math.min(index * 55, 220)}ms` }}
         >
           <span className={cn("grid size-9 shrink-0 place-items-center rounded-xl", STAT_TONES[item.tone ?? "gold"])}>
