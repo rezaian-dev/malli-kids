@@ -26,7 +26,6 @@ import {
   type Skin,
 } from "./styles";
 
-/** فیلدها باید داخلِ `<AppForm>` باشند (از FormProvider می‌خوانند). */
 function useField(name: string) {
   const form = useFormContext();
   if (!form) throw new Error("‹Field› باید داخل <AppForm> قرار بگیرد.");
@@ -41,24 +40,20 @@ export type FieldShellProps = {
   required?: boolean;
   skin?: Skin;
   className?: string;
-  /** آیکونِ ابتدایِ فیلد (فقط در پوسته‌های قاب‌دار) */
+  
   icon?: ReactNode;
-  /** دکمه‌ی انتهای فیلد، مثل نمایش/پنهانِ رمز */
+  
   trailing?: ReactNode;
-  /** قابِ خطی/باکسی را خاموش می‌کند (فیلدهایی که خودشان قاب دارند، مثل کد یکبارمصرف) */
+  
   noShell?: boolean;
-  /** پیامِ متنیِ خطا را نشان نده — فقط قاب/حاشیه قرمز (مثل ایمیلِ خبرنامه) */
+  
   hideMessage?: boolean;
-  /** کلاسِ خودِ برچسب (مثلاً «sr-only» وقتی برچسبِ تصویری نداریم) */
+  
   labelClassName?: string;
-  /** کنترل را خودتان می‌سازید (برای Select/ToggleGroup/InputOTP/…) */
+  
   children: (p: { field: ReturnType<typeof useField>["field"]; invalid: boolean; id: string; describedBy?: string }) => ReactNode;
 };
 
-/**
- * قابِ مشترکِ همهٔ فیلدها: Label + کنترل + پیامِ خطا + راهنما.
- * بقیهٔ فیلدها فقط این را با یک کنترلِ مناسب پر می‌کنند.
- */
 export function Field({ name, label, hint, required, skin = "admin", className, icon, trailing, noShell, hideMessage, labelClassName, children }: FieldShellProps) {
   const { field, fieldState } = useField(name);
   const uid = useId();
@@ -103,8 +98,7 @@ export function Field({ name, label, hint, required, skin = "admin", className, 
       )}
 
       {showMsg ? (
-        /* پوستهٔ grid-rows: ارتفاعِ پیامِ خطا به‌جای پرشِ ناگهانی، نرم باز می‌شود
-           (جلوگیری از اسکرول/پرشِ عمودیِ لحظه‌ای، مثل لرزشِ کد OTP در مودال). */
+        
         <p id={`${id}-msg`} role="alert" className="m-0 grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity] duration-[280ms] ease-[cubic-bezier(.25,.1,.25,1)] starting:grid-rows-[0fr] starting:opacity-0 [&>*]:min-h-0 [&>*]:overflow-hidden">
           <span className={ERROR_TEXT}>
             <CircleAlert className="mt-0.5 size-3 shrink-0" />
@@ -132,10 +126,10 @@ export type TextFieldProps = {
   dir?: "rtl" | "ltr";
   maxLength?: number;
   icon?: ReactNode;
-  /** دکمهٔ انتهایِ فیلد (نمایشِ رمز و…) — فقط در پوسته‌های قاب‌دار */
+  
   trailing?: ReactNode;
   required?: boolean;
-  /** «۱۲ حرف باقی‌مانده» را زیرِ فیلد نشان می‌دهد */
+  
   showCount?: boolean;
 };
 
@@ -171,7 +165,7 @@ export function TextField({
             placeholder={placeholder}
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
-            // در چیدمانِ راست‌به‌چپ مقدار همیشه در «آغازِ» راست می‌نشیند؛ برایِ متنِ لاتین هم لازم است
+            
             className={cn(INPUT[skin], LATIN_ANCHOR, inputClassName)}
             value={(field.value as string | number | undefined) ?? ""}
             name={field.name}
@@ -188,7 +182,7 @@ export function TextField({
 
 export type TextareaFieldProps = Omit<TextFieldProps, "type" | "icon" | "inputClassName"> & {
   rows?: number;
-  /** حداقلِ طولِ مجاز — فقط برایِ شمارنده (قاعدهٔ اصلی در اسکیما است) */
+  
   min?: number;
 };
 
@@ -230,12 +224,10 @@ export function TextareaField({
   );
 }
 
-/** فیلدِ داخلِ باکس، با آیکون و دکمهٔ انتها (دیالوگ ورود/ثبت‌نام) */
 export function InsetField(props: TextFieldProps) {
   return <TextField skin="inset" {...props} />;
 }
 
-/** فیلدِ عددیِ پولی: ارقامِ فارسی و جداکنندهٔ هزارگان را می‌فهمد و فارسی نشان می‌دهد. */
 export function MoneyField({
   name,
   label,

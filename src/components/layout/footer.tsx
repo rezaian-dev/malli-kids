@@ -12,11 +12,8 @@ const PERKS = [
   { Icon: Headphones, t: "پشتیبانی مادری", d: "مشاوره سایز، هر روز هفته" },
 ];
 
-/** لینک‌های ستونی فوتر: ارتفاع لمسیِ ۴۴px روی موبایل، جمع‌تر روی دسکتاپ. */
 const FOOT_LINK =
   "inline-flex min-h-11 items-center py-1 transition-colors hover:text-gold md:min-h-9";
-
-/* ── آیکون‌های برند (SVG درون‌خطی، هم‌وزن با آیکن‌های lucide) ── */
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -41,8 +38,6 @@ function WhatsAppIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-
-/* ── دکمه‌های شبکهٔ اجتماعی: هاور = بلند شدن + رنگِ برند + هاله + تولتیپ ── */
 
 const SOCIAL_BASE =
   "group relative grid size-11 shrink-0 place-items-center rounded-full border border-white/10 bg-white/10 text-gold-light transition-all duration-300 hover:-translate-y-1.5 hover:border-transparent hover:text-white";

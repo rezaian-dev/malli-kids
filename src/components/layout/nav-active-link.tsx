@@ -6,16 +6,11 @@ import type { ComponentProps } from "react";
 import { NavigationMenuLink } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 
-/** آیا مسیر فعلی زیرمجموعهٔ این href است؟ */
 export function isActive(path: string, href: string) {
   if (href === "/shop") return path === "/shop" || path.startsWith("/shop");
   return path === href || path.startsWith(`${href}/`);
 }
 
-/**
- * تنها دلیل client بودن: usePathname برای حالت active.
- * فقط همین لینک هیدریت می‌شود، نه کل نوار ناوبری.
- */
 export function NavActiveLink({
   href,
   className,
@@ -33,7 +28,6 @@ export function NavActiveLink({
   );
 }
 
-/** نسخهٔ ساده برای منوی موبایل (بدون NavigationMenuLink). */
 export function MobileActiveLink({
   href,
   className,

@@ -7,7 +7,6 @@ import { toFaDigits } from "@/lib/format";
 import { countErrors } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 
-/** مسیرِ همهٔ فیلدهایِ دارایِ خطا («price» یا «sizes.0») */
 function errorPaths(errors: FieldErrors, prefix = "", depth = 0): string[] {
   const out: string[] = [];
   if (depth > 4) return out;
@@ -22,9 +21,6 @@ function errorPaths(errors: FieldErrors, prefix = "", depth = 0): string[] {
 
 const esc = (s: string) => (typeof CSS !== "undefined" && CSS.escape ? CSS.escape(s) : s.replace(/[^\w-]/g, "\\"));
 
-/** فوکوس و اسکرول روی اولین فیلدِ نامعتبر — کاربر نباید دنبالِ خطا بگردد.
- * ترتیبِ کلیدها در `errors` مطمئن نیست، پس «اولین رویِ صفحه» را با ترتیبِ DOM پیدا می‌کنیم.
- */
 function focusFirstError(errors: FieldErrors) {
   if (typeof document === "undefined") return;
   const FOCUSABLE = 'input:not([type="hidden"]), textarea, select, button, a[href], [tabindex]';
@@ -41,8 +37,8 @@ function focusFirstError(errors: FieldErrors) {
   if (!nodes.length) return;
   const el = nodes.reduce((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? a : b));
   el.focus({ preventScroll: true });
-  // «nearest»: اگر فیلد همین حالا پیداست (مثل کد OTP در مودال) هیچ اسکرولی رخ نمی‌دهد؛
-  // فقط وقتی بیرونِ دید باشد، حداقلِ اسکرول برای نمایان‌شدنش انجام می‌شود.
+  
+  
   el.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
@@ -53,25 +49,21 @@ export type AppFormProps<T extends FieldValues> = {
   className?: string;
   id?: string;
   ariaLabel?: string;
-  /** اگر خطا بود، «N مورد را اصلاح کنید» هم اعلام شود */
+  
   notify?: boolean;
-  /** تکانِ ملایمِ فرم هنگام ثبتِ نامعتبر (مثل ورودِ پنل) */
+  
   shake?: boolean;
   role?: "search" | "form";
-  /** form action — برایِ حالتِ بدونِ JavaScript */
+  
   action?: string;
   method?: "get" | "post";
-  /** هر مقدارِ تازه‌ای که بدهید، فرم یک‌بار می‌لرزد (برایِ خطایِ سمتِ سرور) */
+  
   shakeSignal?: number;
-  /** رفتارِ سفارشیِ ثبتِ نامعتبر؛ اگر بدهید، جایِ پیش‌فرض را می‌گیرد */
+  
   onInvalid?: (errors: FieldErrors<T>) => void;
   resetOnSubmit?: boolean;
 };
 
-/**
- * <form> مشترک: FormProvider + noValidate (حبابِ مرورگر خاموش، پیام‌ها فقط از zod)
- * + مدیریتِ حالتِ نامعتبر (فوکوس، تکان، شمارشِ خطاها).
- */
 export function AppForm<T extends FieldValues>({
   form,
   onSubmit,
@@ -129,7 +121,6 @@ export function AppForm<T extends FieldValues>({
   );
 }
 
-/** سرِ فرم — تیتر و توضیح، هم‌راستا در همهٔ فرم‌ها */
 export function FormHead({ title, desc, className }: { title: ReactNode; desc?: ReactNode; className?: string }) {
   return (
     <div className={className}>

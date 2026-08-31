@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   description: "درس‌های کوتاه دوخت؛ از اولین کوک تا چین دامن جشن.",
 };
 
-
-
 export default function TutorialsPage() {
   return (
     <>

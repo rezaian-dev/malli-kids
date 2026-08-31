@@ -15,7 +15,6 @@ const SIZE_TABLE = [
 
 const HEADS = ["سایز", "قد کودک (سانتی‌متر)", "سن تقریبی", "دور سینه"];
 
-/** جدول راهنمای سایز — کاملاً ایستا، پس Server Component. */
 export function ProductSizeTable() {
   return (
     <div className="grid items-start gap-5 lg:grid-cols-[1fr_280px]">

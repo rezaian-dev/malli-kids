@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   description: "الگوهای سایزبندی‌شدهٔ ۸۰ تا ۱۲۲ همراه با فیلم کوتاه برش.",
 };
 
-
-
 export default function PatternsPage() {
   return (
     <>

@@ -9,19 +9,19 @@ import { toast } from "sonner";
 
 type Props = {
   value?: string;
-  /** Receives a compressed data-URL ready to store (or POST to an upload route). */
+  /** 🪶 Ready-to-store compressed image data. */
   onChange: (dataUrl: string) => void;
   onClear?: () => void;
   variant?: "avatar" | "cover";
   label?: string;
   fallback?: ReactNode;
-  /** Target size after compression (MB). Keeps localStorage/base64 small. */
+  /** 🪶 Target size after compression in MB. */
   maxSizeMB?: number;
   maxWidthOrHeight?: number;
   className?: string;
 };
 
-/** Compress + resize a picked file into a light data-URL (shared by the component and bespoke pickers like the profile avatar). */
+/** 🪶 Compress a picked image into a light data URL. */
 export async function compressToDataUrl(file: File, opts?: { maxSizeMB?: number; maxWidthOrHeight?: number }): Promise<string> {
   const compressed = await imageCompression(file, {
     maxSizeMB: opts?.maxSizeMB ?? 0.8,
@@ -32,13 +32,7 @@ export async function compressToDataUrl(file: File, opts?: { maxSizeMB?: number;
   return imageCompression.getDataUrlFromFile(compressed);
 }
 
-/**
- * Clean, reusable image picker. Handles drag-and-drop + click (react-dropzone),
- * then compresses/resizes on the client (browser-image-compression) so a 5MB
- * phone photo becomes a light data-URL instead of being rejected. The output is
- * storage-agnostic: here it feeds the localStorage-backed store, but the same
- * `onChange(dataUrl)` could POST to an upload route for a real CDN.
- */
+/** 🖼️ Reusable image picker with client-side compression. */
 export function ImageUpload({
   value,
   onChange,
@@ -93,7 +87,7 @@ export function ImageUpload({
         <input {...getInputProps()} />
 
         {value ? (
-          // eslint-disable-next-line @next/next/no-img-element
+          // eslint-disable-next-line @next/next/no-img-element -- 🪶 Local previews can use a raw img.
           <img src={value} alt="" className="absolute inset-0 size-full object-cover" />
         ) : fallback ? (
           fallback

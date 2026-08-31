@@ -17,17 +17,12 @@ const TONE: Record<FestiveTheme, string> = {
   night: "from-navy-deep via-slate to-navy-deep",
 };
 
-/**
- * بدنهٔ نوارِ بالای هدر — کلاینت است تا «جشنوارهٔ» فعالِ ادمین اولویت بگیرد:
- * جشنواره > بنرِ مناسبتیِ تاریخ > پیامِ پیش‌فرضِ ارسال رایگان.
- * ارتفاع در هر سه حالت یکسان می‌ماند تا جبرانِ هدرِ ثابت به‌هم نریزد.
- */
 export function FestiveBannerBody({ item: serverItem }: { item: BannerItem | null }) {
   const { campaign } = useStore();
   const [seen, setSeen] = useState(false);
   const [item, setItem] = useState<BannerItem | null>(serverItem);
   useEffect(() => setSeen(true), []);
-  // بنرهای ذخیره‌شدهٔ ادمین بر دانهٔ سرور اولویت می‌گیرند
+  
   useEffect(() => setItem(pickBanner(loadBanners()) ?? null), []);
 
   if (seen && campaign.active && campaign.percent > 0) {

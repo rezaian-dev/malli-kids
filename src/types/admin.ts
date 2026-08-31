@@ -37,12 +37,12 @@ export type AdminCustomer = {
   orders: number;
   spent: number;
   childName?: string;
-  /** تصویر پروفایل؛ فقط در صورت ثبت‌شدن در هدر مدیریت نمایش داده می‌شود. */
+  
   avatar?: string;
   joined: string;
-  /** نقش حساب برای تفکیک کاربران فروشگاه و مدیران در کنسول. */
+  
   role?: "user" | "admin";
-  /** وضعیتِ حساب — مسدود یعنی اجازهٔ ثبت سفارش ندارد */
+  
   status?: "فعال" | "مسدود";
 };
 
@@ -72,9 +72,9 @@ export type AdminArticle = {
   tag: string;
   title: string;
   excerpt: string;
-  /** بدنهٔ مقاله — متنِ ساده (دانه) یا HTML خروجیِ ویرایشگرِ ادمین */
+  
   body?: string;
-  /** تصویرِ شاخص — مسیرِ فایل یا dataURL آپلودِ ادمین */
+  
   cover?: string;
   published: boolean;
   date: string;
@@ -90,11 +90,11 @@ export type AdminMessage = {
 };
 
 export type AdminCampaign = {
-  /** جشنوارهٔ تخفیفِ سراسری روی همهٔ محصولات */
+  
   active: boolean;
-  /** درصدِ تخفیفِ سراسری (۰ تا ۹۰) */
+  
   percent: number;
-  /** عنوانِ جشنواره — در نوارِ بالایِ فروشگاه و برچسبِ قیمت نمایش داده می‌شود */
+  
   title: string;
 };
 

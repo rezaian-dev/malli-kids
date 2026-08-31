@@ -7,9 +7,7 @@ export const metadata: Metadata = {
   description: "اتاق پرو دیجیتال مالی کیدز؛ لباس‌های کالکشن را روی تنِ کوچولو ببینید.",
 };
 
-
-// The live AI studio lives in ./_components/try-on-studio (<Studio />) and its API in app/api/tryon/route.ts.
-// When the AI provider is ready, swap <TryOnComingSoon /> for <Studio /> to re-enable it.
+// 🚀 Swap the coming-soon view with the live studio when the provider is ready.
 export default function TryOnPage() {
   return (
     <>

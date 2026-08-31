@@ -12,11 +12,6 @@ const TRIGGER = cn(
   "dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep",
 );
 
-/**
- * استایل‌های منتخب — Server Component.
- * فیلتر دسته با Tabs shadcn انجام می‌شود (بدون useState/useMemo)؛ هر چهار
- * گرید روی سرور رندر و در HTML اولیه ارسال می‌شوند.
- */
 export function Styles() {
   return (
     <section id="styles" className="bg-transparent py-12 sm:py-16 lg:py-20">
@@ -34,8 +29,7 @@ export function Styles() {
               </h2>
             </div>
 
-            {/* بدون اسکرول افقی: چهار تب همیشه داخل عرض جا می‌شوند و روی
-                موبایل وسط‌چین‌اند؛ در صفحهٔ خیلی باریک به خط بعد می‌شکنند. */}
+            {}
             <div className="flex w-full justify-center lg:w-auto">
               <TabsList className="h-auto max-w-full flex-nowrap justify-center gap-0.5 min-[360px]:gap-1 rounded-full border border-navy/5 bg-white p-2 shadow-sm sm:gap-1.5 sm:p-2.5 dark:border-gold/20 dark:bg-dusk-alt">
                 {TABS.map((name) => (
@@ -51,8 +45,7 @@ export function Styles() {
             const items = name === "همه" ? CORE_PRODUCTS : CORE_PRODUCTS.filter((p) => p.cat === name);
             return (
               <TabsContent key={name} value={name} className="mt-0">
-                {/* تک‌ستونه تا ۵۱۹px (همان مرزِ گریدِ /shop)؛ از ۵۲۰px دو ستونه.
-                   با این کار پهنای هر کارت در دو‌ستونه هیچ‌وقت زیر ~۲۳۸px نمی‌آید. */}
+                {}
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4">
                   {items.map((p, i) => (
                     <div key={p.id} className="animate-style-in" style={{ animationDelay: `${i * 72}ms` }}>

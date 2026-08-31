@@ -24,10 +24,6 @@ function Face({ src, letter, className }: { src?: string; letter: string; classN
   );
 }
 
-/**
- * جزیرهٔ کاربر: یا دکمهٔ ورود، یا منوی حساب.
- * تنها بخشی از هدر که به استور وابسته است.
- */
 export function UserMenu() {
   const { user, setAuthOpen, logout } = useStore();
 

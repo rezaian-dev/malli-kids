@@ -5,10 +5,6 @@ import { toggleFav, useFavorites } from "@/lib/favorites";
 import { useStore } from "@/providers/store-provider";
 import { cn } from "@/lib/utils";
 
-/**
- * قلبِ علاقه‌مندی روی کارتِ محصول — بی‌درنگ پر/خالی می‌شود و در تبِ
- * «علاقه‌مندی‌ها» پنل کاربری جمع می‌شود.
- */
 export function FavButton({ id, name, className }: { id: number; name: string; className?: string }) {
   const favs = useFavorites();
   const { showToast } = useStore();

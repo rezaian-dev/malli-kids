@@ -18,8 +18,6 @@ import type {
 } from "@/types";
 import { ADMIN_CREDS, seedAdminDb } from "./admin-data";
 
-// دیتابیسِ پنل روی localStorage زنده می‌ماند (کلیدِ malli_admin_db) تا هر تغییرِ
-// ادمین — از مقاله و بنر تا موجودی و جشنواره — بعد از refresh هم بماند.
 export type AdminIdentity = {
   username: string;
   name: string;
@@ -82,7 +80,6 @@ function loadSession(): AdminSession {
   }
 }
 
-/** خواندنِ دیتابیسِ پنل: دادهٔ ذخیره‌شده با دانهٔ نمونه ادغام می‌شود */
 function loadDb(): AdminDb {
   const seed = seedAdminDb();
   try {
@@ -93,8 +90,8 @@ function loadDb(): AdminDb {
       ...customer,
       role: customer.role ?? ("user" as const),
     }));
-    // نسخه‌های قدیمی localStorage نقش نداشتند؛ حساب مدیریت نمونه را بدون حذف
-    // کاربران موجود به دادهٔ مهاجرت‌یافته اضافه می‌کنیم.
+    
+    
     const adminSeed = seed.customers.find((customer) => customer.role === "admin");
     const customers = legacyCustomers.some((customer) => customer.role === "admin") || !adminSeed
       ? legacyCustomers
@@ -108,7 +105,7 @@ function loadDb(): AdminDb {
       articles: saved.articles ?? seed.articles,
       messages: saved.messages ?? seed.messages,
       banners: saved.banners ?? seed.banners,
-      // ادغامِ عمیق تا فیلدهای تازهٔ تنظیمات (مثل جشنواره) از قلم نیفتند
+      
       settings: { ...seed.settings, ...saved.settings },
     };
   } catch {
@@ -122,20 +119,20 @@ export function AdminStore({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AdminSession>(DEFAULT_SESSION);
   const [hydrated, setHydrated] = useState(false);
 
-  // هیدریت از localStorage (فقط در مرورگر — رندرِ سرور با دانه یکسان می‌ماند)
+  
   useEffect(() => {
     setDb(loadDb());
     setSession(loadSession());
     setHydrated(true);
   }, []);
 
-  // ذخیرهٔ خودکارِ هر تغییر
+  
   useEffect(() => {
     if (!hydrated) return;
     try {
       window.localStorage.setItem(KEY, JSON.stringify(db));
     } catch {
-      /* حافظهٔ مرورگر در دسترس نیست */
+      
     }
   }, [db, hydrated]);
 
@@ -162,7 +159,7 @@ export function AdminStore({ children }: { children: ReactNode }) {
         try {
           window.localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
         } catch {
-          /* حافظهٔ مرورگر در دسترس نیست */
+          
         }
         return true;
       },
@@ -170,11 +167,11 @@ export function AdminStore({ children }: { children: ReactNode }) {
         try {
           window.localStorage.removeItem(SESSION_KEY);
         } catch {
-          /* noop */
+          /* 🪶 No-op. */
         }
         setSession(DEFAULT_SESSION);
-        // خروج → بازگشت به صفحهٔ اصلی فروشگاه؛ «بازگشت به فروشگاه» و «خروج از پنل»
-        // هر دو کاربر را به تجربهٔ خرید برمی‌گردانند، نه به صفحهٔ ورود.
+        
+        
         router.push("/");
       },
       saveProducts: (list) => {
@@ -287,7 +284,7 @@ export function AdminStore({ children }: { children: ReactNode }) {
         try {
           window.localStorage.removeItem(KEY);
         } catch {
-          /* noop */
+          /* 🪶 No-op. */
         }
         setDb(seedAdminDb());
         toast("داده‌ها بازنشانی شد", { description: "همه‌چیز به حالت اولیه برگشت." });
@@ -304,7 +301,7 @@ export function useAdmin() {
   return ctx;
 }
 
-// No auth yet — the backend will add real gating. Pass-through for now.
+// 🪶 Real auth can wrap this gate later.
 export function AdminGate({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }

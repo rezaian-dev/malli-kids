@@ -46,7 +46,6 @@ function routeIsActive(path: string, href: string) {
   return href === "/admin" ? path === "/admin" : path.startsWith(href);
 }
 
-/** اسکرول سفارشی سایدبار با نشانگرِ زندهٔ موقعیت؛ مستقل از ظاهر پیش‌فرض مرورگر. */
 function SidebarScroller({ children, className = "" }: { children: ReactNode; className?: string }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const [scroll, setScroll] = useState({ top: 0, thumb: 100, visible: false });
@@ -55,8 +54,8 @@ function SidebarScroller({ children, className = "" }: { children: ReactNode; cl
     const viewport = viewportRef.current;
     if (!viewport) return;
     const max = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
-    // Rail از هر سمت ۱.۱rem فاصله دارد؛ اندازهٔ پیکسلی باعث می‌شود Thumb حتی
-    // وقتی ارتفاع والد با inset تعیین شده، در همهٔ مرورگرها دقیق حرکت کند.
+    
+    
     const railHeight = Math.max(1, viewport.clientHeight - 35.2);
     const ratio = viewport.clientHeight / Math.max(1, viewport.scrollHeight);
     const thumb = Math.max(44, Math.min(railHeight, railHeight * ratio));
@@ -89,14 +88,14 @@ function SidebarScroller({ children, className = "" }: { children: ReactNode; cl
       </div>
       <span
         aria-hidden="true"
-        className={`pointer-events-none absolute z-[5] inset-y-[1.1rem] end-[3px] w-1 rounded-full bg-navy/[0.07] shadow-[inset_0_0_0_1px_rgba(14,42,71,0.04)] transition-[opacity,transform,width] duration-[220ms] dark:bg-gold-soft/[0.055] dark:shadow-[inset_0_0_0_1px_rgba(232,197,122,0.06)] ${
+        className={`pointer-events-none absolute z-[5] inset-y-[1.1rem] inset-e-[3px] w-1 rounded-full bg-navy/[0.07] shadow-[inset_0_0_0_1px_rgba(14,42,71,0.04)] transition-[opacity,transform,width] duration-[220ms] dark:bg-gold-soft/[0.055] dark:shadow-[inset_0_0_0_1px_rgba(232,197,122,0.06)] ${
           scroll.visible
             ? "opacity-[0.64] scale-y-100 group-hover:opacity-100 group-hover:w-[5px]"
             : "opacity-0 scale-y-[0.88]"
         }`}
       >
-        <span className="absolute start-1/2 top-[-8px] size-1 -translate-x-1/2 rounded-full bg-gold/55 shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
-        <span className="absolute start-1/2 bottom-[-8px] size-1 -translate-x-1/2 rounded-full bg-gold/55 shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
+        <span className="absolute inset-s-1/2 top-[-8px] size-1 -translate-x-1/2 rounded-full bg-gold/55 shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
+        <span className="absolute inset-s-1/2 bottom-[-8px] size-1 -translate-x-1/2 rounded-full bg-gold/55 shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
         <span
           className="absolute inset-x-0 rounded-full bg-linear-to-b from-gold-light to-gold-deep shadow-[0_0_0_1px_rgba(255,248,236,0.24),0_0_14px_rgba(193,147,87,0.38)] transition-[top,height,filter] duration-[180ms] group-hover:brightness-[1.12]"
           style={{ "--admin-scroll-top": `${scroll.top}px`, "--admin-scroll-size": `${scroll.thumb}px`, top: "var(--admin-scroll-top, 0%)", height: "var(--admin-scroll-size, 2.75rem)" } as CSSProperties}
@@ -140,9 +139,9 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
                         : "text-navy/68 hover:bg-navy/5 hover:text-navy dark:text-ivory/68 dark:hover:bg-white/6 dark:hover:text-ivory"
                     }`}
                   >
-                    {/* shimmer sweep — جانشینِ .admin-nav-item::after */}
+                    {}
                     <span aria-hidden="true" className="pointer-events-none absolute inset-0 translate-x-[105%] bg-[linear-gradient(105deg,transparent_30%,rgba(255,255,255,.1),transparent_70%)] transition-transform duration-[520ms] ease-[cubic-bezier(.25,.1,.25,1)] group-hover:-translate-x-[105%] motion-reduce:hidden" />
-                    {active ? <span className="absolute inset-y-2 start-0 w-0.5 rounded-full bg-gold dark:bg-navy-deep/45" /> : null}
+                    {active ? <span className="absolute inset-y-2 inset-s-0 w-0.5 rounded-full bg-gold dark:bg-navy-deep/45" /> : null}
                     <span
                       className={`grid size-9 shrink-0 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-105 ${
                         active ? "bg-gold text-navy-deep dark:bg-navy-deep dark:text-gold" : "bg-navy/6 text-navy/55 dark:bg-white/6 dark:text-gold-soft"
@@ -186,7 +185,6 @@ function AccountFooter({ onLogout }: { onLogout: () => void }) {
   );
 }
 
-// نام سازگار با باندل‌های Fast Refresh قبلی؛ هر دو نام دقیقاً فوتر سادهٔ خروج را رندر می‌کنند.
 const SidebarFooter = AccountFooter;
 
 function HeaderNotifications() {
@@ -204,7 +202,7 @@ function HeaderNotifications() {
       <DropdownMenuTrigger asChild>
         <button type="button" className="relative hidden size-10 shrink-0 place-items-center rounded-xl border border-navy/8 bg-white/60 text-navy/65 transition hover:border-gold/35 hover:text-gold md:grid dark:border-gold/14 dark:bg-white/[0.035] dark:text-wheat/70" aria-label={`${toFaDigits(total)} اعلان مدیریتی`}>
           <Bell className="size-4" />
-          {total > 0 ? <span className="absolute -end-1 -top-1 grid min-w-4 place-items-center rounded-full bg-rose px-1 text-[8px] font-black leading-4 text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]">{toFaDigits(total)}</span> : null}
+          {total > 0 ? <span className="absolute -inset-e-1 -top-1 grid min-w-4 place-items-center rounded-full bg-rose px-1 text-[8px] font-black leading-4 text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]">{toFaDigits(total)}</span> : null}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={10} className="w-[min(20rem,calc(100vw-1.5rem))] rounded-2xl border-navy/9 bg-fog/98 p-2 shadow-[0_24px_70px_-26px_rgba(4,20,39,.72)] dark:border-gold/18 dark:bg-navy-deep/98">
@@ -244,8 +242,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const path = usePathname();
   const admin = useAdmin();
   const { logout } = admin;
-  // Fast Refresh ممکن است برای یک فریم مقدار Context نسخهٔ قبلی (بدون profile)
-  // را نگه دارد؛ fallback از شکستن کل Shell جلوگیری می‌کند.
+  
+  
   const profile = admin.profile ?? FALLBACK_ADMIN_PROFILE;
   const [open, setOpen] = useState(false);
   const current = ADMIN_NAV.find((item) => routeIsActive(path, item.href)) ?? ADMIN_NAV[0];
@@ -254,7 +252,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="relative isolate min-h-dvh overflow-x-clip text-navy bg-fog bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-[size:auto,auto,36px_36px,36px_36px] dark:text-ivory dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-[size:auto,auto,42px_42px,42px_42px]">
-      {/* الگوی هندسیِ admin-root::before — جانشین pseudo-element */}
+      {}
       <span
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-0 bg-no-repeat opacity-[0.22] bg-[position:calc(100%+45px)_-45px] bg-[size:min(44vw,38rem)] [mask-image:linear-gradient(to_bottom_left,#000,transparent_64%)] max-[639px]:bg-[size:20rem] max-[639px]:opacity-[0.14] dark:opacity-[0.52] dark:[filter:drop-shadow(0_0_22px_rgba(193,147,87,0.08))]"
@@ -264,19 +262,19 @@ export function AdminShell({ children }: { children: ReactNode }) {
         }}
       />
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <span className="absolute block w-[min(46vw,36rem)] aspect-square rounded-full border border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)] end-[-18rem] top-[14%] animate-admin-orbit motion-reduce:animate-none max-[639px]:w-96">
-          <span className="absolute start-[15%] top-[12%] size-[5px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
-          <span className="absolute end-[8%] bottom-[25%] size-[3px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
+        <span className="absolute block w-[min(46vw,36rem)] aspect-square rounded-full border border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)] inset-e-[-18rem] top-[14%] animate-admin-orbit motion-reduce:animate-none max-[639px]:w-96">
+          <span className="absolute inset-s-[15%] top-[12%] size-[5px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
+          <span className="absolute inset-e-[8%] bottom-[25%] size-[3px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
         </span>
-        <span className="absolute block w-[min(32vw,24rem)] aspect-square rounded-full border border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)] start-[-10rem] bottom-[-9rem] animate-admin-orbit [animation-direction:reverse] motion-reduce:animate-none max-[639px]:hidden">
-          <span className="absolute start-[15%] top-[12%] size-[5px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
-          <span className="absolute end-[8%] bottom-[25%] size-[3px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
+        <span className="absolute block w-[min(32vw,24rem)] aspect-square rounded-full border border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)] inset-s-[-10rem] bottom-[-9rem] animate-admin-orbit [animation-direction:reverse] motion-reduce:animate-none max-[639px]:hidden">
+          <span className="absolute inset-s-[15%] top-[12%] size-[5px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
+          <span className="absolute inset-e-[8%] bottom-[25%] size-[3px] rounded-full bg-gold shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
         </span>
-        <span className="absolute end-[18%] top-[42%] size-96 rounded-full bg-gold/[0.045] blur-[90px] animate-admin-glow motion-reduce:animate-none" />
+        <span className="absolute inset-e-[18%] top-[42%] size-96 rounded-full bg-gold/[0.045] blur-[90px] animate-admin-glow motion-reduce:animate-none" />
       </div>
 
-      <aside className="fixed inset-y-0 start-0 z-40 hidden w-[276px] flex-col overflow-hidden border-e border-navy/8 bg-white/68 backdrop-blur-2xl shadow-[0_18px_55px_-40px_rgba(4,20,39,0.62)] dark:border-gold/16 dark:bg-navy-deep/62 dark:shadow-[0_20px_60px_-38px_rgba(0,0,0,0.82)] lg:flex">
-        <div className="pointer-events-none absolute -top-20 start-0 size-56 rounded-full bg-gold/12 blur-3xl dark:bg-gold/9" />
+      <aside className="fixed inset-y-0 inset-s-0 z-40 hidden w-[276px] flex-col overflow-hidden border-e border-navy/8 bg-white/68 backdrop-blur-2xl shadow-[0_18px_55px_-40px_rgba(4,20,39,0.62)] dark:border-gold/16 dark:bg-navy-deep/62 dark:shadow-[0_20px_60px_-38px_rgba(0,0,0,0.82)] lg:flex">
+        <div className="pointer-events-none absolute -top-20 inset-s-0 size-56 rounded-full bg-gold/12 blur-3xl dark:bg-gold/9" />
         <div className="relative px-5 pb-5 pt-6">{BRAND}</div>
         <div className="relative min-h-0 flex-1 overflow-hidden">
           <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-[3] h-4 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.78),transparent)] dark:bg-[linear-gradient(to_bottom,rgba(3,17,31,0.9),transparent)]" />
@@ -328,7 +326,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
       <div className="relative z-10 min-w-0 lg:ps-[276px]">
         <header className="relative sticky top-0 z-30 border-b border-navy/7 bg-fog/76 backdrop-blur-2xl shadow-[0_18px_55px_-40px_rgba(4,20,39,0.62)] dark:border-gold/14 dark:bg-navy-deep/64 dark:shadow-[0_20px_60px_-38px_rgba(0,0,0,0.82)]">
-          {/* line gradient زیرِ topbar — جانشینِ .admin-topbar::after */}
+          {}
           <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 -bottom-px h-px opacity-42 bg-[linear-gradient(to_left,transparent,rgba(193,147,87,0.58)_28%,rgba(193,147,87,0.12)_72%,transparent)]" />
           <div className="mx-auto flex h-[72px] max-w-[100rem] items-center gap-2 px-3 sm:gap-2.5 sm:px-5 lg:px-8">
             <Button
@@ -374,7 +372,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 export function AdminPageHeader({ kicker, title, description, action }: { kicker: string; title: string; description?: string; action?: ReactNode }) {
   return (
     <header className="admin-page-head relative mb-6 overflow-hidden rounded-[26px] border border-navy/9 bg-[linear-gradient(115deg,rgba(193,147,87,0.075),transparent_38%),rgba(255,254,251,0.78)] shadow-[0_24px_58px_-42px_rgba(14,42,71,0.5),inset_0_1px_0_rgba(255,255,255,0.84)] backdrop-blur-[20px] animate-admin-reveal motion-reduce:animate-none sm:mb-7 dark:border-gold-soft/17 dark:bg-[linear-gradient(115deg,rgba(193,147,87,0.09),transparent_42%),rgba(10,31,53,0.72)] dark:shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92),inset_0_1px_0_rgba(255,255,255,0.045),0_0_40px_rgba(193,147,87,0.025)]">
-      <span className="absolute end-[-4rem] top-[-9rem] size-60 rounded-full bg-gold/[0.13] blur-[44px] pointer-events-none dark:bg-gold/[0.105]" aria-hidden="true" />
+      <span className="absolute inset-e-[-4rem] top-[-9rem] size-60 rounded-full bg-gold/[0.13] blur-[44px] pointer-events-none dark:bg-gold/[0.105]" aria-hidden="true" />
       <div className="relative flex flex-col justify-between gap-5 px-4 pb-5 pt-4 sm:flex-row sm:items-end sm:px-6 sm:pb-6 sm:pt-5">
         <div className="min-w-0">
           <div className="mb-3 flex min-w-0 items-center gap-1.5 text-[9px] font-black text-navy/38 dark:text-wheat/50">
@@ -384,9 +382,9 @@ export function AdminPageHeader({ kicker, title, description, action }: { kicker
             <span className="truncate text-navy/58 dark:text-ivory/66">{title}</span>
           </div>
           <div className="relative min-w-0 ps-4">
-            <span className="absolute inset-y-1 start-0 w-1 rounded-full bg-linear-to-b from-gold-light via-gold to-gold-deep shadow-[0_0_18px_rgba(193,147,87,.28)]" />
+            <span className="absolute inset-y-1 inset-s-0 w-1 rounded-full bg-linear-to-b from-gold-light via-gold to-gold-deep shadow-[0_0_18px_rgba(193,147,87,.28)]" />
             <p className="text-[9px] font-black tracking-[0.24em] text-gold">{kicker}</p>
-            {/* عنوان فارسی با Vazirmatn؛ Playfair حروف فارسی ندارد و باعث «فونت نگرفته» می‌شود */}
+            {}
             <h1 className="mt-1 text-[clamp(1.6rem,3vw,2.35rem)] font-black leading-tight text-navy dark:text-ivory">{title}</h1>
             {description ? <p className="mt-2 max-w-2xl text-[11px] font-bold leading-6 text-navy/50 sm:text-xs dark:text-wheat/68">{description}</p> : null}
           </div>

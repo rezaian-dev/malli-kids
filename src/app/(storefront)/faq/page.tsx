@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   description: "پاسخ سوال‌های پرتکرار مادرها دربارهٔ سایز، ارسال، بازگشت کالا و پرو مجازی.",
 };
 
-
-
 export default function FaqPage() {
   return (
     <>

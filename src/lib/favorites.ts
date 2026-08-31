@@ -2,11 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-/**
- * علاقه‌مندی‌ها — قلبِ روی کارتِ محصول و تبِ «علاقه‌مندی‌ها» در پنل.
- * فهرستِ idهای محصول روی localStorage؛ با رویداد زنده بین هدر، کارت‌ها و پنل همگام.
- */
-
 const KEY = "malli_favs";
 const EVENT = "favs:change";
 
@@ -30,7 +25,6 @@ export function toggleFav(id: number) {
   persist(list.includes(id) ? list.filter((x) => x !== id) : [id, ...list]);
 }
 
-/** فهرستِ زندهٔ idهای علاقه‌مندی */
 export function useFavorites(): number[] {
   const [favs, setFavs] = useState<number[]>([]);
 

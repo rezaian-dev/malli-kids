@@ -125,7 +125,7 @@ export default function AdminMessages() {
                     <div className="flex min-w-0 items-start gap-3">
                       <span className="relative grid size-10 shrink-0 place-items-center rounded-xl bg-navy font-black text-gold dark:bg-gold/15 dark:text-gold-soft">
                         {ticket.name.charAt(0)}
-                        <span className={cn("absolute -end-0.5 -top-0.5 size-2.5 rounded-full border-2 border-white dark:border-navy-mid", meta.dot)} />
+                        <span className={cn("absolute -inset-e-0.5 -top-0.5 size-2.5 rounded-full border-2 border-white dark:border-navy-mid", meta.dot)} />
                       </span>
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-1.5">

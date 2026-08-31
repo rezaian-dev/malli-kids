@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   description: "کیت کامل دوخت پوشاک کودک؛ همه‌چیز داخل جعبه است.",
 };
 
-
-
 export default function KitsPage() {
   return (
     <>

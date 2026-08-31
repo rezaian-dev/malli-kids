@@ -5,16 +5,10 @@ import { usePathname } from "next/navigation";
 
 export const PROGRESS_EVENT = "malli:progress";
 
-/** این رویداد را dispatch کنید تا نوارِ پیشرفتِ طلایی بالای صفحه روشن شود */
 export function startTopProgress() {
   window.dispatchEvent(new Event(PROGRESS_EVENT));
 }
 
-/**
- * نوار پیشرفتِ باریکِ طلایی بالای صفحه — برای ناوبری‌های برنامه‌ای
- * (مثل کلیک روی آیتمِ دسته‌بندی) که nextjs-toploader برایشان بارِ قابل
- * نمایشی ندارد. با تغییرِ مسیر کامل و محو می‌شود.
- */
 export function ClickProgress() {
   const [phase, setPhase] = useState<"idle" | "run" | "done">("idle");
   const path = usePathname();
@@ -23,7 +17,7 @@ export function ClickProgress() {
   useEffect(() => {
     const start = () => {
       setPhase("run");
-      // اگر مسیر عوض نشد (مثلاً مقصد همان صفحه بود) خودش کامل می‌شود
+      
       window.setTimeout(() => setPhase((s) => (s === "run" ? "done" : s)), 900);
     };
     window.addEventListener(PROGRESS_EVENT, start);

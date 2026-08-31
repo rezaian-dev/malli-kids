@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { amount, isJalaliFuture, jalaliDate, optAmount, percent, promoCode, text } from "@/lib/forms";
 
-/** کد تخفیفِ جدیدِ پنل */
 export const couponSchema = z
   .object({
     code: promoCode(),

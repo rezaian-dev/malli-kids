@@ -3,11 +3,6 @@
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * دکمهٔ یکدستِ اسلایدرها در تمامِ صفحه‌های سایت.
- * هاور: گرادیانِ طلایی + هالهٔ نور + بزرگ‌نمایی + سُرخوردنِ آیکن در جهتِ حرکت.
- * کلیک: موجِ طلایی (arrow-ripple) + فشرده‌شدنِ لحظه‌ای.
- */
 export function SliderArrow({
   direction,
   onClick,
@@ -16,11 +11,11 @@ export function SliderArrow({
   className,
   disabled,
 }: {
-  /** prev = فلش به راست (RTL)، next = فلش به چپ */
+  
   direction: "prev" | "next";
   onClick?: () => void;
   label: string;
-  /** برای اسلایدرِ روی تصویر (گالری محصول) به‌جای Arrow از Chevron استفاده می‌شود */
+  
   chevron?: boolean;
   className?: string;
   disabled?: boolean;
@@ -55,7 +50,7 @@ export function SliderArrow({
       <Icon
         className={cn(
           "size-[18px] transition-transform duration-300 group-active:scale-75",
-          // سُرخوردنِ آیکن در جهتِ حرکت — حسِ «هل‌دادنِ» اسلاید
+          
           direction === "next" ? "group-hover:-translate-x-1" : "group-hover:translate-x-1",
         )}
       />

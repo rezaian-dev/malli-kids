@@ -13,8 +13,7 @@ function Slider({
   max = 100,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Root>) {
-  // Derive thumb count from whichever value prop is controlled, falling back to
-  // a single thumb across [min, max]. Memoised so we don't rebuild on each render.
+  // 🎚️ Derive thumb count from the current controlled value.
   const values = React.useMemo(
     () =>
       Array.isArray(value)

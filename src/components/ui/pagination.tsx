@@ -8,21 +8,15 @@ import { cn } from "@/lib/utils";
 import type { Paged } from "@/types";
 
 type PaginationProps = {
-  /** خروجی usePagination */
+  
   pg: Paged<unknown>;
-  /** واحد رکورد در خلاصه؛ مانند «حساب» یا «سفارش». */
+  
   unit?: string;
-  /** تعداد همسایه‌های صفحهٔ جاری؛ برای حفظ کارایی حداکثر ۲ در نظر گرفته می‌شود. */
+  
   siblings?: number;
   className?: string;
 };
 
-/**
- * صفحه‌بندی مقیاس‌پذیر و RTL:
- * - دسکتاپ: ابتدا/انتها + همسایه‌های صفحهٔ جاری + فاصلهٔ هوشمند
- * - موبایل: فقط قبلی، «صفحه X از Y» و بعدی
- * تعداد کنترل‌ها با افزایش رکوردها ثابت می‌ماند و هرگز به‌اندازهٔ pageCount رشد نمی‌کند.
- */
 export function Pagination({ pg, unit = "مورد", siblings = 1, className }: PaginationProps) {
   const { page, pageCount, setPage: onPage, total, from, to } = pg;
   const hasSummary = total > 0;
@@ -48,7 +42,7 @@ export function Pagination({ pg, unit = "مورد", siblings = 1, className }: P
 
       {pageCount > 1 ? (
         <>
-          {/* موبایل: سه کنترل ثابت، مستقل از تعداد کل صفحات. */}
+          {}
           <ul className="flex w-full items-center justify-center gap-2 sm:hidden" data-slot="pagination-mobile">
             <li>
               <PageButton aria-label="صفحه قبل" disabled={page <= 1} onClick={() => onPage(page - 1)}>
@@ -67,7 +61,7 @@ export function Pagination({ pg, unit = "مورد", siblings = 1, className }: P
             </li>
           </ul>
 
-          {/* تبلت و دسکتاپ: حداکثر ۹ توکن، حتی با میلیون‌ها رکورد. */}
+          {}
           <ul className="hidden items-center gap-1.5 sm:flex" data-slot="pagination-desktop">
             <li>
               <PageButton aria-label="صفحه قبل" disabled={page <= 1} onClick={() => onPage(page - 1)}>

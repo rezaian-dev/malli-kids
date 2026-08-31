@@ -6,7 +6,6 @@ import { loadReviews } from "@/lib/admin-sync";
 import type { AdminReview, Product } from "@/types";
 import { useLiveProduct } from "./product-live-context";
 
-/** دیدگاه‌های تأییدشدهٔ همین محصول — زنده از دیتابیسِ پنل */
 export function ProductReviews({ product: seed }: { product: Product }) {
   const product = useLiveProduct(seed);
   const [list, setList] = useState<AdminReview[]>([]);

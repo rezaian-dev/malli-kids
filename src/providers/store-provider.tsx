@@ -29,23 +29,23 @@ type Ctx = {
   clearCart: () => void;
   showToast: (text: string) => void;
   campaign: Campaign;
-  /** قیمتِ مؤثر: در زمانِ جشنواره، قیمتِ تخفیف‌خورده (رُند به هزارِ تومان) */
+  
   priceOf: (price: number) => number;
 };
 
 const StoreCtx = createContext<Ctx | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  // نشستِ کاربر و سبد با localStorage زنده می‌مانند تا با reload هم باز بمانند.
-  // خواندن بعد از mount انجام می‌شود (نه در مقدارِ اولیه) تا خروجیِ رندرِ سرور و
-  // کلاینت یکسان بماند و hydration نشکند.
+  
+  
+  
   const [user, setUser] = useState<User | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [campaign, setCampaign] = useState<Campaign>(NO_CAMPAIGN);
   const hydrated = useRef(false);
 
-  // جشنواره را از تنظیماتِ ذخیره‌شدهٔ پنلِ ادمین می‌خوانیم (کلیدِ مشترکِ adminDb)
+  
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE.adminDb);
@@ -54,7 +54,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setCampaign({ active: !!c.active, percent: Math.min(90, Math.max(0, c.percent)), title: c.title ?? "" });
       }
     } catch {
-      /* بدونِ جشنواره */
+      
     }
   }, []);
 
@@ -69,9 +69,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           const parsed = JSON.parse(rawCart) as CartItem[];
           if (Array.isArray(parsed)) setCart(parsed.filter((i) => i && typeof i.id === "number" && i.qty > 0));
         }
-        return; // مقادیرِ خوانده‌شده در گامِ بعد ذخیره می‌شوند
+        return; 
       } catch {
-        /* مقدارِ خراب — نشستِ تازه */
+        
       }
     }
     try {
@@ -79,7 +79,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       else window.localStorage.removeItem(STORAGE.user);
       window.localStorage.setItem(STORAGE.cart, JSON.stringify(cart));
     } catch {
-      /* حافظهٔ مرورگر در دسترس نیست — نشست فقط تا پایانِ تب */
+      
     }
   }, [user, cart]);
 

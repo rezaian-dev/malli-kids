@@ -11,14 +11,6 @@ export const metadata: Metadata = {
   description: "پشتیبانی مالی کیدز از طریق سایت؛ پاسخ سوال‌ها، پیگیری سفارش و آدرس گالری.",
 };
 
-
-/**
- * صفحهٔ تماس — بدونِ فرم.
- *
- * فلسفهٔ پشتیبانیِ مالی‌کیدز: هر سوالی فقط از طریقِ خودِ سایت و در پنلِ کاربری
- * پاسخ داده می‌شود؛ پس این صفحه به‌جای فرم، مسیرِ «تیکت در پنل» را نشان می‌دهد
- * و کنارش راه‌های ارتباطی و نقشهٔ گالری را نگه می‌دارد.
- */
 export default function ContactPage() {
   return (
     <>
@@ -30,7 +22,7 @@ export default function ContactPage() {
       />
 
       <div className="container mx-auto w-full max-w-5xl space-y-9 px-4 sm:px-5 lg:px-7">
-        {/* ── پشتیبانی در پنل ─────────────────────────────── */}
+        {}
         <section className="overflow-hidden rounded-[28px] bg-linear-to-br from-navy via-navy-mid to-navy-light px-6 py-8 shadow-[0_24px_60px_-30px_rgba(4,20,39,.6)] sm:px-10 sm:py-10">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
             <div className="min-w-0 flex-1">
@@ -71,7 +63,7 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* ── راه‌های ارتباطی ─────────────────────────────── */}
+        {}
         <section>
           <h2 className="text-[11px] font-black tracking-[0.22em] text-gold">راه‌های ارتباطی</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">

@@ -4,10 +4,6 @@ import type { ReactNode } from "react";
 import { useStore } from "@/providers/store-provider";
 import { Button } from "@/components/ui/button";
 
-/**
- * دکمهٔ افزودن به سبد روی کارت محصول.
- * فقط شمارندهٔ نمایشی را بالا می‌برد — منطق واقعی سبد در بک‌اند خواهد بود.
- */
 export function AddToCartButton({
   out,
   id,

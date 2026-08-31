@@ -6,8 +6,6 @@ export const metadata: Metadata = {
   description: "شرایط خرید، ارسال و بازگشت کالا در فروشگاه مالی کیدز.",
 };
 
-
-
 export default function TermsPage() {
   return (
     <>

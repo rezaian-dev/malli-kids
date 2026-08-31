@@ -1,4 +1,4 @@
-/** لایهٔ تزئینی نوار مناسبتی — کاملاً ایستا و غیرتعاملی (Server Component). */
+
 
 const STARS = [
   { top: "18%", left: "9%", size: "size-1", delay: "0s" },
@@ -21,8 +21,8 @@ export function FestiveDecor() {
         }}
       />
       {/* floating glow orbs */}
-      <span className="animate-floaty motion-reduce:animate-none pointer-events-none absolute -start-12 top-1/2 size-40 -translate-y-1/2 rounded-full bg-gold/20 blur-3xl" />
-      <span className="animate-floaty-slow motion-reduce:animate-none pointer-events-none absolute -end-8 -top-8 size-32 rounded-full bg-gold-glow/15 blur-2xl" />
+      <span className="animate-floaty motion-reduce:animate-none pointer-events-none absolute -inset-s-12 top-1/2 size-40 -translate-y-1/2 rounded-full bg-gold/20 blur-3xl" />
+      <span className="animate-floaty-slow motion-reduce:animate-none pointer-events-none absolute -inset-e-8 -top-8 size-32 rounded-full bg-gold-glow/15 blur-2xl" />
       {/* diagonal shine sweep */}
       <span className="animate-shimmer motion-reduce:animate-none pointer-events-none absolute inset-y-0 -inset-x-1/4 w-1/3 -skew-x-12 bg-linear-to-r from-transparent via-white/12 to-transparent" />
       {/* twinkling stars */}

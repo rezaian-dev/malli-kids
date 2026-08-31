@@ -13,8 +13,7 @@ import { toast } from "sonner";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 type Phase = "idle" | "running" | "done" | "error";
 
-// A few catalog kid photos double as ready-made "sample models" so a parent can
-// try the feature without uploading a photo of their own child.
+// 🧪 Ready-made sample models let parents try the studio instantly.
 const SAMPLE_MODELS = CORE_PRODUCTS.slice(0, 4).map((p) => p.img);
 
 function sizeForHeight(h: number): string {
@@ -26,7 +25,7 @@ function sizeForHeight(h: number): string {
 }
 
 export function Studio() {
-  const [person, setPerson] = useState<string | null>(null); // data URI or catalog path
+  const [person, setPerson] = useState<string | null>(null); // 🪶 Data URL or catalog path.
   const [garment, setGarment] = useState(0);
   const [height, setHeight] = useState("104");
   const [phase, setPhase] = useState<Phase>("idle");
@@ -59,7 +58,7 @@ export function Studio() {
       const started = await start.json();
       if (!start.ok) throw new Error(started.error || "شروع پرو مجازی ناموفق بود.");
 
-      // Free provider returns the image directly; paid provider returns an id to poll.
+      // 🔁 Free mode returns an image now; paid mode returns a job id.
       if (started.image) {
         setResult(started.image);
         setPhase("done");
@@ -92,7 +91,7 @@ export function Studio() {
 
   return (
     <div className="container mx-auto grid w-full max-w-6xl gap-8 px-4 sm:px-5 lg:grid-cols-2 lg:px-7">
-      {/* Preview */}
+      {/* 🖼️ Live preview panel. */}
       <div className="rounded-[28px] border border-navy/10 bg-white p-5 dark:border-gold/30 dark:bg-dusk">
         <div className="flex items-center justify-between">
           <p className="text-xs font-black text-gold">پیش‌نمایش زنده</p>
@@ -101,7 +100,7 @@ export function Studio() {
 
         <div className="relative mt-3 aspect-4/5 overflow-hidden rounded-2xl bg-sand">
           {shown ? (
-            // eslint-disable-next-line @next/next/no-img-element
+            // eslint-disable-next-line @next/next/no-img-element -- 🪶 Data URLs need a raw img.
             <img src={shown} alt="پیش‌نمایش پرو مجازی" className="size-full object-cover" />
           ) : (
             <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
@@ -110,7 +109,7 @@ export function Studio() {
             </div>
           )}
 
-          {/* running overlay */}
+          {/* ✨ Progress overlay while AI is running. */}
           {phase === "running" ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-navy-deep/70 backdrop-blur-sm">
               <Loader2 className="size-8 animate-spin text-gold" />
@@ -121,7 +120,7 @@ export function Studio() {
 
           {/* current garment chip */}
           { }
-          <Image src={CORE_PRODUCTS[garment].img} alt="" width={80} height={96} className="absolute bottom-3 end-3 h-24 w-20 rounded-xl border-2 border-white object-cover shadow-lg" />
+          <Image src={CORE_PRODUCTS[garment].img} alt="" width={80} height={96} className="absolute bottom-3 inset-e-3 h-24 w-20 rounded-xl border-2 border-white object-cover shadow-lg" />
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
@@ -167,7 +166,7 @@ export function Studio() {
         </p>
       </div>
 
-      {/* Garment + size */}
+      {/* 👕 Garment and size controls. */}
       <div>
         <h2 className="mb-3 flex items-center gap-2 text-lg font-black text-navy dark:text-ivory">
           <Shirt className="size-5 text-gold" /> لباس کالکشن

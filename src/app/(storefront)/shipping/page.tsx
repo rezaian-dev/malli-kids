@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   description: "شرایط ارسال سریع، هزینهٔ پست و بازگشت آسان کالا در مالی کیدز.",
 };
 
-
-
 export default function ShippingPage() {
   const cards = [
     { t: "ارسال", d: "۲ تا ۴ روز کاری به سراسر کشور. بالای ۱٬۵۰۰٬۰۰۰ تومان رایگان. مدل‌های دستدوز ممکن است زمان دوخت اضافه داشته باشند." },

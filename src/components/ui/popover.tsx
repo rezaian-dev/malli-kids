@@ -5,12 +5,7 @@ import { Popover as PopoverPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
-/**
- * Radix Popover.Root is non-modal by default, so opening it never mounts a
- * scroll-lock (RemoveScroll). That is what keeps the page from shifting
- * horizontally when the trigger is clicked — unlike DropdownMenu, which is
- * modal by default and compensates for the removed scrollbar with padding.
- */
+/** 🪶 Keep popovers non-modal to avoid layout shift. */
 function Popover({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Root>) {

@@ -26,7 +26,6 @@ import {
 
 import { toast } from "sonner";
 
-/** فشرده‌سازیِ تصویرِ آپلودی روی canvas تا مقاله سنگین نشود (حداکثر ~۱۲۸۰px، JPEG ۸۵٪) */
 export async function fileToDataUrl(file: File): Promise<string> {
   try {
     const bitmap = await createImageBitmap(file);
@@ -41,7 +40,7 @@ export async function fileToDataUrl(file: File): Promise<string> {
     bitmap.close();
     return canvas.toDataURL("image/jpeg", 0.85);
   } catch {
-    // اگر فرمت پشتیبانی نشد، فایلِ اصلی را می‌خوانیم
+    
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result));

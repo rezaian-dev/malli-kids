@@ -3,14 +3,12 @@ import { CATS, SEASONS } from "@/lib/constants";
 import { amount, longText, optAmount, optText, parseFaNumber, text } from "@/lib/forms";
 import type { Product } from "@/types";
 
-/** دسته‌بندی‌هایِ واقعیِ سایت (بدونِ «همه») */
 export const CAT_OPTIONS: string[] = CATS.filter((c) => c !== "همه");
 
 const oneCat = z
   .string({ error: () => "دسته‌بندی را انتخاب کنید" })
   .refine((v) => CAT_OPTIONS.includes(v), "دسته‌بندی را انتخاب کنید");
 
-/** ساخت/ویرایشِ محصول */
 export const productSchema = z
   .object({
     name: text("نام محصول", 3, 80),
@@ -54,7 +52,6 @@ export const productDefaults: ProductValues = {
   stock: true,
 };
 
-/** محصولِ موجود را داخلِ فرم می‌گذارد */
 export function productValues(p: Product): ProductValues {
   return {
     name: p.name,

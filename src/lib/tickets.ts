@@ -4,15 +4,6 @@ import { useEffect, useState } from "react";
 import { faNow } from "./format";
 import { notify } from "./notifications";
 
-/**
- * تیکت‌های پشتیبانی — پلی میانِ «پنلِ کاربر» و «پنلِ ادمین».
- *
- * فلسفهٔ سایت: پشتیبانی فقط از طریقِ خودِ سایت است؛ کاربر تیکت می‌سازد و
- * پاسخ را در پنلِ خودش می‌بیند. این ماژول فعلاً روی localStorage است و با
- * رویدادِ «tickets:change» هر دو پنل را زنده همگام نگه می‌دارد — جای آن با
- * یک API واقعی عوض می‌شود بدون اینکه صفحه‌ها تغییر کنند.
- */
-
 export type TicketStatus = "open" | "answered" | "closed";
 
 export type TicketReply = {
@@ -23,13 +14,13 @@ export type TicketReply = {
 
 export type Ticket = {
   id: string;
-  /** ایمیل یا موبایلِ صاحبِ تیکت — معیارِ «تیکت‌های من» در پنل */
+  
   owner: string;
   name: string;
   subject: string;
   status: TicketStatus;
   createdAt: string;
-  /** خودِ پیامِ اول هم reply از سمتِ کاربر است */
+  
   replies: TicketReply[];
 };
 
@@ -68,7 +59,6 @@ export function createTicket(input: { owner: string; name: string; subject: stri
   return ticket;
 }
 
-/** پاسخِ کاربر وضعیت را «باز» و پاسخِ پشتیبانی «پاسخ‌داده‌شده» می‌کند. */
 export function replyTicket(id: string, from: "user" | "support", text: string) {
   const at = faNow();
   if (from === "support") {
@@ -92,10 +82,6 @@ export function setTicketStatus(id: string, status: TicketStatus) {
   persist(loadTickets().map((t) => (t.id === id ? { ...t, status } : t)));
 }
 
-/**
- * فهرستِ زندهٔ تیکت‌ها — با تغییر در هر تب/پنل فوراً به‌روز می‌شود.
- * با `owner` فقط تیکت‌های همان کاربر برمی‌گردد.
- */
 export function useTickets(owner?: string): Ticket[] {
   const [all, setAll] = useState<Ticket[]>([]);
 

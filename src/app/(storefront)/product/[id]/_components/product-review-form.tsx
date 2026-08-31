@@ -41,7 +41,7 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
   }
 
   function onValid({ rating, body }: typeof reviewDefaults) {
-    // نظر در دیتابیسِ پنل می‌نشیند و پس از تأییدِ ادمین در ویترین دیده می‌شود
+    
     try {
       const raw = window.localStorage.getItem(STORAGE.adminDb);
       const db = raw ? (JSON.parse(raw) as { reviews?: unknown[] }) : {};
@@ -58,7 +58,7 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
       db.reviews = reviews;
       window.localStorage.setItem(STORAGE.adminDb, JSON.stringify(db));
     } catch {
-      /* حافظه در دسترس نیست */
+      
     }
     toast.success(`نظرِ ${rating} ستاره‌تان ثبت شد — پس از تأیید ادمین نمایش داده می‌شود ✨`);
     form.reset({ ...reviewDefaults });

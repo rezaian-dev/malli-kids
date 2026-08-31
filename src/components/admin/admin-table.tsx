@@ -8,16 +8,16 @@ import { cn } from "@/lib/utils";
 export type AdminCol<T> = {
   key: string;
   title: ReactNode;
-  /** عرض ستون در الگوی گرید دسکتاپ؛ مانند 1.6fr یا 11rem. */
+  
   width?: string;
   align?: "start" | "center" | "end";
-  /** محتوای مهم ستون در ردیف دسکتاپ. */
+  
   render: (row: T) => ReactNode;
-  /** ستون در نمای کارت موبایل پنهان شود. */
+  
   hideMobile?: boolean;
-  /** ستون کم‌اهمیت در جدول فشردهٔ تبلت پنهان شود. */
+  
   hideTablet?: boolean;
-  /** رندر اختصاصی برای کارت موبایل. */
+  
   renderMobile?: (row: T) => ReactNode;
 };
 
@@ -27,13 +27,6 @@ const ALIGN: Record<NonNullable<AdminCol<never>["align"]>, string> = {
   end: "text-end",
 };
 
-/**
- * جدول واکنش‌گرای پنل:
- * - جدول کامل و ستونی در دسکتاپ عریض
- * - جدول فشرده با ستون‌های اولویت‌دار در تبلت و لپ‌تاپ کوچک
- * - رکورد سلولی متراکم فقط در موبایل
- * - بدون اسکرول افقی صفحه و قابل استفاده از عرض ۳۲۰px
- */
 export function AdminTable<T extends { id: string | number }>({
   cols,
   rows,
@@ -50,7 +43,7 @@ export function AdminTable<T extends { id: string | number }>({
   onRowClick?: (row: T) => void;
   footer?: ReactNode;
   header?: ReactNode;
-  /** حداقل عرض شبکه داخلی دسکتاپ؛ اسکرول فقط داخل قاب جدول رخ می‌دهد. */
+  
   minWidth?: string;
   className?: string;
 }) {
@@ -75,7 +68,7 @@ export function AdminTable<T extends { id: string | number }>({
 
       {rows.length > 0 ? (
         <>
-          {/* دسکتاپ عریض: جدول ستونی. اسکرول احتمالی فقط داخل همین قاب است. */}
+          {}
           <div className="hidden min-[1360px]:block" role="grid" aria-label="جدول اطلاعات">
             <div className="overflow-x-auto [scrollbar-width:thin] [scrollbar-color:rgba(193,147,87,0.78)_rgba(14,42,71,0.04)] [&::-webkit-scrollbar]:h-[9px] [&::-webkit-scrollbar-track]:bg-navy/[0.045] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-[linear-gradient(to_right,var(--color-gold-deep),var(--color-gold-light))] [&::-webkit-scrollbar-thumb]:bg-clip-padding dark:[&::-webkit-scrollbar-track]:bg-gold-soft/[0.04]">
               <div style={{ minWidth }}>
@@ -118,7 +111,7 @@ export function AdminTable<T extends { id: string | number }>({
             </div>
           </div>
 
-          {/* تبلت و لپ‌تاپ کوچک: جدول واقعی با ستون‌های اولویت‌دار، بدون اسکرول افقی. */}
+          {}
           <div className="hidden min-[700px]:block min-[1360px]:hidden" role="grid" aria-label="جدول اطلاعات">
             <div className="grid text-[rgba(255,248,236,0.9)] border-b border-[rgba(232,197,122,0.26)] bg-[linear-gradient(100deg,rgba(193,147,87,0.14),transparent_42%),var(--color-navy)] shadow-[inset_0_-1px_0_rgba(4,20,39,0.24)] dark:text-[rgba(255,248,236,0.88)] dark:border-[rgba(232,197,122,0.23)] dark:bg-[linear-gradient(100deg,rgba(193,147,87,0.12),transparent_45%),rgba(4,20,39,0.86)]" style={tabletGridStyle} role="row">
               {tabletCols.map((column) => (
@@ -156,7 +149,7 @@ export function AdminTable<T extends { id: string | number }>({
             </div>
           </div>
 
-          {/* موبایل واقعی: رکورد فشرده با شبکهٔ سلولی، نه فرم بلند. */}
+          {}
           <div className="grid gap-2 p-2 bg-[linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),rgba(14,42,71,0.018)] bg-[size:100%_34px] dark:bg-[linear-gradient(rgba(232,197,122,0.022)_1px,transparent_1px),rgba(4,20,39,0.24)] sm:p-2.5 min-[700px]:hidden">
             {rows.map((row, index) => (
               <article

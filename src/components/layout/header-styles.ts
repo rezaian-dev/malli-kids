@@ -1,13 +1,5 @@
 import { cn } from "@/lib/utils";
 
-/**
- * کلاس‌های مشترک هدر.
- *
- * این فایل عمداً نه "use client" دارد و نه JSX: فقط رشتهٔ کلاس است، پس هم
- * Server Component و هم جزیره‌های client می‌توانند بدون هزینهٔ باندل واردش کنند.
- */
-
-/** پایهٔ لینک‌های ناوبری دسکتاپ (روی NavigationMenuLink سوار می‌شود). */
 export const NAV_LINK = cn(
   "group/nav relative flex-row items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-medium",
   "transition-[color,background-color,transform,box-shadow] duration-300 ease-out",
@@ -23,20 +15,10 @@ export const NAV_LINK = cn(
   "dark:data-[active=true]:bg-gold dark:data-[active=true]:text-navy-deep dark:data-[active=true]:hover:text-navy-deep",
 );
 
-/**
- * نردبان ارتفاعِ خوشهٔ اکشن: ورود/ثبت‌نام، تم، سبد و منوی موبایل همه از همین
- * یک رشته استفاده می‌کنند، پس مرکز عمودی‌شان در هر بریک‌پوینتی یکی است.
- * (موبایل ۳۶، از ۳۶۰px به بعد ۴۰، در ستون باریکِ md دوباره ۳۶، از lg ۴۰)
- */
 export const CLUSTER_H = "h-9 min-[360px]:h-10 md:h-9 lg:h-10";
 
-/** عرض دکمه‌های آیکونی — مربع کامل با همین نردبان. */
 export const ICON_W = "w-9 min-[360px]:w-10 md:w-9 lg:w-10";
 
-/**
- * دکمه‌های آیکونی هدر — هم‌اندازه و هماهنگ در هر دو تم.
- * آیکون‌ها همه ۲۰px (size-5) هستند تا خطِ وسطِ بصری‌شان هم جابه‌جا نشود.
- */
 export const ICON_BTN = cn(
   CLUSTER_H,
   ICON_W,
@@ -45,14 +27,13 @@ export const ICON_BTN = cn(
   "dark:text-gold-soft dark:hover:bg-gold/20 dark:hover:text-gold-light",
 );
 
-/** پنل‌های کشویی هدر (Sheet سبد و منوی موبایل). */
 export const PANEL = cn(
   "z-[90] flex flex-col gap-0 border-navy/10 bg-cream p-0",
   "dark:border-gold/20 dark:bg-navy-deep",
-  // ورود/خروجِ کاملِ پنل با فنرِ ملایم و محوشدنیِ سبک.
-  // دقت: سلایدِ پیش‌فرضِ شادن «۱۰ واحد» است و twMerge آن را از بین نمی‌برد، پس
-  // اینجا یک شرطِ اضافه (data-[slot=sheet-content]) روی همان وریانت‌ها گذاشته‌ایم
-  // تا ویژگیِ (specificity) بالاتر، فارغ از ترتیبِ CSS، همیشه برنده باشد.
+  
+  
+  
+  
   "duration-400 ease-[cubic-bezier(0.22,1,0.32,1)]",
   "data-open:animate-in data-closed:animate-out",
   "data-open:fade-in-0 data-open:blur-in-4 data-closed:fade-out-0",
@@ -62,7 +43,6 @@ export const PANEL = cn(
   "data-[slot=sheet-content]:data-[side=right]:data-closed:slide-out-to-right-full",
 );
 
-/** سربرگ گرادیانی داخل پنل‌ها. */
 export const PANEL_HEAD = cn(
   "gap-1 border-b border-navy/10 bg-linear-to-l from-navy to-navy-mid px-5 py-5",
   "dark:border-gold/20",

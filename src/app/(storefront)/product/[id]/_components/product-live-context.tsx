@@ -27,7 +27,6 @@ export function ProductLiveProvider({
   return <LiveCtx.Provider value={p}>{children}</LiveCtx.Provider>;
 }
 
-/** نسخهٔ زندهٔ محصول؛ اگر خارج از Provider استفاده شود همان دانهٔ سرور برمی‌گردد. */
 export function useLiveProduct(fallback: Product): Product;
 export function useLiveProduct<T extends Pick<Product, "id">>(fallback: T): Product | T;
 export function useLiveProduct(fallback: { id: number }) {
@@ -35,12 +34,10 @@ export function useLiveProduct(fallback: { id: number }) {
   return live && live.id === fallback.id ? live : fallback;
 }
 
-/** نامِ زندهٔ محصول (نان‌بردکرامب) — یک برگِ متنیِ چند بایتی. */
 export function LiveName({ product }: { product: Product }) {
   return <>{useLiveProduct(product).name}</>;
 }
 
-/** معرفیِ زندهٔ محصول داخل تبِ «معرفی». */
 export function LiveDesc({ product }: { product: Product }) {
   return <p>{useLiveProduct(product).desc}</p>;
 }

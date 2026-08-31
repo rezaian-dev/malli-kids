@@ -33,10 +33,6 @@ type AdminFilterBarProps = {
   className?: string;
 };
 
-/**
- * نوار فیلتر مشترک پنل. کنترل‌های انتخابی از Select خود shadcn/ui استفاده
- * می‌کنند و در ۳۲۰px تک‌ستونه، در تبلت دو‌ستونه و در دسکتاپ افقی می‌شوند.
- */
 export function AdminFilterBar({
   children,
   search,
@@ -84,7 +80,7 @@ export function AdminFilterBar({
           <label className="min-w-0 sm:col-span-2 xl:min-w-[16rem] xl:flex-1">
             <span className="mb-1.5 block text-[10px] font-black text-navy/50 dark:text-wheat/75">جستجو</span>
             <span className="relative block">
-              <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-gold" />
+              <Search className="pointer-events-none absolute inset-s-3 top-1/2 size-4 -translate-y-1/2 text-gold" />
               <Input
                 value={search}
                 onChange={(event) => onSearchChange(event.target.value)}
@@ -96,7 +92,7 @@ export function AdminFilterBar({
                   type="button"
                   onClick={() => onSearchChange("")}
                   aria-label="پاک‌کردن جستجو"
-                  className="absolute end-2.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-lg text-navy/40 transition hover:bg-navy/7 hover:text-navy dark:text-wheat/60 dark:hover:bg-white/8 dark:hover:text-ivory"
+                  className="absolute inset-e-2.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-lg text-navy/40 transition hover:bg-navy/7 hover:text-navy dark:text-wheat/60 dark:hover:bg-white/8 dark:hover:text-ivory"
                 >
                   <X className="size-3.5" />
                 </button>
@@ -170,7 +166,6 @@ const STAT_TONES: Record<NonNullable<AdminStatItem["tone"]>, string> = {
   blue: "bg-sky-500/10 text-sky-700 dark:bg-sky-400/12 dark:text-sky-300",
 };
 
-/** کارت‌های خلاصهٔ کوچک برای قابل‌تشخیص‌بودن وضعیت‌ها در یک نگاه. */
 export function AdminStatStrip({ items, className }: { items: AdminStatItem[]; className?: string }) {
   return (
     <div className={cn("mb-5 grid grid-cols-2 gap-2.5 lg:grid-cols-4", className)}>

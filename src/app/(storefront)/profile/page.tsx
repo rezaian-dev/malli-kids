@@ -6,7 +6,6 @@ export const metadata: Metadata = {
   description: "سفارش‌ها، علاقه‌مندی‌ها و اطلاعات حساب کاربری شما در مالی کیدز.",
 };
 
-
 export default function ProfilePage() {
   return <ProfileView />;
 }

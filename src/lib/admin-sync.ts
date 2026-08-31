@@ -15,7 +15,6 @@ function read(): Saved | null {
   }
 }
 
-/** کاتالوگِ زنده: اگر ادمین محصولی اضافه/ویرایش کرده باشد همان، وگرنه دانه */
 export function loadCatalog(): Product[] {
   const saved = read()?.products;
   const source = saved?.length ? saved : CATALOG;
@@ -26,17 +25,14 @@ export function findCatalogProduct(id: number): Product | undefined {
   return loadCatalog().find((p) => p.id === id);
 }
 
-/** کدهای تخفیفِ زنده برای اعتبارسنجی در تسویه */
 export function loadCoupons(): AdminCoupon[] {
   return read()?.coupons ?? seedAdminDb().coupons;
 }
 
-/** بنرهای مناسبتیِ زنده برای نوارِ بالای هدر */
 export function loadBanners(): FestiveBanner[] {
   return read()?.banners ?? seedAdminDb().banners;
 }
 
-/** دیدگاه‌های زنده (تأییدشده‌ها برای ویترین، همه برای پنل) */
 export function loadReviews(visibleOnly = false): AdminReview[] {
   const list = read()?.reviews ?? seedAdminDb().reviews;
   return visibleOnly ? list.filter((r) => r.visible) : list;

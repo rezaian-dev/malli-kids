@@ -17,7 +17,7 @@ const PLOT_W = W - PAD.left - PAD.right;
 const PLOT_H = H - PAD.top - PAD.bottom;
 const BASELINE = PAD.top + PLOT_H;
 
-/** Catmull-Rom → cubic Bézier for a smooth line through every point. */
+/** 📈 Smooth each point into one clean Bézier path. */
 function smoothPath(pts: { x: number; y: number }[]): string {
   if (pts.length === 0) return "";
   if (pts.length === 1) return `M ${pts[0].x} ${pts[0].y}`;
@@ -67,7 +67,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
     return `${smoothPath(coords)} L ${last.x} ${BASELINE} L ${first.x} ${BASELINE} Z`;
   }, [coords]);
 
-  // Draw-in animation (respects reduced-motion).
+  // ✨ Draw the path in, while respecting reduced motion.
   useEffect(() => {
     setActive(null);
     const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;

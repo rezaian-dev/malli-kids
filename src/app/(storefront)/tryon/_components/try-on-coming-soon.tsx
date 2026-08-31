@@ -7,19 +7,14 @@ const STEPS = [
   { icon: Ruler, t: "پیش‌نمایش و سایز", d: "لباس روی تن دیده می‌شود و سایز مناسب پیشنهاد می‌شود." },
 ];
 
-/**
- * حالتِ «به‌زودی» پرو مجازی — Server Component.
- * تمام مارک‌آپ و انیمیشن‌ها CSS-only هستند و صفر جاوااسکریپت می‌فرستند؛
- * فقط <NotifyForm /> برای ثبتِ ایمیل، جزیرهٔ client است.
- */
 export function TryOnComingSoon() {
   return (
     <div className="container mx-auto w-full max-w-5xl px-4 pb-10 sm:px-5 lg:px-7">
       {/* Hero */}
       <div className="relative isolate overflow-hidden rounded-[32px] border border-gold/30 bg-linear-to-b from-navy via-navy-mid to-navy-deep p-8 text-center text-ivory shadow-[0_30px_80px_-30px_rgba(4,20,39,.6)] sm:p-14">
         {/* decorative glows + shimmer */}
-        <span className="animate-floaty motion-reduce:animate-none pointer-events-none absolute -start-16 top-4 size-48 rounded-full bg-gold/20 blur-3xl" />
-        <span className="animate-floaty-slow motion-reduce:animate-none pointer-events-none absolute -end-10 -top-8 size-40 rounded-full bg-gold-glow/15 blur-2xl" />
+        <span className="animate-floaty motion-reduce:animate-none pointer-events-none absolute -inset-s-16 top-4 size-48 rounded-full bg-gold/20 blur-3xl" />
+        <span className="animate-floaty-slow motion-reduce:animate-none pointer-events-none absolute -inset-e-10 -top-8 size-40 rounded-full bg-gold-glow/15 blur-2xl" />
         <span className="animate-shimmer motion-reduce:animate-none pointer-events-none absolute inset-y-0 -inset-x-1/3 w-1/3 -skew-x-12 bg-linear-to-r from-transparent via-white/10 to-transparent" />
 
         <div className="relative">

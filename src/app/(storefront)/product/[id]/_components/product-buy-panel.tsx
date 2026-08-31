@@ -23,7 +23,7 @@ import { useLiveProduct } from "./product-live-context";
 const SIZES = ["۸۰", "۸۶", "۹۲", "۹۸", "۱۰۴", "۱۱۰", "۱۱۶", "۱۲۲"];
 
 export function ProductBuyPanel({ product: seed }: { product: Product }) {
-  // دانهٔ سرور + نسخهٔ ویرایش‌شدهٔ ادمین (اگر باشد)
+  
   const product = useLiveProduct(seed);
   const { addToCart, showToast, user, setAuthOpen, campaign, priceOf } = useStore();
   const [size, setSize] = useState("۹۸");
@@ -65,7 +65,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
     }
   }
 
-  /** دیالوگِ تسویه — بدونِ ورود، اول مودالِ ورود باز می‌شود */
+  
   function openCheckout() {
     if (!product.stock) return showToast("به محض موجود شدن خبرتان می‌کنیم");
     if (!user) {
@@ -109,7 +109,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
 
   return (
     <div className="grid items-start gap-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
-      {/* min-w-0 لازم است وگرنه آیتم گرید کوچک‌تر از محتوایش نمی‌شود و بیرون می‌زند */}
+      {}
       <div className="min-w-0 lg:sticky lg:top-24">
         <div
           className="relative aspect-4/5 select-none overflow-hidden rounded-[28px] bg-sand shadow-2xl shadow-navy/15 sm:rounded-[36px]"
@@ -145,8 +145,8 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
               </span>
             ) : null}
           </div>
-          <SliderArrow chevron direction="prev" label="قبلی" onClick={() => go(slide - 1)} className="absolute start-3 top-1/2 z-10 -translate-y-1/2" />
-          <SliderArrow chevron direction="next" label="بعدی" onClick={() => go(slide + 1)} className="absolute end-3 top-1/2 z-10 -translate-y-1/2" />
+          <SliderArrow chevron direction="prev" label="قبلی" onClick={() => go(slide - 1)} className="absolute inset-s-3 top-1/2 z-10 -translate-y-1/2" />
+          <SliderArrow chevron direction="next" label="بعدی" onClick={() => go(slide + 1)} className="absolute inset-e-3 top-1/2 z-10 -translate-y-1/2" />
           <div className="absolute inset-x-0 bottom-4 z-10 flex justify-center gap-1.5">
             {gallery.map((_, i) => (
               <button key={i} type="button" aria-label={`اسلاید ${i + 1}`} onClick={() => go(i)} className={`h-2 rounded-full ${i === slide ? "w-6 bg-gold" : "w-2 bg-white/70"}`} />
@@ -231,7 +231,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
           </Button>
         </div>
 
-        {/* ── دیالوگِ تسویهٔ سفارش ── */}
+        {}
         <Dialog open={checkout} onOpenChange={setCheckout}>
           <DialogContent dir="rtl" showCloseButton className="max-w-md rounded-[24px] border border-gold/40 bg-paper text-navy dark:border-gold/50 dark:bg-dusk dark:text-ivory">
             <DialogTitle className="flex items-center gap-2 text-base font-black">

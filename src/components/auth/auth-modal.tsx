@@ -29,12 +29,10 @@ const SUBMIT_GOLD =
 const TITLES = { login: "ورود به حساب", otp: "ورود با پیامک", register: "ساخت حساب" } as const;
 type Tab = keyof typeof TITLES;
 
-/** «۰۹۱۲ ۳۴۵ ۶۷۸۹» و «+۹۸۹۱۲…» → «09123456789» */
 const digits = (v: string) => phoneDigits(v);
-/** فقط رقم‌ها — برایِ کدِ پیامکی */
+
 const onlyDigits = (v: string) => toLatinDigits(v).replace(/\D/g, "");
 
-/** شمارشِ معکوسِ «ارسالِ مجددِ کد» */
 function useCooldown() {
   const [sec, setSec] = useState(0);
   useEffect(() => {
@@ -45,10 +43,6 @@ function useCooldown() {
   return { sec, restart: (n = 90) => setSec(n), stop: () => setSec(0) };
 }
 
-/**
- * وضعیتِ مشترکِ دو تبِ پیامکی: شمارهٔ قفل‌شده، نام، کد و تایمر.
- * فرمِ کد اینجا ساخته می‌شود تا هر دو تب از یک اسکیما استفاده کنند.
- */
 function useSmsFlow() {
   const code = useAppForm({ schema: smsCodeSchema, defaultValues: smsCodeDefaults });
   const cd = useCooldown();
@@ -79,7 +73,6 @@ function useSmsFlow() {
 
 type SmsFlow = ReturnType<typeof useSmsFlow>;
 
-/** کد ۵ رقمی + ارسالِ مجدد + تغییرِ شماره */
 function CodeStep({ flow, submitLabel, onVerify }: { flow: SmsFlow; submitLabel: string; onVerify: (v: SmsCodeValues) => void }) {
   return (
     <AppForm form={flow.code} onSubmit={onVerify} ariaLabel="تأیید کد پیامکی" className="space-y-4" notify>
@@ -93,7 +86,7 @@ function CodeStep({ flow, submitLabel, onVerify }: { flow: SmsFlow; submitLabel:
               containerClassName="gap-1.5"
               autoFocus
             >
-              {/* خانه‌های کد از چپ به راست، مثل ورودِ کد در کیبوردِ شماره */}
+              {}
               <InputOTPGroup className="gap-1.5" dir="ltr">
                 {Array.from({ length: OTP_LEN }, (_, i) => (
                   <InputOTPSlot
@@ -146,7 +139,6 @@ function CodeStep({ flow, submitLabel, onVerify }: { flow: SmsFlow; submitLabel:
   );
 }
 
-/** کارتِ «شماره قفل شد» */
 function LockedCard({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="rounded-2xl border border-gold/30 bg-sand/80 px-3.5 py-3 dark:border-gold/25 dark:bg-navy-deep/60">
@@ -155,8 +147,6 @@ function LockedCard({ title, children }: { title: string; children: ReactNode })
     </div>
   );
 }
-
-/* ─────────────── تبِ اول: ورود با رمز ─────────────── */
 
 function LoginPanel({ onOtp }: { onOtp: () => void }) {
   const { login, showToast } = useStore();
@@ -174,7 +164,7 @@ function LoginPanel({ onOtp }: { onOtp: () => void }) {
     });
     showToast("خوش آمدید ✨");
     form.reset();
-    // رمزِ عبور فقط برایِ احرازِ هویت خوانده می‌شود؛ در اسکیما حداقل ۶ نویسه است و هیچ‌جا ذخیره نمی‌شود.
+    
   }
 
   return (
@@ -227,8 +217,6 @@ function LoginPanel({ onOtp }: { onOtp: () => void }) {
   );
 }
 
-/* ─────────────── تبِ دوم: ورود با پیامک ─────────────── */
-
 function OtpPanel() {
   const { login, showToast } = useStore();
   const flow = useSmsFlow();
@@ -236,13 +224,13 @@ function OtpPanel() {
 
   function send(v: SmsStartValues) {
     flow.send(digits(v.phone));
-    // TODO: ارسالِ کد از سمتِ سرور (پنلِ پیامکی)
+    
     showToast("کد ۵ رقمی به شمارهٔ شما پیامک شد");
   }
 
   function verify(v: SmsCodeValues) {
     const code = onlyDigits(v.code);
-    // TODO: اعتبارسنجیِ کد سمتِ سرور؛ فعلاً هر کدِ ۵ رقمی می‌پذیریم.
+    
     if (code.length !== OTP_LEN) return;
     login({ firstName: "کاربر", ...smsAccount(flow.phone) });
     showToast("با پیامک وارد شدید ✨");
@@ -291,8 +279,6 @@ function OtpPanel() {
   );
 }
 
-/* ─────────────── تبِ سوم: ثبت‌نام ─────────────── */
-
 function RegisterPanel() {
   const { login, showToast } = useStore();
   const flow = useSmsFlow();
@@ -300,12 +286,12 @@ function RegisterPanel() {
 
   function send(v: RegisterValues) {
     flow.send(digits(v.phone), v.name.trim());
-    // TODO: ارسالِ کد از سمتِ سرور (پنلِ پیامکی)
+    
     showToast("کد ۵ رقمی به موبایل شما پیامک شد");
   }
 
   function verify() {
-    // TODO: ساختِ حساب سمتِ سرور و اعتبارسنجیِ کد (کد از فرمِ flow.code خوانده می‌شود)
+    
     login({ firstName: flow.name || "کاربر", ...smsAccount(flow.phone) });
     showToast(`حسابِ «${flow.name || "کاربر"}» ساخته شد ✨`);
     flow.back();
@@ -373,7 +359,7 @@ export function AuthModal() {
         dir="rtl"
         showCloseButton={false}
         className={cn(
-          // DialogContent پایه grid و rounded-xl و p-4 دارد؛ همه را صریح بازنویسی می‌کنیم
+          
           "z-[100] block max-h-[94dvh] w-[calc(100%-1.5rem)] max-w-[26rem] gap-0 overflow-y-auto overflow-x-hidden overscroll-contain p-0 sm:max-w-[26rem]",
           "rounded-[28px] bg-paper text-navy ring-0",
           "border border-gold/35 shadow-[0_28px_80px_-20px_rgba(4,20,39,.55)]",
@@ -381,10 +367,10 @@ export function AuthModal() {
           "lg:flex lg:max-w-[54rem] lg:flex-row-reverse",
         )}
       >
-        {/* دکمهٔ بستن — همیشه در گوشهٔ شروع (چپ در RTL) */}
+        {}
         <DialogClose
           className={cn(
-            "absolute top-4 start-4 z-20 inline-flex size-9 items-center justify-center rounded-full",
+            "absolute top-4 inset-s-4 z-20 inline-flex size-9 items-center justify-center rounded-full",
             "text-navy/60 transition-colors hover:bg-sand hover:text-navy",
             "focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
             "dark:text-ivory/70 dark:hover:bg-dusk-mid dark:hover:text-ivory",

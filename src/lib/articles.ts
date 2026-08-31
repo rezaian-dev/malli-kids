@@ -6,9 +6,9 @@ export type JournalArticle = {
   tag: string;
   title: string;
   excerpt: string;
-  /** متنِ ساده (دانه) یا HTML خروجیِ ویرایشگرِ ادمین */
+  
   body: string;
-  /** تصویرِ شاخصِ آپلودشده توسط ادمین (dataURL) — دانه تصویر ندارد */
+  
   cover?: string;
   date?: string;
 };
@@ -24,7 +24,6 @@ type StoredArticle = {
   date?: string;
 };
 
-/** مقاله‌های دانه برای وقتی هنوز ادمین چیزی ذخیره نکرده است */
 const SEED: JournalArticle[] = ARTICLES.map((a) => ({
   slug: a.slug,
   tag: a.tag,
@@ -34,7 +33,7 @@ const SEED: JournalArticle[] = ARTICLES.map((a) => ({
 }));
 
 function sanitizeHtml(html: string): string {
-  // خروجیِ ویرایشگرِ خودِ ادمین است؛ با این حال script/iframe/handler حذف می‌شود
+  
   return html
     .replace(/<\s*(script|iframe|object|embed)[\s\S]*?<\s*\/\s*\1\s*>/gi, "")
     .replace(/<\s*(script|iframe|object|embed)[^>]*\/?\s*>/gi, "")
@@ -42,11 +41,6 @@ function sanitizeHtml(html: string): string {
     .replace(/href\s*=\s*(["'])\s*javascript:[^"']*\1/gi, 'href="#"');
 }
 
-/**
- * فهرستِ مقاله‌های منتشرشده: اگر ادمین در پنل مقاله‌ای ذخیره کرده باشد
- * همان‌ها (فقط منتشرشده‌ها) و در غیرِ این صورت دانهٔ اولیه.
- * فقط در مرورگر قابلِ خواندن است (localStorage).
- */
 export function loadPublishedArticles(): JournalArticle[] {
   if (typeof window === "undefined") return SEED;
   try {

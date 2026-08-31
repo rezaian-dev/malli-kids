@@ -16,11 +16,6 @@ const KIND_ICON: Record<NoticeKind, typeof Bell> = {
   system: Sparkles,
 };
 
-/**
- * زنگولهٔ اعلان‌ها — فقط برای کاربرِ واردشده.
- * پاسخِ تیکت و تغییرِ وضعیتِ سفارش این‌جا چراغ می‌اندازد تا کاربر بدونِ
- * گشتنِ پنل متوجه شود؛ کلیک روی هر اعلان آن را خوانده می‌کند.
- */
 export function NoticesBell() {
   const { user } = useStore();
   const owner = user?.email || user?.phone || "";
@@ -46,7 +41,7 @@ export function NoticesBell() {
           {unread > 0 ? (
             <Badge
               aria-hidden
-              className="pointer-events-none absolute -end-1 -top-1 grid size-5 place-items-center rounded-full border-2 border-cream bg-rose p-0 text-[10px] font-black text-white dark:border-navy-deep"
+              className="pointer-events-none absolute -inset-e-1 -top-1 grid size-5 place-items-center rounded-full border-2 border-cream bg-rose p-0 text-[10px] font-black text-white dark:border-navy-deep"
             >
               {unread > 9 ? "+۹" : toFaDigits(unread)}
             </Badge>

@@ -16,10 +16,6 @@ import { cn } from "@/lib/utils";
 import { isActive } from "./nav-active-link";
 import { startTopProgress } from "./click-progress";
 
-/**
- * آیتم «دسته‌بندی» نوار ناوبری.
- * client است چون NavigationMenuTrigger باز/بسته می‌شود و حالت active به مسیر وابسته است.
- */
 export function CategoryMenu() {
   const path = usePathname();
   const router = useRouter();
@@ -28,7 +24,7 @@ export function CategoryMenu() {
   return (
     <NavigationMenuItem>
       <NavigationMenuTrigger
-        // هاور = باز شدنِ منو؛ کلیک = رفتن به صفحهٔ لیستِ محصولات
+        
         onClick={() => {
           startTopProgress();
           router.push("/shop");
@@ -54,7 +50,7 @@ export function CategoryMenu() {
 
       <NavigationMenuContent
         className={cn(
-          "start-0 end-auto z-[80] p-0",
+          "inset-s-0 inset-e-auto z-[80] p-0",
           "overflow-hidden rounded-2xl border border-navy/10 bg-paper shadow-xl",
           "dark:border-gold/25 dark:bg-dusk",
           "[&_a]:text-current [&_button]:text-current [&_svg]:text-current",

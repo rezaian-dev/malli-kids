@@ -1,13 +1,4 @@
-/**
- * Storefront background — pure Tailwind and inline SVG, no background image.
- * Light keeps the editorial paper direction; dark is intentionally rebuilt as
- * a quiet midnight gallery with velvet gradients, fine seams, and constellations.
- *
- * نکتهٔ مهم: آلفای رنگ‌ها داخل مقادیرِ arbitrary (bg-[radial-...]) را نمی‌توان با
- * `theme(colors.x/N)` ساخت — Tailwind آن را داخل یک string برش نمی‌زند و گرادیان
- * ناخواسته اوپک (۱۴/۱۸٪ → ۱۰۰٪) رندر می‌شود. به‌جای آن از `color-mix` با درصدِ
- * صریح استفاده می‌کنیم تا درخشش‌ها واقعاً محو و ملایم بمانند.
- */
+
 const STARS = Array.from({ length: 30 }, (_, i) => i);
 const DELAYS = [
   "[animation-delay:-.2s]",
@@ -27,14 +18,14 @@ export function BackgroundScene() {
       {/* Golden halo ring — a soft echo of the circular gold mark in the logo. */}
       <div className="absolute -top-32 left-1/2 hidden size-[42rem] -translate-x-1/2 rounded-full border-[1.5px] border-gold/20 dark:hidden md:block" />
       <div className="absolute -top-20 left-1/2 hidden size-[34rem] -translate-x-1/2 rounded-full border-[1px] border-gold/15 dark:hidden md:block" />
-      <div className="absolute -end-40 top-10 hidden size-[26rem] rounded-full bg-[radial-gradient(circle_at_40%_35%,color-mix(in_srgb,theme(colors.gold)_22%,transparent),transparent_62%)] blur-2xl dark:hidden md:block" />
-      <div className="absolute -start-40 bottom-0 hidden size-[24rem] rounded-full bg-[radial-gradient(circle_at_45%_60%,color-mix(in_srgb,theme(colors.navy-soft)_18%,transparent),transparent_62%)] blur-2xl dark:hidden md:block" />
+      <div className="absolute -inset-e-40 top-10 hidden size-[26rem] rounded-full bg-[radial-gradient(circle_at_40%_35%,color-mix(in_srgb,theme(colors.gold)_22%,transparent),transparent_62%)] blur-2xl dark:hidden md:block" />
+      <div className="absolute -inset-s-40 bottom-0 hidden size-[24rem] rounded-full bg-[radial-gradient(circle_at_45%_60%,color-mix(in_srgb,theme(colors.navy-soft)_18%,transparent),transparent_62%)] blur-2xl dark:hidden md:block" />
       {/* Dark: a completely different midnight-gallery direction. */}
       <div className="absolute inset-0 hidden dark:block bg-[radial-gradient(ellipse_at_62%_10%,color-mix(in_srgb,theme(colors.navy-light)_16%,transparent),transparent_32%),radial-gradient(ellipse_at_22%_82%,color-mix(in_srgb,theme(colors.gold)_6%,transparent),transparent_34%),linear-gradient(135deg,theme(colors.ink)_0%,theme(colors.navy-deep)_46%,theme(colors.night-deep)_100%)]" />
-      <div className="absolute -end-72 -top-72 hidden size-[34rem] rounded-full bg-[radial-gradient(ellipse_at_50%_15%,color-mix(in_srgb,theme(colors.gold)_7%,transparent),transparent_64%)] blur-3xl dark:block" />
-      <div className="absolute -bottom-72 -start-56 hidden size-[38rem] rounded-full bg-[radial-gradient(ellipse_at_50%_20%,color-mix(in_srgb,theme(colors.navy-light)_9%,transparent),transparent_62%)] blur-3xl dark:block" />
-      <div className="absolute inset-y-0 start-[12%] hidden w-px bg-gradient-to-b from-transparent via-gold/20 to-transparent dark:block" />
-      <div className="absolute inset-y-0 end-[18%] hidden w-px bg-gradient-to-b from-transparent via-gold/10 to-transparent dark:block" />
+      <div className="absolute -inset-e-72 -top-72 hidden size-[34rem] rounded-full bg-[radial-gradient(ellipse_at_50%_15%,color-mix(in_srgb,theme(colors.gold)_7%,transparent),transparent_64%)] blur-3xl dark:block" />
+      <div className="absolute -bottom-72 -inset-s-56 hidden size-[38rem] rounded-full bg-[radial-gradient(ellipse_at_50%_20%,color-mix(in_srgb,theme(colors.navy-light)_9%,transparent),transparent_62%)] blur-3xl dark:block" />
+      <div className="absolute inset-y-0 inset-s-[12%] hidden w-px bg-gradient-to-b from-transparent via-gold/20 to-transparent dark:block" />
+      <div className="absolute inset-y-0 inset-e-[18%] hidden w-px bg-gradient-to-b from-transparent via-gold/10 to-transparent dark:block" />
 
       <svg className="absolute inset-0 hidden h-full w-full opacity-[0.16] text-gold mix-blend-screen dark:block" xmlns="http://www.w3.org/2000/svg">
         <defs>

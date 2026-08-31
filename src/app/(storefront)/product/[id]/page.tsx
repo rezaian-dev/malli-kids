@@ -18,13 +18,6 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return p ? { title: p.name, description: p.desc } : {};
 }
 
-/**
- * صفحهٔ محصول — Server Component.
- *
- * نان‌بردکرامب، تب‌ها (معرفی/جدول سایز/نظرها) و کارت‌های «مدل‌های مشابه» روی
- * سرور رندر می‌شوند و به‌صورت اسلات داخل <LiveProduct> می‌نشینند؛ آن Provider
- * تنها کاری که می‌کند خواندنِ نسخهٔ ویرایش‌شدهٔ ادمین از localStorage است.
- */
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const num = Number(id);

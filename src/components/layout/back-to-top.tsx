@@ -5,11 +5,6 @@ import { ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-/**
- * دکمهٔ «بازگشت به بالا» — فقط از کامپوننت shadcn/ui (Button) ساخته شده.
- * با اسکرول، به‌صورت نرم (فقط Tailwind) ظاهر/محو می‌شود و کلیک، صاف به ابتدای
- * صفحه برمی‌گرداند.
- */
 export function BackToTop() {
   const [show, setShow] = useState(false);
 
@@ -28,7 +23,7 @@ export function BackToTop() {
       aria-label="بازگشت به ابتدای صفحه"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       className={cn(
-        "fixed bottom-6 end-6 z-[60] size-12 rounded-full shadow-lg shadow-gold/40",
+        "fixed bottom-6 inset-e-6 z-[60] size-12 rounded-full shadow-lg shadow-gold/40",
         "transition-all duration-500 ease-out",
         show
           ? "translate-y-0 opacity-100 focus-visible:opacity-100"

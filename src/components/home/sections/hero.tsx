@@ -5,9 +5,9 @@ import { GoldMark, OrnStar } from "@/components/home/home-ornaments";
 export function Hero() {
   return (
     <section id="heroSection" className="relative overflow-hidden bg-transparent pt-8 pb-14 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24">
-      <div className="pointer-events-none absolute -top-24 -start-20 size-72 animate-pulse rounded-full bg-gold/25 blur-[70px] xs:size-88" />
-      <div className="pointer-events-none absolute top-32 -end-24 size-80 animate-pulse rounded-full bg-navy/10 blur-[70px] xs:size-96" />
-      <span className="font-display pointer-events-none absolute top-[22%] end-[5%] hidden select-none text-[130px] leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(196,163,106,.55)] rotate-6 xl:block">
+      <div className="pointer-events-none absolute -top-24 -inset-s-20 size-72 animate-pulse rounded-full bg-gold/25 blur-[70px] xs:size-88" />
+      <div className="pointer-events-none absolute top-32 -inset-e-24 size-80 animate-pulse rounded-full bg-navy/10 blur-[70px] xs:size-96" />
+      <span className="font-display pointer-events-none absolute top-[22%] inset-e-[5%] hidden select-none text-[130px] leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(196,163,106,.55)] rotate-6 xl:block">
         kids
       </span>
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7 relative grid items-center gap-12 lg:grid-cols-2 lg:gap-8">

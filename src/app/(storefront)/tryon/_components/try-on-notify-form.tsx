@@ -6,15 +6,11 @@ import { AppForm, Field, useAppForm } from "@/components/form";
 import { notifyDefaults, notifySchema, type NotifyValues } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 
-/**
- * تنها جزیرهٔ client صفحهٔ پرو مجازی: فرمِ «خبرم کن».
- * پوستهٔ هیرو، انیمیشن‌های تزئینی و سه مرحلهٔ توضیح، همگی سرور هستند.
- */
 export function NotifyForm() {
   const form = useAppForm({ schema: notifySchema, defaultValues: notifyDefaults });
 
   function notify({ email }: NotifyValues) {
-    // TODO: عضویتِ «خبرم کن» را به سرویسِ پیامک/ایمیل وصل کنید.
+    
     toast.success(`ثبت شد ✨ به‌محض آماده شدن، به ${email} خبر می‌دهیم`);
     form.reset();
   }

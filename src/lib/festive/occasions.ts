@@ -57,7 +57,7 @@ export function pickBanner(list: FestiveBanner[], d = new Date()): FestiveBanner
   const { jm, jd } = toJalali(d);
   const hit = list.find((b) => {
     if (!b.active) return false;
-    // تاریخ‌ها با ارقامِ فارسی ذخیره شده‌اند؛ Number روی آن‌ها NaN می‌سازد.
+    
     const num = (s: string) => Number(s.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))));
     const [fm, fd] = b.from.split("/").map(num);
     const [tm, td] = b.to.split("/").map(num);

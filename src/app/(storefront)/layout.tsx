@@ -7,8 +7,7 @@ import { BackToTop } from "@/components/layout/back-to-top";
 import { BackgroundScene } from "@/components/shared/background-scene";
 import { AuthModalMount } from "@/components/auth";
 
-// Storefront chrome. A route-group layout (the "(storefront)" segment is stripped
-// from the URL) so every public page shares this shell without a runtime path check.
+// 🛍️ Shared storefront shell for every public page.
 export default function StorefrontLayout({ children }: { children: ReactNode }) {
   return (
     <>

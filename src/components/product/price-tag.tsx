@@ -3,10 +3,6 @@
 import { useStore } from "@/providers/store-provider";
 import { formatToman, toFaDigits } from "@/lib/format";
 
-/**
- * قیمتِ محصول با آگاهی از جشنوارهٔ ادمین:
- * در زمانِ جشنواره، قیمتِ تخفیف‌خورده + قیمتِ خط‌خورده + برچسبِ درصد.
- */
 export function PriceTag({ price, className }: { price: number; className?: string }) {
   const { campaign, priceOf } = useStore();
   const eff = priceOf(price);

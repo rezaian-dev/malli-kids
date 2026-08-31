@@ -10,7 +10,6 @@ export const metadata: Metadata = {
   description: "قصهٔ آتلیهٔ مالی کیدز؛ دوخت ایرانی پوشاک کودک از نوزادی تا ۱۰ سالگی.",
 };
 
-
 const ICONS = [Heart, Scissors, ScanFace, ShieldCheck];
 
 export default function AboutPage() {

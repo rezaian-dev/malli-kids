@@ -3,10 +3,6 @@
 import { useEffect, useState } from "react";
 import { faNow } from "./format";
 
-/**
- * درخواست‌های همکاری — صفحهٔ «همکاری» پر می‌کند و پنلِ ادمین پیگیری می‌کند.
- */
-
 export type CollabStatus = "در انتظار بررسی" | "تماس گرفته شد";
 
 export type CollabRequest = {

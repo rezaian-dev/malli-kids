@@ -1,13 +1,4 @@
-/**
- * ابزارهای مشترک فرم‌ها (zod v4) — همهٔ پیام‌ها فارسی.
- *
- * دو قانونِ طراحی:
- *  ۱) اسکیما مقدار را تغییر نمی‌دهد (نه .transform، نه .coerce)؛ پس نوعِ ورودی =
- *     نوعِ خروجی است و react-hook-form بدونِ ژیمناستیکِ تایپ کار می‌کند.
- *     نرمال‌سازیِ ارقامِ فارسی و جداکنندهٔ هزارگان با `parseFaNumber` در لحظهٔ مصرف انجام می‌شود.
- *  ۲) اعتبارسنجی «واقعاً ایرانی»: موبایل ۰۹، کدملی با checksum، تاریخ شمسی، قیمتِ
- *     تومان — همان چیزی که `required` اچ‌تی‌ام‌ال نمی‌تواند بدهد.
- */
+
 import { z } from "zod";
 import { toFaDigits } from "./format";
 
@@ -16,7 +7,6 @@ const arDigits = Array.from({ length: 10 }, (_, i) => String.fromCodePoint(0x066
 const FA = faDigits.join("");
 const AR = arDigits.join("");
 
-/** «۱۲۹۰۰۰۰» و «1,290,000» و «۱ ۲۹۰ ۰۰» → ۲۹۰۰۰ (و برای رشتهٔ نامعتبر NaN) */
 export function parseFaNumber(raw: unknown): number {
   if (typeof raw === "number") return raw;
   if (typeof raw !== "string") return Number.NaN;
@@ -25,22 +15,19 @@ export function parseFaNumber(raw: unknown): number {
   return Number(s);
 }
 
-/** تبدیل ارقامِ فارسی/عربی به لاتین (برای regex‌ها و ذخیره‌سازی) */
 export function toLatinDigits(v: string): string {
   return v
     .replace(/[\u06f0-\u06f9]/g, (d) => String(FA.indexOf(d)))
     .replace(/[\u0660-\u0669]/g, (d) => String(AR.indexOf(d)));
 }
 
-/** 1290000 → «۱٬۲۰٬۰۰» برای نمایش */
 export function formatFaMoney(n: number): string {
   if (!Number.isFinite(n)) return "";
   return toFaDigits(n.toLocaleString("en-US")).replace(/,/g, "٬");
 }
 
-/** «۰۹۱۲ ۳۴۵ ۶۷۸۹» / «+۹۸ ۹۱۲ ۳۴۵ ۶۷۸۹» → «09123456789» (فقط برایِ بررسی؛ مقدارِ فرم دست‌نخورده می‌ماند) */
 export function phoneDigits(v: string): string {
-  // خطِ تیره (‑، —، –)، فاصله، پرانتز و جداکننده‌ها حذف می‌شوند تا «۰۲۱ — ۲۶۴۰ ۱۲۴» هم بپذیریم
+  
   const raw = toLatinDigits(v).replace(/[\s\u200c\u200e\u200f().٫،\u2010-\u2015_-]/g, "");
   if (raw.startsWith("+98")) return `0${raw.slice(3)}`;
   if (raw.startsWith("0098")) return `0${raw.slice(4)}`;
@@ -48,14 +35,13 @@ export function phoneDigits(v: string): string {
 }
 
 export const RE = {
-  mobile: /^09\d{9}$/, // موبایل ایران
-  tel: /^0\d{2,3}\d{7,8}$/, // تلفن ثابت با پیش‌شماره
+  mobile: /^09\d{9}$/, 
+  tel: /^0\d{2,3}\d{7,8}$/, 
   email: /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/,
   nationalId: /^\d{10}$/,
   code: /^[A-Za-z0-9_-]{4,16}$/,
 } as const;
 
-/** الگوریتمِ رسمیِ اعتبارِ کد ملی ایران */
 export function isIranianNationalId(input: string): boolean {
   const code = toLatinDigits(input).trim();
   if (!/^\d{10}$/.test(code) || /^(\d)\1{9}$/.test(code)) return false;
@@ -66,7 +52,6 @@ export function isIranianNationalId(input: string): boolean {
   return r < 2 ? d === r : d === 11 - r;
 }
 
-/** «۱۴۰۵/۰۲/۱۵» → {y,m,d} یا null (ساختار + بازهٔ ماه/روز؛ تقویمِ کامل نیست) */
 export function jalaliParts(input: string): { y: number; m: number; d: number } | null {
   const s = toLatinDigits(input).trim().replace(/[.\u200c\-]/g, "/");
   const m = /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.exec(s);
@@ -79,8 +64,6 @@ export function jalaliParts(input: string): { y: number; m: number; d: number } 
   if (d < 1 || d > (mo <= 6 ? 31 : mo <= 11 ? 30 : 29)) return null;
   return { y, m: mo, d };
 }
-
-/* ────────────────────  پیام‌های پیش‌فرض  ──────────────────── */
 
 export const fa = {
   required: (label: string) => `${label} را وارد کنید`,
@@ -95,9 +78,6 @@ export const fa = {
   range: (from: number, to: number) => `مقدار باید بین ${toFaDigits(from)} و ${toFaDigits(to)} باشد`,
 } as const;
 
-/* ────────────────────  فیلدهای آماده  ──────────────────── */
-
-/** رشتهٔ متنیِ الزامی */
 export const text = (label: string, min = 2, max = 60) =>
   z
     .string({ error: () => fa.required(label) })
@@ -106,11 +86,8 @@ export const text = (label: string, min = 2, max = 60) =>
     .min(min, fa.min(min, label))
     .max(max, fa.max(max, label));
 
-/** رشتهٔ متنیِ اختیاری (اما سقفِ طول دارد) */
-/** رشتهٔ اختیاری: خالی مجاز، ولی سقفِ طول رعایت می‌شود */
 export const optText = (max = 60, label = "متن") => z.string().trim().max(max, fa.max(max, label));
 
-/** «اختیاری، ولی اگر پر شد باید معتبر باشد» — خطا می‌ماند تا در UI دیده شود */
 const optionalPattern = (test: (v: string) => boolean, message: string) =>
   z
     .string()
@@ -147,11 +124,9 @@ export const emailOrMobile = (label = "ایمیل یا موبایل") =>
     .min(1, fa.required("ایمیل یا موبایل"))
     .refine((v) => RE.email.test(v.replace(/\s/g, "")) || RE.mobile.test(phoneDigits(v)), "ایمیل یا شمارهٔ موبایلِ ۰۹ را وارد کنید");
 
-/** کد ملی — اختیاری؛ اگر پر شد باید checksum رد شود */
 export const nationalId = () =>
   optionalPattern((v) => RE.nationalId.test(toLatinDigits(v)) && isIranianNationalId(v), fa.nationalId);
 
-/** عددِ صحیحِ مالی (تومان) — رشته می‌گیرد تا ارقامِ فارسی و جداکننده هم بپذیرد */
 export const amount = (label: string, opts: { min?: number; max?: number } = {}) => {
   const min = opts.min ?? 0;
   const max = opts.max ?? 500_000_000;
@@ -166,7 +141,6 @@ export const amount = (label: string, opts: { min?: number; max?: number } = {})
     }, fa.range(min, max));
 };
 
-/** عددِ اختیاری با بازه (برای «حداقلِ قیمت» در فیلترها) */
 export const optAmount = (opts: { min?: number; max?: number } = {}) => {
   const min = opts.min ?? 0;
   const max = opts.max ?? 500_000_000;
@@ -181,7 +155,6 @@ export const optAmount = (opts: { min?: number; max?: number } = {}) => {
     }, fa.range(min, max));
 };
 
-/** درصدِ صحیح (کد تخفیف و…) */
 export const percent = (min = 1, max = 90) =>
   z
     .string({ error: () => fa.required("درصد تخفیف") })
@@ -193,7 +166,6 @@ export const percent = (min = 1, max = 90) =>
       return Number.isInteger(n) && n >= min && n <= max;
     }, fa.range(min, max));
 
-/** تاریخ شمسی */
 export const jalaliDate = (label = "تاریخ") =>
   z
     .string({ error: () => fa.required(label) })
@@ -201,7 +173,6 @@ export const jalaliDate = (label = "تاریخ") =>
     .min(1, fa.required("تاریخ"))
     .refine((v) => jalaliParts(v) !== null, fa.jalali);
 
-/** کد تخفیف لاتین */
 export const promoCode = () =>
   z
     .string({ error: () => fa.required("کد تخفیف") })
@@ -209,11 +180,9 @@ export const promoCode = () =>
     .min(1, fa.required("کد تخفیف"))
     .refine((v) => RE.code.test(v), fa.code);
 
-/** یکی از گزینه‌های معتبر */
 export const oneOf = <T extends readonly [string, ...string[]]>(values: T, label: string) =>
   z.enum(values, { error: () => `${label} را انتخاب کنید` });
 
-/** نامِ کامل — «نام و نام خانوادگی» با فاصله؛ در حالتِ اختیاری رشتهٔ خالی رد می‌شود */
 export const fullName = (opts: { required?: boolean } = {}) => {
   const required = opts.required ?? true;
   return z
@@ -226,7 +195,6 @@ export const fullName = (opts: { required?: boolean } = {}) => {
     .refine((v) => !required || v.split(/\s+/).filter(Boolean).length >= 2, "نام و نام خانوادگی را کامل بنویسید");
 };
 
-/** کد یکبارمصرفِ عددی — ارقامِ فارسی هم پذیرفته می‌شود */
 export const otpCode = (len = 5) =>
   z
     .string({ error: () => fa.required("کد تأیید") })
@@ -234,13 +202,11 @@ export const otpCode = (len = 5) =>
     .min(1, fa.required("کد تأیید"))
     .refine((v) => new RegExp(`^\\d{${len}}$`).test(toLatinDigits(v).replace(/\s/g, "")), `کد ${toFaDigits(len)} رقمی را کامل وارد کنید`);
 
-/** رمز عبور */
 export const password = (min = 6) =>
   z
     .string({ error: () => fa.required("رمز عبور") })
     .min(min, `رمز باید حداقل ${toFaDigits(min)} نویسه باشد`);
 
-/** توضیحِ بلند (شمارندهٔ کاراکتر در UI نمایش داده می‌شود) */
 export const longText = (label: string, min = 10, max = 600) =>
   z
     .string({ error: () => fa.required(label) })
@@ -249,14 +215,12 @@ export const longText = (label: string, min = 10, max = 600) =>
     .min(min, `حداقل ${toFaDigits(min)} حرف بنویسید تا مفید باشد`)
     .max(max, fa.max(max, label));
 
-/** فهرستِ خالی‌نپذیرِ رشته */
 export const list = (label: string, min = 1, max = 20) =>
   z
     .array(z.string().trim().min(1))
     .min(min, `${label} را حداقل یک مورد انتخاب کنید`)
     .max(max, `حداکثر ${toFaDigits(max)} مورد`);
 
-/** امروز به شمسی — برایِ «تاریخ باید بعد از امروز باشد» */
 export function jalaliToday(): { y: number; m: number; d: number } {
   try {
     const parts = new Intl.DateTimeFormat("en-u-ca-persian", {
@@ -272,7 +236,6 @@ export function jalaliToday(): { y: number; m: number; d: number } {
   }
 }
 
-/** «۱۴۰۵/۱۲/۲۹» بعد ازِ امروز است؟ (فقط وقتی ساختارِ تاریخ درست باشد) */
 export function isJalaliFuture(input: string): boolean {
   const p = jalaliParts(input);
   if (!p) return false;
@@ -280,9 +243,6 @@ export function isJalaliFuture(input: string): boolean {
   return p.y * 10000 + p.m * 100 + p.d > t.y * 10000 + t.m * 100 + t.d;
 }
 
-/* ────────────────────  قاعدهٔ روی شیء  ──────────────────── */
-
-/** اگر هر دو «از» و «تا» پر بودند: از ≤ تا */
 export function orderedRange<T extends z.ZodType>(schema: T, fromKey: string, toKey: string, message = "حداقلِ قیمت نمی‌تواند بیشتر از حداکثر باشد"): T {
   return schema.superRefine((val: any, ctx) => {
     const a = parseFaNumber(val?.[fromKey]);
@@ -292,12 +252,10 @@ export function orderedRange<T extends z.ZodType>(schema: T, fromKey: string, to
   }) as T;
 }
 
-/** فرمِ «خبردارم کن» — فوتر و پرو مجازی (یک فیلدِ ایمیل) */
 export const notifySchema = z.object({ email: email("ایمیل") });
 export type NotifyValues = z.infer<typeof notifySchema>;
 export const notifyDefaults: NotifyValues = { email: "" };
 
-/** تعدادِ خطاهای یک شیءِ errors (برای پیامِ «N مورد را اصلاح کنید») */
 export function countErrors(errors: Record<string, unknown> | undefined): number {
   if (!errors) return 0;
   return Object.values(errors).reduce<number>(

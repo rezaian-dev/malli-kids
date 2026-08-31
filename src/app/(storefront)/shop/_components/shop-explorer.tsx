@@ -125,7 +125,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
 
   const sortLabel = SORTS[state.sort] || "جدیدترین";
 
-  /* ---------- Sort options list (shared by Popover + mobile Sheet) ---------- */
+  /* 🔀 Shared sort UI for desktop and mobile. */
   const sortOptions = (onPick?: () => void) => (
     <ToggleGroup
       type="single"
@@ -163,7 +163,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
     </ToggleGroup>
   );
 
-  /* ---------- Filter body (shared by desktop sidebar + mobile Sheet) ---------- */
+  /* 🎚️ Shared filter UI for desktop and mobile. */
   const filterBody = (
     <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-5">
       {/* 🔎 Search */}
@@ -172,7 +172,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
           <Search className="size-3.5" /> جستجو
         </label>
         <span className="relative block">
-          <Search className="pointer-events-none absolute end-3.5 top-1/2 size-4 -translate-y-1/2 text-gold" />
+          <Search className="pointer-events-none absolute inset-e-3.5 top-1/2 size-4 -translate-y-1/2 text-gold" />
           <Input
             id="shop-search"
             type="search"

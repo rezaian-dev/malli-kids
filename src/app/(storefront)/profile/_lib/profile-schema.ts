@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { email, longText, nationalId, optMobile, optText, text } from "@/lib/forms";
 
-/** ویرایشِ حساب — نام و ایمیل الزامی، بقیه اختیاری ولی با قاعدهٔ واقعی */
 export const accountSchema = z
   .object({
     firstName: text("نام", 2, 40),
@@ -13,7 +12,7 @@ export const accountSchema = z
     email: email("ایمیل"),
   })
   .superRefine((v, ctx) => {
-    // قاعدهٔ دو فیلدی: آدرسِ بی‌شهر، قابلِ ارسال نیست
+    
     if (v.address.trim() && !v.city.trim()) {
       ctx.addIssue({ code: "custom", path: ["city"], message: "با آدرس، شهر را هم بنویسید" });
     }
@@ -30,7 +29,6 @@ export const accountDefaults: AccountValues = {
   email: "",
 };
 
-/** اطلاعاتِ کوچولو — همه اختیاری، ولی اگر نوشته شد باید درست باشد */
 export const childSchema = z.object({
   childName: optText(40, "نام کوچولو"),
   childAge: z
@@ -49,7 +47,6 @@ export const childSchema = z.object({
 export type ChildValues = z.infer<typeof childSchema>;
 export const childDefaults: ChildValues = { childName: "", childAge: "", childGender: "" };
 
-/** تیکتِ پشتیبانی — موضوع کوتاه، پیامِ واقعی */
 export const ticketSchema = z.object({
   subject: text("موضوع", 3, 60),
   message: longText("پیام", 10, 600),

@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   description: "متری همان پارچه‌ای که لباس‌ها از آن دوخته شده؛ با راهنمای شست‌وشو.",
 };
 
-
-
 export default function FabricsPage() {
   return (
     <>

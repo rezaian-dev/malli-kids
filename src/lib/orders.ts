@@ -6,17 +6,8 @@ import { BRAND, STORAGE } from "./constants";
 import { faNow } from "./format";
 import { notify } from "./notifications";
 
-/**
- * سفارش‌های واقعیِ کاربر — منبعِ دادهٔ تبِ «سفارش‌ها» در پنل و صفحهٔ سفارش‌های ادمین.
- *
- * چرخه: ثبت سفارش از صفحهٔ محصول → وضعیت «جدید» → ادمین وضعیت را جلو می‌برد →
- * کاربر هم در پنل (خط زمانی) و هم با اعلانِ هدر، مرحلهٔ سفارشش را می‌بیند.
- * پرداخت در این نسخهٔ نمایشی شبیه‌سازی می‌شود (پرداخت در محل).
- */
-
 export const ORDER_FLOW: OrderStatus[] = ["جدید", "در حال آماده‌سازی", "ارسال‌شده", "تحویل‌شده", "مرجوعی"];
 
-/** چهار مرحلهٔ اصلی برای خطِ زمانیِ پنل کاربر */
 export const ORDER_STAGES = ["ثبت و پرداخت", "آماده‌سازی", "ارسال", "تحویل"] as const;
 
 export function stageIndex(status: OrderStatus): number {
@@ -30,7 +21,7 @@ export function stageIndex(status: OrderStatus): number {
     case "تحویل‌شده":
       return 3;
     default:
-      return -1; // مرجوعی
+      return -1; 
   }
 }
 
@@ -40,7 +31,7 @@ export type OrderItem = { id: number; name: string; img: string; size: string; q
 
 export type Order = {
   id: string;
-  /** ایمیل/موبایل کاربر — معیارِ «سفارش‌های من» */
+  
   owner: string;
   customer: string;
   phone: string;
@@ -97,7 +88,6 @@ export function createOrder(input: { owner: string; customer: string; phone: str
   return order;
 }
 
-/** تغییر وضعیت (از ادمین) + اعلان به کاربر */
 export function setOrderStatus(id: string, status: OrderStatus) {
   const target = loadOrders().find((o) => o.id === id);
   persist(loadOrders().map((o) => (o.id === id ? { ...o, status } : o)));
@@ -106,7 +96,6 @@ export function setOrderStatus(id: string, status: OrderStatus) {
   }
 }
 
-/** فهرست زندهٔ سفارش‌ها — با owner فقط سفارش‌های همان کاربر. */
 export function useOrders(owner?: string): Order[] {
   const [all, setAll] = useState<Order[]>([]);
 

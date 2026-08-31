@@ -5,10 +5,6 @@ import { useTheme } from "@/providers/theme-provider";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-/**
- * سوییچ تم — با یک کلیک بین روشن و تاریک جابه‌جا می‌شود (بدون منوی کشویی).
- * وضعیت را ThemeProvider داخلی نگه می‌دارد؛ آیکن‌ها کاملاً با CSS جابه‌جا می‌شوند.
- */
 export function ModeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
 

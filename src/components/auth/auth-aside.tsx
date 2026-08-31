@@ -16,7 +16,6 @@ function Perk({ icon, t, d }: { icon: ReactNode; t: string; d: string }) {
   );
 }
 
-/** ستون تصویری دیالوگ ورود — کاملاً ایستا، پس Server Component. */
 export function AuthAside() {
   return (
     <aside className="relative hidden w-[46%] shrink-0 overflow-hidden rounded-s-[28px] bg-navy text-ivory lg:block">

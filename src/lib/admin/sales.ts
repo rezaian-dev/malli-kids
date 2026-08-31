@@ -5,7 +5,6 @@ const FA_MONTHS = ["فروردین", "اردیبهشت", "خرداد", "تیر",
 
 type Parsed = { y: number; m: number; d: number; key: string };
 
-/** Parse a Jalali date string like "۱۴۰۵/۰۶/۰۱". Returns null if malformed. */
 function parseJalali(date: string): Parsed | null {
   const parts = date.split("/");
   if (parts.length !== 3) return null;

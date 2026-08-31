@@ -1,10 +1,4 @@
-/**
- * پوسته‌های بصریِ فیلدها.
- *
- * همه‌چیز فقط کلاسِ Tailwind است (هیچ CSS دست‌نویسی این‌جا نیست) و هر پوسته از
- * همان کلاس‌هایی می‌آید که پیش‌تر داخلِ خودِ فرم‌ها تکرار شده بود — پس ظاهرِ سایت
- * عوض نمی‌شود، فقط یک‌جا تعریف می‌شود.
- */
+
 export type Skin = "lux" | "soft" | "admin" | "bare" | "inset";
 
 export const INPUT: Record<Skin, string> = {
@@ -31,21 +25,16 @@ export const LABEL: Record<Skin, string> = {
   inset: "text-xs font-bold text-navy/80 dark:text-linen",
 };
 
-/** پوسته‌هایی که یک «قاب» دورِ کنترل می‌خواهند (خطِ زیرین یا باکس).
- *  یادداشتِ بازر: همین عنصر با `data-field-shell` علامت می‌خورد تا معیارِ سنجشِ
- *  «فاصلهٔ متن تا لبه»، لبهٔ واقعیِ دیدنی باشد نه قابِ خودِ input. */
 export const SHELL: Partial<Record<Skin, string>> = {
   bare: "flex items-center gap-3 border-b-2 pb-2 transition-colors",
   inset:
     "flex h-12 items-center rounded-xl border bg-white transition-[border-color,box-shadow] duration-200 border-tan dark:border-white/12 focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/25 data-[invalid=true]:border-rose data-[invalid=true]:dark:border-rose data-[invalid=true]:focus-within:border-rose data-[invalid=true]:focus-within:ring-2 data-[invalid=true]:focus-within:ring-rose/25 dark:bg-navy-deep/60",
 };
 
-/** آیکونِ ابتدایِ فیلد در پوسته‌های قاب‌دار */
 export const LEAD: Partial<Record<Skin, string>> = {
   inset: "flex w-8 shrink-0 items-center justify-center text-gold dark:text-gold-light",
 };
 
-/** لنگرِ مقدارهایِ لاتین در فرمِ rtl (کنارِ dir="ltr" به‌کار می‌رود) */
 export const LATIN_ANCHOR = "text-right";
 
 export const SHELL_BARE_IDLE = "border-navy/15 focus-within:border-gold dark:border-gold/25";

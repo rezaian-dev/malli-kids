@@ -53,25 +53,10 @@ export function usePagination<T>(items: T[], pageSize: number, resetKey?: unknow
   };
 }
 
-/**
- * پنجرهٔ صفحه‌بندی — منطقِ ساده و قابل‌خواندن برای انسان:
- * همیشه اول و آخر، صفحاتِ نزدیک به صفحهٔ جاری، و «…» بینِ شکاف‌ها.
- * اعداد با same token «…» به‌جای تکرارِ صدها دکمه، حتی برای میلیون‌ها صفحه.
- *
- * همگام با منطق درخواستی:
- *   const pages = [];
- *   for (let i = 1; i <= totalPages; i++) {
- *     const isFirst = i === 1;
- *     const isLast = i === totalPages;
- *     const isNearCurrent = Math.abs(i - currentPage) <= siblings;
- *     if (isFirst || isLast || isNearCurrent) pages.push(i);
- *     else if (pages[pages.length - 1] !== "…") pages.push("…");
- *   }
- */
 export function pageWindow(page: number, pageCount: number, siblings = 1): (number | "…")[] {
   const totalPages = Number.isFinite(pageCount) ? Math.max(1, Math.floor(pageCount)) : 1;
   const currentPage = Number.isFinite(page) ? Math.min(totalPages, Math.max(1, Math.floor(page))) : 1;
-  // فاصلهٔ همسایگیِ اطراف صفحهٔ جاری؛ حداکثر ۲ برای حفظ کارایی.
+  
   const neighborRange = Math.min(2, Math.max(0, Number.isFinite(siblings) ? Math.floor(siblings) : 1));
 
   const pages: (number | "…")[] = [];

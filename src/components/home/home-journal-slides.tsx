@@ -9,11 +9,6 @@ const SLIDES = [
   { href: "/articles/fabric", img: "/brand/cat-boy-portrait.jpg", tag: "دوخت", title: "چرا الگوی آزاد برای بازی مهم است", excerpt: "درز آزاد یعنی کودک می‌دود و لباس کش نمی‌آید." },
 ];
 
-/**
- * اسلایدهای مجله — Server Component.
- * به‌صورت children داخل کروسل (جزیرهٔ client) می‌نشینند، پس نه دادهٔ مقاله‌ها و
- * نه مارک‌آپ کارت‌ها هیچ‌کدام وارد باندل مرورگر نمی‌شوند.
- */
 export function HomeJournalSlides() {
   return (
     <>

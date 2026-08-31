@@ -1,11 +1,5 @@
 import { ShieldCheck } from "lucide-react";
 
-/**
- * پانوشت اطمینان‌بخش پای فرم‌های ورود.
- *
- * فضای خالی زیر دکمه را با یک پیام کوتاه امنیتی پر می‌کند تا کاربر
- * قبل از دادن شمارهٔ موبایل خیالش راحت باشد. کاملاً ایستا → Server Component.
- */
 export function TrustNote() {
   return (
     <p

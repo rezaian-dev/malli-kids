@@ -16,11 +16,6 @@ const schema = z.object({
 type Values = z.infer<typeof schema>;
 const defaults: Values = { name: "", phone: "", kind: "", text: "" };
 
-/**
- * تنها جزیرهٔ client صفحهٔ همکاری: اعتبارسنجی زنده + ثبت درخواست + toast.
- * کارت‌های معرفی و پوستهٔ صفحه روی سرور رندر می‌شوند و اینجا هیچ مارک‌آپِ
- * ایستایی تکرار نشده است.
- */
 export function CollabForm() {
   const form = useAppForm({ schema, defaultValues: defaults });
 

@@ -16,15 +16,11 @@ import { NAV_LINK } from "./header-styles";
 
 const MAIN_LINKS = NAV_MAIN.filter((n) => n.href !== "/shop");
 
-/**
- * ناوبری دسکتاپ — با state کنترلشده، بهمحضِ تغییرِ مسیر، منوی باز بسته میشود
- * تا بعد از انتخابِ یک آیتم و رفتن به صفحهٔ جدید، منوی «دستهبندی» باز نمانَد.
- */
 export function DesktopNav() {
   const path = usePathname();
   const [value, setValue] = useState("");
 
-  // Close the open menu (controlled) the moment the route changes.
+  // 🧭 Close the open menu as soon as the route changes.
   useEffect(() => {
     setValue("");
   }, [path]);

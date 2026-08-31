@@ -1,5 +1,4 @@
-/** آیکون برداری پیام‌رسان ایتا — هم‌خانواده با سایر آیکن‌های برندِ فوتر.
- * مسیر از روی لوگوی رسمی (تراست برداریِ بزرگ‌ترین مؤلفهٔ همبند) استخراج شده است. */
+
 export function EitaaIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 896 918" fill="currentColor" aria-hidden className={className}>

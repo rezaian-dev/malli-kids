@@ -24,10 +24,6 @@ import {
 import { cn } from "@/lib/utils";
 import { ICON_BTN, PANEL, PANEL_HEAD } from "./header-styles";
 
-/**
- * سبد خرید — آیتم‌های واقعی (محصول + سایز + تعداد) با localStorage.
- * طراحی کارت‌محور، جمع‌وجور روی موبایل و کاملاً واکنش‌گرا.
- */
 export function CartSheet() {
   const { cart, cartCount, setCartQty, removeCartItem, clearCart, campaign, priceOf } = useStore();
   const empty = cartCount === 0;
@@ -56,11 +52,11 @@ export function CartSheet() {
         >
           <ShoppingBag className="size-5 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110" />
 
-          {/* بج تعداد — عدد فارسی، +۹۹ برای مقادیر بزرگ */}
+          {}
           <Badge
             aria-hidden
             className={cn(
-              "pointer-events-none absolute -end-1 -top-1 justify-center rounded-full border-2 p-0 tabular-nums",
+              "pointer-events-none absolute -inset-e-1 -top-1 justify-center rounded-full border-2 p-0 tabular-nums",
               "border-cream bg-navy text-[10px] font-black text-gold",
               "dark:border-navy-deep dark:bg-navy dark:text-gold-light",
               cartCount > 9 ? "h-5 min-w-5 px-1" : "size-5",
@@ -74,7 +70,7 @@ export function CartSheet() {
 
       <SheetContent side="left" dir="rtl" showCloseButton={false} className={cn(PANEL, "flex w-[min(24rem,94vw)] flex-col")}>
         <SheetHeader className={cn(PANEL_HEAD, "relative pe-14")}>
-          <SheetClose asChild className="absolute end-3.5 top-1/2 -translate-y-1/2">
+          <SheetClose asChild className="absolute inset-e-3.5 top-1/2 -translate-y-1/2">
             <Button
               size="icon-sm"
               variant="ghost"
@@ -123,7 +119,7 @@ export function CartSheet() {
           </div>
         ) : (
           <>
-            {/* نوار پیشرفتِ ارسالِ رایگان */}
+            {}
             <div className="border-b border-navy/10 px-4 py-3.5 dark:border-gold/20">
               <div className="flex items-center gap-2 text-[11px] font-black text-navy dark:text-ivory">
                 <Truck className="size-4 shrink-0 text-gold" />
@@ -149,7 +145,7 @@ export function CartSheet() {
               </div>
             </div>
 
-            {/* آیتم‌ها */}
+            {}
             <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-4 py-4 [scrollbar-width:thin]">
               {rows.map(({ item, product }) => (
                 <div
@@ -190,7 +186,7 @@ export function CartSheet() {
                     </div>
 
                     <div className="mt-2 flex items-center justify-between gap-2">
-                      {/* تعداد */}
+                      {}
                       <div className="flex items-center gap-1 rounded-full border border-navy/12 bg-sand p-0.5 dark:border-gold/25 dark:bg-dusk-soft">
                         <button
                           type="button"
@@ -220,7 +216,7 @@ export function CartSheet() {
               ))}
             </div>
 
-            {/* جمع */}
+            {}
             <div className="space-y-1.5 border-t border-navy/10 px-4 py-3 text-xs font-bold text-navy/70 dark:border-gold/20 dark:text-wheat/80">
               <p className="flex justify-between">
                 <span>جمعِ کالاها</span>

@@ -10,8 +10,6 @@ export const metadata: Metadata = {
   description: "جدول سایز پوشاک کودک مالی کیدز بر حسب قد و سن، از ۸۰ تا ۱۲۲.",
 };
 
-
-
 export default function SizeGuidePage() {
   return (
     <>

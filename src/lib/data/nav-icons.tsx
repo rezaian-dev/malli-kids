@@ -15,7 +15,6 @@ import {
   Sparkles,
 } from "lucide-react";
 
-/** نگاشت نامِ آیکون در دادهٔ ناوبری به کامپوننت lucide. */
 export const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   crown: Crown,
   shirt: Shirt,
@@ -32,7 +31,6 @@ export const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   phone: Phone,
 };
 
-/** همیشه یک کامپوننت معتبر برمی‌گرداند. */
 export function navIcon(name?: string): ComponentType<{ className?: string }> {
   return (name && ICONS[name]) || Sparkles;
 }

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-/** دکمه‌های پایان مقاله — Server Component (اسلات). */
 export function ArticleActions() {
   return (
     <div className="flex flex-wrap gap-2 mt-8">

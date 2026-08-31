@@ -124,7 +124,7 @@ export default function AdminProducts() {
               <div className="flex min-w-0 gap-3 p-3.5">
                 <div className="relative size-[5.25rem] shrink-0 overflow-hidden rounded-2xl bg-sand dark:bg-navy-deep">
                   <Image src={product.img} alt={product.name} fill sizes="84px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
-                  <span className={`absolute bottom-1.5 end-1.5 size-2 rounded-full ring-2 ring-white dark:ring-navy-deep ${product.stock ? "bg-emerald-500" : "bg-rose"}`} />
+                  <span className={`absolute bottom-1.5 inset-e-1.5 size-2 rounded-full ring-2 ring-white dark:ring-navy-deep ${product.stock ? "bg-emerald-500" : "bg-rose"}`} />
                 </div>
                 <div className="min-w-0 flex-1 py-0.5">
                   <div className="flex items-center justify-between gap-2">

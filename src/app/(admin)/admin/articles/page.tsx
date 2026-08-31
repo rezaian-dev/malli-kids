@@ -43,7 +43,7 @@ type Draft = {
 
 const EMPTY: Draft = { slug: null, title: "", tag: TAGS[0], excerpt: "", body: "", cover: "", published: true };
 
-/** اسلاگِ فارسی‌پسند: فاصله‌ها خط تیره، کاراکترهای نامعتبر حذف می‌شوند */
+/** 🪶 Build a clean Persian-friendly slug from the title. */
 function persianSlug(title: string, taken: string[]): string {
   const base = title.trim().replace(/\s+/g, "-").replace(/[^\p{L}\p{N}-]/gu, "");
   let slug = base || "مقاله";
@@ -52,7 +52,7 @@ function persianSlug(title: string, taken: string[]): string {
   return slug;
 }
 
-/** تاریخِ شمسیِ امروز — الگوریتمِ استانداردِ جلالی */
+/** 🗓️ Return today's Jalali date. */
 function jalaliToday(): string {
   const g = new Date();
   const gy = g.getFullYear();
@@ -145,7 +145,7 @@ export default function AdminArticles() {
     }
   }
 
-  /* ---------------- نمایِ ویرایشگر ---------------- */
+  /* ✍️ Editor view. */
   if (draft) {
     return (
       <div>
@@ -198,9 +198,9 @@ export default function AdminArticles() {
               <span className="text-[11px] font-black text-navy/50 dark:text-wheat">تصویر شاخص</span>
               {draft.cover ? (
                 <div className="relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {/* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use saved data URLs. */}
                   <img src={draft.cover} alt="تصویر شاخص" className="h-36 w-full rounded-2xl object-cover" />
-                  <button type="button" onClick={() => set("cover", "")} className="absolute end-2 top-2 grid size-8 place-items-center rounded-full bg-rose text-white shadow" aria-label="حذف تصویر">
+                  <button type="button" onClick={() => set("cover", "")} className="absolute inset-e-2 top-2 grid size-8 place-items-center rounded-full bg-rose text-white shadow" aria-label="حذف تصویر">
                     <Trash2 className="size-4" />
                   </button>
                 </div>
@@ -225,7 +225,7 @@ export default function AdminArticles() {
     );
   }
 
-  /* ---------------- نمایِ فهرست ---------------- */
+  /* 📰 List view. */
   return (
     <div>
       <AdminPageHeader
@@ -271,7 +271,7 @@ export default function AdminArticles() {
         {pg.pageItems.map((article, index) => (
           <article key={article.slug} className="rounded-[22px] max-[639px]:rounded-[19px] border border-navy/9 bg-paper/94 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-gold/40 hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:border-gold-soft/30 dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] group flex flex-col gap-3 overflow-hidden p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4" style={{ animationDelay: `${index * 45}ms` }}>
             {article.cover ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
+              /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use saved data URLs. */
               <img src={article.cover} alt="" className="h-32 w-full rounded-2xl object-cover transition-transform duration-500 group-hover:scale-[1.02] sm:h-24 sm:w-32" />
             ) : (
               <div className="grid h-32 w-full shrink-0 place-items-center rounded-2xl bg-linear-to-br from-sand to-gold/25 text-gold-deep dark:from-navy-deep dark:to-gold/12 dark:text-gold-soft sm:h-24 sm:w-32"><FilePenLine className="size-6" /></div>

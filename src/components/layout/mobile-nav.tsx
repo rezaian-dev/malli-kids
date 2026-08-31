@@ -26,7 +26,6 @@ import { isActive } from "./nav-active-link";
 
 const MAIN_LINKS = NAV_MAIN.filter((n) => n.href !== "/shop");
 
-/** منوی موبایل (زیر ۷۶۸px) — Sheet + Accordion، بدون state دستی. */
 export function MobileNav() {
   const path = usePathname();
 
@@ -37,13 +36,13 @@ export function MobileNav() {
           variant="ghost"
           size="icon"
           aria-label="منو"
-          // دقت: «relative» لازم است، وگرنه ✕ که absolute inset-0 است به نزدیک‌ترین
-          // والدِ positioned (یعنی خودِ هدر) می‌چسبد و آیکونِ دکمه غیب می‌شود.
+          
+          
           className={cn(
             ICON_BTN,
             "group/menu relative md:hidden hover:bg-gold/15",
-            // نسخهٔ ghostِ شادن روی هر تریگرِ باز، bg-muted می‌گذارد؛ اینجا همان
-            // حالتِ «فعال» را طلایی می‌کنیم تا با بقیهٔ آیکون‌های هدر هم‌زبان باشد.
+            
+            
             "aria-expanded:bg-gold/25 aria-expanded:text-gold-deep dark:aria-expanded:text-gold-light",
           )}
         >
@@ -54,7 +53,7 @@ export function MobileNav() {
 
       <SheetContent side="right" dir="rtl" showCloseButton={false} className={cn(PANEL, "w-[min(20rem,90vw)]")}>
         <SheetHeader className={cn(PANEL_HEAD, "relative pe-14 py-4")}>
-          <SheetClose asChild className="absolute end-3.5 top-1/2 -translate-y-1/2">
+          <SheetClose asChild className="absolute inset-e-3.5 top-1/2 -translate-y-1/2">
             <Button
               size="icon-sm"
               variant="ghost"

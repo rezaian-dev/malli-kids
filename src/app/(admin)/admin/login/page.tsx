@@ -20,7 +20,7 @@ export default function AdminLogin() {
 
   function onSubmit({ user, pass }: AdminLoginValues) {
     if (!login(user.trim(), pass)) {
-      // خطایِ سمتِ سرور: رویِ ریشهٔ فرم می‌نشیند و فرم را می‌لرزاند
+      
       form.setError("root", { message: "نام کاربری یا رمز نادرست است" });
       setShake((n) => n + 1);
       return;
@@ -31,7 +31,7 @@ export default function AdminLogin() {
 
   return (
     <div className="grid min-h-dvh text-navy bg-fog bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-[size:auto,auto,36px_36px,36px_36px] dark:text-ivory dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-[size:auto,auto,42px_42px,42px_42px] lg:grid-cols-[minmax(0,1fr)_minmax(20rem,42%)]">
-      {/* الگوی هندسیِ admin-root::before — جانشین pseudo-element */}
+      {}
       <span
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-0 bg-no-repeat opacity-[0.22] bg-[position:calc(100%+45px)_-45px] bg-[size:min(44vw,38rem)] [mask-image:linear-gradient(to_bottom_left,#000,transparent_64%)] max-[639px]:bg-[size:20rem] max-[639px]:opacity-[0.14] dark:opacity-[0.52] dark:[filter:drop-shadow(0_0_22px_rgba(193,147,87,0.08))]"

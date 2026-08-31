@@ -8,13 +8,8 @@ export const metadata: Metadata = {
   description: "راهنمای سایز، جنس پارچه، مراقبت از لباس کودک و استایل‌های فصلی — مجلهٔ مالی کیدز.",
 };
 
-/**
- * مجله — Server Component.
- * پوسته و سربرگ روی سرور رندر می‌شوند و مقاله‌های دانه هم همان‌جا داخل HTML
- * می‌آیند؛ جزیرهٔ client فقط برای جایگزینیِ فهرست با مقاله‌های ذخیره‌شدهٔ ادمین است.
- */
 export default function ArticlesPage() {
-  const seed = loadPublishedArticles(); // روی سرور = مقاله‌های دانه
+  const seed = loadPublishedArticles(); 
 
   return (
     <>

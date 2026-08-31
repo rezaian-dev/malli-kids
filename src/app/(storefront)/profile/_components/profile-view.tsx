@@ -37,7 +37,7 @@ export function ProfileView() {
   const account = useAppForm({ schema: accountSchema, defaultValues: accountDefaults });
   const child = useAppForm({ schema: childSchema, defaultValues: childDefaults });
 
-  // مقدارها از حسابِ کاربر پر می‌شوند (یک‌بار به‌ازایِ هر تغییرِ user)
+  // 👤 Refill both forms when the signed-in user changes.
   useEffect(() => {
     if (!user) return;
     account.reset({
@@ -53,7 +53,7 @@ export function ProfileView() {
     child.reset({
       childName: user.childName || "",
       childAge: user.childAge || "",
-      // مقدارهای قدیمیِ ذخیره‌شده که درِ لیست نیستند، خالی خوانده می‌شوند
+      // 🪶 Drop legacy values that no longer match the allowed list.
       childGender: gender === "دختر" || gender === "پسر" ? gender : "",
     });
   }, [user, account, child]);
@@ -245,7 +245,7 @@ export function ProfileView() {
   );
 }
 
-/* ─────────────── تبِ سفارش‌ها: آمار، فیلتر و خطِ زمانی ─────────────── */
+/* 📦 Orders tab: stats, filters, and timeline. */
 
 const ORDER_TONE: Record<OrderStatus, string> = {
   جدید: "bg-gold/15 text-gold dark:bg-gold/20 dark:text-gold-light",
@@ -410,7 +410,7 @@ function OrderCard({ order }: { order: Order }) {
   );
 }
 
-/* ─────────────── تبِ علاقه‌مندی‌ها ─────────────── */
+/* 💛 Wishlist tab. */
 
 function WishlistPanel() {
   const favs = useFavorites();
@@ -447,9 +447,7 @@ function WishlistPanel() {
   );
 }
 
-/* ─────────────── تبِ پشتیبانی: تیکت‌ها ───────────────
- * پشتیبانیِ ملی‌کیدز فقط از طریقِ سایت است: کاربر تیکت می‌سازد و پاسخ را
- * در همین‌جا، پنلِ خودش می‌بیند. گفتگو زنده با پنلِ ادمین همگام است. */
+/* 🎫 Support tab with live ticket threads. */
 
 const TICKET_STATUS: Record<TicketStatus, { label: string; cls: string }> = {
   open: { label: "در انتظار پاسخ", cls: "bg-gold/15 text-gold dark:bg-gold/20 dark:text-gold-light" },
@@ -540,7 +538,7 @@ function SupportPanel() {
   );
 }
 
-/** رشتهٔ گفتگوی یک تیکت + پاسخِ پیگیریِ کاربر */
+/** 💬 Ticket thread plus the user's follow-up reply. */
 function TicketThread({ ticket }: { ticket: Ticket }) {
   const [reply, setReply] = useState("");
 

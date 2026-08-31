@@ -5,14 +5,6 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { findPublishedArticle, type JournalArticle } from "@/lib/articles";
 
-/**
- * بدنهٔ مقاله.
- *
- * چرا client؟ مقاله‌های ادمین در localStorage زندگی می‌کنند و مسیرِ ایستا ندارند.
- * ولی دانهٔ سرور (`initial`) از قبل رندر شده است، پس دیگر «صفحهٔ خالی تا mount»
- * نداریم. حالتِ یافت‌نشد و دکمه‌های پایانِ مقاله به‌صورت اسلاتِ Server Component
- * تزریق می‌شوند تا مارک‌آپشان روی سرور بماند.
- */
 export function ArticleView({
   slug,
   initial,
@@ -32,7 +24,7 @@ export function ArticleView({
     setReady(true);
   }, [slug]);
 
-  // فقط وقتی سرور هم چیزی نداشت و هنوز localStorage خوانده نشده، فضا رزرو می‌شود
+  
   if (!ready) return <div className="min-h-[40vh]" />;
   if (!a) return <>{missing}</>;
 
@@ -49,7 +41,7 @@ export function ArticleView({
       {a.date ? <span className="mt-4 ms-2 align-middle text-[11px] font-bold text-navy/40 dark:text-wheat">{a.date}</span> : null}
       <h1 className="text-3xl font-black mt-3 text-navy dark:text-ivory">{a.title}</h1>
       {a.cover ? (
-        /* eslint-disable-next-line @next/next/no-img-element */
+        /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin article covers can be raw data URLs. */
         <img src={a.cover} alt="" className="mt-6 w-full rounded-3xl object-cover" />
       ) : null}
       {isHtml ? (

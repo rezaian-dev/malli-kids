@@ -5,10 +5,6 @@ import Autoplay from "embla-carousel-autoplay";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { SliderArrow } from "@/components/ui/slider-arrow";
 
-/**
- * کروسل مجله — تنها بخشِ client، خودِ موتورِ اسکرول (Embla) و دکمه‌هاست.
- * اسلایدها به‌صورت children از یک Server Component تزریق می‌شوند.
- */
 export function HomeJournal({ children }: { children: ReactNode }) {
   const [emblaRef, embla] = useEmblaCarousel(
     { loop: true, align: "start", direction: "rtl", skipSnaps: false, dragFree: false },
