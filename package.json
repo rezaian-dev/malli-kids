@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build --webpack",
+    "dev": "node scripts/ensure-local-next.mjs && next dev",
+    "build": "node scripts/ensure-local-next.mjs && next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",
