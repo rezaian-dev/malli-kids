@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import { Intro } from "@/components/shared/intro";
+
+export const metadata: Metadata = {
+  title: "قوانین و مقررات",
+  description: "شرایط خرید، ارسال و بازگشت کالا در فروشگاه مالی کیدز.",
+};
+
 
 
 export default function TermsPage() {

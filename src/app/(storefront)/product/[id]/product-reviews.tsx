@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { loadReviews } from "@/lib/admin-sync";
 import type { AdminReview, Product } from "@/types";
+import { useLiveProduct } from "./live-product";
 
 /** دیدگاه‌های تأییدشدهٔ همین محصول — زنده از دیتابیسِ پنل */
-export function ProductReviews({ product }: { product: Pick<Product, "name"> }) {
+export function ProductReviews({ product: seed }: { product: Product }) {
+  const product = useLiveProduct(seed);
   const [list, setList] = useState<AdminReview[]>([]);
   useEffect(() => {
     setList(loadReviews(true).filter((r) => r.product === product.name));

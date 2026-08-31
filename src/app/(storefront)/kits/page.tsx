@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import { Intro } from "@/components/shared/intro";
 import { Catalog } from "@/features/product";
 import { KITS } from "@/lib/data/pages";
+
+export const metadata: Metadata = {
+  title: "کیت‌های آماده دوخت",
+  description: "کیت کامل دوخت پوشاک کودک؛ همه‌چیز داخل جعبه است.",
+};
+
 
 
 export default function KitsPage() {

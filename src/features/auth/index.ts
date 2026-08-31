@@ -1,1 +1,1 @@
-export { Modal } from "./components/auth-modal";
+export { Modal } from "./components/auth-modal-mount";

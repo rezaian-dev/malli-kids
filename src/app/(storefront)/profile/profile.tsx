@@ -371,7 +371,7 @@ function OrderCard({ order }: { order: Order }) {
       <ul className="space-y-2 px-4 py-3">
         {order.items.map((it) => (
           <li key={`${it.id}-${it.size}`} className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+            { }
             <Image src={it.img} alt="" width={48} height={48} className="size-12 shrink-0 rounded-xl object-cover" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-black text-navy dark:text-ivory">{it.name}</p>

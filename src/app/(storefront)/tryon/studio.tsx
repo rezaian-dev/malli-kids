@@ -120,7 +120,7 @@ export function Studio() {
           ) : null}
 
           {/* current garment chip */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <Image src={CORE_PRODUCTS[garment].img} alt="" width={80} height={96} className="absolute bottom-3 end-3 h-24 w-20 rounded-xl border-2 border-white object-cover shadow-lg" />
         </div>
 
@@ -156,7 +156,7 @@ export function Studio() {
               }}
               className={`overflow-hidden rounded-xl border-2 transition ${person === src ? "border-gold" : "border-transparent hover:border-gold/40"}`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              { }
               <Image src={src} alt="مدل نمونه" width={56} height={72} className="h-18 w-14 object-cover" />
             </button>
           ))}
@@ -180,7 +180,7 @@ export function Studio() {
               onClick={() => setGarment(i)}
               className={`overflow-hidden rounded-xl border-2 transition ${garment === i ? "border-gold" : "border-transparent hover:border-gold/40"}`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              { }
               <Image src={p.img} alt={p.name} width={60} height={80} className="aspect-3/4 w-full object-cover" />
             </button>
           ))}

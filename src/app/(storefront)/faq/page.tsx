@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import { Intro } from "@/components/shared/intro";
 import { Faq } from "@/components/shared/faq";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "سوال‌های پرتکرار",
+  description: "پاسخ سوال‌های پرتکرار مادرها دربارهٔ سایز، ارسال، بازگشت کالا و پرو مجازی.",
+};
+
 
 
 export default function FaqPage() {

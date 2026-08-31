@@ -1,20 +1,44 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ArticleClient } from "./article-client";
+import type { Metadata } from "next";
+import { findPublishedArticle, loadPublishedArticles } from "@/lib/articles";
+import { ArticleView } from "./article-view";
+import { ArticleMissing } from "./article-missing";
+import { ArticleActions } from "./article-actions";
 
-export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  return <ArticleClient slug={slug} />;
+/** اسلاگ‌های فارسی از مسیر به‌صورت percent-encoded می‌رسند */
+function decode(slug: string) {
+  try {
+    return decodeURIComponent(slug);
+  } catch {
+    return slug;
+  }
 }
 
-/** حالتِ «یافت نشد» — مقاله‌های تازهٔ ادمین مسیرِ ایستا ندارند، پس کلاینتی بررسی می‌شود */
-export function ArticleMissing() {
+/** مقاله‌های دانه از پیش ساخته می‌شوند؛ مقاله‌های ادمین در زمان اجرا حل می‌شوند */
+export function generateStaticParams() {
+  return loadPublishedArticles().map((a) => ({ slug: a.slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const a = findPublishedArticle(decode(slug));
+  return a ? { title: a.title, description: a.excerpt } : { title: "مجله" };
+}
+
+/**
+ * صفحهٔ مقاله — Server Component.
+ * مقالهٔ دانه روی سرور پیدا و رندر می‌شود؛ جزیرهٔ client فقط برای مقاله‌هایی است
+ * که ادمین در مرورگر ذخیره کرده و اسلات‌های ایستا را از همین‌جا می‌گیرد.
+ */
+export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const decoded = decode(slug);
+
   return (
-    <article className="container mx-auto w-full px-4 sm:px-5 lg:px-7 max-w-3xl py-16 text-center">
-      <p className="text-sm font-bold text-navy/50 dark:text-wheat">این مقاله حذف شده یا هنوز منتشر نشده است.</p>
-      <Button asChild variant="secondary" className="mt-4 rounded-full">
-        <Link href="/articles">بازگشت به مجله</Link>
-      </Button>
-    </article>
+    <ArticleView
+      slug={decoded}
+      initial={findPublishedArticle(decoded) ?? null}
+      missing={<ArticleMissing />}
+      actions={<ArticleActions />}
+    />
   );
 }

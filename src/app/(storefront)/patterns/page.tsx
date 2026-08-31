@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import { Intro } from "@/components/shared/intro";
 import { Catalog } from "@/features/product";
 import { PATTERNS } from "@/lib/data/pages";
+
+export const metadata: Metadata = {
+  title: "الگوهای آماده دوخت",
+  description: "الگوهای سایزبندی‌شدهٔ ۸۰ تا ۱۲۲ همراه با فیلم کوتاه برش.",
+};
+
 
 
 export default function PatternsPage() {

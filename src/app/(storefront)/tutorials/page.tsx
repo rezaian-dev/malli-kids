@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import { Intro } from "@/components/shared/intro";
 import { Catalog } from "@/features/product";
 import { TUTORIALS } from "@/lib/data/pages";
+
+export const metadata: Metadata = {
+  title: "آموزش‌های آتلیه",
+  description: "درس‌های کوتاه دوخت؛ از اولین کوک تا چین دامن جشن.",
+};
+
 
 
 export default function TutorialsPage() {

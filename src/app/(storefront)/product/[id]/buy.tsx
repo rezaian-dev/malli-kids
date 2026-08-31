@@ -18,10 +18,13 @@ import { createOrder, SHIPPING_FEE } from "@/lib/orders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useLiveProduct } from "./live-product";
 
 const SIZES = ["۸۰", "۸۶", "۹۲", "۹۸", "۱۰۴", "۱۱۰", "۱۱۶", "۱۲۲"];
 
-export function Buy({ product }: { product: Product }) {
+export function Buy({ product: seed }: { product: Product }) {
+  // دانهٔ سرور + نسخهٔ ویرایش‌شدهٔ ادمین (اگر باشد)
+  const product = useLiveProduct(seed);
   const { addToCart, showToast, user, setAuthOpen, campaign, priceOf } = useStore();
   const [size, setSize] = useState("۹۸");
   const [qty, setQty] = useState(1);
@@ -226,7 +229,7 @@ export function Buy({ product }: { product: Product }) {
             </DialogTitle>
 
             <div className="flex items-center gap-3 rounded-2xl border border-navy/10 bg-white p-3 dark:border-gold/25 dark:bg-navy-deep/50">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              { }
               <Image src={product.img} alt="" width={56} height={56} className="size-14 rounded-xl object-cover" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-black">{product.name}</p>

@@ -11,12 +11,14 @@ import { AppForm, Field, TextField, TextareaField, useAppForm } from "@/componen
 import { cn } from "@/lib/utils";
 import { Product } from "@/types";
 import { RATING_STARS, reviewDefaults, reviewSchema } from "./schema";
+import { useLiveProduct } from "./live-product";
 
 /**
  * فرم ثبت نظر — react-hook-form + zod.
  * اعتبارسنجی: امتیاز (۱ تا ۵) الزامی، نظر ۲۰ تا ۵۰۰ حرف.
  */
-export function ReviewForm({ product }: { product: Pick<Product, "id" | "name"> }) {
+export function ReviewForm({ product: seed }: { product: Product }) {
+  const product = useLiveProduct(seed);
   const { user } = useStore();
   const [purchased, setPurchased] = useState(false);
   const form = useAppForm({ schema: reviewSchema, defaultValues: reviewDefaults });

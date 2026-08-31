@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { Intro } from "@/components/shared/intro";
 import { Lock, Share2, UserRound } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "حریم خصوصی",
+  description: "سیاست نگهداری داده‌ها در مالی کیدز؛ فقط دادهٔ لازم برای سفارش و پشتیبانی.",
+};
+
 
 
 const ITEMS = [

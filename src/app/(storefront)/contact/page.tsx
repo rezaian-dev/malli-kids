@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Clock, Handshake, Headphones, MapPin, Phone } from "lucide-react";
 import { Intro } from "@/components/shared/intro";
 import { Button } from "@/components/ui/button";
 import { BRAND } from "@/lib/constants";
 import { Map } from "./map";
+
+export const metadata: Metadata = {
+  title: "تماس با ما",
+  description: "پشتیبانی مالی کیدز از طریق سایت؛ پاسخ سوال‌ها، پیگیری سفارش و آدرس گالری.",
+};
+
 
 /**
  * صفحهٔ تماس — بدونِ فرم.

@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Journal } from "@/features/home/components/journal";
+import { JournalSlides } from "@/features/home/components/journal-slides";
 import { OrnStitch } from "@/features/home/components/ornaments";
 
 export function Stories() {
@@ -17,11 +19,13 @@ export function Stories() {
             </h2>
             <p className="mt-2 text-sm text-navy/50 dark:text-wheat">خواندنی‌های کوتاه برای خرید و استایل کوچولو</p>
           </div>
-          <a href="/articles" className="text-sm font-black text-gold hover:underline">
+          <Link href="/articles" className="text-sm font-black text-gold hover:underline">
             همه مقالات
-          </a>
+          </Link>
         </div>
-        <Journal />
+        <Journal>
+          <JournalSlides />
+        </Journal>
       </div>
     </section>
   );

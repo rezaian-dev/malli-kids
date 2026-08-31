@@ -1,27 +1,40 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { findPublishedArticle, type JournalArticle } from "@/lib/articles";
-import { ArticleMissing } from "./page";
 
-export function ArticleClient({ slug }: { slug: string }) {
-  const [a, setA] = useState<JournalArticle | null | undefined>(undefined);
-  // اسلاگ‌های فارسی از مسیر به‌صورت percent-encoded می‌رسند
-  const decoded = useMemo(() => {
-    try {
-      return decodeURIComponent(slug);
-    } catch {
-      return slug;
-    }
+/**
+ * بدنهٔ مقاله.
+ *
+ * چرا client؟ مقاله‌های ادمین در localStorage زندگی می‌کنند و مسیرِ ایستا ندارند.
+ * ولی دانهٔ سرور (`initial`) از قبل رندر شده است، پس دیگر «صفحهٔ خالی تا mount»
+ * نداریم. حالتِ یافت‌نشد و دکمه‌های پایانِ مقاله به‌صورت اسلاتِ Server Component
+ * تزریق می‌شوند تا مارک‌آپشان روی سرور بماند.
+ */
+export function ArticleView({
+  slug,
+  initial,
+  missing,
+  actions,
+}: {
+  slug: string;
+  initial: JournalArticle | null;
+  missing: ReactNode;
+  actions: ReactNode;
+}) {
+  const [a, setA] = useState<JournalArticle | null>(initial);
+  const [ready, setReady] = useState(initial !== null);
+
+  useEffect(() => {
+    setA(findPublishedArticle(slug) ?? null);
+    setReady(true);
   }, [slug]);
-  useEffect(() => setA(findPublishedArticle(decoded) ?? null), [decoded]);
 
-  // تا زمانِ خواندنِ localStorage چیزی نشان نده تا با رندرِ سرور تضاد نشود
-  if (a === undefined) return <div className="min-h-[40vh]" />;
-  if (a === null) return <ArticleMissing />;
+  // فقط وقتی سرور هم چیزی نداشت و هنوز localStorage خوانده نشده، فضا رزرو می‌شود
+  if (!ready) return <div className="min-h-[40vh]" />;
+  if (!a) return <>{missing}</>;
 
   const isHtml = a.body.trimStart().startsWith("<");
 
@@ -48,17 +61,7 @@ export function ArticleClient({ slug }: { slug: string }) {
       ) : (
         <p className="mt-6 leading-9 text-navy/75 dark:text-cream/75">{a.body}</p>
       )}
-      <div className="flex flex-wrap gap-2 mt-8">
-        <Button asChild className="rounded-full">
-          <Link href="/shop">فروشگاه</Link>
-        </Button>
-        <Button asChild variant="secondary" className="rounded-full">
-          <Link href="/tryon">پرو مجازی</Link>
-        </Button>
-        <Button asChild variant="ghost" className="rounded-full">
-          <Link href="/articles">بازگشت به مجله</Link>
-        </Button>
-      </div>
+      {actions}
     </article>
   );
 }

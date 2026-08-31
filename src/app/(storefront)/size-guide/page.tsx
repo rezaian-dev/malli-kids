@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Intro } from "@/components/shared/intro";
 import { SIZE_ROWS } from "@/lib/data/pages";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  title: "راهنمای سایز",
+  description: "جدول سایز پوشاک کودک مالی کیدز بر حسب قد و سن، از ۸۰ تا ۱۲۲.",
+};
+
 
 
 export default function SizeGuidePage() {

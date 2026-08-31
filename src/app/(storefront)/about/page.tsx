@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Heart, ScanFace, Scissors, ShieldCheck } from "lucide-react";
 import { Intro } from "@/components/shared/intro";
 import { ABOUT } from "@/lib/data/pages";
 import { BRAND } from "@/lib/constants";
+
+export const metadata: Metadata = {
+  title: "درباره مالی کیدز",
+  description: "قصهٔ آتلیهٔ مالی کیدز؛ دوخت ایرانی پوشاک کودک از نوزادی تا ۱۰ سالگی.",
+};
+
 
 const ICONS = [Heart, Scissors, ScanFace, ShieldCheck];
 

@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Intro } from "@/components/shared/intro";
 import { Button } from "@/components/ui/button";
+
+export const metadata: Metadata = {
+  title: "ارسال و بازگشت",
+  description: "شرایط ارسال سریع، هزینهٔ پست و بازگشت آسان کالا در مالی کیدز.",
+};
+
 
 
 export default function ShippingPage() {
