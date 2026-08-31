@@ -397,7 +397,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
                   سایز {size} × {toFaDigits(qty)}
                 </p>
               </div>
-              <span className="text-gold text-sm fock">
+              <span className="text-gold text-sm font-black">
                 {formatToman(subtotal)}
               </span>
             </div>
@@ -513,6 +513,4 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
       </div>
     </div>
   );
-}
- );
 }
