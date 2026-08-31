@@ -113,6 +113,7 @@ export function Field({
       {shell ? (
         <span
           data-field-shell
+          data-skin={skin}
           className={cn(
             shell,
             skin === "bare" && (invalid ? SHELL_BARE_BAD : SHELL_BARE_IDLE),

@@ -10,8 +10,8 @@ export function Hero() {
       id="heroSection"
       className="relative overflow-hidden bg-transparent pt-8 pb-14 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24"
     >
-      <div className="bg-gold/25 xs:size-88 pointer-events-none absolute -inset-s-20 -top-24 size-72 animate-pulse rounded-full blur-[70px]" />
-      <div className="bg-navy/10 xs:size-96 pointer-events-none absolute -inset-e-24 top-32 size-80 animate-pulse rounded-full blur-[70px]" />
+      <div className="bg-gold/25 xs:size-88 pointer-events-none absolute -inset-s-20 -top-24 size-72 animate-pulse rounded-full blur-[56px]" />
+      <div className="bg-navy/10 xs:size-96 pointer-events-none absolute -inset-e-24 top-32 size-80 animate-pulse rounded-full blur-[56px]" />
       <span className="font-display pointer-events-none absolute inset-e-[5%] top-[22%] hidden rotate-6 text-[130px] leading-none text-transparent select-none [-webkit-text-stroke:1.5px_rgba(196,163,106,.55)] xl:block">
         kids
       </span>

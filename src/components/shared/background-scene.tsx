@@ -13,13 +13,16 @@ function LightAtelier() {
   return (
     <div className="absolute inset-0 dark:hidden">
       <div className="absolute inset-0 bg-[#ece6dc]" />
-      <div className="absolute inset-0 bg-[linear-gradient(168deg,#d8cfc2_0%,#ece6dc_18%,#f5efe6_34%,#ead9bc_52%,#d7c09a_70%,#c4ad88_86%,#b7a27c_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(108deg,rgba(14,42,71,0.22)_0%,rgba(14,42,71,0.06)_22%,rgba(250,246,239,0.28)_46%,rgba(193,147,87,0.26)_68%,rgba(193,147,87,0.08)_86%,rgba(14,42,71,0.14)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_58%_at_50%_-8%,rgba(193,147,87,0.42),transparent_58%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_52%_40%_at_50%_36%,rgba(250,246,239,0.55),transparent_72%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_0%_100%,rgba(14,42,71,0.26),transparent_58%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_64%_50%_at_100%_92%,rgba(193,147,87,0.3),transparent_56%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_32%_at_100%_0%,rgba(14,42,71,0.14),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(158deg,#cfc3b3_0%,#ece6dc_16%,#f6efe4_30%,#e8d4b0_48%,#d4b585_64%,#c19357_80%,#b7a07c_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(118deg,rgba(14,42,71,0.30)_0%,rgba(14,42,71,0.10)_20%,rgba(250,246,239,0.34)_42%,rgba(193,147,87,0.40)_64%,rgba(193,147,87,0.12)_82%,rgba(14,42,71,0.18)_100%)]" />
+      {/* Logo mix (navy + gold + cream) as one silk wash — slightly less blur. */}
+      <div className="absolute inset-[-16%] blur-[52px]">
+        <div className="absolute top-[-8%] left-[20%] h-[44%] w-[52%] rounded-full bg-[rgba(193,147,87,0.46)]" />
+        <div className="absolute top-[10%] right-[-8%] h-[40%] w-[44%] rounded-full bg-[rgba(14,42,71,0.18)]" />
+        <div className="absolute bottom-[-10%] left-[-10%] h-[48%] w-[54%] rounded-full bg-[rgba(14,42,71,0.22)]" />
+        <div className="absolute right-[10%] bottom-[8%] h-[38%] w-[42%] rounded-full bg-[rgba(250,246,239,0.58)]" />
+        <div className="absolute top-[34%] left-[36%] h-[34%] w-[36%] rounded-full bg-[rgba(193,147,87,0.24)]" />
+      </div>
 
       <svg
         className="absolute inset-0 h-full w-full"
@@ -69,12 +72,12 @@ function LightAtelier() {
             <stop offset="1" stopColor="#c19357" stopOpacity="0" />
           </linearGradient>
           <radialGradient id="mk-cream-well" cx="50%" cy="28%" r="48%">
-            <stop offset="0" stopColor="#faf6ef" stopOpacity="0.42" />
-            <stop offset="0.4" stopColor="#f0e2cc" stopOpacity="0.18" />
+            <stop offset="0" stopColor="#faf6ef" stopOpacity="0.2" />
+            <stop offset="0.4" stopColor="#f0e2cc" stopOpacity="0.1" />
             <stop offset="1" stopColor="#ece6dc" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="mk-gold-halo" cx="50%" cy="18%" r="34%">
-            <stop offset="0" stopColor="#c19357" stopOpacity="0.22" />
+            <stop offset="0" stopColor="#c19357" stopOpacity="0.28" />
             <stop offset="1" stopColor="#c19357" stopOpacity="0" />
           </radialGradient>
         </defs>

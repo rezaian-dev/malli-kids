@@ -545,6 +545,23 @@ textarea:autofill {
   background-color: transparent !important;
   background-image: none !important;
 }
+
+/* Inset shell owns the fill. Transparent on the native control reveals
+   Chromium's dark Field layer as a nested capsule — inherit the shell. */
+[data-field-shell][data-skin="inset"] :is(input, textarea) {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: inherit !important;
+  background-image: none !important;
+}
+[data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill,
+[data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:hover,
+[data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:focus,
+[data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:active,
+[data-field-shell][data-skin="inset"] :is(input, textarea):autofill {
+  background-color: inherit !important;
+  background-image: none !important;
+}
 input.newsletter-field:-webkit-autofill,
 input.newsletter-field:-webkit-autofill:hover,
 input.newsletter-field:-webkit-autofill:focus,
