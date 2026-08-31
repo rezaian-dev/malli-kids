@@ -50,9 +50,7 @@
     "eslint-config-next": "^16.3.3",
     "playwright": "^1.62.1",
     "playwright-core": "^1.62.1",
-    "pngjs": "^7.0.0",
     "postcss": "8.5.26",
-    "potrace": "^2.1.8",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3"
   }
