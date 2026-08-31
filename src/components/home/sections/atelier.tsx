@@ -40,7 +40,7 @@ export function Atelier() {
   return (
     <section
       id="atelier"
-      className="bg-sand relative overflow-hidden py-12 sm:py-16 lg:py-20 dark:bg-transparent"
+      className="relative overflow-hidden bg-transparent py-12 sm:py-16 lg:py-20"
     >
       <span className="font-display pointer-events-none absolute top-10 left-8 hidden -rotate-6 text-[120px] leading-none text-transparent select-none [-webkit-text-stroke:1.5px_rgba(193,147,87,.55)] xl:block">
         atelier

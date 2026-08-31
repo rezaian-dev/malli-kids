@@ -6,7 +6,7 @@ export function Reviews() {
   return (
     <section
       id="testimonials"
-      className="bg-sand relative overflow-hidden py-12 sm:py-16 lg:py-20 dark:bg-transparent"
+      className="relative overflow-hidden bg-transparent py-12 sm:py-16 lg:py-20"
     >
       <div className="bg-gold/15 pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl" />
       <div className="bg-navy/10 pointer-events-none absolute -bottom-28 -left-20 h-80 w-80 rounded-full blur-3xl" />

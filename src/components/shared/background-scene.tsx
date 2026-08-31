@@ -12,16 +12,27 @@ const RAYS = Array.from({ length: 32 }, (_, i) => i);
 function LightAtelier() {
   return (
     <div className="absolute inset-0 dark:hidden">
-      <div className="absolute inset-0 bg-[#e6d7c4]" />
-      <div className="absolute inset-0 bg-[linear-gradient(152deg,#6f8499_0%,#a9b4c2_10%,#d7cbb8_22%,#ece6dc_34%,#f7f0e4_44%,#e8c57a_56%,#c19357_68%,#d9b77f_80%,#8a9aab_92%,#c4ad88_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(112deg,rgba(14,42,71,0.48)_0%,rgba(14,42,71,0.18)_16%,rgba(250,246,239,0.42)_34%,rgba(193,147,87,0.55)_52%,rgba(232,197,122,0.38)_68%,rgba(14,42,71,0.28)_86%,rgba(14,42,71,0.12)_100%)]" />
-      <div className="absolute inset-[-18%] blur-[46px]">
-        <div className="absolute top-[-12%] left-[8%] h-[52%] w-[58%] rounded-full bg-[rgba(193,147,87,0.58)]" />
-        <div className="absolute top-[-4%] right-[-12%] h-[46%] w-[50%] rounded-full bg-[rgba(14,42,71,0.28)]" />
-        <div className="absolute bottom-[-14%] left-[-12%] h-[56%] w-[60%] rounded-full bg-[rgba(14,42,71,0.36)]" />
-        <div className="absolute right-[6%] top-[28%] h-[42%] w-[46%] rounded-full bg-[rgba(250,246,239,0.62)]" />
-        <div className="absolute right-[-8%] bottom-[4%] h-[40%] w-[44%] rounded-full bg-[rgba(232,197,122,0.42)]" />
-        <div className="absolute top-[38%] left-[30%] h-[36%] w-[40%] rounded-full bg-[rgba(193,147,87,0.32)]" />
+      <div className="absolute inset-0 bg-atelier" />
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: [
+            "radial-gradient(ellipse 82% 62% at 16% 6%, rgba(193,147,87,0.62), transparent 58%)",
+            "radial-gradient(ellipse 70% 54% at 92% 8%, rgba(14,42,71,0.26), transparent 54%)",
+            "radial-gradient(ellipse 78% 58% at 52% 40%, rgba(250,246,239,0.46), transparent 64%)",
+            "radial-gradient(ellipse 72% 64% at 4% 94%, rgba(14,42,71,0.36), transparent 58%)",
+            "radial-gradient(ellipse 64% 52% at 96% 80%, rgba(232,197,122,0.48), transparent 56%)",
+            "radial-gradient(ellipse 48% 40% at 40% 72%, rgba(193,147,87,0.28), transparent 62%)",
+            "linear-gradient(128deg, rgba(14,42,71,0.22) 0%, rgba(236,230,220,0.32) 34%, rgba(193,147,87,0.34) 58%, rgba(14,42,71,0.14) 100%)",
+          ].join(","),
+        }}
+      />
+      <div className="absolute inset-[-20%] blur-[40px]">
+        <div className="animate-silk-glow absolute top-[-10%] left-[10%] h-[48%] w-[54%] rounded-full bg-[rgba(193,147,87,0.52)]" />
+        <div className="absolute top-[6%] right-[-10%] h-[42%] w-[46%] rounded-full bg-[rgba(14,42,71,0.22)]" />
+        <div className="animate-silk-glow absolute bottom-[-12%] left-[-8%] h-[50%] w-[52%] rounded-full bg-[rgba(14,42,71,0.28)] [animation-delay:-7s]" />
+        <div className="absolute top-[30%] right-[8%] h-[38%] w-[42%] rounded-full bg-[rgba(250,246,239,0.52)]" />
+        <div className="animate-silk-glow absolute right-[-6%] bottom-[2%] h-[36%] w-[40%] rounded-full bg-[rgba(232,197,122,0.38)] [animation-delay:-4s]" />
       </div>
 
       <svg
@@ -87,8 +98,8 @@ function LightAtelier() {
             <stop offset="1" stopColor="#c19357" stopOpacity="0" />
           </linearGradient>
           <radialGradient id="mk-cream-well" cx="50%" cy="28%" r="48%">
-            <stop offset="0" stopColor="#faf6ef" stopOpacity="0.16" />
-            <stop offset="0.4" stopColor="#f0e2cc" stopOpacity="0.08" />
+            <stop offset="0" stopColor="#faf6ef" stopOpacity="0.1" />
+            <stop offset="0.4" stopColor="#f0e2cc" stopOpacity="0.05" />
             <stop offset="1" stopColor="#ece6dc" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="mk-gold-halo" cx="50%" cy="18%" r="34%">
@@ -293,7 +304,7 @@ export function BackgroundScene() {
   return (
     <div
       aria-hidden="true"
-      className="dark:bg-ink pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#ece6dc]"
+      className="bg-atelier dark:bg-ink pointer-events-none fixed inset-0 -z-10 overflow-hidden"
     >
       <LightAtelier />
 
