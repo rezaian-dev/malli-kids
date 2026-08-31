@@ -6,24 +6,30 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
 } from "react";
 import { toast } from "sonner";
 import { STORAGE } from "@/lib/constants";
+import {
+  NO_CAMPAIGN,
+  sanitizeCampaign,
+  sanitizeCart,
+  sanitizeUser,
+  type StoredCampaign,
+  type StoredCartItem,
+} from "@/lib/storefront-state";
 import type { User } from "@/types";
 
-// 🛒 Cart item kept in local storage.
-export type CartItem = { id: number; size: string; qty: number };
+// 🛒 Cart item shared across storage and UI.
+export type CartItem = StoredCartItem;
 
-// 🎉 Active campaign shared across the storefront.
-export type Campaign = { active: boolean; percent: number; title: string };
-
-export const NO_CAMPAIGN: Campaign = { active: false, percent: 0, title: "" };
+// 🎉 Campaign state shared across the storefront.
+export type Campaign = StoredCampaign;
 
 // 🧠 Small client store for auth, cart and campaign state.
 type Ctx = {
+  ready: boolean;
   user: User | null;
   authOpen: boolean;
   cart: CartItem[];
@@ -38,106 +44,124 @@ type Ctx = {
   clearCart: () => void;
   showToast: (text: string) => void;
   campaign: Campaign;
-
   priceOf: (price: number) => number;
 };
 
 const StoreCtx = createContext<Ctx | null>(null);
 
+function readCampaignFromAdminDb() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE.adminDb);
+    if (!raw) return NO_CAMPAIGN;
+    return sanitizeCampaign(JSON.parse(raw)?.settings?.campaign);
+  } catch {
+    return NO_CAMPAIGN;
+  }
+}
+
+function readLocalUser() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE.user);
+    return raw ? sanitizeUser(JSON.parse(raw)) : null;
+  } catch {
+    return null;
+  }
+}
+
+function readLocalCart() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE.cart);
+    return raw ? sanitizeCart(JSON.parse(raw)) : [];
+  } catch {
+    return [];
+  }
+}
+
+function normalizeUser(input: User) {
+  const parts = (input.firstName || "").trim().split(/\s+/);
+  return {
+    ...input,
+    firstName: parts[0] || "کاربر",
+    lastName: input.lastName || parts.slice(1).join(" ") || undefined,
+  } satisfies User;
+}
+
+// 🪶 Wait for local storage once, then keep the header stable. ✨
 export function StoreProvider({ children }: { children: ReactNode }) {
+  const [ready, setReady] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [campaign, setCampaign] = useState<Campaign>(NO_CAMPAIGN);
-  const hydrated = useRef(false);
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE.adminDb);
-      const c = raw
-        ? (JSON.parse(raw)?.settings?.campaign as Campaign | undefined)
-        : undefined;
-      if (c && typeof c.percent === "number") {
-        setCampaign({
-          active: !!c.active,
-          percent: Math.min(90, Math.max(0, c.percent)),
-          title: c.title ?? "",
-        });
-      }
-    } catch {}
+    setUser(readLocalUser());
+    setCart(readLocalCart());
+    setCampaign(readCampaignFromAdminDb());
+    setReady(true);
   }, []);
 
   useEffect(() => {
-    if (!hydrated.current) {
-      hydrated.current = true;
-      try {
-        const rawUser = window.localStorage.getItem(STORAGE.user);
-        if (rawUser) setUser(JSON.parse(rawUser) as User);
-        const rawCart = window.localStorage.getItem(STORAGE.cart);
-        if (rawCart) {
-          const parsed = JSON.parse(rawCart) as CartItem[];
-          if (Array.isArray(parsed))
-            setCart(
-              parsed.filter((i) => i && typeof i.id === "number" && i.qty > 0),
-            );
-        }
-        return;
-      } catch {}
-    }
+    if (!ready) return;
+
     try {
       if (user) window.localStorage.setItem(STORAGE.user, JSON.stringify(user));
       else window.localStorage.removeItem(STORAGE.user);
+
       window.localStorage.setItem(STORAGE.cart, JSON.stringify(cart));
     } catch {}
-  }, [user, cart]);
 
-  const login = useCallback((u: User) => {
-    const parts = (u.firstName || "").trim().split(/\s+/);
-    setUser({
-      ...u,
-      firstName: parts[0] || "کاربر",
-      lastName: u.lastName || parts.slice(1).join(" ") || undefined,
-    });
+    document.documentElement.dataset.auth = user ? "user" : "guest";
+  }, [ready, user, cart]);
+
+  const login = useCallback((nextUser: User) => {
+    setUser(normalizeUser(nextUser));
     setAuthOpen(false);
   }, []);
 
   const updateUser = useCallback(
     (patch: Partial<User>) =>
-      setUser((prev) => (prev ? { ...prev, ...patch } : prev)),
+      setUser((current) => (current ? { ...current, ...patch } : current)),
     [],
   );
+
   const logout = useCallback(() => setUser(null), []);
 
   const addToCart = useCallback((id: number, size: string, qty = 1) => {
-    setCart((prev) => {
-      const hit = prev.find((i) => i.id === id && i.size === size);
-      if (hit)
-        return prev.map((i) =>
-          i === hit ? { ...i, qty: Math.min(9, i.qty + qty) } : i,
+    setCart((current) => {
+      const hit = current.find((item) => item.id === id && item.size === size);
+
+      if (hit) {
+        return current.map((item) =>
+          item === hit ? { ...item, qty: Math.min(9, item.qty + qty) } : item,
         );
-      return [...prev, { id, size, qty: Math.min(9, qty) }];
+      }
+
+      return [...current, { id, size, qty: Math.min(9, qty) }];
     });
   }, []);
 
   const setCartQty = useCallback((id: number, size: string, qty: number) => {
-    setCart((prev) =>
+    setCart((current) =>
       qty <= 0
-        ? prev.filter((i) => !(i.id === id && i.size === size))
-        : prev.map((i) =>
-            i.id === id && i.size === size
-              ? { ...i, qty: Math.min(9, qty) }
-              : i,
+        ? current.filter((item) => !(item.id === id && item.size === size))
+        : current.map((item) =>
+            item.id === id && item.size === size
+              ? { ...item, qty: Math.min(9, qty) }
+              : item,
           ),
     );
   }, []);
 
   const removeCartItem = useCallback((id: number, size: string) => {
-    setCart((prev) => prev.filter((i) => !(i.id === id && i.size === size)));
+    setCart((current) =>
+      current.filter((item) => !(item.id === id && item.size === size)),
+    );
   }, []);
 
   const clearCart = useCallback(() => setCart([]), []);
 
-  const cartCount = useMemo(() => cart.reduce((n, i) => n + i.qty, 0), [cart]);
+  const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.qty, 0), [cart]);
 
   const showToast = useCallback((text: string) => toast(text), []);
 
@@ -154,6 +178,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
+      ready,
       user,
       authOpen,
       cart,
@@ -171,6 +196,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       priceOf,
     }),
     [
+      ready,
       user,
       authOpen,
       cart,

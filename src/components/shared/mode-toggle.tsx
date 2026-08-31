@@ -8,11 +8,20 @@ import { cn } from "@/lib/utils";
 export function ModeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
 
+  function toggleTheme() {
+    const isDark =
+      typeof document === "undefined"
+        ? resolvedTheme === "dark"
+        : document.documentElement.classList.contains("dark");
+
+    setTheme(isDark ? "light" : "dark");
+  }
+
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+      onClick={toggleTheme}
       aria-label="تغییر حالت روشن و تاریک"
       className={cn("group relative", className)}
     >

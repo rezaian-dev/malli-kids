@@ -5,7 +5,7 @@ import { FestiveBanner } from "@/components/festive";
 import { HeaderActions } from "./header-actions";
 import { HeaderNavMount } from "./header-nav-mount";
 
-// 🧭 Server shell with lazy client islands.
+// 🧭 Keep the storefront shell visually stable on first paint. ✨
 export function Header() {
   return (
     <header dir="rtl" className="fixed inset-x-0 top-0 z-70">
@@ -23,7 +23,7 @@ export function Header() {
         >
           <Link href="/" prefetch={false} className="flex shrink-0 items-center gap-1.5">
             <Image
-              src="/brand/logo.svg"
+              src="/brand/logo.png"
               alt="لوگوی ملی‌کیدز"
               width={36}
               height={36}
@@ -31,7 +31,7 @@ export function Header() {
               className="size-8 object-contain sm:size-9 dark:hidden"
             />
             <Image
-              src="/brand/logo-white.svg"
+              src="/brand/logo-white.png"
               alt=""
               aria-hidden
               width={36}

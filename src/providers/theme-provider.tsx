@@ -9,11 +9,17 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import {
+  readThemePreference,
+  resolveThemePreference,
+  THEME_KEY,
+  writeCookie,
+  type ResolvedTheme,
+  type ThemePreference,
+} from "@/lib/storefront-state";
 
-type Theme = "light" | "dark" | "system";
-type Resolved = "light" | "dark";
-
-const KEY = "theme";
+type Theme = ThemePreference;
+type Resolved = ResolvedTheme;
 
 const Ctx = createContext<{
   theme: Theme;
@@ -25,48 +31,75 @@ const Ctx = createContext<{
   setTheme: () => {},
 });
 
-// 🌗 Tiny theme provider without extra script tags.
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === "undefined") return "system";
-    try {
-      const s = localStorage.getItem(KEY);
-      return s === "light" || s === "dark" || s === "system" ? s : "system";
-    } catch {
-      return "system";
-    }
-  });
-  const [resolved, setResolved] = useState<Resolved>("light");
+function readClientTheme(fallback: Theme) {
+  if (typeof window === "undefined") return fallback;
+
+  try {
+    return readThemePreference(window.localStorage.getItem(THEME_KEY) ?? undefined);
+  } catch {
+    return fallback;
+  }
+}
+
+function readClientResolvedTheme() {
+  if (typeof document === "undefined") return "light" as Resolved;
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+// 🌗 Keep the first paint in sync with the saved theme. ✨
+export function ThemeProvider({
+  children,
+  initialTheme = "system",
+}: {
+  children: ReactNode;
+  initialTheme?: Theme;
+}) {
+  const [theme, setThemeState] = useState<Theme>(() => readClientTheme(initialTheme));
+  const [resolved, setResolved] = useState<Resolved>(readClientResolvedTheme);
 
   useEffect(() => {
-    const apply = () => {
-      const r: Resolved =
-        theme === "system"
-          ? window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light"
-          : theme;
-      document.documentElement.classList.toggle("dark", r === "dark");
-      document.documentElement.style.colorScheme = r;
-      setResolved(r);
-    };
-    apply();
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const apply = () => {
+      const nextTheme = readClientTheme(initialTheme);
+      const nextResolved = resolveThemePreference(nextTheme, mq.matches);
+      const root = document.documentElement;
+
+      root.classList.toggle("dark", nextResolved === "dark");
+      root.style.colorScheme = nextResolved;
+      writeCookie(THEME_KEY, encodeURIComponent(nextTheme));
+      setThemeState(nextTheme);
+      setResolved(nextResolved);
+    };
+
+    apply();
     mq.addEventListener("change", apply);
     return () => mq.removeEventListener("change", apply);
-  }, [theme]);
+  }, [initialTheme]);
 
-  const setTheme = useCallback((t: Theme) => {
+  const setTheme = useCallback((nextTheme: Theme) => {
     try {
-      localStorage.setItem(KEY, t);
+      window.localStorage.setItem(THEME_KEY, nextTheme);
     } catch {}
-    setThemeState(t);
+
+    const nextResolved = resolveThemePreference(
+      nextTheme,
+      window.matchMedia("(prefers-color-scheme: dark)").matches,
+    );
+
+    const root = document.documentElement;
+    root.classList.toggle("dark", nextResolved === "dark");
+    root.style.colorScheme = nextResolved;
+    writeCookie(THEME_KEY, encodeURIComponent(nextTheme));
+    setThemeState(nextTheme);
+    setResolved(nextResolved);
   }, []);
 
   const value = useMemo(
     () => ({ theme, resolvedTheme: resolved, setTheme }),
     [theme, resolved, setTheme],
   );
+
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { JsonLd } from "@/components/shared/json-ld";
 import { getRootMetadata, organizationSchema, websiteSchema } from "@/lib/seo";
+import { buildThemeScript } from "@/lib/storefront-state";
 import "./globals.css";
 
 const vazir = localFont({
@@ -41,6 +42,7 @@ export const viewport: Viewport = {
   ],
 };
 
+// 🌗 Set the saved theme before the first paint. ✨
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
@@ -50,8 +52,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${vazir.variable} ${playfair.variable} scrollbar-gutter-stable`}
       suppressHydrationWarning
     >
+      <head>
+        <style>{`html{background:#faf6ef;color:#0e2a47;color-scheme:light}html.dark{background:#041427;color:#fff8ec;color-scheme:dark}body{background:inherit;color:inherit}`}</style>
+        <script dangerouslySetInnerHTML={{ __html: buildThemeScript() }} />
+      </head>
       <body
-        className={`${vazir.className} text-navy dark:text-ivory min-h-dvh antialiased data-scroll-locked:mr-0!`}
+        className={`${vazir.className} min-h-dvh text-navy antialiased dark:text-ivory data-scroll-locked:mr-0!`}
         suppressHydrationWarning
       >
         <JsonLd data={organizationSchema()} />

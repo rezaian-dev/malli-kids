@@ -80,7 +80,7 @@ export default function AdminLogin() {
         <header className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Image
-              src="/brand/logo-white.svg"
+              src="/brand/logo-white.png"
               alt=""
               width={44}
               height={44}
