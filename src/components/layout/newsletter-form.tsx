@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { FIELD_FOCUS_WITHIN } from "@/lib/field";
 import { cn } from "@/lib/utils";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,10 +37,10 @@ export function NewsletterForm({ className }: { className?: string }) {
     >
       <span
         className={cn(
-          "flex h-13 items-center rounded-full border p-1.5 backdrop-blur-md",
-          "bg-white/10 shadow-[0_18px_50px_-18px_rgba(193,147,87,0.55),0_8px_28px_-16px_rgba(0,0,0,0.55)]",
+          "flex h-13 items-center rounded-full border bg-white/10 p-1.5 backdrop-blur-md",
+          "shadow-[0_18px_50px_-18px_rgba(193,147,87,0.55),0_8px_28px_-16px_rgba(0,0,0,0.55)]",
           "transition-[border-color,box-shadow] duration-300",
-          "focus-within:border-gold/55 focus-within:shadow-[0_20px_56px_-16px_rgba(193,147,87,0.7),0_8px_28px_-14px_rgba(0,0,0,0.5)]",
+          FIELD_FOCUS_WITHIN,
           bad ? "border-rose focus-within:border-rose" : "border-white/20",
         )}
       >
@@ -59,7 +60,7 @@ export function NewsletterForm({ className }: { className?: string }) {
               setSubmitted(false);
             }
           }}
-          className="newsletter-field caret-cream text-cream placeholder:text-taupe h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-right text-sm outline-none autofill:shadow-[inset_0_0_0_1000px_rgb(14_42_71_/_0.96)] autofill:[-webkit-text-fill-color:var(--color-cream)]"
+          className="newsletter-field caret-cream text-cream placeholder:text-taupe h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-right text-sm shadow-none outline-none"
         />
         <button
           type="submit"

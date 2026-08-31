@@ -53,6 +53,7 @@
   --color-gold-pale: #f0e2cc;
 
   /* 🧺 Cream / paper / sand family */
+  --color-atelier: #e8eef4;
   --color-cream: #faf6ef;
   --color-ivory: #fff8ec;
   --color-linen: #f7f4ee;
@@ -390,7 +391,7 @@
 /* ─────────────────────────── 🌗 Theme vars ─────────────────────────────── */
 :root {
   color-scheme: light;
-  --background: #faf6ef;
+  --background: #e8eef4;
   --foreground: #0e2a47;
   --card: #fffefb;
   --card-foreground: #0e2a47;
@@ -463,7 +464,7 @@
     @apply max-w-full overflow-x-hidden scroll-smooth;
     scroll-padding-top: 110px;
     color-scheme: light;
-    background-color: var(--color-cream);
+    background-color: var(--color-atelier);
   }
   html.dark {
     color-scheme: dark;
@@ -487,11 +488,11 @@
     outline-offset: 3px;
   }
 
-  /* 🧍 Body — cream bg + subtle grain & ambient glows (light/dark aware) */
+  /* 🧍 Body — cool atelier canvas; grain sits above. Scene paints the graphic. */
   body {
     @apply text-navy dark:text-ivory min-h-dvh max-w-full overflow-x-hidden antialiased;
     font-family: var(--font-vazir), Vazirmatn, Tahoma, sans-serif;
-    background-color: var(--color-cream);
+    background-color: var(--color-atelier);
     background-image: none;
   }
   .dark body {
@@ -552,6 +553,7 @@ textarea:-webkit-autofill,
 textarea:autofill {
   -webkit-text-fill-color: var(--color-navy);
   caret-color: var(--color-navy);
+  background-color: transparent;
   transition:
     background-color 9999s ease-in-out 0s,
     color 0.2s,
@@ -575,9 +577,12 @@ input.newsletter-field:-webkit-autofill:active,
 input.newsletter-field:autofill {
   -webkit-text-fill-color: var(--color-cream);
   caret-color: var(--color-cream);
-  box-shadow: inset 0 0 0 1000px rgb(14 42 71 / 0.96);
-  border-radius: 9999px;
-  transition: background-color 9999s ease-in-out 0s;
+  background-color: transparent;
+  transition:
+    background-color 9999s ease-in-out 0s,
+    color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 /* 🔄 nextjs-toploader — gold gradient anchored to the right (RTL-friendly) */

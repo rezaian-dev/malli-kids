@@ -91,13 +91,13 @@ export function AdminFilterBar({
             <span className="text-navy/50 dark:text-wheat/75 mb-1.5 block text-[10px] font-black">
               جستجو
             </span>
-            <span className="relative block">
+            <span className="dark:bg-navy-deep/45 relative block rounded-xl bg-white">
               <Search className="text-gold pointer-events-none absolute inset-s-3 top-1/2 size-4 -translate-y-1/2" />
               <Input
                 value={search}
                 onChange={(event) => onSearchChange(event.target.value)}
                 placeholder={searchPlaceholder}
-                className="dark:bg-navy-deep/45 h-11 w-full rounded-xl bg-white ps-10 pe-10 shadow-none"
+                className="h-11 w-full rounded-xl bg-transparent ps-10 pe-10 shadow-none"
               />
               {search ? (
                 <button

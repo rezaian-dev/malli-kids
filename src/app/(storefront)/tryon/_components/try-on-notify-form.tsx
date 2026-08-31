@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { AppForm, Field, useAppForm } from "@/components/form";
 import { notifyDefaults, notifySchema, type NotifyValues } from "@/lib/forms";
+import { FIELD_FOCUS_WITHIN } from "@/lib/field";
 import { cn } from "@/lib/utils";
 
 export function NotifyForm() {
@@ -35,10 +36,9 @@ export function NotifyForm() {
         {({ field, invalid, id, describedBy }) => (
           <span
             className={cn(
-              "flex items-center gap-1.5 rounded-full border bg-white/5 p-1.5 transition-colors",
-              invalid
-                ? "border-rose"
-                : "focus-within:border-gold/60 border-white/20",
+              "flex items-center gap-1.5 rounded-full border bg-white/5 p-1.5 transition-[border-color,box-shadow] duration-200",
+              invalid ? "border-rose" : "border-white/20",
+              FIELD_FOCUS_WITHIN,
             )}
           >
             <input

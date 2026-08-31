@@ -57,19 +57,19 @@ function isIranianNationalId(value: string) {
 
 function inputClass(error?: string) {
   return [
-    "h-11 w-full rounded-2xl border bg-sand px-4 text-sm text-navy outline-none transition-colors dark:bg-navy-mid dark:text-ivory",
+    "h-11 w-full rounded-2xl border bg-transparent px-4 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
     error
       ? "border-rose"
-      : "border-navy/12 focus:border-gold/60 dark:border-gold/25",
+      : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
   ].join(" ");
 }
 
 function textAreaClass(error?: string) {
   return [
-    "min-h-28 w-full rounded-2xl border bg-sand px-4 py-3 text-sm text-navy outline-none transition-colors dark:bg-navy-mid dark:text-ivory",
+    "min-h-28 w-full rounded-2xl border bg-transparent px-4 py-3 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
     error
       ? "border-rose"
-      : "border-navy/12 focus:border-gold/60 dark:border-gold/25",
+      : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
   ].join(" ");
 }
 
@@ -171,33 +171,50 @@ export function ProfileInfoPanel() {
     <>
       <section className={PROFILE_CARD}>
         <div>
-          <h2 className="text-lg font-black text-navy dark:text-linen">ویرایش حساب</h2>
+          <h2 className="text-navy dark:text-linen text-lg font-black">
+            ویرایش حساب
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">نام</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              نام
+            </span>
             <input
               value={account.firstName}
               onChange={(event) => {
-                setAccount((current) => ({ ...current, firstName: event.target.value }));
-                setAccountErrors((current) => ({ ...current, firstName: undefined }));
+                setAccount((current) => ({
+                  ...current,
+                  firstName: event.target.value,
+                }));
+                setAccountErrors((current) => ({
+                  ...current,
+                  firstName: undefined,
+                }));
               }}
               maxLength={40}
               autoComplete="given-name"
               className={inputClass(accountErrors.firstName)}
             />
             {accountErrors.firstName ? (
-              <p className="text-xs font-bold text-rose">{accountErrors.firstName}</p>
+              <p className="text-rose text-xs font-bold">
+                {accountErrors.firstName}
+              </p>
             ) : null}
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">نام خانوادگی</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              نام خانوادگی
+            </span>
             <input
               value={account.lastName}
               onChange={(event) =>
-                setAccount((current) => ({ ...current, lastName: event.target.value }))
+                setAccount((current) => ({
+                  ...current,
+                  lastName: event.target.value,
+                }))
               }
               maxLength={40}
               autoComplete="family-name"
@@ -206,35 +223,53 @@ export function ProfileInfoPanel() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">کد ملی</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              کد ملی
+            </span>
             <input
               dir="ltr"
               inputMode="numeric"
               value={account.nationalId}
               onChange={(event) => {
-                setAccount((current) => ({ ...current, nationalId: event.target.value }));
-                setAccountErrors((current) => ({ ...current, nationalId: undefined }));
+                setAccount((current) => ({
+                  ...current,
+                  nationalId: event.target.value,
+                }));
+                setAccountErrors((current) => ({
+                  ...current,
+                  nationalId: undefined,
+                }));
               }}
               maxLength={10}
               placeholder="0123456789"
               className={inputClass(accountErrors.nationalId)}
             />
             {accountErrors.nationalId ? (
-              <p className="text-xs font-bold text-rose">{accountErrors.nationalId}</p>
+              <p className="text-rose text-xs font-bold">
+                {accountErrors.nationalId}
+              </p>
             ) : (
-              <p className="text-[11px] font-bold text-navy/45 dark:text-wheat">
+              <p className="text-navy/45 dark:text-wheat text-[11px] font-bold">
                 ۱۰ رقم؛ سالم بودن رقم کنترل هم بررسی می‌شود.
               </p>
             )}
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">شهر</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              شهر
+            </span>
             <input
               value={account.city}
               onChange={(event) => {
-                setAccount((current) => ({ ...current, city: event.target.value }));
-                setAccountErrors((current) => ({ ...current, city: undefined }));
+                setAccount((current) => ({
+                  ...current,
+                  city: event.target.value,
+                }));
+                setAccountErrors((current) => ({
+                  ...current,
+                  city: undefined,
+                }));
               }}
               maxLength={40}
               autoComplete="address-level2"
@@ -242,16 +277,23 @@ export function ProfileInfoPanel() {
               className={inputClass(accountErrors.city)}
             />
             {accountErrors.city ? (
-              <p className="text-xs font-bold text-rose">{accountErrors.city}</p>
+              <p className="text-rose text-xs font-bold">
+                {accountErrors.city}
+              </p>
             ) : null}
           </label>
 
           <label className="space-y-1.5 sm:col-span-2">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">آدرس</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              آدرس
+            </span>
             <textarea
               value={account.address}
               onChange={(event) =>
-                setAccount((current) => ({ ...current, address: event.target.value }))
+                setAccount((current) => ({
+                  ...current,
+                  address: event.target.value,
+                }))
               }
               maxLength={160}
               autoComplete="street-address"
@@ -260,68 +302,100 @@ export function ProfileInfoPanel() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">شماره موبایل</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              شماره موبایل
+            </span>
             <input
               dir="ltr"
               type="tel"
               inputMode="tel"
               value={account.phone}
               onChange={(event) => {
-                setAccount((current) => ({ ...current, phone: event.target.value }));
-                setAccountErrors((current) => ({ ...current, phone: undefined }));
+                setAccount((current) => ({
+                  ...current,
+                  phone: event.target.value,
+                }));
+                setAccountErrors((current) => ({
+                  ...current,
+                  phone: undefined,
+                }));
               }}
               placeholder="0912…"
               autoComplete="tel-national"
               className={inputClass(accountErrors.phone)}
             />
             {accountErrors.phone ? (
-              <p className="text-xs font-bold text-rose">{accountErrors.phone}</p>
+              <p className="text-rose text-xs font-bold">
+                {accountErrors.phone}
+              </p>
             ) : (
-              <p className="text-[11px] font-bold text-navy/45 dark:text-wheat">
+              <p className="text-navy/45 dark:text-wheat text-[11px] font-bold">
                 فقط برای تماس در صورت نیاز.
               </p>
             )}
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">ایمیل</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              ایمیل
+            </span>
             <input
               dir="ltr"
               type="email"
               value={account.email}
               onChange={(event) => {
-                setAccount((current) => ({ ...current, email: event.target.value }));
-                setAccountErrors((current) => ({ ...current, email: undefined }));
+                setAccount((current) => ({
+                  ...current,
+                  email: event.target.value,
+                }));
+                setAccountErrors((current) => ({
+                  ...current,
+                  email: undefined,
+                }));
               }}
               autoComplete="email"
               className={inputClass(accountErrors.email)}
             />
             {accountErrors.email ? (
-              <p className="text-xs font-bold text-rose">{accountErrors.email}</p>
+              <p className="text-rose text-xs font-bold">
+                {accountErrors.email}
+              </p>
             ) : null}
           </label>
         </div>
 
-        <Button type="button" variant="navy" className="h-11 px-7" onClick={saveAccount}>
+        <Button
+          type="button"
+          variant="navy"
+          className="h-11 px-7"
+          onClick={saveAccount}
+        >
           ذخیره حساب
         </Button>
       </section>
 
       <section className={PROFILE_CARD}>
         <div>
-          <h2 className="text-lg font-black text-navy dark:text-linen">اطلاعات کوچولو</h2>
-          <p className="mt-2 text-xs text-navy/50 dark:text-wheat">
+          <h2 className="text-navy dark:text-linen text-lg font-black">
+            اطلاعات کوچولو
+          </h2>
+          <p className="text-navy/50 dark:text-wheat mt-2 text-xs">
             اختیاری است؛ اگر پرش کنید، سایز دقیق‌تری پیشنهاد می‌دهیم.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <label className="space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">نام کوچولو</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              نام کوچولو
+            </span>
             <input
               value={child.childName}
               onChange={(event) =>
-                setChild((current) => ({ ...current, childName: event.target.value }))
+                setChild((current) => ({
+                  ...current,
+                  childName: event.target.value,
+                }))
               }
               maxLength={40}
               placeholder="نیلو"
@@ -330,32 +404,50 @@ export function ProfileInfoPanel() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">سن تقریبی</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              سن تقریبی
+            </span>
             <input
               value={child.childAge}
               onChange={(event) => {
-                setChild((current) => ({ ...current, childAge: event.target.value }));
-                setChildErrors((current) => ({ ...current, childAge: undefined }));
+                setChild((current) => ({
+                  ...current,
+                  childAge: event.target.value,
+                }));
+                setChildErrors((current) => ({
+                  ...current,
+                  childAge: undefined,
+                }));
               }}
               placeholder="۳ سال"
               className={inputClass(childErrors.childAge)}
             />
             {childErrors.childAge ? (
-              <p className="text-xs font-bold text-rose">{childErrors.childAge}</p>
+              <p className="text-rose text-xs font-bold">
+                {childErrors.childAge}
+              </p>
             ) : (
-              <p className="text-[11px] font-bold text-navy/45 dark:text-wheat">
+              <p className="text-navy/45 dark:text-wheat text-[11px] font-bold">
                 عدد + سال یا ماه کافی است.
               </p>
             )}
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">جنسیت</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              جنسیت
+            </span>
             <select
               value={child.childGender}
               onChange={(event) => {
-                setChild((current) => ({ ...current, childGender: event.target.value }));
-                setChildErrors((current) => ({ ...current, childGender: undefined }));
+                setChild((current) => ({
+                  ...current,
+                  childGender: event.target.value,
+                }));
+                setChildErrors((current) => ({
+                  ...current,
+                  childGender: undefined,
+                }));
               }}
               className={inputClass(childErrors.childGender)}
             >
@@ -364,12 +456,19 @@ export function ProfileInfoPanel() {
               <option value="پسر">پسر</option>
             </select>
             {childErrors.childGender ? (
-              <p className="text-xs font-bold text-rose">{childErrors.childGender}</p>
+              <p className="text-rose text-xs font-bold">
+                {childErrors.childGender}
+              </p>
             ) : null}
           </label>
         </div>
 
-        <Button type="button" variant="gold" className="h-11 px-7" onClick={saveChild}>
+        <Button
+          type="button"
+          variant="gold"
+          className="h-11 px-7"
+          onClick={saveChild}
+        >
           ذخیره اطلاعات کودک
         </Button>
       </section>

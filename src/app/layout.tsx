@@ -53,7 +53,7 @@ export async function generateViewport(): Promise<Viewport> {
 
   return {
     colorScheme: resolved,
-    themeColor: resolved === "dark" ? "#061728" : "#fcf7ef",
+    themeColor: resolved === "dark" ? "#061728" : "#e8eef4",
   };
 }
 
@@ -85,7 +85,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <style>{`html{background:#f6ead6;color:#0e2a47;color-scheme:light}html.dark{background:#041427;color:#fff8ec;color-scheme:dark}body{background:inherit;color:inherit}`}</style>
+        <style>{`html{background:#e8eef4;color:#0e2a47;color-scheme:light}html.dark{background:#041427;color:#fff8ec;color-scheme:dark}body{background:inherit;color:inherit}`}</style>
         <script dangerouslySetInnerHTML={{ __html: buildThemeScript() }} />
       </head>
       <body

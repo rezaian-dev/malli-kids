@@ -30,7 +30,11 @@ export default function AdminLogin() {
 
   function updateValue(field: keyof LoginValues, value: string) {
     setValues((current) => ({ ...current, [field]: value }));
-    setErrors((current) => ({ ...current, [field]: undefined, root: undefined }));
+    setErrors((current) => ({
+      ...current,
+      [field]: undefined,
+      root: undefined,
+    }));
   }
 
   function validate(next: LoginValues): LoginErrors {
@@ -69,7 +73,7 @@ export default function AdminLogin() {
     <div className="text-navy bg-fog dark:text-ivory grid min-h-dvh bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-size-[auto,auto,36px_36px,36px_36px] lg:grid-cols-[minmax(0,1fr)_minmax(20rem,42%)] dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-size-[auto,auto,42px_42px,42px_42px]">
       <span
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat bg-size-[min(44vw,38rem)] opacity-[0.22] max-[639px]:bg-size-[20rem] max-[639px]:opacity-[0.14] dark:opacity-[0.52] dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]"
+        className="pointer-events-none fixed inset-0 z-0 mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-[0.22] max-[639px]:bg-size-[20rem] max-[639px]:opacity-[0.14] dark:opacity-[0.52] dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c19357' stroke-opacity='.28'%3E%3Ccircle cx='90' cy='90' r='42'/%3E%3Ccircle cx='90' cy='90' r='28' stroke-dasharray='3 7'/%3E%3Cpath d='M90 34v112M34 90h112M50 50l80 80M130 50l-80 80' stroke-opacity='.15'/%3E%3C/g%3E%3C/svg%3E\")",
@@ -126,11 +130,14 @@ export default function AdminLogin() {
             ) : null}
 
             <div className="space-y-2">
-              <label className="text-navy/60 dark:text-wheat text-xs font-black" htmlFor="admin-user">
+              <label
+                className="text-navy/60 dark:text-wheat text-xs font-black"
+                htmlFor="admin-user"
+              >
                 شناسه
               </label>
-              <div className="relative">
-                <User className="text-navy/35 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 my-auto size-4" />
+              <div className="relative rounded-3xl bg-white/70 dark:bg-white/5">
+                <User className="text-navy/35 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 z-10 my-auto size-4" />
                 <Input
                   id="admin-user"
                   value={values.user}
@@ -138,7 +145,7 @@ export default function AdminLogin() {
                   placeholder="شناسه همکار"
                   autoComplete="username"
                   aria-invalid={Boolean(errors.user)}
-                  className="h-14 rounded-3xl border-navy/12 bg-white/70 ps-11 pe-4 text-sm dark:border-gold/20 dark:bg-white/5"
+                  className="border-navy/12 dark:border-gold/20 h-14 rounded-3xl bg-transparent ps-11 pe-4 text-sm"
                   required
                 />
               </div>
@@ -150,11 +157,14 @@ export default function AdminLogin() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-navy/60 dark:text-wheat text-xs font-black" htmlFor="admin-pass">
+              <label
+                className="text-navy/60 dark:text-wheat text-xs font-black"
+                htmlFor="admin-pass"
+              >
                 کلید دسترسی
               </label>
-              <div className="relative">
-                <Lock className="text-navy/35 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 my-auto size-4" />
+              <div className="relative rounded-3xl bg-white/70 dark:bg-white/5">
+                <Lock className="text-navy/35 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 z-10 my-auto size-4" />
                 <Input
                   id="admin-pass"
                   type="password"
@@ -163,7 +173,7 @@ export default function AdminLogin() {
                   placeholder="رمز اختصاصی پنل"
                   autoComplete="current-password"
                   aria-invalid={Boolean(errors.pass)}
-                  className="h-14 rounded-3xl border-navy/12 bg-white/70 ps-11 pe-4 text-sm dark:border-gold/20 dark:bg-white/5"
+                  className="border-navy/12 dark:border-gold/20 h-14 rounded-3xl bg-transparent ps-11 pe-4 text-sm"
                   required
                 />
               </div>

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { CORE_PRODUCTS } from "@/lib/data/products";
 import { shopHrefFromSearch } from "@/lib/shop-query";
+import { FIELD_FOCUS_WITHIN } from "@/lib/field";
 import { cn } from "@/lib/utils";
 import { formatToman } from "@/lib/format";
 
@@ -76,7 +77,12 @@ export function HomeSearch() {
             goShop(query);
           }}
         >
-          <div className="border-gold/40 xs:gap-2 xs:p-2 flex items-center gap-1.5 rounded-3xl border bg-white/85 p-1.5 shadow-[0_18px_50px_-18px_rgba(193,147,87,.55)] backdrop-blur-xl sm:p-2.5">
+          <div
+            className={cn(
+              "border-gold/40 xs:gap-2 xs:p-2 flex items-center gap-1.5 rounded-3xl border bg-white/85 p-1.5 shadow-[0_18px_50px_-18px_rgba(193,147,87,.55)] backdrop-blur-xl transition-[border-color,box-shadow] duration-200 sm:p-2.5",
+              FIELD_FOCUS_WITHIN,
+            )}
+          >
             <span className="from-gold/25 to-gold/10 text-gold-deep ring-gold/30 flex size-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br ring-1">
               <SearchIcon className="size-5" />
             </span>

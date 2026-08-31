@@ -352,7 +352,7 @@ function Field({
       <Input
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="border-navy/9 text-navy dark:border-gold/16 dark:bg-navy-deep/38 dark:text-ivory mt-1.5 h-11 rounded-xl bg-white/75 shadow-none"
+        className="border-navy/9 text-navy dark:border-gold/16 dark:text-ivory mt-1.5 h-11 rounded-xl bg-transparent shadow-none"
       />
     </div>
   );

@@ -370,7 +370,7 @@ export default function AdminMessages() {
                       value={reply}
                       onChange={(event) => setReply(event.target.value)}
                       placeholder="پاسخ کامل و شفاف خود را بنویسید…"
-                      className="dark:bg-navy-deep/40 min-h-28 resize-y rounded-xl bg-white/80"
+                      className="min-h-28 resize-y rounded-xl bg-transparent"
                     />
                     <div className="mt-2 flex justify-end">
                       <Button

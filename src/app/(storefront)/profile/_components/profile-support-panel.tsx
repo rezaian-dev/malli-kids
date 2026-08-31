@@ -33,10 +33,10 @@ const TICKET_STATUS: Record<TicketStatus, { label: string; cls: string }> = {
 
 function fieldClass(error?: string) {
   return [
-    "w-full rounded-2xl border bg-sand px-4 text-sm text-navy outline-none transition-colors dark:bg-navy-mid dark:text-ivory",
+    "w-full rounded-2xl border bg-transparent px-4 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
     error
       ? "border-rose"
-      : "border-navy/12 focus:border-gold/60 dark:border-gold/25",
+      : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
   ].join(" ");
 }
 
@@ -49,14 +49,18 @@ export function ProfileSupportPanel() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [errors, setErrors] = useState<{ subject?: string; message?: string }>({});
+  const [errors, setErrors] = useState<{ subject?: string; message?: string }>(
+    {},
+  );
 
   if (!user) return null;
 
   function submit() {
     const next: { subject?: string; message?: string } = {};
-    if (subject.trim().length < 3) next.subject = "موضوع باید حداقل ۳ حرف باشد.";
-    if (message.trim().length < 10) next.message = "پیام باید حداقل ۱۰ حرف باشد.";
+    if (subject.trim().length < 3)
+      next.subject = "موضوع باید حداقل ۳ حرف باشد.";
+    if (message.trim().length < 10)
+      next.message = "پیام باید حداقل ۱۰ حرف باشد.";
     setErrors(next);
     if (Object.keys(next).length) return;
 
@@ -77,8 +81,10 @@ export function ProfileSupportPanel() {
     <section className={PROFILE_CARD}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-black text-navy dark:text-linen">تیکت‌های پشتیبانی</h2>
-          <p className="mt-1 text-xs leading-6 text-navy/50 dark:text-wheat">
+          <h2 className="text-navy dark:text-linen text-lg font-black">
+            تیکت‌های پشتیبانی
+          </h2>
+          <p className="text-navy/50 dark:text-wheat mt-1 text-xs leading-6">
             هر سوالی دارید به‌صورت تیکت بپرسید؛ پاسخ فقط در همین پنل ثبت می‌شود.
           </p>
         </div>
@@ -98,7 +104,9 @@ export function ProfileSupportPanel() {
       {compose ? (
         <div className="space-y-4">
           <label className="block space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">موضوع</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              موضوع
+            </span>
             <input
               value={subject}
               onChange={(event) => {
@@ -110,12 +118,14 @@ export function ProfileSupportPanel() {
               className={`${fieldClass(errors.subject)} h-11`}
             />
             {errors.subject ? (
-              <p className="text-xs font-bold text-rose">{errors.subject}</p>
+              <p className="text-rose text-xs font-bold">{errors.subject}</p>
             ) : null}
           </label>
 
           <label className="block space-y-1.5">
-            <span className="text-xs font-black text-navy/60 dark:text-wheat">پیام</span>
+            <span className="text-navy/60 dark:text-wheat text-xs font-black">
+              پیام
+            </span>
             <textarea
               value={message}
               onChange={(event) => {
@@ -127,12 +137,17 @@ export function ProfileSupportPanel() {
               className={`${fieldClass(errors.message)} min-h-32 py-3`}
             />
             {errors.message ? (
-              <p className="text-xs font-bold text-rose">{errors.message}</p>
+              <p className="text-rose text-xs font-bold">{errors.message}</p>
             ) : null}
           </label>
 
           <div className="flex gap-2">
-            <Button type="button" variant="navy" className="h-11 px-6" onClick={submit}>
+            <Button
+              type="button"
+              variant="navy"
+              className="h-11 px-6"
+              onClick={submit}
+            >
               ثبت تیکت
             </Button>
             <Button
@@ -146,11 +161,14 @@ export function ProfileSupportPanel() {
           </div>
         </div>
       ) : tickets.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-dashed border-navy/15 px-6 py-10 text-center dark:border-gold/25">
-          <Headphones className="mx-auto size-9 text-gold" />
-          <p className="mt-3 font-black text-navy dark:text-ivory">هنوز تیکتی ندارید</p>
-          <p className="mx-auto mt-1 max-w-xs text-xs leading-6 text-navy/50 dark:text-wheat">
-            مشاوره سایز، پیگیری سفارش یا هر سوال دیگر — تیکت بسازید تا همین‌جا پاسخ بگیرید.
+        <div className="border-navy/15 dark:border-gold/25 mt-6 rounded-2xl border border-dashed px-6 py-10 text-center">
+          <Headphones className="text-gold mx-auto size-9" />
+          <p className="text-navy dark:text-ivory mt-3 font-black">
+            هنوز تیکتی ندارید
+          </p>
+          <p className="text-navy/50 dark:text-wheat mx-auto mt-1 max-w-xs text-xs leading-6">
+            مشاوره سایز، پیگیری سفارش یا هر سوال دیگر — تیکت بسازید تا همین‌جا
+            پاسخ بگیرید.
           </p>
         </div>
       ) : (
@@ -161,23 +179,28 @@ export function ProfileSupportPanel() {
             return (
               <li
                 key={ticket.id}
-                className="overflow-hidden rounded-2xl border border-navy/10 dark:border-gold/25"
+                className="border-navy/10 dark:border-gold/25 overflow-hidden rounded-2xl border"
               >
                 <button
                   type="button"
-                  className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-start transition-colors hover:bg-navy/3 dark:hover:bg-white/4"
+                  className="hover:bg-navy/3 flex w-full items-center justify-between gap-3 px-4 py-3.5 text-start transition-colors dark:hover:bg-white/4"
                   onClick={() => setOpenId(open ? null : ticket.id)}
                   aria-expanded={open}
                 >
                   <span className="min-w-0">
-                    <span className="block truncate text-sm font-black text-navy dark:text-ivory">
+                    <span className="text-navy dark:text-ivory block truncate text-sm font-black">
                       {ticket.subject}
                     </span>
-                    <span className="mt-0.5 block text-[10px] font-bold text-navy/45 dark:text-wheat">
+                    <span className="text-navy/45 dark:text-wheat mt-0.5 block text-[10px] font-bold">
                       {ticket.createdAt}
                     </span>
                   </span>
-                  <span className={cn("shrink-0 rounded-full px-3 py-1 text-[10px] font-black", status.cls)}>
+                  <span
+                    className={cn(
+                      "shrink-0 rounded-full px-3 py-1 text-[10px] font-black",
+                      status.cls,
+                    )}
+                  >
                     {status.label}
                   </span>
                 </button>
@@ -202,25 +225,28 @@ function TicketThread({ ticket }: { ticket: Ticket }) {
   }
 
   return (
-    <div className="space-y-3 border-t border-navy/8 bg-navy/2 px-4 py-4 dark:border-gold/15 dark:bg-white/2">
+    <div className="border-navy/8 bg-navy/2 dark:border-gold/15 space-y-3 border-t px-4 py-4 dark:bg-white/2">
       {ticket.replies.map((replyItem, index) => (
         <div
           key={index}
-          className={cn("flex", replyItem.from === "support" ? "justify-end" : "justify-start")}
+          className={cn(
+            "flex",
+            replyItem.from === "support" ? "justify-end" : "justify-start",
+          )}
         >
           <div
             className={cn(
               "max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-7",
               replyItem.from === "support"
-                ? "rounded-se-md border border-gold/30 bg-gold/10 text-navy dark:text-ivory"
-                : "rounded-ss-md border border-navy/10 bg-white text-navy dark:border-white/10 dark:bg-dusk-mid dark:text-linen",
+                ? "border-gold/30 bg-gold/10 text-navy dark:text-ivory rounded-se-md border"
+                : "border-navy/10 text-navy dark:bg-dusk-mid dark:text-linen rounded-ss-md border bg-white dark:border-white/10",
             )}
           >
-            <p className="mb-1 text-[10px] font-black text-gold">
+            <p className="text-gold mb-1 text-[10px] font-black">
               {replyItem.from === "support" ? "پشتیبانی" : "شما"}
             </p>
             <p className="whitespace-pre-wrap">{replyItem.text}</p>
-            <p className="mt-1.5 text-[10px] font-bold text-navy/40 dark:text-wheat">
+            <p className="text-navy/40 dark:text-wheat mt-1.5 text-[10px] font-bold">
               {replyItem.at}
             </p>
           </div>
@@ -237,7 +263,7 @@ function TicketThread({ ticket }: { ticket: Ticket }) {
             send();
           }}
           placeholder="پیام پیگیری…"
-          className="h-10 flex-1 rounded-xl border border-navy/12 bg-white px-4 text-sm text-navy outline-none dark:border-gold/25 dark:bg-navy-mid dark:text-ivory"
+          className="border-navy/12 text-navy dark:border-gold/25 dark:bg-navy-mid dark:text-ivory h-10 flex-1 rounded-xl border bg-white px-4 text-sm outline-none"
         />
         <Button
           type="button"

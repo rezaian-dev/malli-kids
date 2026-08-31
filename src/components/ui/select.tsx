@@ -4,6 +4,7 @@ import * as React from "react";
 import { Select as SelectPrimitive } from "radix-ui";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
+import { FIELD_FOCUS } from "@/lib/field";
 import { cn } from "@/lib/utils";
 
 function Select(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
@@ -35,9 +36,10 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "border-navy/12 text-navy flex w-full items-center justify-between gap-2 rounded-2xl border bg-white px-3.5 text-sm font-bold shadow-sm transition-colors outline-none",
+        "border-navy/12 text-navy flex w-full items-center justify-between gap-2 rounded-2xl border bg-white px-3.5 text-sm font-bold shadow-none transition-[color,box-shadow,border-color] duration-200 outline-none",
         "data-[size=default]:h-11 data-[size=sm]:h-9",
-        "hover:border-gold/50 focus-visible:border-gold focus-visible:ring-gold/40 focus-visible:ring-2",
+        "hover:border-gold/50",
+        FIELD_FOCUS,
         "data-placeholder:text-navy/40 disabled:cursor-not-allowed disabled:opacity-50",
         "dark:border-gold/25 dark:bg-navy-mid dark:text-ivory dark:hover:border-gold/50 dark:data-placeholder:text-wheat/70",
         "[&>span]:line-clamp-1 [&>span]:text-right",

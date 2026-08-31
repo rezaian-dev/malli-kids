@@ -172,7 +172,9 @@ export default function AdminCoupons() {
       cap: parseFaNumber(formValues.cap),
       active: true,
       min: parseFaNumber(formValues.min) || 0,
-      until: toLatinDigits(formValues.until).trim().replace(/[.\u200c\-]/g, "/"),
+      until: toLatinDigits(formValues.until)
+        .trim()
+        .replace(/[.\u200c\-]/g, "/"),
     };
 
     saveCoupons([next, ...db.coupons]);
@@ -342,7 +344,8 @@ export default function AdminCoupons() {
                   <div className="mt-4">
                     <div className="text-navy/45 dark:text-wheat mb-1.5 flex items-center justify-between text-[9px] font-bold">
                       <span>
-                        مصرف {toFaDigits(coupon.used)} از {toFaDigits(coupon.cap)}
+                        مصرف {toFaDigits(coupon.used)} از{" "}
+                        {toFaDigits(coupon.cap)}
                       </span>
                       <span>{toFaDigits(usage)}٪</span>
                     </div>
@@ -416,7 +419,7 @@ export default function AdminCoupons() {
               dir="ltr"
               maxLength={16}
               error={formErrors.code}
-              className="uppercase tracking-[0.12em]"
+              className="tracking-[0.12em] uppercase"
               required
             />
             <CouponField
@@ -473,7 +476,11 @@ export default function AdminCoupons() {
               required
             />
 
-            <Button type="submit" variant="navy" className="h-11 w-full rounded-xl">
+            <Button
+              type="submit"
+              variant="navy"
+              className="h-11 w-full rounded-xl"
+            >
               <Percent className="size-4" /> ذخیره کد
             </Button>
           </form>
@@ -500,7 +507,10 @@ function CouponField({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-navy/55 dark:text-wheat text-xs font-black" htmlFor={id}>
+      <label
+        className="text-navy/55 dark:text-wheat text-xs font-black"
+        htmlFor={id}
+      >
         {label}
       </label>
       <Input
@@ -508,7 +518,7 @@ function CouponField({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={Boolean(error)}
-        className={`h-11 rounded-2xl border-navy/12 bg-white/70 px-4 text-sm dark:border-gold/20 dark:bg-white/5 ${className ?? ""}`}
+        className={`border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm ${className ?? ""}`}
         {...props}
       />
       {error ? (

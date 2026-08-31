@@ -30,7 +30,9 @@ type ProductFormValues = {
   stock: boolean;
 };
 
-type ProductFormErrors = Partial<Record<keyof ProductFormValues | "form", string>>;
+type ProductFormErrors = Partial<
+  Record<keyof ProductFormValues | "form", string>
+>;
 
 function getInitialValues(product?: Product): ProductFormValues {
   return {
@@ -114,7 +116,11 @@ export function ProductForm({ product }: { product?: Product }) {
     value: ProductFormValues[K],
   ) {
     setValues((current) => ({ ...current, [field]: value }));
-    setErrors((current) => ({ ...current, [field]: undefined, form: undefined }));
+    setErrors((current) => ({
+      ...current,
+      [field]: undefined,
+      form: undefined,
+    }));
   }
 
   async function onImageChange(event: ChangeEvent<HTMLInputElement>) {
@@ -126,7 +132,8 @@ export function ProductForm({ product }: { product?: Product }) {
     setErrors((current) => ({ ...current, img: undefined, form: undefined }));
 
     try {
-      const { compressToDataUrl } = await import("@/components/ui/image-upload");
+      const { compressToDataUrl } =
+        await import("@/components/ui/image-upload");
       const dataUrl = await compressToDataUrl(file);
       updateValue("img", dataUrl);
     } catch {
@@ -149,7 +156,8 @@ export function ProductForm({ product }: { product?: Product }) {
     }
 
     upsertProduct({
-      id: product?.id ?? Math.max(999, ...db.products.map((item) => item.id)) + 1,
+      id:
+        product?.id ?? Math.max(999, ...db.products.map((item) => item.id)) + 1,
       rate: product?.rate ?? 4.8,
       sold: product?.sold ?? 0,
       name: values.name.trim(),
@@ -200,7 +208,10 @@ export function ProductForm({ product }: { product?: Product }) {
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="product-name" className="text-navy/55 dark:text-wheat text-xs font-black">
+            <label
+              htmlFor="product-name"
+              className="text-navy/55 dark:text-wheat text-xs font-black"
+            >
               نام محصول
             </label>
             <Input
@@ -210,7 +221,7 @@ export function ProductForm({ product }: { product?: Product }) {
               placeholder="مثلاً: پیراهن مجلسی الماس طلایی"
               maxLength={80}
               aria-invalid={Boolean(errors.name)}
-              className="h-11 rounded-2xl border-navy/12 bg-white/70 px-4 text-sm dark:border-gold/20 dark:bg-white/5"
+              className="border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm"
               required
             />
             <FieldNote error={errors.name} />
@@ -218,7 +229,10 @@ export function ProductForm({ product }: { product?: Product }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label htmlFor="product-cat" className="text-navy/55 dark:text-wheat text-xs font-black">
+              <label
+                htmlFor="product-cat"
+                className="text-navy/55 dark:text-wheat text-xs font-black"
+              >
                 دسته‌بندی
               </label>
               <select
@@ -226,7 +240,7 @@ export function ProductForm({ product }: { product?: Product }) {
                 value={values.cat}
                 onChange={(event) => updateValue("cat", event.target.value)}
                 aria-invalid={Boolean(errors.cat)}
-                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 dark:aria-invalid:border-destructive/50 h-11 w-full rounded-2xl border border-navy/12 bg-white/70 px-4 text-sm outline-none transition-[color,box-shadow,border-color] duration-200 focus-visible:ring-3 aria-invalid:ring-3 dark:border-gold/20 dark:bg-white/5"
+                className="border-navy/12 focus-visible:border-gold dark:border-gold/20 h-11 w-full rounded-2xl border bg-transparent px-4 text-sm transition-[color,box-shadow,border-color] duration-200 outline-none focus-visible:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:focus-visible:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]"
                 required
               >
                 {CAT_OPTIONS.map((item) => (
@@ -239,7 +253,10 @@ export function ProductForm({ product }: { product?: Product }) {
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="product-season" className="text-navy/55 dark:text-wheat text-xs font-black">
+              <label
+                htmlFor="product-season"
+                className="text-navy/55 dark:text-wheat text-xs font-black"
+              >
                 زیرشاخه (فصل)
               </label>
               <select
@@ -247,7 +264,7 @@ export function ProductForm({ product }: { product?: Product }) {
                 value={values.season}
                 onChange={(event) => updateValue("season", event.target.value)}
                 aria-invalid={Boolean(errors.season)}
-                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 dark:aria-invalid:border-destructive/50 h-11 w-full rounded-2xl border border-navy/12 bg-white/70 px-4 text-sm outline-none transition-[color,box-shadow,border-color] duration-200 focus-visible:ring-3 aria-invalid:ring-3 dark:border-gold/20 dark:bg-white/5"
+                className="border-navy/12 focus-visible:border-gold dark:border-gold/20 h-11 w-full rounded-2xl border bg-transparent px-4 text-sm transition-[color,box-shadow,border-color] duration-200 outline-none focus-visible:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:focus-visible:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]"
                 required
               >
                 {SEASONS.map((item) => (
@@ -262,7 +279,10 @@ export function ProductForm({ product }: { product?: Product }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label htmlFor="product-price" className="text-navy/55 dark:text-wheat text-xs font-black">
+              <label
+                htmlFor="product-price"
+                className="text-navy/55 dark:text-wheat text-xs font-black"
+              >
                 قیمت (تومان)
               </label>
               <Input
@@ -272,14 +292,17 @@ export function ProductForm({ product }: { product?: Product }) {
                 inputMode="numeric"
                 placeholder="حداقل ۱٬۰۰۰ تومان"
                 aria-invalid={Boolean(errors.price)}
-                className="h-11 rounded-2xl border-navy/12 bg-white/70 px-4 text-sm dark:border-gold/20 dark:bg-white/5"
+                className="border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm"
                 required
               />
               <FieldNote error={errors.price} />
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="product-old" className="text-navy/55 dark:text-wheat text-xs font-black">
+              <label
+                htmlFor="product-old"
+                className="text-navy/55 dark:text-wheat text-xs font-black"
+              >
                 قیمت قبل (اختیاری)
               </label>
               <Input
@@ -289,7 +312,7 @@ export function ProductForm({ product }: { product?: Product }) {
                 inputMode="numeric"
                 placeholder="باید بیشتر از قیمت باشد"
                 aria-invalid={Boolean(errors.old)}
-                className="h-11 rounded-2xl border-navy/12 bg-white/70 px-4 text-sm dark:border-gold/20 dark:bg-white/5"
+                className="border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm"
               />
               <FieldNote error={errors.old} />
             </div>
@@ -297,7 +320,10 @@ export function ProductForm({ product }: { product?: Product }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label htmlFor="product-disc" className="text-navy/55 dark:text-wheat text-xs font-black">
+              <label
+                htmlFor="product-disc"
+                className="text-navy/55 dark:text-wheat text-xs font-black"
+              >
                 تخفیف (اختیاری)
               </label>
               <Input
@@ -307,13 +333,16 @@ export function ProductForm({ product }: { product?: Product }) {
                 placeholder="۱۷٪"
                 maxLength={20}
                 aria-invalid={Boolean(errors.disc)}
-                className="h-11 rounded-2xl border-navy/12 bg-white/70 px-4 text-sm dark:border-gold/20 dark:bg-white/5"
+                className="border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm"
               />
               <FieldNote error={errors.disc} />
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="product-badge" className="text-navy/55 dark:text-wheat text-xs font-black">
+              <label
+                htmlFor="product-badge"
+                className="text-navy/55 dark:text-wheat text-xs font-black"
+              >
                 نشان (اختیاری)
               </label>
               <Input
@@ -323,14 +352,17 @@ export function ProductForm({ product }: { product?: Product }) {
                 placeholder="پرفروش / جدید"
                 maxLength={20}
                 aria-invalid={Boolean(errors.badge)}
-                className="h-11 rounded-2xl border-navy/12 bg-white/70 px-4 text-sm dark:border-gold/20 dark:bg-white/5"
+                className="border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm"
               />
               <FieldNote error={errors.badge} />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="product-desc" className="text-navy/55 dark:text-wheat text-xs font-black">
+            <label
+              htmlFor="product-desc"
+              className="text-navy/55 dark:text-wheat text-xs font-black"
+            >
               توضیح
             </label>
             <Textarea
@@ -340,7 +372,7 @@ export function ProductForm({ product }: { product?: Product }) {
               placeholder="جنس پارچه، سایزبندی و ویژگی‌ها…"
               maxLength={800}
               aria-invalid={Boolean(errors.desc)}
-              className="min-h-36 rounded-2xl border-navy/12 bg-white/70 px-4 py-3 text-sm dark:border-gold/20 dark:bg-white/5"
+              className="border-navy/12 dark:border-gold/20 min-h-36 rounded-2xl bg-transparent px-4 py-3 text-sm"
               required
             />
             <FieldNote error={errors.desc} />
@@ -351,7 +383,7 @@ export function ProductForm({ product }: { product?: Product }) {
           <div className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 space-y-4 rounded-[22px] border p-5 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] sm:p-6 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
             <h2 className="text-gold text-sm font-black">تصویر محصول</h2>
 
-            <div className="overflow-hidden rounded-[22px] border border-navy/10 bg-white/55 dark:border-gold/14 dark:bg-white/4">
+            <div className="border-navy/10 dark:border-gold/14 overflow-hidden rounded-[22px] border bg-white/55 dark:bg-white/4">
               {/* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use local files and data URLs. */}
               <img
                 src={preview}
@@ -371,7 +403,11 @@ export function ProductForm({ product }: { product?: Product }) {
                 />
                 <span className="border-navy/12 text-navy hover:border-gold/45 dark:border-gold/20 dark:text-ivory inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-2xl border bg-white/70 px-4 text-sm font-black transition dark:bg-white/5">
                   <ImagePlus className="size-4" />
-                  {imageBusy ? "در حال پردازش تصویر…" : values.img ? "تغییر تصویر" : "آپلود تصویر"}
+                  {imageBusy
+                    ? "در حال پردازش تصویر…"
+                    : values.img
+                      ? "تغییر تصویر"
+                      : "آپلود تصویر"}
                 </span>
               </label>
               {values.img ? (
@@ -384,7 +420,10 @@ export function ProductForm({ product }: { product?: Product }) {
                 </button>
               ) : null}
             </div>
-            <FieldNote error={errors.img} hint="در صورت خالی بودن، تصویر پیش‌فرض برند ذخیره می‌شود" />
+            <FieldNote
+              error={errors.img}
+              hint="در صورت خالی بودن، تصویر پیش‌فرض برند ذخیره می‌شود"
+            />
 
             <label className="border-navy/8 dark:border-gold/20 flex items-center justify-between rounded-2xl border px-4 py-3">
               <span className="space-y-1">
@@ -404,10 +443,19 @@ export function ProductForm({ product }: { product?: Product }) {
 
       <div className="border-navy/8 bg-fog/90 dark:border-gold/20 dark:bg-navy-deep/90 fixed inset-x-0 bottom-0 z-30 border-t px-4 py-3 backdrop-blur-xl lg:inset-s-68">
         <div className="flex items-center justify-end gap-2">
-          <Button asChild type="button" variant="outline" className="h-11 rounded-2xl">
+          <Button
+            asChild
+            type="button"
+            variant="outline"
+            className="h-11 rounded-2xl"
+          >
             <Link href="/admin/products">انصراف</Link>
           </Button>
-          <Button type="submit" variant="navy" className="h-11 rounded-2xl px-6">
+          <Button
+            type="submit"
+            variant="navy"
+            className="h-11 rounded-2xl px-6"
+          >
             <Save className="size-4" /> {isNew ? "ساخت محصول" : "ذخیره تغییرات"}
           </Button>
         </div>

@@ -259,7 +259,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
         <label htmlFor="shop-search" className={SECTION_LABEL}>
           <Search className="size-3.5" /> جستجو
         </label>
-        <span className="relative block">
+        <span className="dark:bg-navy-mid relative block rounded-2xl bg-white">
           <Search className="text-gold pointer-events-none absolute inset-e-3.5 top-1/2 size-4 -translate-y-1/2" />
           <Input
             id="shop-search"
@@ -275,7 +275,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
               event.preventDefault();
               commitQuery();
             }}
-            className="border-navy/12 text-navy placeholder:text-navy/35 dark:border-gold/30 dark:bg-navy-mid dark:text-ivory dark:placeholder:text-wheat h-12 rounded-2xl bg-white ps-4 pe-11 text-sm font-bold shadow-inner"
+            className="border-navy/12 text-navy placeholder:text-navy/35 dark:border-gold/30 dark:text-ivory dark:placeholder:text-wheat h-12 rounded-2xl bg-transparent ps-4 pe-11 text-sm font-bold"
           />
         </span>
       </div>

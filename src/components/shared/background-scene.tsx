@@ -11,16 +11,8 @@ const DELAYS = [
 function LightAtelier() {
   return (
     <div className="absolute inset-0 dark:hidden">
-      <div className="absolute inset-0 bg-linear-to-br from-[#fff9f1] via-[#f6ead6] to-[#efe0c8]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-8%,rgba(193,147,87,0.34),transparent_52%),radial-gradient(ellipse_at_100%_8%,rgba(14,42,71,0.12),transparent_46%),radial-gradient(ellipse_at_0%_100%,rgba(14,42,71,0.10),transparent_48%),radial-gradient(ellipse_at_82%_88%,rgba(232,197,122,0.26),transparent_42%)]" />
-
-      <div className="border-gold/25 absolute -top-36 left-1/2 size-120 -translate-x-1/2 rounded-full border md:size-168" />
-      <div className="border-gold/20 absolute -top-20 left-1/2 size-88 -translate-x-1/2 rounded-full border md:size-136" />
-      <div className="border-navy/10 absolute -top-6 left-1/2 size-56 -translate-x-1/2 rounded-full border md:size-88" />
-
-      <div className="absolute top-8 left-1/2 size-64 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(232,197,122,0.32),transparent_68%)] blur-3xl md:size-104" />
-      <div className="absolute -inset-s-24 -bottom-16 size-88 rounded-full bg-[radial-gradient(circle,rgba(14,42,71,0.10),transparent_70%)] blur-3xl" />
-      <div className="absolute -inset-e-16 top-1/3 size-72 rounded-full bg-[radial-gradient(circle,rgba(193,147,87,0.16),transparent_68%)] blur-3xl" />
+      <div className="absolute inset-0 bg-[#e8eef4]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-12%,rgba(193,147,87,0.28),transparent_46%),radial-gradient(ellipse_at_100%_0%,rgba(14,42,71,0.14),transparent_42%),radial-gradient(ellipse_at_0%_100%,rgba(14,42,71,0.16),transparent_48%),radial-gradient(ellipse_at_80%_90%,rgba(193,147,87,0.14),transparent_40%)]" />
 
       <svg
         className="absolute inset-0 h-full w-full"
@@ -29,77 +21,146 @@ function LightAtelier() {
         aria-hidden
       >
         <defs>
-          <linearGradient id="mk-gold-line" x1="0" y1="0" x2="1" y2="1">
+          <pattern
+            id="mk-lattice"
+            width="56"
+            height="96"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M28 0L56 48L28 96L0 48Z"
+              fill="none"
+              stroke="#c19357"
+              strokeOpacity="0.16"
+              strokeWidth="0.8"
+            />
+            <path
+              d="M28 16L42 48L28 80L14 48Z"
+              fill="none"
+              stroke="#0e2a47"
+              strokeOpacity="0.07"
+              strokeWidth="0.6"
+            />
+          </pattern>
+          <linearGradient id="mk-gold-arc" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#c19357" stopOpacity="0" />
-            <stop offset="0.45" stopColor="#c19357" stopOpacity="0.45" />
+            <stop offset="0.5" stopColor="#c19357" stopOpacity="0.55" />
             <stop offset="1" stopColor="#0e2a47" stopOpacity="0" />
           </linearGradient>
+          <radialGradient id="mk-gold-core" cx="50%" cy="38%" r="38%">
+            <stop offset="0" stopColor="#c19357" stopOpacity="0.22" />
+            <stop offset="1" stopColor="#c19357" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
-        <path
-          d="M600 92c-28 0-52 18-64 44-12-26-36-44-64-44-40 0-72 32-72 72 0 86 136 148 136 148s136-62 136-148c0-40-32-72-72-72Z"
-          fill="#c19357"
-          fillOpacity="0.09"
-        />
-        <path
-          d="M600 108c-22 0-41 14-50 35-9-21-28-35-50-35-31 0-56 25-56 56 0 68 106 116 106 116s106-48 106-116c0-31-25-56-56-56Z"
-          fill="none"
-          stroke="#c19357"
-          strokeOpacity="0.28"
-          strokeWidth="1.4"
-        />
+        <rect width="1200" height="800" fill="url(#mk-lattice)" />
+        <rect width="1200" height="800" fill="url(#mk-gold-core)" />
 
         <circle
-          cx="600"
-          cy="210"
-          r="210"
-          fill="none"
-          stroke="#c19357"
-          strokeOpacity="0.16"
-          strokeWidth="1.1"
-        />
-        <circle
-          cx="600"
-          cy="210"
-          r="148"
-          fill="none"
-          stroke="#0e2a47"
-          strokeOpacity="0.08"
-          strokeWidth="1"
-        />
-        <circle
-          cx="600"
-          cy="210"
-          r="92"
+          cx="980"
+          cy="90"
+          r="260"
           fill="none"
           stroke="#c19357"
           strokeOpacity="0.22"
           strokeWidth="1.2"
         />
-
-        <path
-          d="M80 620C260 480 420 700 600 560s340-160 520 40"
-          fill="none"
-          stroke="url(#mk-gold-line)"
-          strokeWidth="1.15"
-        />
-        <path
-          d="M40 240C220 120 380 280 560 160s360-40 600 120"
+        <circle
+          cx="980"
+          cy="90"
+          r="190"
           fill="none"
           stroke="#0e2a47"
-          strokeOpacity="0.08"
+          strokeOpacity="0.1"
+          strokeWidth="1"
+        />
+        <circle
+          cx="980"
+          cy="90"
+          r="120"
+          fill="none"
+          stroke="#c19357"
+          strokeOpacity="0.28"
+          strokeWidth="1.3"
+        />
+
+        <circle
+          cx="140"
+          cy="720"
+          r="220"
+          fill="none"
+          stroke="#0e2a47"
+          strokeOpacity="0.12"
+          strokeWidth="1"
+        />
+        <circle
+          cx="140"
+          cy="720"
+          r="150"
+          fill="none"
+          stroke="#c19357"
+          strokeOpacity="0.2"
+          strokeWidth="1.1"
+        />
+
+        <path
+          d="M600 168c-26 0-48 17-58 42-10-25-32-42-58-42-36 0-66 30-66 66 0 80 124 138 124 138s124-58 124-138c0-36-30-66-66-66Z"
+          fill="#c19357"
+          fillOpacity="0.16"
+        />
+        <path
+          d="M600 184c-20 0-38 13-46 33-8-20-26-33-46-33-28 0-52 23-52 52 0 64 98 110 98 110s98-46 98-110c0-29-24-52-52-52Z"
+          fill="none"
+          stroke="#c19357"
+          strokeOpacity="0.45"
+          strokeWidth="1.6"
+        />
+
+        <text
+          x="430"
+          y="470"
+          fill="#0e2a47"
+          fillOpacity="0.08"
+          fontFamily="var(--font-display), 'Playfair Display', Georgia, serif"
+          fontSize="240"
+          fontWeight="700"
+        >
+          M
+        </text>
+        <text
+          x="640"
+          y="530"
+          fill="#0e2a47"
+          fillOpacity="0.08"
+          fontFamily="var(--font-display), 'Playfair Display', Georgia, serif"
+          fontSize="240"
+          fontWeight="700"
+        >
+          L
+        </text>
+
+        <path
+          d="M70 560C250 420 430 680 610 520s350-150 520 70"
+          fill="none"
+          stroke="url(#mk-gold-arc)"
+          strokeWidth="1.3"
+        />
+        <path
+          d="M-20 220C200 80 380 260 580 130s380-20 640 140"
+          fill="none"
+          stroke="#0e2a47"
+          strokeOpacity="0.1"
           strokeWidth="1"
         />
 
-        <g fill="#c19357" fillOpacity="0.28">
-          <circle cx="180" cy="140" r="2.2" />
-          <circle cx="980" cy="120" r="1.8" />
-          <circle cx="160" cy="430" r="1.6" />
-          <circle cx="1040" cy="390" r="2" />
-          <circle cx="240" cy="700" r="1.7" />
-          <circle cx="920" cy="680" r="2.1" />
-          <circle cx="430" cy="80" r="1.5" />
-          <circle cx="760" cy="70" r="1.6" />
+        <g fill="#c19357" fillOpacity="0.42">
+          <circle cx="210" cy="120" r="2.4" />
+          <circle cx="860" cy="70" r="1.8" />
+          <circle cx="90" cy="360" r="1.7" />
+          <circle cx="1120" cy="340" r="2.2" />
+          <circle cx="300" cy="680" r="1.8" />
+          <circle cx="980" cy="640" r="2.1" />
+          <circle cx="520" cy="60" r="1.6" />
         </g>
       </svg>
     </div>
@@ -110,7 +171,7 @@ export function BackgroundScene() {
   return (
     <div
       aria-hidden="true"
-      className="bg-cream dark:bg-ink pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className="dark:bg-ink pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#e8eef4]"
     >
       <LightAtelier />
 
@@ -179,9 +240,6 @@ export function BackgroundScene() {
           );
         })}
       </div>
-
-      <div className="from-cream/90 dark:from-ink/90 absolute inset-x-0 top-0 h-28 bg-linear-to-b to-transparent" />
-      <div className="from-cream/80 dark:from-ink/80 absolute inset-x-0 bottom-0 h-36 bg-linear-to-t to-transparent" />
     </div>
   );
 }
