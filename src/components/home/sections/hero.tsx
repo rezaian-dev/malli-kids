@@ -116,7 +116,7 @@ export function Hero() {
               alt="پیراهن مجلسی دخترانه ملی‌کیدز"
               width={900}
               height={1200}
-              preload
+              priority
               placeholder="blur"
               sizes="(max-width: 639px) 18rem, (max-width: 1023px) 27.5rem, 45vw"
               className="animate-hero-ken h-full w-full origin-[58%_38%] object-cover"

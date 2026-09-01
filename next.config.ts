@@ -1,18 +1,4 @@
-import { existsSync, lstatSync, rmSync } from "node:fs";
-import { join } from "node:path";
 import type { NextConfig } from "next";
-
-try {
-  const nextDir = join(process.cwd(), ".next");
-  if (existsSync(nextDir) && lstatSync(nextDir).isSymbolicLink()) {
-    rmSync(nextDir, { force: true });
-  }
-} catch {
-  /* leftover Windows junction from a previous cache move */
-}
-
-const onSlowWin =
-  process.platform === "win32" && !/^c:/i.test(process.cwd());
 
 const nextConfig: NextConfig = {
   // 🧪 Skip dev gzip to avoid noisy upstream listener warnings in Next 16.
@@ -26,10 +12,18 @@ const nextConfig: NextConfig = {
   },
 };
 
-if (onSlowWin) {
-  // Default-on since 16.1 — only opt out on a slow non-C: Windows volume.
-  // Setting the flag at all prints "Experiments (use with caution)".
-  nextConfig.experimental = { turbopackFileSystemCacheForDev: false };
-}
+// Note: On a slow filesystem (e.g. a non-C: volume), point the `.next` build
+// cache at a fast local disk with a Windows junction instead of disabling
+// Turbopack's filesystem cache via `experimental` (which prints a loud
+// "Experiments (use with caution)" banner and slows cold rebuilds):
+//
+//   mklink /J <project>\.next D:\fast-cache\malli-kids-next
+//
+// `.next` must be a real join pointing at the fast volume — do NOT let it
+// remain a symlink that Next resolves on every disk probe.
+//
+// We intentionally avoid setting `experimental.turbopackFileSystemCacheForDev`
+// here: it only trades one warning (the filesystem benchmark) for another
+// (the experimental banner) without fixing the underlying disk bottleneck.
 
 export default nextConfig;

@@ -164,7 +164,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
                 alt={product.name}
                 width={900}
                 height={1200}
-                preload={index === 0}
+                priority={index === 0}
                 loading={index === 0 ? "eager" : "lazy"}
                 sizes="(max-width: 1023px) 100vw, 44vw"
                 className="h-full w-full shrink-0 object-cover"
