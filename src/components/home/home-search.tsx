@@ -12,17 +12,19 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { CORE_PRODUCTS } from "@/lib/data/products";
-import { shopHrefFromSearch } from "@/lib/shop-query";
+import { shopHrefFromSearch, shopCategoryHref } from "@/lib/shop-query";
 import { FIELD_FOCUS_WITHIN } from "@/lib/field";
 import { cn } from "@/lib/utils";
 import { formatToman } from "@/lib/format";
 
+// 🏷️ Quick chips: each maps to a clean, indexable `category=` URL so the
+// category filter engages (real search terms stay as `query=`).
 const CHIPS = [
-  { q: "پیراهن", Icon: Shirt },
-  { q: "سیسمونی", Icon: Baby },
-  { q: "پالتو", Icon: Flame },
-  { q: "دستدوز", Icon: Sparkles },
-];
+  { q: "پیراهن", Icon: Shirt, cat: "دخترانه" },
+  { q: "سیسمونی", Icon: Baby, cat: "سیسمونی" },
+  { q: "پالتو", Icon: Flame, cat: "دخترانه" },
+  { q: "دستدوز", Icon: Sparkles, cat: "دستدوز" },
+] as const;
 
 const MIN_QUERY = 2;
 const MAX_QUERY = 60;
@@ -53,6 +55,13 @@ export function HomeSearch() {
 
     setError("");
     router.push(shopHrefFromSearch(next));
+  }
+
+  function goChip(chip: (typeof CHIPS)[number]) {
+    setQuery(chip.q);
+    setError("");
+    setOpen(false);
+    router.push(shopCategoryHref(chip.cat));
   }
 
   function selectSuggestion(value: string) {
@@ -136,16 +145,16 @@ export function HomeSearch() {
                 <TrendingUp className="text-gold size-4" /> جستجوهای پرتکرار
               </p>
               <div className="flex flex-wrap gap-2">
-                {CHIPS.map(({ q: chip, Icon }) => (
+                {CHIPS.map((chip) => (
                   <button
-                    key={chip}
+                    key={chip.q}
                     type="button"
                     className="bg-sand text-navy dark:bg-dusk-mid dark:text-linen inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold"
                     onPointerDown={(event) => event.preventDefault()}
-                    onClick={() => selectSuggestion(chip)}
+                    onClick={() => goChip(chip)}
                   >
-                    <Icon className="text-gold size-3.5" />
-                    {chip}
+                    <chip.Icon className="text-gold size-3.5" />
+                    {chip.q}
                   </button>
                 ))}
               </div>
@@ -193,15 +202,15 @@ export function HomeSearch() {
 
       <div className="relative z-10 mt-5 flex flex-wrap items-center justify-center gap-2">
         <span className="text-ivory/80 text-[11px] font-bold">پرطرفدار:</span>
-        {CHIPS.map(({ q: chip, Icon }) => (
+        {CHIPS.map((chip) => (
           <button
-            key={chip}
+            key={chip.q}
             type="button"
             className="text-ivory hover:bg-gold hover:text-navy-deep inline-flex min-h-9 items-center gap-1.5 rounded-full bg-white/20 px-3.5 py-1.5 text-xs font-bold"
-            onClick={() => selectSuggestion(chip)}
+            onClick={() => goChip(chip)}
           >
-            <Icon className="size-3.5" />
-            {chip}
+            <chip.Icon className="size-3.5" />
+            {chip.q}
           </button>
         ))}
       </div>
