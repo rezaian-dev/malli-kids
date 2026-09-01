@@ -130,7 +130,10 @@ export function Field({
           ) : null}
           {control}
           {trailing ? (
-            <span data-field-trail className="relative z-10 shrink-0">
+            <span
+              data-field-trail
+              className="relative z-10 ms-auto shrink-0 pe-1"
+            >
               {trailing}
             </span>
           ) : null}

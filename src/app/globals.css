@@ -561,15 +561,28 @@ textarea:-internal-autofill-selected {
 
 /* Inset shell is the only visible box. Chromium paints Field a few px
    inside the control — expand the input past the clip so that inner
-   radius never shows. No color-scheme override, no clip:text. */
+   radius never shows. No color-scheme override, no clip:text.
+
+   Padding is physical, mapped from the *shell* direction — never the
+   input's dir. LTR values (email, password) were eating the RTL icons. */
 [data-field-shell][data-skin="inset"] {
   isolation: isolate;
+  --field-clip: 12px;
+  --field-pad: 1.75rem;
+  --field-pad-start: var(--field-pad);
+  --field-pad-end: var(--field-pad);
+}
+[data-field-shell][data-skin="inset"]:has([data-field-lead]) {
+  --field-pad-start: 3.5rem;
+}
+[data-field-shell][data-skin="inset"]:has([data-field-trail]) {
+  --field-pad-end: 3.5rem;
 }
 [data-field-shell][data-skin="inset"] input {
   appearance: none;
   -webkit-appearance: none;
   position: absolute;
-  inset: -12px;
+  inset: calc(var(--field-clip) * -1);
   z-index: 0;
   width: auto;
   height: auto;
@@ -583,15 +596,13 @@ textarea:-internal-autofill-selected {
   box-shadow: none;
   outline: none;
   line-height: 3rem;
-  padding-block: 12px;
-  padding-inline-start: 3.25rem;
-  padding-inline-end: 1.75rem;
+  padding-block: var(--field-clip);
+  padding-right: var(--field-pad-start);
+  padding-left: var(--field-pad-end);
 }
-[data-field-shell][data-skin="inset"]:not(:has([data-field-lead])) input {
-  padding-inline-start: 1.75rem;
-}
-[data-field-shell][data-skin="inset"]:has([data-field-trail]) input {
-  padding-inline-end: 3.5rem;
+[data-field-shell][data-skin="inset"]:dir(ltr) input {
+  padding-left: var(--field-pad-start);
+  padding-right: var(--field-pad-end);
 }
 [data-field-shell][data-skin="inset"] input::-ms-reveal,
 [data-field-shell][data-skin="inset"] input::-ms-clear {

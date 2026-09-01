@@ -34,7 +34,7 @@ export const SHELL: Partial<Record<Skin, string>> = {
 
 export const LEAD: Partial<Record<Skin, string>> = {
   inset:
-    "flex w-8 shrink-0 items-center justify-center text-gold dark:text-gold-light",
+    "flex w-9 shrink-0 items-center justify-center text-gold dark:text-gold-light",
 };
 
 export const LATIN_ANCHOR = "text-right";

@@ -273,7 +273,7 @@ function LoginPanel({ onOtp }: { onOtp: () => void }) {
             type="button"
             variant="ghost"
             size="icon"
-            className="text-gold hover:bg-gold/10 hover:text-gold me-1 size-8 shrink-0"
+            className="text-gold hover:bg-gold/10 hover:text-gold size-8 shrink-0"
             onClick={() => setShow((s) => !s)}
             aria-label={show ? "پنهان کردنِ رمز" : "نمایشِ رمز"}
           >
