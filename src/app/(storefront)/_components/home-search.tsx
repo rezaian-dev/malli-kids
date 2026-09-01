@@ -3,35 +3,20 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Baby,
-  Flame,
-  Search as SearchIcon,
-  Shirt,
-  Sparkles,
-  TrendingUp,
-} from "lucide-react";
+import { Flame, Search as SearchIcon, TrendingUp } from "lucide-react";
 import { CORE_PRODUCTS } from "@/lib/data/products";
-import { shopHrefFromSearch, shopCategoryHref } from "@/lib/shop-query";
+import { shopHrefFromSearch } from "@/lib/shop-query";
+import { recordSearchAction } from "../_lib/search-actions";
 import { FIELD_FOCUS_WITHIN } from "@/lib/field";
 import { cn } from "@/lib/utils";
 import { formatToman } from "@/lib/locale/fa";
-
-// 🏷️ Quick chips: each maps to a clean, indexable `category=` URL so the
-// category filter engages (real search terms stay as `query=`).
-const CHIPS = [
-  { q: "پیراهن", Icon: Shirt, cat: "دخترانه" },
-  { q: "سیسمونی", Icon: Baby, cat: "سیسمونی" },
-  { q: "پالتو", Icon: Flame, cat: "دخترانه" },
-  { q: "دستدوز", Icon: Sparkles, cat: "دستدوز" },
-] as const;
 
 const MIN_QUERY = 2;
 const MAX_QUERY = 60;
 const ERROR_TEXT = "mt-2 text-xs font-bold text-rose-200";
 
 // 🔎 Tiny home search without form-runtime overhead.
-export function HomeSearch() {
+export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -47,7 +32,10 @@ export function HomeSearch() {
       )
     : [];
 
-  function goShop(value: string) {
+  // 🔎 The one real "a search happened" moment — a submitted query, a
+  // clicked suggestion, or a picked popular term all funnel through here, so
+  // `recordSearchAction` only ever counts genuine searches, never keystrokes.
+  function runSearch(value: string) {
     const next = value.trim();
 
     if (next !== "" && next.length < MIN_QUERY) {
@@ -55,25 +43,11 @@ export function HomeSearch() {
       return;
     }
 
-    setError("");
-    router.push(shopHrefFromSearch(next));
-  }
-
-  function goChip(chip: (typeof CHIPS)[number]) {
-    setQuery(chip.q);
-    setError("");
-    setOpen(false);
-    router.push(shopCategoryHref(chip.cat));
-  }
-
-  function selectSuggestion(value: string) {
-    const next = value.trim();
-    if (!next) return;
-
     setQuery(next);
     setError("");
     setOpen(false);
     router.push(shopHrefFromSearch(next));
+    if (next) void recordSearchAction(next);
   }
 
   return (
@@ -85,7 +59,7 @@ export function HomeSearch() {
           className="relative z-20"
           onSubmit={(event) => {
             event.preventDefault();
-            goShop(query);
+            runSearch(query);
           }}
         >
           <div
@@ -162,9 +136,9 @@ export function HomeSearch() {
                 <TrendingUp className="text-gold size-4" /> جستجوهای پرتکرار
               </p>
               <div className="flex flex-wrap gap-2">
-                {CHIPS.map((chip) => (
+                {popularTerms.map((term) => (
                   <button
-                    key={chip.q}
+                    key={term}
                     type="button"
                     className={cn(
                       "inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95",
@@ -172,10 +146,10 @@ export function HomeSearch() {
                       "dark:bg-dusk-mid dark:text-linen dark:hover:bg-dusk",
                     )}
                     onPointerDown={(event) => event.preventDefault()}
-                    onClick={() => goChip(chip)}
+                    onClick={() => runSearch(term)}
                   >
-                    <chip.Icon className="text-gold size-3.5" />
-                    {chip.q}
+                    <Flame className="text-gold size-3.5" />
+                    {term}
                   </button>
                 ))}
               </div>
@@ -191,7 +165,7 @@ export function HomeSearch() {
                   <button
                     type="button"
                     onPointerDown={(event) => event.preventDefault()}
-                    onClick={() => selectSuggestion(p.name)}
+                    onClick={() => runSearch(p.name)}
                     className={cn(
                       "flex w-full items-center gap-3 px-3.5 py-2.5 text-start transition-colors duration-150",
                       "hover:bg-gold/10 focus-visible:bg-gold/10",
@@ -224,23 +198,25 @@ export function HomeSearch() {
         </div>
       </div>
 
-      <div className="relative z-10 mt-5 flex flex-wrap items-center justify-center gap-2">
-        <span className="text-ivory/80 text-[11px] font-bold">پرطرفدار:</span>
-        {CHIPS.map((chip) => (
-          <button
-            key={chip.q}
-            type="button"
-            className={cn(
-              "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold",
-              "text-ivory hover:bg-gold hover:text-navy-deep bg-white/20",
-            )}
-            onClick={() => goChip(chip)}
-          >
-            <chip.Icon className="size-3.5" />
-            {chip.q}
-          </button>
-        ))}
-      </div>
+      {popularTerms.length ? (
+        <div className="relative z-10 mt-5 flex flex-wrap items-center justify-center gap-2">
+          <span className="text-ivory/80 text-[11px] font-bold">پرطرفدار:</span>
+          {popularTerms.map((term) => (
+            <button
+              key={term}
+              type="button"
+              className={cn(
+                "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold",
+                "text-ivory hover:bg-gold hover:text-navy-deep bg-white/20",
+              )}
+              onClick={() => runSearch(term)}
+            >
+              <Flame className="size-3.5" />
+              {term}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

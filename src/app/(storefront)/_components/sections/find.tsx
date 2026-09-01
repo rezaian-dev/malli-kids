@@ -1,7 +1,11 @@
 import Image from "next/image";
 import { HomeSearch } from "../home-search";
+import { getTopSearchTerms } from "@/lib/shop/search-terms";
 
-export function Find() {
+export async function Find() {
+  // 🔥 Real, ranked-by-actual-search-count terms — see `@/lib/shop/search-terms`.
+  const popularTerms = await getTopSearchTerms();
+
   return (
     <section
       id="searchHome"
@@ -29,7 +33,7 @@ export function Find() {
         <p className="text-ivory/85 mx-auto mt-3 max-w-xl text-sm leading-7 sm:text-base">
           نام لباس، دسته یا استایل را بنویسید؛ نتیجه همان لحظه دیده می‌شود.
         </p>
-        <HomeSearch />
+        <HomeSearch popularTerms={popularTerms} />
       </div>
     </section>
   );
