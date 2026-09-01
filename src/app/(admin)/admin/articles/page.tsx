@@ -22,6 +22,8 @@ import {
   useAdmin,
 } from "@/components/admin";
 import { toFaDigits } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
@@ -36,7 +38,13 @@ const RichEditor = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="border-navy/15 text-navy/40 dark:border-gold/25 dark:text-wheat grid min-h-88 place-items-center rounded-3xl border border-dashed text-sm font-bold">
+      <div
+        className={cn(
+          "grid min-h-88 place-items-center rounded-3xl border border-dashed text-sm font-bold",
+          "border-navy/15 text-navy/40",
+          "dark:border-gold/25 dark:text-wheat",
+        )}
+      >
         در حال آماده‌سازی ویرایشگر…
       </div>
     ),
@@ -53,6 +61,8 @@ const TAGS = [
 const PER_PAGE = 6;
 type PublishFilter = "all" | "published" | "draft";
 type ArticleSort = "newest" | "oldest" | "title";
+
+const FIELD_LABEL = "text-navy/50 dark:text-wheat text-[11px] font-black";
 
 type Draft = {
   slug: string | null;
@@ -243,12 +253,15 @@ export default function AdminArticles() {
               onChange={(html) => set("body", html)}
             />
           </div>
-          <aside className="hover:border-gold/50 border-navy/9 bg-paper/94 dark:border-gold-soft/16 space-y-4 rounded-[22px] border p-4 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] backdrop-blur-[18px] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] max-[639px]:rounded-[19px] sm:p-5 dark:bg-[rgba(16,43,70,0.72)]">
+          <aside
+            className={cn(
+              "space-y-4 rounded-[22px] border p-4 backdrop-blur-[18px] transition-all duration-500 max-[639px]:rounded-[19px] sm:p-5",
+              "border-navy/9 bg-paper/94 hover:border-gold/50 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]",
+              "dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)]",
+            )}
+          >
             <div className="space-y-1.5">
-              <label
-                className="text-navy/50 dark:text-wheat text-[11px] font-black"
-                htmlFor="art-title"
-              >
+              <label className={FIELD_LABEL} htmlFor="art-title">
                 عنوان
               </label>
               <Input
@@ -260,20 +273,19 @@ export default function AdminArticles() {
               />
             </div>
             <div className="space-y-1.5">
-              <span className="text-navy/50 dark:text-wheat text-[11px] font-black">
-                برچسب
-              </span>
+              <span className={FIELD_LABEL}>برچسب</span>
               <div className="flex flex-wrap gap-1.5">
                 {TAGS.map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => set("tag", t)}
-                    className={`rounded-full px-3 py-1.5 text-[11px] font-black transition ${
+                    className={cn(
+                      "rounded-full px-3 py-1.5 text-[11px] font-black transition",
                       draft.tag === t
                         ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep"
-                        : "border-navy/12 text-navy/65 hover:border-gold/50 dark:border-gold/25 dark:bg-navy-mid dark:text-wheat border bg-white"
-                    }`}
+                        : "border-navy/12 text-navy/65 hover:border-gold/50 dark:border-gold/25 dark:bg-navy-mid dark:text-wheat border bg-white",
+                    )}
                   >
                     {t}
                   </button>
@@ -287,10 +299,7 @@ export default function AdminArticles() {
               />
             </div>
             <div className="space-y-1.5">
-              <label
-                className="text-navy/50 dark:text-wheat text-[11px] font-black"
-                htmlFor="art-excerpt"
-              >
+              <label className={FIELD_LABEL} htmlFor="art-excerpt">
                 خلاصه (در فهرستِ مجله نمایش داده می‌شود)
               </label>
               <Textarea
@@ -303,9 +312,7 @@ export default function AdminArticles() {
               />
             </div>
             <div className="space-y-1.5">
-              <span className="text-navy/50 dark:text-wheat text-[11px] font-black">
-                تصویر شاخص
-              </span>
+              <span className={FIELD_LABEL}>تصویر شاخص</span>
               {draft.cover ? (
                 <div className="relative">
                   {/* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use saved data URLs. */}
@@ -452,7 +459,10 @@ export default function AdminArticles() {
         {pg.pageItems.map((article, index) => (
           <article
             key={article.slug}
-            className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 group flex flex-col gap-3 overflow-hidden rounded-[22px] border p-3 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] sm:flex-row sm:items-center sm:gap-4 sm:p-4 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]"
+            className={cn(
+              adminGlassCard,
+              "group flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4",
+            )}
             style={{ animationDelay: `${index * 45}ms` }}
           >
             {article.cover ? (
@@ -463,7 +473,13 @@ export default function AdminArticles() {
                 className="h-32 w-full rounded-2xl object-cover transition-transform duration-500 group-hover:scale-[1.02] sm:h-24 sm:w-32"
               />
             ) : (
-              <div className="from-sand to-gold/25 text-gold-deep dark:from-navy-deep dark:to-gold/12 dark:text-gold-soft grid h-32 w-full shrink-0 place-items-center rounded-2xl bg-linear-to-br sm:h-24 sm:w-32">
+              <div
+                className={cn(
+                  "grid h-32 w-full shrink-0 place-items-center rounded-2xl bg-linear-to-br sm:h-24 sm:w-32",
+                  "from-sand to-gold/25 text-gold-deep",
+                  "dark:from-navy-deep dark:to-gold/12 dark:text-gold-soft",
+                )}
+              >
                 <FilePenLine className="size-6" />
               </div>
             )}
@@ -473,7 +489,12 @@ export default function AdminArticles() {
                   {article.tag}
                 </span>
                 <span
-                  className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black ${article.published ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "bg-amber-500/12 text-amber-700 dark:text-amber-300"}`}
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black",
+                    article.published
+                      ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                      : "bg-amber-500/12 text-amber-700 dark:text-amber-300",
+                  )}
                 >
                   {article.published ? (
                     <Eye className="size-3" />
@@ -494,7 +515,13 @@ export default function AdminArticles() {
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-2 sm:flex-col lg:flex-row">
-              <label className="border-navy/8 text-navy/55 dark:border-gold/14 dark:text-wheat flex min-h-9 flex-1 items-center justify-center gap-2 rounded-xl border px-3 text-[10px] font-black sm:flex-none">
+              <label
+                className={cn(
+                  "flex min-h-9 flex-1 items-center justify-center gap-2 rounded-xl border px-3 text-[10px] font-black sm:flex-none",
+                  "border-navy/8 text-navy/55",
+                  "dark:border-gold/14 dark:text-wheat",
+                )}
+              >
                 <Switch
                   checked={article.published}
                   onCheckedChange={(value) =>
@@ -533,7 +560,7 @@ export default function AdminArticles() {
           </article>
         ))}
         {filteredArticles.length === 0 ? (
-          <div className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border p-12 text-center shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+          <div className={cn(adminGlassCard, "p-12 text-center")}>
             <FilePenLine className="text-gold mx-auto size-10" />
             <p className="text-navy dark:text-ivory mt-3 text-sm font-black">
               {db.articles.length === 0
@@ -546,5 +573,4 @@ export default function AdminArticles() {
       {filteredArticles.length > 0 ? <Pagination pg={pg} unit="مقاله" /> : null}
     </div>
   );
-
 }

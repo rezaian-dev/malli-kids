@@ -1,9 +1,14 @@
 import { ShieldCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function TrustNote() {
   return (
     <p
-      className="bg-navy/4 text-navy/55 dark:text-linen/60 mt-1 flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-[10.5px] font-bold dark:bg-white/4"
+      className={cn(
+        "mt-1 flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-[10.5px] font-bold",
+        "bg-navy/4 text-navy/70",
+        "dark:text-linen/60 dark:bg-white/4",
+      )}
       dir="rtl"
     >
       <ShieldCheck className="text-gold size-3.5 shrink-0" />

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowDownLeft } from "lucide-react";
 import { OrnLeaf } from "@/components/home/home-ornaments";
 import { wash } from "@/components/home/section-wash";
+import { cn } from "@/lib/utils";
 
 const BIG = [
   {
@@ -47,6 +48,11 @@ const SMALL = [
   },
 ];
 
+const SEASON_BADGE = cn(
+  "rounded-full border px-2.5 py-1 text-[10px] font-black whitespace-nowrap sm:px-3 sm:py-1.5 sm:text-xs",
+  "border-navy/15 bg-paper-warm text-navy",
+);
+
 export function Categories() {
   return (
     <section id="categories" className={`${wash.navy} py-12 sm:py-16 lg:py-20`}>
@@ -56,7 +62,13 @@ export function Categories() {
             <span className="text-gold text-sm font-bold tracking-wide">
               دسته‌بندی‌ها
             </span>
-            <h2 className="text-navy dark:text-ivory mt-2 text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black">
+            <h2
+              className={cn(
+                "mt-2",
+                "text-navy text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black",
+                "dark:text-ivory",
+              )}
+            >
               برای هر لحظه،{" "}
               <span className="text-gold relative inline-block">
                 یک استایل
@@ -64,7 +76,7 @@ export function Categories() {
               </span>
             </h2>
           </div>
-          <p className="text-navy/55 dark:text-wheat max-w-md text-sm leading-7 sm:text-[15px]">
+          <p className="text-navy/70 dark:text-wheat max-w-md text-sm leading-7 sm:text-[15px]">
             از سیسمونی لطیف تا لباس مشاغل فانتزی؛ هر دسته با وسواس یک مادر
             انتخاب و دوخته شده است.
           </p>
@@ -74,7 +86,10 @@ export function Categories() {
             <Link
               key={card.t}
               href={card.href}
-              className="group shadow-navy/10 relative col-span-2 block h-64 overflow-hidden rounded-2xl shadow-lg min-[420px]:h-80 sm:h-105 sm:rounded-[28px]"
+              className={cn(
+                "group relative col-span-2 block h-64 overflow-hidden rounded-2xl shadow-lg min-[420px]:h-80 sm:h-105 sm:rounded-[28px]",
+                "shadow-navy/10",
+              )}
             >
               <Image
                 src={card.img}
@@ -87,12 +102,8 @@ export function Categories() {
               <div className="from-navy-deep/85 via-navy/20 absolute inset-0 bg-linear-to-t to-transparent" />
               <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2.5 p-4 sm:gap-3 sm:p-6">
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  <span className="border-navy/15 bg-paper-warm text-navy rounded-full border px-2.5 py-1 text-[10px] font-black whitespace-nowrap sm:px-3 sm:py-1.5 sm:text-xs">
-                    پاییز – زمستان
-                  </span>
-                  <span className="border-navy/15 bg-paper-warm text-navy rounded-full border px-2.5 py-1 text-[10px] font-black whitespace-nowrap sm:px-3 sm:py-1.5 sm:text-xs">
-                    بهار – تابستان
-                  </span>
+                  <span className={SEASON_BADGE}>پاییز – زمستان</span>
+                  <span className={SEASON_BADGE}>بهار – تابستان</span>
                 </div>
                 <div className="flex items-end justify-between gap-2">
                   <div className="min-w-0">
@@ -103,7 +114,12 @@ export function Categories() {
                       {card.d}
                     </p>
                   </div>
-                  <span className="bg-gold text-navy-deep flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform duration-500 group-hover:rotate-45 sm:h-12 sm:w-12">
+                  <span
+                    className={cn(
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform duration-500 group-hover:rotate-45 sm:h-12 sm:w-12",
+                      "bg-gold text-navy-deep",
+                    )}
+                  >
                     <ArrowDownLeft className="h-4 w-4 sm:h-5 sm:w-5" />
                   </span>
                 </div>
@@ -114,7 +130,10 @@ export function Categories() {
             <Link
               key={card.t}
               href={card.href}
-              className="group shadow-navy/10 relative block h-52 overflow-hidden rounded-xl shadow-lg min-[420px]:h-64 sm:h-80 sm:rounded-3xl lg:h-105"
+              className={cn(
+                "group relative block h-52 overflow-hidden rounded-xl shadow-lg min-[420px]:h-64 sm:h-80 sm:rounded-3xl lg:h-105",
+                "shadow-navy/10",
+              )}
             >
               <Image
                 src={card.img}
@@ -122,7 +141,10 @@ export function Categories() {
                 width={600}
                 height={750}
                 sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(50vw - 2rem), 25vw"
-                className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 ${card.top ? "object-top" : ""}`}
+                className={cn(
+                  "absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110",
+                  card.top && "object-top",
+                )}
               />
               <div className="from-navy-deep/80 via-navy/10 absolute inset-0 bg-linear-to-t to-transparent" />
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3.5 sm:p-5">
@@ -134,7 +156,13 @@ export function Categories() {
                     {card.d}
                   </p>
                 </div>
-                <span className="bg-navy/40 group-hover:border-gold group-hover:bg-gold group-hover:text-navy-deep hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/30 text-white transition-all min-[420px]:flex sm:h-9 sm:w-9">
+                <span
+                  className={cn(
+                    "hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all min-[420px]:flex sm:h-9 sm:w-9",
+                    "bg-navy/40 border-white/30 text-white",
+                    "group-hover:border-gold group-hover:bg-gold group-hover:text-navy-deep",
+                  )}
+                >
                   <ArrowDownLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </span>
               </div>

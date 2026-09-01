@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { dailySeries, monthlySeries, type SalesPoint } from "@/lib/admin/sales";
+import { adminGlassCard } from "@/lib/admin/admin-chrome";
 
 type Range = "month" | "week";
 
@@ -123,10 +124,16 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
     : 50;
 
   return (
-    <section className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border p-5 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] sm:p-6 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+    <section className={cn(adminGlassCard, "p-5 sm:p-6")}>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h2 className="text-navy dark:text-ivory flex items-center gap-2 font-black">
+          <h2
+            className={cn(
+              "flex items-center gap-2 font-black",
+              "text-navy",
+              "dark:text-ivory",
+            )}
+          >
             <TrendingUp className="text-gold size-4" /> روند فروش
           </h2>
           {delta !== null ? (
@@ -163,7 +170,11 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
             dir="rtl"
           >
             <SelectTrigger
-              className="dark:bg-navy-deep/45 h-9 w-28 rounded-xl bg-white text-[10px] shadow-none"
+              className={cn(
+                "h-9 w-28 rounded-xl text-[10px] shadow-none",
+                "bg-white",
+                "dark:bg-navy-deep/45",
+              )}
               aria-label="بازه نمودار فروش"
             >
               <SelectValue />
@@ -177,7 +188,13 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
       </div>
 
       {n === 0 ? (
-        <div className="bg-navy/4 text-navy/45 dark:bg-navy-deep/50 dark:text-wheat grid h-44 place-items-center rounded-2xl text-sm font-bold">
+        <div
+          className={cn(
+            "grid h-44 place-items-center rounded-2xl text-sm font-bold",
+            "bg-navy/4 text-navy/45",
+            "dark:bg-navy-deep/50 dark:text-wheat",
+          )}
+        >
           هنوز فروش پرداخت‌شده‌ای برای نمایش ثبت نشده است.
         </div>
       ) : (
@@ -283,7 +300,10 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
                   cx={activeCoord.x}
                   cy={activeCoord.y}
                   r="4"
-                  className="stroke-gold-deep dark:fill-navy-deep dark:stroke-gold fill-white"
+                  className={cn(
+                    "stroke-gold-deep fill-white",
+                    "dark:fill-navy-deep dark:stroke-gold",
+                  )}
                   strokeWidth="2.5"
                 />
               </>
@@ -311,7 +331,11 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
           {/* tooltip */}
           {activePoint && activeCoord ? (
             <div
-              className="border-gold/30 dark:bg-navy-deep/95 pointer-events-none absolute z-10 -translate-x-1/2 rounded-2xl border bg-white/95 px-3 py-2 shadow-lg backdrop-blur-sm"
+              className={cn(
+                "pointer-events-none absolute z-10 -translate-x-1/2 rounded-2xl border px-3 py-2 shadow-lg backdrop-blur-sm",
+                "border-gold/30 bg-white/95",
+                "dark:bg-navy-deep/95",
+              )}
               style={{
                 left: `${tooltipLeft}%`,
                 top: `${(activeCoord.y / H) * 100}%`,

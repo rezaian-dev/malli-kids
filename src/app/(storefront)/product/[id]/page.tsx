@@ -11,7 +11,7 @@ import {
   pdpHref,
 } from "@/lib/data/products";
 import { breadcrumbSchema, buildMetadata, productSchema } from "@/lib/seo";
-import { shell } from "@/lib/utils";
+import { cn, shell } from "@/lib/utils";
 import { wash } from "@/components/home/section-wash";
 import { ProductBuyPanel } from "./_components/product-buy-panel";
 import { ProductDetailsMount } from "./_components/product-details-mount";
@@ -21,8 +21,12 @@ import {
 } from "./_components/product-live-context";
 import { pdpCard, pdpKicker } from "./_components/product-chrome";
 
+const CRUMB_LINK = "hover:text-gold inline-block py-1.5";
+
 export function generateStaticParams() {
-  return CORE_PRODUCTS.map((product) => ({ id: pdpHref(product.id).split("/").pop()! }));
+  return CORE_PRODUCTS.map((product) => ({
+    id: pdpHref(product.id).split("/").pop()!,
+  }));
 }
 
 export async function generateMetadata({
@@ -95,9 +99,15 @@ export default async function ProductPage({
               aria-label="مسیر محصول"
               className={`${pdpCard} mb-4 px-3 py-1.5 sm:mb-8 sm:px-5`}
             >
-              <ol className="text-navy/45 dark:text-wheat flex flex-wrap items-center gap-1.5 text-xs font-bold">
+              <ol
+                className={cn(
+                  "flex flex-wrap items-center gap-1.5 text-xs font-bold",
+                  "text-navy/70",
+                  "dark:text-wheat",
+                )}
+              >
                 <li>
-                  <Link href="/" className="hover:text-gold inline-block py-1.5">
+                  <Link href="/" className={CRUMB_LINK}>
                     خانه
                   </Link>
                 </li>
@@ -105,10 +115,7 @@ export default async function ProductPage({
                   /
                 </li>
                 <li>
-                  <Link
-                    href="/shop"
-                    className="hover:text-gold inline-block py-1.5"
-                  >
+                  <Link href="/shop" className={CRUMB_LINK}>
                     فروشگاه
                   </Link>
                 </li>
@@ -132,7 +139,11 @@ export default async function ProductPage({
                 <p className={pdpKicker}>COMPLETE THE LOOK</p>
                 <h2
                   id="related-products-heading"
-                  className="text-navy dark:text-ivory mt-1 mb-4 text-lg font-black sm:mb-6 sm:text-xl"
+                  className={cn(
+                    "mt-1 mb-4 text-lg font-black sm:mb-6 sm:text-xl",
+                    "text-navy",
+                    "dark:text-ivory",
+                  )}
                 >
                   مدل‌های مشابه
                 </h2>

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const SLIDES = [
   {
@@ -49,7 +50,11 @@ export function HomeJournalSlides() {
         >
           <Link
             href={s.href}
-            className="group border-navy/10 hover:border-gold/45 dark:border-gold/30 dark:bg-slate/55 block h-full overflow-hidden rounded-3xl border bg-white/92 no-underline shadow-[0_14px_32px_-22px_rgba(14,42,71,.25)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_-20px_rgba(193,147,87,.28)]"
+            className={cn(
+              "group block h-full overflow-hidden rounded-3xl border no-underline transition-all duration-500 hover:-translate-y-1",
+              "border-navy/10 hover:border-gold/45 bg-white/92 shadow-[0_14px_32px_-22px_rgba(14,42,71,.25)] hover:shadow-[0_20px_40px_-20px_rgba(193,147,87,.28)]",
+              "dark:border-gold/30 dark:bg-slate/55",
+            )}
           >
             <div className="bg-sand aspect-16/10 overflow-hidden">
               <Image
@@ -68,7 +73,7 @@ export function HomeJournalSlides() {
               <h3 className="text-navy dark:text-linen mt-1.5 mb-0 text-[0.98rem] leading-snug font-black">
                 {s.title}
               </h3>
-              <p className="text-navy/50 dark:text-khaki mt-1.5 mb-0 text-xs leading-7">
+              <p className="text-navy/70 dark:text-khaki mt-1.5 mb-0 text-xs leading-7">
                 {s.excerpt}
               </p>
             </div>

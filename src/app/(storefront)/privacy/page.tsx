@@ -1,6 +1,7 @@
 import { Lock, Share2, UserRound } from "lucide-react";
 import { Intro } from "@/components/shared/intro";
 import { buildMetadata } from "@/lib/seo";
+import { cn } from "@/lib/utils";
 
 export const metadata = buildMetadata({
   title: "حریم خصوصی",
@@ -36,18 +37,27 @@ export default function PrivacyPage() {
         lead="فقط داده‌هایی را نگه می‌داریم که برای سفارش، ارسال و پشتیبانی لازم است."
         path="/privacy"
       />
-      <div className="container mx-auto w-full max-w-3xl space-y-4 px-3 xs:px-4 sm:px-5 lg:px-7">
+      <div className="xs:px-4 container mx-auto w-full max-w-3xl space-y-4 px-3 sm:px-5 lg:px-7">
         {ITEMS.map(({ Icon, t, d }) => (
           <article
             key={t}
-            className="border-navy/8 hover:border-gold/40 dark:border-gold/30 dark:bg-slate flex gap-4 rounded-3xl border bg-white p-5 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-xl sm:p-6"
+            className={cn(
+              "flex gap-4 rounded-3xl border p-5 sm:p-6",
+              "border-navy/8 hover:border-gold/40 bg-white shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-xl",
+              "dark:border-gold/30 dark:bg-slate",
+            )}
           >
-            <span className="bg-gold/15 text-gold flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl">
+            <span
+              className={cn(
+                "flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl",
+                "bg-gold/15 text-gold",
+              )}
+            >
               <Icon className="h-5 w-5" />
             </span>
             <div>
               <h2 className="text-navy dark:text-ivory font-black">{t}</h2>
-              <p className="text-navy/55 dark:text-wheat mt-2 text-sm leading-7">
+              <p className="text-navy/70 dark:text-wheat mt-2 text-sm leading-7">
                 {d}
               </p>
             </div>

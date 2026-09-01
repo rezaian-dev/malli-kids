@@ -88,11 +88,17 @@ export function HomeSearch() {
         >
           <div
             className={cn(
-              "border-gold/40 xs:gap-2 xs:p-2 flex items-center gap-1.5 rounded-3xl border bg-white/85 p-1.5 shadow-[0_18px_50px_-18px_rgba(193,147,87,.55)] backdrop-blur-xl transition-[border-color,box-shadow] duration-200 sm:p-2.5",
+              "xs:gap-2 xs:p-2 flex items-center gap-1.5 rounded-3xl border p-1.5 backdrop-blur-xl transition-[border-color,box-shadow] duration-200 sm:p-2.5",
+              "border-gold/40 bg-white/85 shadow-[0_18px_50px_-18px_rgba(193,147,87,.55)]",
               FIELD_FOCUS_WITHIN,
             )}
           >
-            <span className="from-gold/25 to-gold/10 text-gold-deep ring-gold/30 flex size-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br ring-1">
+            <span
+              className={cn(
+                "flex size-11 shrink-0 items-center justify-center rounded-2xl ring-1",
+                "from-gold/25 to-gold/10 text-gold-deep ring-gold/30 bg-linear-to-br",
+              )}
+            >
               <SearchIcon className="size-5" />
             </span>
             <input
@@ -112,11 +118,17 @@ export function HomeSearch() {
               }}
               onFocus={() => setOpen(true)}
               onBlur={() => window.setTimeout(() => setOpen(false), 180)}
-              className="text-navy placeholder:text-navy/40 min-w-0 flex-1 bg-transparent px-3 py-3 text-sm outline-none sm:text-base"
+              className={cn(
+                "min-w-0 flex-1 px-3 py-3 text-sm outline-none sm:text-base",
+                "text-navy placeholder:text-navy/70 bg-transparent",
+              )}
             />
             <button
               type="submit"
-              className="bg-navy text-ivory shrink-0 rounded-2xl px-4 py-3 text-xs font-black sm:px-6 sm:text-sm"
+              className={cn(
+                "shrink-0 rounded-2xl px-4 py-3 text-xs font-black sm:px-6 sm:text-sm",
+                "bg-navy text-ivory",
+              )}
             >
               جستجو
             </button>
@@ -133,15 +145,18 @@ export function HomeSearch() {
         </form>
 
         <div
-          className={`border-gold/35 bg-paper dark:border-gold/40 dark:bg-dusk absolute inset-x-0 top-full z-30 mt-2 rounded-2xl border shadow-xl ${
+          className={cn(
+            "absolute inset-x-0 top-full z-30 mt-2 rounded-2xl border shadow-xl",
+            "border-gold/35 bg-paper",
             open
               ? "visible opacity-100"
-              : "pointer-events-none invisible opacity-0"
-          }`}
+              : "pointer-events-none invisible opacity-0",
+            "dark:border-gold/40 dark:bg-dusk",
+          )}
         >
           {!q ? (
             <div className="p-4">
-              <p className="text-navy/50 dark:text-gold-soft mb-3 flex items-center gap-1.5 text-[11px] font-bold">
+              <p className="text-navy/70 dark:text-gold-soft mb-3 flex items-center gap-1.5 text-[11px] font-bold">
                 <TrendingUp className="text-gold size-4" /> جستجوهای پرتکرار
               </p>
               <div className="flex flex-wrap gap-2">
@@ -149,7 +164,11 @@ export function HomeSearch() {
                   <button
                     key={chip.q}
                     type="button"
-                    className="bg-sand text-navy dark:bg-dusk-mid dark:text-linen inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold"
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold",
+                      "bg-sand text-navy",
+                      "dark:bg-dusk-mid dark:text-linen",
+                    )}
                     onPointerDown={(event) => event.preventDefault()}
                     onClick={() => goChip(chip)}
                   >
@@ -160,7 +179,7 @@ export function HomeSearch() {
               </div>
             </div>
           ) : hits.length === 0 ? (
-            <p className="text-navy/55 dark:text-wheat px-5 py-6 text-center text-sm font-bold">
+            <p className="text-navy/70 dark:text-wheat px-5 py-6 text-center text-sm font-bold">
               نتیجه‌ای برای «{q}» نیست
             </p>
           ) : (
@@ -171,7 +190,10 @@ export function HomeSearch() {
                     type="button"
                     onPointerDown={(event) => event.preventDefault()}
                     onClick={() => selectSuggestion(p.name)}
-                    className="hover:bg-gold/10 focus-visible:bg-gold/10 flex w-full items-center gap-3 px-3.5 py-2.5 text-start"
+                    className={cn(
+                      "flex w-full items-center gap-3 px-3.5 py-2.5 text-start",
+                      "hover:bg-gold/10 focus-visible:bg-gold/10",
+                    )}
                   >
                     <Image
                       src={p.img}
@@ -185,7 +207,7 @@ export function HomeSearch() {
                       <span className="text-navy dark:text-ivory block truncate text-sm font-black">
                         {p.name}
                       </span>
-                      <span className="text-navy/45 dark:text-wheat block text-[11px]">
+                      <span className="text-navy/70 dark:text-wheat block text-[11px]">
                         {p.cat}
                       </span>
                     </span>
@@ -206,7 +228,10 @@ export function HomeSearch() {
           <button
             key={chip.q}
             type="button"
-            className="text-ivory hover:bg-gold hover:text-navy-deep inline-flex min-h-9 items-center gap-1.5 rounded-full bg-white/20 px-3.5 py-1.5 text-xs font-bold"
+            className={cn(
+              "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold",
+              "text-ivory hover:bg-gold hover:text-navy-deep bg-white/20",
+            )}
             onClick={() => goChip(chip)}
           >
             <chip.Icon className="size-3.5" />

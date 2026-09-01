@@ -24,7 +24,6 @@ export function Header() {
           <Link
             href="/"
             prefetch={false}
-            aria-label="ملی‌کیدز"
             className="flex shrink-0 items-center gap-1.5"
           >
             <Image
@@ -45,7 +44,13 @@ export function Header() {
               className="hidden size-8 object-contain sm:size-9 dark:block"
             />
             <span className="hidden leading-none min-[480px]:block md:hidden lg:block">
-              <span className="font-display text-navy dark:text-linen block text-xs font-bold tracking-[0.16em]">
+              <span
+                className={cn(
+                  "block",
+                  "font-display text-navy text-xs font-bold tracking-[0.16em]",
+                  "dark:text-linen",
+                )}
+              >
                 MALLI
               </span>
               <span className="font-display text-gold mt-0.5 block text-[10px] tracking-[0.3em]">

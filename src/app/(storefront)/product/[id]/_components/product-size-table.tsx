@@ -20,6 +20,8 @@ const SIZE_TABLE = [
   ["۱۲۲", "۱۱۷–۱۲۲", "۶–۷ سال", "۶۲"],
 ];
 
+const CELL = "px-2 py-2.5 whitespace-nowrap sm:p-4";
+
 const HEADS = [
   { short: "سایز", full: "سایز" },
   { short: "قد", full: "قد کودک (سانتی‌متر)" },
@@ -30,7 +32,13 @@ const HEADS = [
 export function ProductSizeTable() {
   return (
     <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_16.5rem] lg:gap-5">
-      <div className="border-navy/10 dark:border-gold/30 dark:bg-navy-deep/55 min-w-0 overflow-hidden rounded-[22px] border bg-white/92 shadow-[0_18px_40px_-28px_rgba(14,42,71,.3)] sm:rounded-[28px]">
+      <div
+        className={cn(
+          "min-w-0 overflow-hidden rounded-[22px] shadow-[0_18px_40px_-28px_rgba(14,42,71,.3)] sm:rounded-[28px]",
+          "border-navy/10 border bg-white/92",
+          "dark:border-gold/30 dark:bg-navy-deep/55",
+        )}
+      >
         <Table className="w-full min-w-0 text-right text-[11px] sm:text-sm">
           <TableHeader>
             <TableRow className="bg-navy hover:bg-navy border-0 text-[10px] sm:text-[11px]">
@@ -58,33 +66,44 @@ export function ProductSizeTable() {
                     ? "bg-gold-pale dark:bg-gold/20"
                     : i % 2
                       ? "bg-sand dark:bg-navy-mid/55"
-                      : "bg-white dark:bg-navy-deep/35",
+                      : "dark:bg-navy-deep/35 bg-white",
                 )}
               >
-                <TableCell className="text-navy dark:text-ivory px-2 py-2.5 font-black whitespace-nowrap sm:p-4">
+                <TableCell
+                  className={cn(
+                    CELL,
+                    "font-black",
+                    "text-navy",
+                    "dark:text-ivory",
+                  )}
+                >
                   {r[0]}
                   {r[0] === "۹۸" ? (
-                    <Badge className="bg-gold/20 text-gold ms-1 hidden rounded-full border-0 text-[10px] font-bold min-[380px]:inline-flex">
+                    <Badge
+                      className={cn(
+                        "ms-1 hidden rounded-full border-0 text-[10px] font-bold min-[380px]:inline-flex",
+                        "bg-gold/20 text-gold",
+                      )}
+                    >
                       پیشنهادی
                     </Badge>
                   ) : null}
                 </TableCell>
-                <TableCell className="px-2 py-2.5 whitespace-nowrap sm:p-4">
-                  {r[1]}
-                </TableCell>
-                <TableCell className="px-2 py-2.5 whitespace-nowrap sm:p-4">
-                  {r[2]}
-                </TableCell>
-                <TableCell className="px-2 py-2.5 whitespace-nowrap sm:p-4">
-                  {r[3]}
-                </TableCell>
+                <TableCell className={CELL}>{r[1]}</TableCell>
+                <TableCell className={CELL}>{r[2]}</TableCell>
+                <TableCell className={CELL}>{r[3]}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
 
-      <aside className="bg-navy text-cream ring-gold/25 min-w-0 rounded-[22px] p-4 ring-1 sm:rounded-[28px] sm:p-6">
+      <aside
+        className={cn(
+          "min-w-0 rounded-[22px] p-4 ring-1 sm:rounded-[28px] sm:p-6",
+          "bg-navy text-cream ring-gold/25",
+        )}
+      >
         <p className="text-gold-light text-[11px] font-bold tracking-[0.18em]">
           SIZE NOTES
         </p>

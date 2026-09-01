@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils";
+
 const STARS = Array.from({ length: 30 }, (_, i) => i);
 const DELAYS = [
   "[animation-delay:-.2s]",
@@ -12,7 +14,7 @@ const RAYS = Array.from({ length: 32 }, (_, i) => i);
 function LightAtelier() {
   return (
     <div className="absolute inset-0 dark:hidden">
-      <div className="absolute inset-0 bg-atelier" />
+      <div className="bg-atelier absolute inset-0" />
       <div
         className="absolute inset-0"
         style={{
@@ -27,7 +29,7 @@ function LightAtelier() {
           ].join(","),
         }}
       />
-      <div className="absolute inset-[-20%] blur-[40px]">
+      <div className="absolute inset-[-20%] blur-2xl">
         <div className="animate-silk-glow absolute top-[-10%] left-[10%] h-[48%] w-[54%] rounded-full bg-[rgba(193,147,87,0.52)]" />
         <div className="absolute top-[6%] right-[-10%] h-[42%] w-[46%] rounded-full bg-[rgba(14,42,71,0.22)]" />
         <div className="animate-silk-glow absolute bottom-[-12%] left-[-8%] h-[50%] w-[52%] rounded-full bg-[rgba(14,42,71,0.28)] [animation-delay:-7s]" />
@@ -60,13 +62,7 @@ function LightAtelier() {
               strokeOpacity="0.14"
               strokeWidth="0.8"
             />
-            <circle
-              cx="36"
-              cy="63"
-              r="1.2"
-              fill="#c19357"
-              fillOpacity="0.36"
-            />
+            <circle cx="36" cy="63" r="1.2" fill="#c19357" fillOpacity="0.36" />
           </pattern>
           <pattern
             id="mk-stitch"
@@ -304,7 +300,11 @@ export function BackgroundScene() {
   return (
     <div
       aria-hidden="true"
-      className="bg-atelier dark:bg-ink pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className={cn(
+        "pointer-events-none fixed inset-0 -z-10 overflow-hidden",
+        "bg-atelier",
+        "dark:bg-ink",
+      )}
     >
       <LightAtelier />
 
@@ -367,7 +367,12 @@ export function BackgroundScene() {
           return (
             <span
               key={i}
-              className={`absolute ${size} bg-gold-light/40 animate-twinkle rounded-full shadow-[0_0_8px_color-mix(in_srgb,var(--color-gold)_45%,transparent)] ${DELAYS[i % DELAYS.length]}`}
+              className={cn(
+                "animate-twinkle absolute rounded-full shadow-[0_0_8px_color-mix(in_srgb,var(--color-gold)_45%,transparent)]",
+                size,
+                "bg-gold-light/40",
+                DELAYS[i % DELAYS.length],
+              )}
               style={{ top: `${y}%`, left: `${x}%` }}
             />
           );

@@ -17,6 +17,7 @@ import {
   THEME_KEY,
   THEME_RESOLVED_KEY,
 } from "@/lib/storefront-state";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
 const vazir = localFont({
@@ -78,9 +79,12 @@ export default async function RootLayout({
       lang="fa-IR"
       dir="rtl"
       data-scroll-behavior="smooth"
-      className={`${vazir.variable} ${playfair.variable} scrollbar-gutter-stable ${
-        initialResolved === "dark" ? "dark" : ""
-      }`}
+      className={cn(
+        vazir.variable,
+        playfair.variable,
+        "scrollbar-gutter-stable",
+        initialResolved === "dark" && "dark",
+      )}
       style={{ colorScheme: initialResolved }}
       suppressHydrationWarning
     >
@@ -89,7 +93,12 @@ export default async function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: buildThemeScript() }} />
       </head>
       <body
-        className={`${vazir.className} text-navy dark:text-ivory min-h-dvh antialiased data-scroll-locked:mr-0!`}
+        className={cn(
+          vazir.className,
+          "min-h-dvh antialiased data-scroll-locked:mr-0!",
+          "text-navy",
+          "dark:text-ivory",
+        )}
         suppressHydrationWarning
       >
         <JsonLd data={organizationSchema()} />

@@ -29,7 +29,8 @@ export function CategoryMenu() {
           router.push("/shop");
         }}
         className={cn(
-          "h-auto cursor-pointer gap-1 rounded-full bg-transparent px-2 py-2 text-[11px] font-medium transition-colors lg:gap-1.5 lg:px-3 lg:text-sm xl:px-4",
+          "h-auto cursor-pointer gap-1 px-2 py-2 lg:gap-1.5 lg:px-3 xl:px-4",
+          "rounded-full bg-transparent text-[11px] font-medium transition-colors lg:text-sm",
           "text-navy/80 hover:bg-gold/10 hover:text-gold focus:bg-gold/10 focus:text-gold",
           "data-open:bg-gold/10 data-open:text-gold",
           "dark:text-ivory dark:hover:bg-gold/15 dark:hover:text-gold-light",
@@ -56,7 +57,12 @@ export function CategoryMenu() {
         )}
       >
         <div className="w-[min(34rem,calc(100vw-1.5rem))]">
-          <div className="from-navy to-navy-mid flex items-center justify-between bg-linear-to-l px-4 py-3">
+          <div
+            className={cn(
+              "flex items-center justify-between px-4 py-3",
+              "from-navy to-navy-mid bg-linear-to-l",
+            )}
+          >
             <p className="text-cream m-0 text-sm font-black">
               دسته‌بندی کالکشن
             </p>
@@ -74,14 +80,16 @@ export function CategoryMenu() {
                     <Link
                       href={c.href}
                       className={cn(
-                        "group flex flex-row items-center gap-3 rounded-2xl border p-3 transition-colors",
-                        "border-navy/8 bg-sand hover:border-gold/50 hover:bg-gold-pale focus:border-gold/50 focus:bg-gold-pale",
+                        "group flex flex-row items-center gap-3 p-3",
+                        "border-navy/8 bg-sand hover:border-gold/50 hover:bg-gold-pale focus:border-gold/50 focus:bg-gold-pale rounded-2xl border transition-colors",
                         "dark:border-gold/20 dark:bg-dusk-alt dark:hover:border-gold/60 dark:hover:bg-dusk-mid dark:focus:bg-dusk-mid",
                       )}
                     >
                       <span
                         className={cn(
-                          "flex size-10 shrink-0 items-center justify-center rounded-2xl transition-[transform,box-shadow] duration-300 group-hover:scale-105",
+                          "flex size-10 shrink-0 items-center justify-center",
+                          "rounded-2xl transition-[transform,box-shadow] duration-300",
+                          "group-hover:scale-105",
                           c.swatch,
                         )}
                       >
@@ -91,7 +99,7 @@ export function CategoryMenu() {
                         <span className="text-navy dark:text-ivory block text-sm font-black">
                           {c.label}
                         </span>
-                        <span className="text-navy/45 dark:text-wheat/80 mt-0.5 block text-[11px] font-normal">
+                        <span className="text-navy/70 dark:text-wheat/80 mt-0.5 block text-[11px] font-normal">
                           {c.hint}
                         </span>
                       </span>
@@ -106,7 +114,8 @@ export function CategoryMenu() {
             <Link
               href="/shop"
               className={cn(
-                "flex flex-row items-center justify-center gap-2 rounded-2xl border-0 py-3.5 text-sm font-black no-underline transition-all",
+                "flex flex-row items-center justify-center gap-2 py-3.5",
+                "rounded-2xl border-0 text-sm font-black no-underline transition-all",
                 "bg-gold text-navy-deep hover:bg-gold-light shadow-[0_4px_14px_-4px_rgba(193,147,87,.5)] hover:shadow-[0_6px_20px_-4px_rgba(193,147,87,.7)]",
               )}
               onClick={() => {

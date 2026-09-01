@@ -9,6 +9,8 @@ import { ArrowLeft, Lock, ShieldCheck, Sparkles, User } from "lucide-react";
 import { useAdmin } from "@/components/admin";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { adminGlassCard } from "@/lib/admin/admin-chrome";
 
 type LoginValues = {
   user: string;
@@ -21,6 +23,13 @@ const EMPTY_VALUES: LoginValues = {
   user: "",
   pass: "",
 };
+
+const FIELD_LABEL = "text-navy/60 dark:text-wheat text-xs font-black";
+const FIELD_ICON =
+  "text-navy/35 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 z-10 my-auto size-4";
+const FIELD_INPUT =
+  "border-navy/12 dark:border-gold/20 h-14 rounded-3xl bg-transparent ps-11 pe-4 text-sm";
+const FIELD_ERROR = "text-rose text-xs font-bold";
 
 export default function AdminLogin() {
   const { login } = useAdmin();
@@ -70,10 +79,20 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="text-navy bg-fog dark:text-ivory grid min-h-dvh bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-size-[auto,auto,36px_36px,36px_36px] lg:grid-cols-[minmax(0,1fr)_minmax(20rem,42%)] dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-size-[auto,auto,42px_42px,42px_42px]">
+    <div
+      className={cn(
+        "grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(20rem,42%)]",
+        "text-navy bg-fog bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-size-[auto,auto,36px_36px,36px_36px]",
+        "dark:text-ivory dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-size-[auto,auto,42px_42px,42px_42px]",
+      )}
+    >
       <span
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-[0.22] max-[639px]:bg-size-[20rem] max-[639px]:opacity-[0.14] dark:opacity-[0.52] dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]"
+        className={cn(
+          "pointer-events-none fixed inset-0 z-0",
+          "mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-[0.22] max-[639px]:bg-size-[20rem] max-[639px]:opacity-[0.14]",
+          "dark:opacity-[0.52] dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]",
+        )}
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c19357' stroke-opacity='.28'%3E%3Ccircle cx='90' cy='90' r='42'/%3E%3Ccircle cx='90' cy='90' r='28' stroke-dasharray='3 7'/%3E%3Cpath d='M90 34v112M34 90h112M50 50l80 80M130 50l-80 80' stroke-opacity='.15'/%3E%3C/g%3E%3C/svg%3E\")",
@@ -91,7 +110,13 @@ export default function AdminLogin() {
               className="bg-navy size-11 rounded-2xl object-contain p-1.5 dark:bg-transparent dark:p-0"
             />
             <div className="leading-none">
-              <p className="font-display text-navy dark:text-ivory text-sm font-bold tracking-[0.2em]">
+              <p
+                className={cn(
+                  "font-display text-sm font-bold tracking-[0.2em]",
+                  "text-navy",
+                  "dark:text-ivory",
+                )}
+              >
                 MALLI
               </p>
               <p className="text-gold mt-1 text-[10px] font-black tracking-[0.32em]">
@@ -100,10 +125,20 @@ export default function AdminLogin() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <ModeToggle className="border-navy/12 text-navy hover:border-gold/50 dark:border-gold/25 dark:bg-navy-mid dark:text-gold-soft size-10 rounded-full border bg-white" />
+            <ModeToggle
+              className={cn(
+                "size-10 rounded-full border bg-white",
+                "border-navy/12 text-navy hover:border-gold/50",
+                "dark:border-gold/25 dark:bg-navy-mid dark:text-gold-soft",
+              )}
+            />
             <Link
               href="/"
-              className="text-navy/50 hover:text-gold dark:text-ivory/45 inline-flex min-h-11 items-center text-xs font-black"
+              className={cn(
+                "inline-flex min-h-11 items-center text-xs font-black",
+                "text-navy/50 hover:text-gold",
+                "dark:text-ivory/45",
+              )}
             >
               بازگشت به فروشگاه
             </Link>
@@ -130,14 +165,11 @@ export default function AdminLogin() {
             ) : null}
 
             <div className="space-y-2">
-              <label
-                className="text-navy/60 dark:text-wheat text-xs font-black"
-                htmlFor="admin-user"
-              >
+              <label className={FIELD_LABEL} htmlFor="admin-user">
                 شناسه
               </label>
               <div className="relative rounded-3xl bg-white/70 dark:bg-white/5">
-                <User className="text-navy/35 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 z-10 my-auto size-4" />
+                <User className={FIELD_ICON} />
                 <Input
                   id="admin-user"
                   value={values.user}
@@ -145,26 +177,23 @@ export default function AdminLogin() {
                   placeholder="شناسه همکار"
                   autoComplete="username"
                   aria-invalid={Boolean(errors.user)}
-                  className="border-navy/12 dark:border-gold/20 h-14 rounded-3xl bg-transparent ps-11 pe-4 text-sm"
+                  className={FIELD_INPUT}
                   required
                 />
               </div>
               {errors.user ? (
-                <p role="alert" className="text-rose text-xs font-bold">
+                <p role="alert" className={FIELD_ERROR}>
                   {errors.user}
                 </p>
               ) : null}
             </div>
 
             <div className="space-y-2">
-              <label
-                className="text-navy/60 dark:text-wheat text-xs font-black"
-                htmlFor="admin-pass"
-              >
+              <label className={FIELD_LABEL} htmlFor="admin-pass">
                 کلید دسترسی
               </label>
               <div className="relative rounded-3xl bg-white/70 dark:bg-white/5">
-                <Lock className="text-navy/35 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 z-10 my-auto size-4" />
+                <Lock className={FIELD_ICON} />
                 <Input
                   id="admin-pass"
                   type="password"
@@ -173,12 +202,12 @@ export default function AdminLogin() {
                   placeholder="رمز اختصاصی پنل"
                   autoComplete="current-password"
                   aria-invalid={Boolean(errors.pass)}
-                  className="border-navy/12 dark:border-gold/20 h-14 rounded-3xl bg-transparent ps-11 pe-4 text-sm"
+                  className={FIELD_INPUT}
                   required
                 />
               </div>
               {errors.pass ? (
-                <p role="alert" className="text-rose text-xs font-bold">
+                <p role="alert" className={FIELD_ERROR}>
                   {errors.pass}
                 </p>
               ) : null}
@@ -186,10 +215,20 @@ export default function AdminLogin() {
 
             <button
               type="submit"
-              className="group bg-navy text-ivory hover:bg-navy-mid dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light flex h-14 w-full items-center justify-between rounded-full px-6 text-sm font-black shadow-[0_16px_32px_-16px_rgba(14,42,71,.55)] transition"
+              className={cn(
+                "group flex h-14 w-full items-center justify-between rounded-full px-6 text-sm font-black transition",
+                "bg-navy text-ivory hover:bg-navy-mid shadow-[0_16px_32px_-16px_rgba(14,42,71,.55)]",
+                "dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light",
+              )}
             >
               ورود به کنسول
-              <span className="bg-navy-deep text-gold dark:bg-navy-deep/30 dark:text-navy-deep grid size-9 place-items-center rounded-full transition-transform group-hover:-translate-x-1">
+              <span
+                className={cn(
+                  "grid size-9 place-items-center rounded-full transition-transform group-hover:-translate-x-1",
+                  "bg-navy-deep text-gold",
+                  "dark:bg-navy-deep/30 dark:text-navy-deep",
+                )}
+              >
                 <ArrowLeft className="size-4" />
               </span>
             </button>
@@ -197,13 +236,13 @@ export default function AdminLogin() {
         </div>
 
         <ul className="text-navy/60 dark:text-wheat grid max-w-md grid-cols-3 gap-3 text-[11px] font-bold">
-          <li className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border px-3 py-3 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+          <li className={cn(adminGlassCard, "px-3 py-3")}>
             <ShieldCheck className="text-gold mb-1 size-4" /> دسترسی محدود
           </li>
-          <li className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border px-3 py-3 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+          <li className={cn(adminGlassCard, "px-3 py-3")}>
             <Sparkles className="text-gold mb-1 size-4" /> سفارش لحظه‌ای
           </li>
-          <li className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border px-3 py-3 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+          <li className={cn(adminGlassCard, "px-3 py-3")}>
             <Lock className="text-gold mb-1 size-4" /> نشست امن
           </li>
         </ul>

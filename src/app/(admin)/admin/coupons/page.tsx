@@ -26,6 +26,8 @@ import { usePagination } from "@/hooks/use-pagination";
 import { parseFaNumber, toLatinDigits } from "@/lib/digits";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { isJalaliFuture, jalaliParts } from "@/lib/jalali";
+import { cn } from "@/lib/utils";
+import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import type { AdminCoupon } from "@/types";
 
 const PER_PAGE = 8;
@@ -42,6 +44,8 @@ type CouponFormValues = {
 };
 
 type CouponFormErrors = Partial<Record<keyof CouponFormValues, string>>;
+
+const STAT_LABEL = "text-navy/40 dark:text-wheat text-[9px] font-black";
 
 const COUPON_DEFAULTS: CouponFormValues = {
   code: "",
@@ -277,7 +281,7 @@ export default function AdminCoupons() {
             return (
               <article
                 key={coupon.code}
-                className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 group overflow-hidden rounded-[22px] border shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]"
+                className={cn(adminGlassCard, "group")}
                 style={{ animationDelay: `${index * 45}ms` }}
               >
                 <div className="p-4 sm:p-5">
@@ -285,13 +289,22 @@ export default function AdminCoupons() {
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <p
-                          className="font-display text-navy dark:text-gold-soft truncate text-lg font-bold tracking-widest"
+                          className={cn(
+                            "font-display truncate text-lg font-bold tracking-widest",
+                            "text-navy",
+                            "dark:text-gold-soft",
+                          )}
                           dir="ltr"
                         >
                           {coupon.code}
                         </p>
                         <span
-                          className={`rounded-lg px-2 py-1 text-[9px] font-black ${usable ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "bg-rose/10 text-rose"}`}
+                          className={cn(
+                            "rounded-lg px-2 py-1 text-[9px] font-black",
+                            usable
+                              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                              : "bg-rose/10 text-rose",
+                          )}
                         >
                           {usable
                             ? "قابل استفاده"
@@ -321,18 +334,14 @@ export default function AdminCoupons() {
 
                   <div className="mt-5 flex items-end justify-between gap-3">
                     <div>
-                      <p className="text-navy/40 dark:text-wheat text-[9px] font-black">
-                        میزان تخفیف
-                      </p>
+                      <p className={STAT_LABEL}>میزان تخفیف</p>
                       <p className="text-gold-deep dark:text-gold-soft mt-0.5 text-3xl font-black">
                         {toFaDigits(Math.round(coupon.rate * 100))}
                         <span className="text-base">٪</span>
                       </p>
                     </div>
                     <div className="text-end">
-                      <p className="text-navy/40 dark:text-wheat text-[9px] font-black">
-                        حداقل خرید
-                      </p>
+                      <p className={STAT_LABEL}>حداقل خرید</p>
                       <p className="text-navy dark:text-ivory mt-1 text-xs font-black">
                         {coupon.min
                           ? `${formatToman(coupon.min)} ت`
@@ -351,13 +360,24 @@ export default function AdminCoupons() {
                     </div>
                     <div className="bg-navy/7 dark:bg-navy-deep h-1.5 overflow-hidden rounded-full">
                       <div
-                        className={`h-full rounded-full transition-all duration-700 ${usage >= 90 ? "bg-rose" : "from-gold to-gold-light bg-linear-to-l"}`}
+                        className={cn(
+                          "h-full rounded-full transition-all duration-700",
+                          usage >= 90
+                            ? "bg-rose"
+                            : "from-gold to-gold-light bg-linear-to-l",
+                        )}
                         style={{ width: `${usage}%` }}
                       />
                     </div>
                   </div>
                 </div>
-                <div className="border-navy/6 bg-navy/1.5 dark:border-gold/12 flex items-center justify-between border-t px-4 py-2.5 text-[10px] dark:bg-white/1.5">
+                <div
+                  className={cn(
+                    "flex items-center justify-between border-t px-4 py-2.5 text-[10px]",
+                    "border-navy/6 bg-navy/1.5",
+                    "dark:border-gold/12 dark:bg-white/1.5",
+                  )}
+                >
                   <span className="text-navy/40 dark:text-wheat font-bold">
                     تاریخ انقضا
                   </span>
@@ -370,7 +390,7 @@ export default function AdminCoupons() {
           })}
         </div>
       ) : (
-        <div className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border px-5 py-14 text-center shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+        <div className={cn(adminGlassCard, "px-5 py-14 text-center")}>
           <TicketPercent className="text-gold mx-auto size-10" />
           <p className="mt-3 text-sm font-black">
             کد تخفیفی مطابق فیلترها نیست
@@ -391,7 +411,11 @@ export default function AdminCoupons() {
             onSubmit={addCoupon}
             noValidate
             aria-label="کد تخفیف جدید"
-            className="border-gold/18 bg-paper dark:bg-navy-mid relative z-10 my-auto w-full max-w-md space-y-3 rounded-3xl border p-4 shadow-2xl sm:p-6"
+            className={cn(
+              "relative z-10 my-auto w-full max-w-md space-y-3 rounded-3xl border p-4 shadow-2xl sm:p-6",
+              "border-gold/18 bg-paper",
+              "dark:bg-navy-mid",
+            )}
           >
             <div className="mb-4 flex items-center justify-between">
               <div>
@@ -403,7 +427,11 @@ export default function AdminCoupons() {
               <button
                 type="button"
                 onClick={close}
-                className="bg-navy/5 text-navy dark:text-ivory grid size-9 place-items-center rounded-xl dark:bg-white/7"
+                className={cn(
+                  "grid size-9 place-items-center rounded-xl",
+                  "bg-navy/5 text-navy",
+                  "dark:text-ivory dark:bg-white/7",
+                )}
                 aria-label="بستن"
               >
                 <X className="size-4" />
@@ -518,7 +546,12 @@ function CouponField({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={Boolean(error)}
-        className={`border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm ${className ?? ""}`}
+        className={cn(
+          "h-11 rounded-2xl bg-transparent px-4 text-sm",
+          "border-navy/12",
+          "dark:border-gold/20",
+          className,
+        )}
         {...props}
       />
       {error ? (

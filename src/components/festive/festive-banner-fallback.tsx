@@ -16,19 +16,28 @@ export function FestiveBannerFallback({ item }: { item: BannerItem | null }) {
     return (
       <div
         className={cn(
-          "text-ivory relative isolate overflow-hidden bg-linear-to-l",
+          "relative isolate overflow-hidden bg-linear-to-l",
+          "text-ivory",
           TONE[item.theme],
         )}
       >
         <FestiveDecor />
         <span
-          className="via-gold/60 pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-l from-transparent to-transparent"
+          className={cn(
+            "pointer-events-none absolute inset-x-0 top-0 h-px",
+            "via-gold/60 bg-linear-to-l from-transparent to-transparent",
+          )}
           aria-hidden
         />
 
         <div className="relative mx-auto flex h-12 max-w-7xl items-center justify-center gap-x-4 overflow-hidden px-3 whitespace-nowrap sm:h-13 sm:justify-between sm:px-6">
           <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-            <span className="bg-gold text-navy-deep shadow-gold/70 relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black shadow-[0_4px_14px_-4px] sm:px-3.5 sm:text-[11px]">
+            <span
+              className={cn(
+                "relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black sm:px-3.5 sm:text-[11px]",
+                "bg-gold text-navy-deep shadow-gold/70 shadow-[0_4px_14px_-4px]",
+              )}
+            >
               <Gift className="size-3.5" />
               {item.occasion}
               <span
@@ -40,7 +49,12 @@ export function FestiveBannerFallback({ item }: { item: BannerItem | null }) {
               <p className="truncate text-[13px] font-black tracking-tight sm:text-[15px]">
                 {item.title}
               </p>
-              <p className="text-ivory/70 mt-0.5 hidden truncate text-[11px] font-bold min-[560px]:block sm:text-xs">
+              <p
+                className={cn(
+                  "mt-0.5 hidden truncate text-[11px] font-bold min-[560px]:block sm:text-xs",
+                  "text-ivory/70",
+                )}
+              >
                 {item.subtitle}
               </p>
             </div>
@@ -49,7 +63,10 @@ export function FestiveBannerFallback({ item }: { item: BannerItem | null }) {
           <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
             {item.coupon ? (
               <span
-                className="border-gold/60 bg-gold/10 text-gold-light hidden items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 text-[11px] font-black tracking-[0.14em] md:inline-flex"
+                className={cn(
+                  "hidden items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 text-[11px] font-black tracking-[0.14em] md:inline-flex",
+                  "border-gold/60 bg-gold/10 text-gold-light",
+                )}
                 title="کد تخفیف را در صفحهٔ پرداخت وارد کنید"
               >
                 <Ticket className="size-3.5" />
@@ -59,11 +76,19 @@ export function FestiveBannerFallback({ item }: { item: BannerItem | null }) {
             <Link
               href={item.href}
               prefetch={false}
-              className="group bg-gold text-navy-deep shadow-gold/30 hover:shadow-gold/50 relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full px-4 py-2 text-[11px] font-black shadow-lg transition-all hover:scale-[1.04] sm:px-5 sm:text-xs"
+              className={cn(
+                "group relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full px-4 py-2 text-[11px] font-black transition-all hover:scale-[1.04] sm:px-5 sm:text-xs",
+                "bg-gold text-navy-deep shadow-gold/30 hover:shadow-gold/50 shadow-lg",
+              )}
             >
               <span className="relative z-10">{item.cta}</span>
               <ArrowLeft className="relative z-10 size-3.5 transition-transform group-hover:-translate-x-0.5" />
-              <span className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/60 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
+              <span
+                className={cn(
+                  "absolute inset-0 -translate-x-full transition-transform duration-500 group-hover:translate-x-full",
+                  "bg-linear-to-r from-transparent via-white/60 to-transparent",
+                )}
+              />
             </Link>
           </div>
         </div>
@@ -72,7 +97,12 @@ export function FestiveBannerFallback({ item }: { item: BannerItem | null }) {
   }
 
   return (
-    <div className="from-navy via-navy-mid to-navy text-ivory relative isolate overflow-hidden bg-linear-to-l">
+    <div
+      className={cn(
+        "relative isolate overflow-hidden bg-linear-to-l",
+        "from-navy via-navy-mid to-navy text-ivory",
+      )}
+    >
       <FestiveDecor />
       <div className="relative mx-auto flex h-12 max-w-7xl items-center justify-center gap-x-3 overflow-hidden px-4 text-center whitespace-nowrap sm:h-13">
         <Sparkles className="text-gold size-4.5 shrink-0" />
@@ -83,7 +113,10 @@ export function FestiveBannerFallback({ item }: { item: BannerItem | null }) {
         <Link
           href="/shipping"
           prefetch={false}
-          className="group text-gold-light inline-flex items-center gap-1 text-[11px] font-black underline-offset-4 hover:underline sm:text-xs"
+          className={cn(
+            "group inline-flex items-center gap-1 text-[11px] font-black underline-offset-4 hover:underline sm:text-xs",
+            "text-gold-light",
+          )}
         >
           جزئیات
           <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />

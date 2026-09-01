@@ -27,17 +27,21 @@ const TICKET_STATUS: Record<TicketStatus, { label: string; cls: string }> = {
   },
   closed: {
     label: "بسته شده",
-    cls: "bg-navy/8 text-navy/55 dark:bg-white/10 dark:text-ivory/55",
+    cls: "bg-navy/8 text-navy/70 dark:bg-white/10 dark:text-ivory/55",
   },
 };
 
+const FIELD_LABEL = "text-navy/70 dark:text-wheat text-xs font-black";
+
 function fieldClass(error?: string) {
-  return [
-    "w-full rounded-2xl border bg-transparent px-4 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
+  return cn(
+    "w-full rounded-2xl border bg-transparent px-4 text-sm outline-none transition-[color,box-shadow,border-color] duration-200",
+    "text-navy",
+    "dark:text-ivory",
     error
       ? "border-rose"
       : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
-  ].join(" ");
+  );
 }
 
 // 🎫 Support panel keeps ticket logic out of the first profile paint.
@@ -84,7 +88,7 @@ export function ProfileSupportPanel() {
           <h2 className="text-navy dark:text-linen text-lg font-black">
             تیکت‌های پشتیبانی
           </h2>
-          <p className="text-navy/50 dark:text-wheat mt-1 text-xs leading-6">
+          <p className="text-navy/70 dark:text-wheat mt-1 text-xs leading-6">
             هر سوالی دارید به‌صورت تیکت بپرسید؛ پاسخ فقط در همین پنل ثبت می‌شود.
           </p>
         </div>
@@ -104,9 +108,7 @@ export function ProfileSupportPanel() {
       {compose ? (
         <div className="space-y-4">
           <label className="block space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              موضوع
-            </span>
+            <span className={FIELD_LABEL}>موضوع</span>
             <input
               value={subject}
               onChange={(event) => {
@@ -115,7 +117,7 @@ export function ProfileSupportPanel() {
               }}
               maxLength={60}
               placeholder="سایز، سفارش…"
-              className={`${fieldClass(errors.subject)} h-11`}
+              className={cn(fieldClass(errors.subject), "h-11")}
             />
             {errors.subject ? (
               <p className="text-rose text-xs font-bold">{errors.subject}</p>
@@ -123,9 +125,7 @@ export function ProfileSupportPanel() {
           </label>
 
           <label className="block space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              پیام
-            </span>
+            <span className={FIELD_LABEL}>پیام</span>
             <textarea
               value={message}
               onChange={(event) => {
@@ -134,7 +134,7 @@ export function ProfileSupportPanel() {
               }}
               maxLength={600}
               placeholder="سوال‌تان را بنویسید…"
-              className={`${fieldClass(errors.message)} min-h-32 py-3`}
+              className={cn(fieldClass(errors.message), "min-h-32 py-3")}
             />
             {errors.message ? (
               <p className="text-rose text-xs font-bold">{errors.message}</p>
@@ -161,12 +161,24 @@ export function ProfileSupportPanel() {
           </div>
         </div>
       ) : tickets.length === 0 ? (
-        <div className="border-navy/15 dark:border-gold/25 mt-6 rounded-2xl border border-dashed px-6 py-10 text-center">
+        <div
+          className={cn(
+            "mt-6 rounded-2xl border border-dashed px-6 py-10 text-center",
+            "border-navy/15",
+            "dark:border-gold/25",
+          )}
+        >
           <Headphones className="text-gold mx-auto size-9" />
           <p className="text-navy dark:text-ivory mt-3 font-black">
             هنوز تیکتی ندارید
           </p>
-          <p className="text-navy/50 dark:text-wheat mx-auto mt-1 max-w-xs text-xs leading-6">
+          <p
+            className={cn(
+              "mx-auto mt-1 max-w-xs text-xs leading-6",
+              "text-navy/70",
+              "dark:text-wheat",
+            )}
+          >
             مشاوره سایز، پیگیری سفارش یا هر سوال دیگر — تیکت بسازید تا همین‌جا
             پاسخ بگیرید.
           </p>
@@ -179,19 +191,39 @@ export function ProfileSupportPanel() {
             return (
               <li
                 key={ticket.id}
-                className="border-navy/10 dark:border-gold/25 overflow-hidden rounded-2xl border"
+                className={cn(
+                  "overflow-hidden rounded-2xl border",
+                  "border-navy/10",
+                  "dark:border-gold/25",
+                )}
               >
                 <button
                   type="button"
-                  className="hover:bg-navy/3 flex w-full items-center justify-between gap-3 px-4 py-3.5 text-start transition-colors dark:hover:bg-white/4"
+                  className={cn(
+                    "flex w-full items-center justify-between gap-3 px-4 py-3.5 text-start transition-colors",
+                    "hover:bg-navy/3",
+                    "dark:hover:bg-white/4",
+                  )}
                   onClick={() => setOpenId(open ? null : ticket.id)}
                   aria-expanded={open}
                 >
                   <span className="min-w-0">
-                    <span className="text-navy dark:text-ivory block truncate text-sm font-black">
+                    <span
+                      className={cn(
+                        "block truncate text-sm font-black",
+                        "text-navy",
+                        "dark:text-ivory",
+                      )}
+                    >
                       {ticket.subject}
                     </span>
-                    <span className="text-navy/45 dark:text-wheat mt-0.5 block text-[10px] font-bold">
+                    <span
+                      className={cn(
+                        "mt-0.5 block text-[10px] font-bold",
+                        "text-navy/70",
+                        "dark:text-wheat",
+                      )}
+                    >
                       {ticket.createdAt}
                     </span>
                   </span>
@@ -225,7 +257,13 @@ function TicketThread({ ticket }: { ticket: Ticket }) {
   }
 
   return (
-    <div className="border-navy/8 bg-navy/2 dark:border-gold/15 space-y-3 border-t px-4 py-4 dark:bg-white/2">
+    <div
+      className={cn(
+        "space-y-3 border-t px-4 py-4",
+        "border-navy/8 bg-navy/2",
+        "dark:border-gold/15 dark:bg-white/2",
+      )}
+    >
       {ticket.replies.map((replyItem, index) => (
         <div
           key={index}
@@ -246,7 +284,7 @@ function TicketThread({ ticket }: { ticket: Ticket }) {
               {replyItem.from === "support" ? "پشتیبانی" : "شما"}
             </p>
             <p className="whitespace-pre-wrap">{replyItem.text}</p>
-            <p className="text-navy/40 dark:text-wheat mt-1.5 text-[10px] font-bold">
+            <p className="text-navy/70 dark:text-wheat mt-1.5 text-[10px] font-bold">
               {replyItem.at}
             </p>
           </div>
@@ -263,7 +301,11 @@ function TicketThread({ ticket }: { ticket: Ticket }) {
             send();
           }}
           placeholder="پیام پیگیری…"
-          className="border-navy/12 text-navy dark:border-gold/25 dark:bg-navy-mid dark:text-ivory h-10 flex-1 rounded-xl border bg-white px-4 text-sm outline-none"
+          className={cn(
+            "h-10 flex-1 rounded-xl border bg-white px-4 text-sm outline-none",
+            "border-navy/12 text-navy",
+            "dark:border-gold/25 dark:bg-navy-mid dark:text-ivory",
+          )}
         />
         <Button
           type="button"

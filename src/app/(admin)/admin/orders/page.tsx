@@ -31,6 +31,7 @@ import { ORDER_FLOW, statusTone } from "@/lib/admin/admin-data";
 import { usePagination } from "@/hooks/use-pagination";
 import { setOrderStatus, useOrders, type Order } from "@/lib/orders";
 import { formatToman, toFaDigits } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { OrderStatus } from "@/types";
 
 const PER_PAGE = 6;
@@ -252,7 +253,10 @@ export default function AdminOrders() {
             align: "center",
             render: (order) => (
               <Badge
-                className={`w-max rounded-lg border-0 ${statusTone(order.status)}`}
+                className={cn(
+                  "w-max rounded-lg border-0",
+                  statusTone(order.status),
+                )}
               >
                 {order.status}
               </Badge>
@@ -269,7 +273,11 @@ export default function AdminOrders() {
       <Sheet open={!!open} onOpenChange={(value) => !value && setOpen(null)}>
         <SheetContent
           side="right"
-          className="border-navy/10 bg-fog text-navy dark:border-gold/20 dark:bg-navy-deep dark:text-ivory w-full max-w-full gap-3 overflow-y-auto sm:w-104 sm:max-w-104"
+          className={cn(
+            "w-full max-w-full gap-3 overflow-y-auto sm:w-104 sm:max-w-104",
+            "border-navy/10 bg-fog text-navy",
+            "dark:border-gold/20 dark:bg-navy-deep dark:text-ivory",
+          )}
         >
           {open ? (
             <>
@@ -285,7 +293,13 @@ export default function AdminOrders() {
                 </SheetDescription>
               </SheetHeader>
 
-              <div className="border-navy/8 dark:border-gold/14 mx-4 rounded-2xl border bg-white/70 p-3 dark:bg-white/[0.035]">
+              <div
+                className={cn(
+                  "mx-4 rounded-2xl border bg-white/70 p-3",
+                  "border-navy/8",
+                  "dark:border-gold/14 dark:bg-white/[0.035]",
+                )}
+              >
                 <p className="font-black">{open.customer}</p>
                 <p
                   className="text-navy/55 dark:text-wheat mt-1 text-xs"
@@ -303,7 +317,11 @@ export default function AdminOrders() {
                 {open.items.map((item) => (
                   <li
                     key={`${item.id}-${item.size}`}
-                    className="border-navy/7 dark:border-gold/12 flex items-center gap-3 rounded-2xl border bg-white/70 p-2 dark:bg-white/[0.035]"
+                    className={cn(
+                      "flex items-center gap-3 rounded-2xl border bg-white/70 p-2",
+                      "border-navy/7",
+                      "dark:border-gold/12 dark:bg-white/[0.035]",
+                    )}
                   >
                     <Image
                       src={item.img}
@@ -325,7 +343,13 @@ export default function AdminOrders() {
                 ))}
               </ul>
 
-              <div className="bg-navy/[0.035] mx-4 space-y-2 rounded-2xl p-4 text-xs dark:bg-white/[0.035]">
+              <div
+                className={cn(
+                  "mx-4 space-y-2 rounded-2xl p-4 text-xs",
+                  "bg-navy/[0.035]",
+                  "dark:bg-white/[0.035]",
+                )}
+              >
                 <Row k="جمع کالا" v={formatToman(open.subtotal)} />
                 <Row
                   k="تخفیف"

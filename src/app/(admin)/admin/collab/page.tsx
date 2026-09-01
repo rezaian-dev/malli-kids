@@ -28,9 +28,12 @@ import {
   type CollabStatus,
 } from "@/lib/collab";
 import { cn } from "@/lib/utils";
+import { adminGlassCard } from "@/lib/admin/admin-chrome";
 
 const PER_PAGE = 6;
 type StatusFilter = "all" | "waiting" | "contacted";
+
+const STATUS_ACTION_BUTTON = "min-h-9 rounded-xl text-[10px]";
 
 export default function AdminCollab() {
   const requests = useCollabs();
@@ -146,7 +149,7 @@ export default function AdminCollab() {
       </AdminFilterBar>
 
       {list.length === 0 ? (
-        <div className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border px-6 py-14 text-center shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+        <div className={cn(adminGlassCard, "px-6 py-14 text-center")}>
           <span className="bg-gold/12 text-gold mx-auto grid size-14 place-items-center rounded-2xl">
             <Handshake className="size-6" />
           </span>
@@ -165,7 +168,7 @@ export default function AdminCollab() {
           {pg.pageItems.map((request, index) => (
             <article
               key={request.id}
-              className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 relative overflow-hidden rounded-[22px] border p-4 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] sm:p-5 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]"
+              className={cn(adminGlassCard, "p-4 sm:p-5")}
               style={{ animationDelay: `${index * 45}ms` }}
             >
               <span
@@ -178,7 +181,13 @@ export default function AdminCollab() {
               />
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
-                  <span className="bg-navy text-gold dark:bg-gold/15 dark:text-gold-soft grid size-10 shrink-0 place-items-center rounded-xl font-black">
+                  <span
+                    className={cn(
+                      "grid size-10 shrink-0 place-items-center rounded-xl font-black",
+                      "bg-navy text-gold",
+                      "dark:bg-gold/15 dark:text-gold-soft",
+                    )}
+                  >
                     {request.name.charAt(0)}
                   </span>
                   <div className="min-w-0">
@@ -187,7 +196,11 @@ export default function AdminCollab() {
                     </p>
                     <a
                       href={`tel:${request.phone}`}
-                      className="text-navy/45 hover:text-gold dark:text-wheat mt-0.5 inline-flex items-center gap-1 text-[10px] font-bold"
+                      className={cn(
+                        "mt-0.5 inline-flex items-center gap-1 text-[10px] font-bold",
+                        "text-navy/45 hover:text-gold",
+                        "dark:text-wheat",
+                      )}
                       dir="ltr"
                     >
                       <Phone className="size-3" /> {request.phone}
@@ -206,10 +219,22 @@ export default function AdminCollab() {
                 </span>
               </div>
 
-              <span className="mt-4 inline-flex rounded-lg bg-sky-500/9 px-2.5 py-1 text-[9px] font-black text-sky-700 dark:text-sky-300">
+              <span
+                className={cn(
+                  "mt-4 inline-flex rounded-lg px-2.5 py-1 text-[9px] font-black",
+                  "bg-sky-500/9 text-sky-700",
+                  "dark:text-sky-300",
+                )}
+              >
                 {request.kind}
               </span>
-              <p className="bg-navy/[0.032] text-navy/78 dark:text-ivory/78 mt-2 min-h-20 rounded-2xl px-3.5 py-3 text-xs leading-7 dark:bg-white/[0.032]">
+              <p
+                className={cn(
+                  "mt-2 min-h-20 rounded-2xl px-3.5 py-3 text-xs leading-7",
+                  "bg-navy/[0.032] text-navy/78",
+                  "dark:text-ivory/78 dark:bg-white/[0.032]",
+                )}
+              >
                 {request.text}
               </p>
               <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
@@ -221,7 +246,7 @@ export default function AdminCollab() {
                     type="button"
                     variant="navy"
                     size="sm"
-                    className="min-h-9 rounded-xl text-[10px]"
+                    className={STATUS_ACTION_BUTTON}
                     onClick={() => change(request.id, "تماس گرفته شد")}
                   >
                     <PhoneCall className="size-3.5" /> ثبت تماس
@@ -231,7 +256,7 @@ export default function AdminCollab() {
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="min-h-9 rounded-xl text-[10px]"
+                    className={STATUS_ACTION_BUTTON}
                     onClick={() => change(request.id, "در انتظار بررسی")}
                   >
                     <RotateCcw className="size-3.5" /> بازگشت به انتظار

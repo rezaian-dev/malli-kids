@@ -83,7 +83,8 @@ export function ImageUpload({
         role="button"
         aria-label="آپلود عکس"
         className={cn(
-          "group relative flex cursor-pointer items-center justify-center overflow-hidden border-2 border-dashed text-center transition",
+          "relative flex cursor-pointer items-center justify-center overflow-hidden",
+          "group border-2 border-dashed text-center transition",
           isDragActive
             ? "border-gold bg-gold/10"
             : "border-navy/20 hover:border-gold/50 dark:border-gold/30",
@@ -110,7 +111,7 @@ export function ImageUpload({
               <Upload className="text-gold mx-auto size-7" />
             )}
             {!isAvatar ? (
-              <p className="text-navy/60 dark:text-wheat mt-2 text-xs font-bold">
+              <p className="text-navy/70 dark:text-wheat mt-2 text-xs font-bold">
                 {label}
               </p>
             ) : null}
@@ -119,13 +120,24 @@ export function ImageUpload({
 
         {/* hover hint when an image already exists */}
         {value && !busy ? (
-          <div className="bg-navy-deep/40 absolute inset-0 flex items-center justify-center opacity-0 transition group-hover:opacity-100">
+          <div
+            className={cn(
+              "absolute inset-0 flex items-center justify-center",
+              "bg-navy-deep/40 opacity-0 transition",
+              "group-hover:opacity-100",
+            )}
+          >
             <Upload className="text-ivory size-6" />
           </div>
         ) : null}
 
         {busy ? (
-          <div className="bg-navy-deep/60 absolute inset-0 flex items-center justify-center backdrop-blur-sm">
+          <div
+            className={cn(
+              "absolute inset-0 flex items-center justify-center",
+              "bg-navy-deep/60 backdrop-blur-sm",
+            )}
+          >
             <Loader2 className="text-gold size-6 animate-spin" />
           </div>
         ) : null}
@@ -135,7 +147,10 @@ export function ImageUpload({
         <button
           type="button"
           onClick={onClear}
-          className="text-rose mt-2 inline-flex items-center gap-1 text-[11px] font-black hover:underline"
+          className={cn(
+            "mt-2 inline-flex items-center gap-1",
+            "text-rose text-[11px] font-black hover:underline",
+          )}
         >
           <Trash2 className="size-3.5" /> حذف عکس
         </button>

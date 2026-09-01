@@ -25,6 +25,9 @@ import {
 } from "lucide-react";
 
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+
+const DIVIDER = "bg-navy/10 dark:bg-gold/20 mx-1 h-6 w-px";
 
 export async function fileToDataUrl(file: File): Promise<string> {
   try {
@@ -66,11 +69,12 @@ function Tool({
       onClick={onClick}
       title={label}
       aria-label={label}
-      className={`grid size-9 place-items-center rounded-xl border transition ${
+      className={cn(
+        "grid size-9 place-items-center rounded-xl border transition",
         active
           ? "border-gold/60 bg-gold/15 text-gold-deep dark:text-gold-soft"
-          : "border-navy/10 text-navy/70 hover:border-gold/50 dark:border-gold/20 dark:bg-navy-mid dark:text-wheat bg-white"
-      }`}
+          : "border-navy/10 text-navy/70 hover:border-gold/50 dark:border-gold/20 dark:bg-navy-mid dark:text-wheat bg-white",
+      )}
     >
       {children}
     </button>
@@ -149,8 +153,20 @@ export function RichEditor({
   }
 
   return (
-    <div className="border-navy/10 bg-sand/40 dark:border-gold/25 dark:bg-navy-deep/40 overflow-hidden rounded-3xl border">
-      <div className="border-navy/8 dark:border-gold/15 flex flex-wrap items-center gap-1.5 border-b p-2">
+    <div
+      className={cn(
+        "overflow-hidden rounded-3xl border",
+        "border-navy/10 bg-sand/40",
+        "dark:border-gold/25 dark:bg-navy-deep/40",
+      )}
+    >
+      <div
+        className={cn(
+          "flex flex-wrap items-center gap-1.5 border-b p-2",
+          "border-navy/8",
+          "dark:border-gold/15",
+        )}
+      >
         <Tool
           label="واگرد"
           onClick={() => editor?.chain().focus().undo().run()}
@@ -160,7 +176,7 @@ export function RichEditor({
         <Tool label="ازنو" onClick={() => editor?.chain().focus().redo().run()}>
           <Redo2 className="size-4" />
         </Tool>
-        <span className="bg-navy/10 dark:bg-gold/20 mx-1 h-6 w-px" />
+        <span className={DIVIDER} />
         <Tool
           label="ضخیم"
           active={editor?.isActive("bold")}
@@ -182,7 +198,7 @@ export function RichEditor({
         >
           <UnderlineIcon className="size-4" />
         </Tool>
-        <span className="bg-navy/10 dark:bg-gold/20 mx-1 h-6 w-px" />
+        <span className={DIVIDER} />
         <Tool
           label="تیتر بزرگ"
           active={editor?.isActive("heading", { level: 2 })}
@@ -201,7 +217,7 @@ export function RichEditor({
         >
           <Heading3 className="size-4" />
         </Tool>
-        <span className="bg-navy/10 dark:bg-gold/20 mx-1 h-6 w-px" />
+        <span className={DIVIDER} />
         <Tool
           label="فهرست نقطه‌ای"
           active={editor?.isActive("bulletList")}
@@ -223,7 +239,7 @@ export function RichEditor({
         >
           <Quote className="size-4" />
         </Tool>
-        <span className="bg-navy/10 dark:bg-gold/20 mx-1 h-6 w-px" />
+        <span className={DIVIDER} />
         <Tool
           label="پیوند"
           active={editor?.isActive("link")}
@@ -234,7 +250,7 @@ export function RichEditor({
         <Tool label="آپلود تصویر" onClick={() => fileRef.current?.click()}>
           <ImageIcon className="size-4" />
         </Tool>
-        <span className="bg-navy/10 dark:bg-gold/20 mx-1 h-6 w-px" />
+        <span className={DIVIDER} />
         <Tool
           label="راست‌چین"
           active={editor?.isActive({ textAlign: "right" })}

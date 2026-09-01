@@ -28,8 +28,14 @@ export default function SizeGuidePage() {
         lead="قد را بدون کفش بگیرید. عددها به سانتی‌متر است. اگر بین دو سایز بودید، برای لباس رویی سایز بزرگ‌تر را بردارید."
         path="/size-guide"
       />
-      <div className="container mx-auto w-full max-w-4xl px-3 xs:px-4 sm:px-5 lg:px-7">
-        <div className="border-navy/10 dark:border-gold/35 dark:bg-dusk overflow-x-auto rounded-3xl border bg-white shadow-sm">
+      <div className="xs:px-4 container mx-auto w-full max-w-4xl px-3 sm:px-5 lg:px-7">
+        <div
+          className={cn(
+            "overflow-x-auto rounded-3xl border shadow-sm",
+            "border-navy/10 bg-white",
+            "dark:border-gold/35 dark:bg-dusk",
+          )}
+        >
           <Table className="min-w-130 text-sm">
             <TableHeader>
               <TableRow className="bg-navy hover:bg-navy border-0">
@@ -81,12 +87,16 @@ export default function SizeGuidePage() {
           ].map((x) => (
             <div
               key={x.t}
-              className="border-navy/8 hover:border-gold/40 dark:border-gold/30 dark:bg-dusk rounded-2xl border bg-white p-4 transition-all hover:-translate-y-0.5"
+              className={cn(
+                "rounded-2xl border p-4 transition-all hover:-translate-y-0.5",
+                "border-navy/8 hover:border-gold/40 bg-white",
+                "dark:border-gold/30 dark:bg-dusk",
+              )}
             >
               <p className="text-navy dark:text-linen text-sm font-black">
                 {x.t}
               </p>
-              <p className="text-navy/55 dark:text-khaki mt-1.5 text-xs leading-6">
+              <p className="text-navy/70 dark:text-khaki mt-1.5 text-xs leading-6">
                 {x.d}
               </p>
             </div>
@@ -96,13 +106,19 @@ export default function SizeGuidePage() {
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             href="/tryon"
-            className="bg-navy text-cream inline-flex rounded-full px-6 py-3 font-black transition-transform hover:-translate-y-0.5"
+            className={cn(
+              "inline-flex rounded-full px-6 py-3 font-black transition-transform hover:-translate-y-0.5",
+              "bg-navy text-cream",
+            )}
           >
             پرو مجازی
           </Link>
           <Link
             href="/shop"
-            className="border-gold text-gold hover:bg-gold hover:text-navy-deep inline-flex rounded-full border-2 px-6 py-3 font-black transition-colors"
+            className={cn(
+              "inline-flex rounded-full border-2 px-6 py-3 font-black transition-colors",
+              "border-gold text-gold hover:bg-gold hover:text-navy-deep",
+            )}
           >
             فروشگاه
           </Link>

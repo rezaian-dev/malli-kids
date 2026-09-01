@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 type Phase = "idle" | "running" | "done" | "error";
@@ -28,6 +29,13 @@ function sizeForHeight(h: number): string {
   ];
   for (const [max, label] of table) if (h < max) return label;
   return "۱۲۲";
+}
+
+function swatchClass(active: boolean) {
+  return cn(
+    "overflow-hidden rounded-xl border-2 transition",
+    active ? "border-gold" : "hover:border-gold/40 border-transparent",
+  );
 }
 
 export function Studio() {
@@ -103,13 +111,25 @@ export function Studio() {
   const shown = result ?? person;
 
   return (
-    <div className="container mx-auto grid w-full max-w-6xl gap-8 px-3 xs:px-4 sm:px-5 lg:grid-cols-2 lg:px-7">
+    <div className="xs:px-4 container mx-auto grid w-full max-w-6xl gap-8 px-3 sm:px-5 lg:grid-cols-2 lg:px-7">
       {/* 🖼️ Live preview panel. */}
-      <div className="border-navy/10 dark:border-gold/30 dark:bg-dusk rounded-[28px] border bg-white p-5">
+      <div
+        className={cn(
+          "rounded-[28px] p-5",
+          "border-navy/10 border bg-white",
+          "dark:border-gold/30 dark:bg-dusk",
+        )}
+      >
         <div className="flex items-center justify-between">
           <p className="text-gold text-xs font-black">پیش‌نمایش زنده</p>
           {result ? (
-            <span className="bg-gold/15 text-gold-deep dark:text-gold-soft rounded-full px-2.5 py-1 text-[10px] font-black">
+            <span
+              className={cn(
+                "rounded-full px-2.5 py-1 text-[10px] font-black",
+                "bg-gold/15 text-gold-deep",
+                "dark:text-gold-soft",
+              )}
+            >
               ساخته‌شده با هوش مصنوعی
             </span>
           ) : null}
@@ -136,7 +156,12 @@ export function Studio() {
 
           {/* ✨ Progress overlay while AI is running. */}
           {phase === "running" ? (
-            <div className="bg-navy-deep/70 absolute inset-0 flex flex-col items-center justify-center gap-3 backdrop-blur-sm">
+            <div
+              className={cn(
+                "absolute inset-0 flex flex-col items-center justify-center gap-3 backdrop-blur-sm",
+                "bg-navy-deep/70",
+              )}
+            >
               <Loader2 className="text-gold size-8 animate-spin" />
               <p className="text-ivory text-sm font-black">
                 هوش مصنوعی در حال پرو کردن لباس…
@@ -152,7 +177,10 @@ export function Studio() {
             alt=""
             width={80}
             height={96}
-            className="absolute inset-e-3 bottom-3 h-24 w-20 rounded-xl border-2 border-white object-cover shadow-lg"
+            className={cn(
+              "absolute inset-e-3 bottom-3 h-24 w-20 rounded-xl object-cover shadow-lg",
+              "border-2 border-white",
+            )}
           />
         </div>
 
@@ -195,11 +223,11 @@ export function Studio() {
         </div>
 
         {/* sample models — no need to upload a child's photo to try the feature */}
-        <p className="text-navy/50 dark:text-wheat mt-4 text-[11px] font-black">
+        <p className="text-navy/70 dark:text-wheat mt-4 text-[11px] font-black">
           یا یک مدل نمونه:
         </p>
         <div className="mt-2 flex flex-wrap gap-2">
-          {SAMPLE_MODELS.map((src) => (
+          {SAMPLE_MODELS.map((src, i) => (
             <button
               key={src}
               type="button"
@@ -208,12 +236,14 @@ export function Studio() {
                 setResult(null);
                 setPhase("idle");
               }}
-              className={`overflow-hidden rounded-xl border-2 transition ${person === src ? "border-gold" : "hover:border-gold/40 border-transparent"}`}
+              aria-label={`مدل نمونه ${i + 1}`}
+              aria-pressed={person === src}
+              className={swatchClass(person === src)}
             >
               {}
               <Image
                 src={src}
-                alt="مدل نمونه"
+                alt=""
                 width={56}
                 height={72}
                 className="h-18 w-14 object-cover"
@@ -231,7 +261,13 @@ export function Studio() {
 
       {/* 👕 Garment and size controls. */}
       <div>
-        <h2 className="text-navy dark:text-ivory mb-3 flex items-center gap-2 text-lg font-black">
+        <h2
+          className={cn(
+            "mb-3 flex items-center gap-2 text-lg font-black",
+            "text-navy",
+            "dark:text-ivory",
+          )}
+        >
           <Shirt className="text-gold size-5" /> لباس کالکشن
         </h2>
         <div className="grid grid-cols-4 gap-2">
@@ -240,7 +276,8 @@ export function Studio() {
               key={p.id}
               type="button"
               onClick={() => setGarment(i)}
-              className={`overflow-hidden rounded-xl border-2 transition ${garment === i ? "border-gold" : "hover:border-gold/40 border-transparent"}`}
+              aria-pressed={garment === i}
+              className={swatchClass(garment === i)}
             >
               {}
               <Image
@@ -254,7 +291,13 @@ export function Studio() {
           ))}
         </div>
 
-        <div className="border-navy/10 dark:border-gold/30 dark:bg-dusk mt-6 space-y-3 rounded-3xl border bg-white p-5">
+        <div
+          className={cn(
+            "mt-6 space-y-3 rounded-3xl p-5",
+            "border-navy/10 border bg-white",
+            "dark:border-gold/30 dark:bg-dusk",
+          )}
+        >
           <h2 className="text-navy dark:text-ivory font-black">
             اندازه برای پیشنهاد سایز
           </h2>
@@ -268,7 +311,13 @@ export function Studio() {
               className="mt-1 rounded-2xl"
             />
           </div>
-          <div className="bg-gold/10 text-gold-deep dark:text-gold-soft rounded-2xl px-4 py-3 text-sm font-black">
+          <div
+            className={cn(
+              "rounded-2xl px-4 py-3 text-sm font-black",
+              "bg-gold/10 text-gold-deep",
+              "dark:text-gold-soft",
+            )}
+          >
             سایز پیشنهادی: {size}
           </div>
         </div>

@@ -60,14 +60,25 @@ export function NewsletterForm({ className }: { className?: string }) {
               setSubmitted(false);
             }
           }}
-          className="newsletter-field caret-cream text-cream placeholder:text-taupe h-10 min-w-0 flex-1 appearance-none rounded-full bg-transparent px-4 text-right text-sm shadow-none outline-none"
+          className={cn(
+            "h-10 min-w-0 flex-1 px-4",
+            "newsletter-field caret-cream text-cream placeholder:text-taupe appearance-none rounded-full bg-transparent text-right text-sm shadow-none outline-none",
+          )}
         />
         <button
           type="submit"
-          className="group/nl bg-gold text-navy-deep inline-flex h-10 shrink-0 items-center gap-1 rounded-full px-5 text-[13px] font-black shadow-[0_10px_24px_-12px_rgba(193,147,87,0.9)] transition-transform duration-200 hover:scale-[1.03] active:scale-95"
+          className={cn(
+            "group/nl inline-flex h-10 shrink-0 items-center gap-1 px-5",
+            "bg-gold text-navy-deep rounded-full text-[13px] font-black shadow-[0_10px_24px_-12px_rgba(193,147,87,0.9)] transition-transform duration-200 hover:scale-[1.03] active:scale-95",
+          )}
         >
           عضویت{" "}
-          <ArrowLeft className="size-4 transition-transform duration-200 group-hover/nl:-translate-x-0.5" />
+          <ArrowLeft
+            className={cn(
+              "size-4",
+              "transition-transform duration-200 group-hover/nl:-translate-x-0.5",
+            )}
+          />
         </button>
       </span>
     </form>

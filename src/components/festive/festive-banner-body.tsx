@@ -79,7 +79,12 @@ export function FestiveBannerBody() {
     return (
       <BannerFrame className={cn("text-ivory", TONE[banner.theme])}>
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-          <span className="bg-gold text-navy-deep shadow-gold/70 relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black shadow-[0_4px_14px_-4px] sm:px-3.5 sm:text-[11px]">
+          <span
+            className={cn(
+              "relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black sm:px-3.5 sm:text-[11px]",
+              "bg-gold text-navy-deep shadow-gold/70 shadow-[0_4px_14px_-4px]",
+            )}
+          >
             <Gift className="size-3.5" />
             {banner.occasion}
             <span
@@ -91,7 +96,12 @@ export function FestiveBannerBody() {
             <p className="truncate text-[13px] font-black tracking-tight sm:text-[15px]">
               {banner.title}
             </p>
-            <p className="text-ivory/70 mt-0.5 hidden truncate text-[11px] font-bold min-[560px]:block sm:text-xs">
+            <p
+              className={cn(
+                "mt-0.5 hidden truncate text-[11px] font-bold min-[560px]:block sm:text-xs",
+                "text-ivory/70",
+              )}
+            >
               {banner.subtitle}
             </p>
           </div>
@@ -100,7 +110,10 @@ export function FestiveBannerBody() {
         <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
           {banner.coupon ? (
             <span
-              className="border-gold/60 bg-gold/10 text-gold-light hidden items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 text-[11px] font-black tracking-[0.14em] md:inline-flex"
+              className={cn(
+                "hidden items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 text-[11px] font-black tracking-[0.14em] md:inline-flex",
+                "border-gold/60 bg-gold/10 text-gold-light",
+              )}
               title="کد تخفیف را در صفحهٔ پرداخت وارد کنید"
             >
               <Ticket className="size-3.5" />
@@ -110,11 +123,19 @@ export function FestiveBannerBody() {
           <Link
             href={banner.href}
             prefetch={false}
-            className="group bg-gold text-navy-deep shadow-gold/30 hover:shadow-gold/50 relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full px-4 py-2 text-[11px] font-black shadow-lg transition-all hover:scale-[1.04] sm:px-5 sm:text-xs"
+            className={cn(
+              "group relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full px-4 py-2 text-[11px] font-black transition-all hover:scale-[1.04] sm:px-5 sm:text-xs",
+              "bg-gold text-navy-deep shadow-gold/30 hover:shadow-gold/50 shadow-lg",
+            )}
           >
             <span className="relative z-10">{banner.cta}</span>
             <ArrowLeft className="relative z-10 size-3.5 transition-transform group-hover:-translate-x-0.5" />
-            <span className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/60 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
+            <span
+              className={cn(
+                "absolute inset-0 -translate-x-full transition-transform duration-500 group-hover:translate-x-full",
+                "bg-linear-to-r from-transparent via-white/60 to-transparent",
+              )}
+            />
           </Link>
         </div>
       </BannerFrame>

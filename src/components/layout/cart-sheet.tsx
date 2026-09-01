@@ -84,7 +84,12 @@ export function CartSheet() {
             "dark:border-gold/60 dark:bg-gold/15 dark:hover:bg-gold dark:hover:text-navy-deep",
           )}
         >
-          <ShoppingBag className="size-5 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" />
+          <ShoppingBag
+            className={cn(
+              "size-5",
+              "transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6",
+            )}
+          />
 
           {}
           <Badge
@@ -117,7 +122,10 @@ export function CartSheet() {
               size="icon-sm"
               variant="ghost"
               aria-label="بستن سبد خرید"
-              className="text-cream hover:text-gold-light rounded-full transition-transform duration-300 ease-out hover:scale-105 hover:bg-white/15"
+              className={cn(
+                "rounded-full transition-transform duration-300 ease-out",
+                "text-cream hover:text-gold-light hover:scale-105 hover:bg-white/15",
+              )}
             >
               <XIcon className="size-5 text-current" />
             </Button>
@@ -153,7 +161,7 @@ export function CartSheet() {
               <p className="text-navy dark:text-ivory text-base font-black">
                 سبد شما خالی است
               </p>
-              <p className="text-navy/50 dark:text-wheat/80 mx-auto mt-1.5 max-w-60 text-xs leading-6">
+              <p className="text-navy/70 dark:text-wheat/80 mx-auto mt-1.5 max-w-60 text-xs leading-6">
                 کالکشن دوخت‌های تازه را ببینید؛ هر چه بپسندید همین‌جا برایتان
                 نگه می‌داریم.
               </p>
@@ -181,7 +189,7 @@ export function CartSheet() {
                     تا ارسالِ رایگان
                   </span>
                 )}
-                <span className="text-navy/40 dark:text-wheat/60 ms-auto text-[10px] font-bold">
+                <span className="text-navy/70 dark:text-wheat/60 ms-auto text-[10px] font-bold">
                   {toFaDigits(progress)}٪
                 </span>
               </div>
@@ -203,19 +211,30 @@ export function CartSheet() {
               {rows.map(({ item, product }) => (
                 <div
                   key={`${item.id}-${item.size}`}
-                  className="group border-navy/8 hover:border-gold/40 dark:border-gold/20 dark:bg-navy-mid/70 dark:hover:border-gold/50 relative flex gap-3 rounded-2xl border bg-white p-2.5 shadow-[0_10px_24px_-18px_rgba(14,42,71,.45)] transition-colors sm:p-3"
+                  className={cn(
+                    "group relative flex gap-3 p-2.5 sm:p-3",
+                    "border-navy/8 hover:border-gold/40 rounded-2xl border bg-white shadow-[0_10px_24px_-18px_rgba(14,42,71,.45)] transition-colors",
+                    "dark:border-gold/20 dark:bg-navy-mid/70 dark:hover:border-gold/50",
+                  )}
                 >
                   <SheetClose asChild>
                     <Link
                       href={pdpHref(product.id)}
-                      className="border-navy/8 bg-sand dark:border-gold/20 dark:bg-dusk relative block size-16 shrink-0 overflow-hidden rounded-xl border sm:size-20"
+                      className={cn(
+                        "relative block size-16 shrink-0 overflow-hidden sm:size-20",
+                        "border-navy/8 bg-sand rounded-xl border",
+                        "dark:border-gold/20 dark:bg-dusk",
+                      )}
                     >
                       <Image
                         src={product.img}
                         alt={product.name}
                         width={80}
                         height={80}
-                        className="size-full object-cover transition-transform duration-500 group-hover:scale-108"
+                        className={cn(
+                          "size-full object-cover",
+                          "transition-transform duration-500 group-hover:scale-108",
+                        )}
                       />
                     </Link>
                   </SheetClose>
@@ -225,7 +244,11 @@ export function CartSheet() {
                       <SheetClose asChild>
                         <Link
                           href={pdpHref(product.id)}
-                          className="text-navy hover:text-gold dark:text-ivory dark:hover:text-gold-light line-clamp-1 text-[13px] font-black sm:text-sm"
+                          className={cn(
+                            "line-clamp-1",
+                            "text-navy hover:text-gold text-[13px] font-black sm:text-sm",
+                            "dark:text-ivory dark:hover:text-gold-light",
+                          )}
                         >
                           {product.name}
                         </Link>
@@ -234,14 +257,30 @@ export function CartSheet() {
                         type="button"
                         aria-label={`حذفِ ${product.name} سایز ${item.size}`}
                         onClick={() => removeCartItem(item.id, item.size)}
-                        className="text-navy/35 hover:bg-rose/10 hover:text-rose dark:text-wheat/50 dark:hover:bg-rose/15 dark:hover:text-rose grid size-7 shrink-0 place-items-center rounded-full transition-colors"
+                        className={cn(
+                          "grid size-7 shrink-0 place-items-center",
+                          "text-navy/70 hover:bg-rose/10 hover:text-rose rounded-full transition-colors",
+                          "dark:text-wheat/50 dark:hover:bg-rose/15 dark:hover:text-rose",
+                        )}
                       >
                         <Trash2 className="size-3.5" />
                       </button>
                     </div>
 
-                    <div className="text-navy/50 dark:text-wheat/70 mt-1 flex flex-wrap items-center gap-1.5 text-[10px] font-bold">
-                      <span className="border-navy/12 bg-sand dark:border-gold/25 dark:bg-dusk-soft rounded-full border px-2 py-0.5">
+                    <div
+                      className={cn(
+                        "mt-1 flex flex-wrap items-center gap-1.5",
+                        "text-navy/70 text-[10px] font-bold",
+                        "dark:text-wheat/70",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "px-2 py-0.5",
+                          "border-navy/12 bg-sand rounded-full border",
+                          "dark:border-gold/25 dark:bg-dusk-soft",
+                        )}
+                      >
                         سایز {item.size}
                       </span>
                       <span className="tabular-nums">
@@ -257,7 +296,13 @@ export function CartSheet() {
 
                     <div className="mt-2 flex items-center justify-between gap-2">
                       {}
-                      <div className="border-navy/12 bg-sand dark:border-gold/25 dark:bg-dusk-soft flex items-center gap-1 rounded-full border p-0.5">
+                      <div
+                        className={cn(
+                          "flex items-center gap-1 p-0.5",
+                          "border-navy/12 bg-sand rounded-full border",
+                          "dark:border-gold/25 dark:bg-dusk-soft",
+                        )}
+                      >
                         <button
                           type="button"
                           aria-label="افزودن تعداد"
@@ -265,11 +310,21 @@ export function CartSheet() {
                           onClick={() =>
                             setCartQty(item.id, item.size, item.qty + 1)
                           }
-                          className="text-navy hover:bg-gold hover:text-navy-deep disabled:hover:text-navy dark:bg-navy dark:text-ivory dark:hover:bg-gold dark:hover:text-navy-deep grid size-6.5 place-items-center rounded-full bg-white shadow-sm transition disabled:opacity-35 disabled:hover:bg-white"
+                          className={cn(
+                            "grid size-6.5 place-items-center",
+                            "text-navy hover:bg-gold hover:text-navy-deep disabled:hover:text-navy rounded-full bg-white shadow-sm transition disabled:opacity-35 disabled:hover:bg-white",
+                            "dark:bg-navy dark:text-ivory dark:hover:bg-gold dark:hover:text-navy-deep",
+                          )}
                         >
                           <Plus className="size-3.5" />
                         </button>
-                        <span className="text-navy dark:text-ivory min-w-5 text-center text-xs font-black tabular-nums">
+                        <span
+                          className={cn(
+                            "min-w-5 text-center",
+                            "text-navy text-xs font-black tabular-nums",
+                            "dark:text-ivory",
+                          )}
+                        >
                           {toFaDigits(item.qty)}
                         </span>
                         <button
@@ -278,14 +333,23 @@ export function CartSheet() {
                           onClick={() =>
                             setCartQty(item.id, item.size, item.qty - 1)
                           }
-                          className="text-navy hover:bg-rose/10 hover:text-rose dark:bg-navy dark:text-ivory dark:hover:bg-rose/15 dark:hover:text-rose grid size-6.5 place-items-center rounded-full bg-white shadow-sm transition"
+                          className={cn(
+                            "grid size-6.5 place-items-center",
+                            "text-navy hover:bg-rose/10 hover:text-rose rounded-full bg-white shadow-sm transition",
+                            "dark:bg-navy dark:text-ivory dark:hover:bg-rose/15 dark:hover:text-rose",
+                          )}
                         >
                           <Minus className="size-3.5" />
                         </button>
                       </div>
-                      <span className="text-gold-deep dark:text-gold-light text-[13px] font-black tabular-nums">
+                      <span
+                        className={cn(
+                          "text-gold-deep text-[13px] font-black tabular-nums",
+                          "dark:text-gold-light",
+                        )}
+                      >
                         {formatToman(priceOf(product.price) * item.qty)}{" "}
-                        <span className="text-navy/40 dark:text-wheat/60 text-[10px] font-bold">
+                        <span className="text-navy/70 dark:text-wheat/60 text-[10px] font-bold">
                           تومان
                         </span>
                       </span>
@@ -296,7 +360,13 @@ export function CartSheet() {
             </div>
 
             {}
-            <div className="border-navy/10 text-navy/70 dark:border-gold/20 dark:text-wheat/80 space-y-1.5 border-t px-4 py-3 text-xs font-bold">
+            <div
+              className={cn(
+                "space-y-1.5 px-4 py-3",
+                "border-navy/10 text-navy/70 border-t text-xs font-bold",
+                "dark:border-gold/20 dark:text-wheat/80",
+              )}
+            >
               <p className="flex justify-between">
                 <span>جمعِ کالاها</span>
                 <span className="tabular-nums">
@@ -325,7 +395,10 @@ export function CartSheet() {
             <Button
               variant="ghost"
               onClick={clearCart}
-              className="text-rose hover:bg-rose/10 hover:text-rose h-11 w-full rounded-2xl text-xs font-bold"
+              className={cn(
+                "h-11 w-full",
+                "text-rose hover:bg-rose/10 hover:text-rose rounded-2xl text-xs font-bold",
+              )}
             >
               <Trash2 className="size-4" /> خالی کردن سبد
             </Button>

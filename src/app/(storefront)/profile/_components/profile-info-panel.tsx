@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PROFILE_CARD } from "./profile-shared";
+import { cn } from "@/lib/utils";
 
 type AccountState = {
   firstName: string;
@@ -62,22 +63,33 @@ function isIranianNationalId(value: string) {
   return rest < 2 ? check === rest : check === 11 - rest;
 }
 
+const FIELD_LABEL = "text-navy/70 dark:text-wheat text-xs font-black";
+const FIELD_HINT = "text-navy/70 dark:text-wheat text-[11px] font-bold";
+const FIELD_ERROR = "text-rose text-xs font-bold";
+const SECTION_TITLE = "text-navy dark:text-linen text-lg font-black";
+const FIELD_FOCUS_RING =
+  "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]";
+
+function fieldState(error?: string) {
+  return error ? "border-rose" : FIELD_FOCUS_RING;
+}
+
 function inputClass(error?: string) {
-  return [
-    "h-11 w-full rounded-2xl border bg-transparent px-4 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
-    error
-      ? "border-rose"
-      : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
-  ].join(" ");
+  return cn(
+    "h-11 w-full rounded-2xl border bg-transparent px-4 text-sm outline-none transition-[color,box-shadow,border-color] duration-200",
+    "text-navy",
+    "dark:text-ivory",
+    fieldState(error),
+  );
 }
 
 function textAreaClass(error?: string) {
-  return [
-    "min-h-28 w-full rounded-2xl border bg-transparent px-4 py-3 text-sm text-navy outline-none transition-[color,box-shadow,border-color] duration-200 dark:text-ivory",
-    error
-      ? "border-rose"
-      : "border-navy/12 focus:border-gold focus:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:border-gold/25 dark:focus:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
-  ].join(" ");
+  return cn(
+    "min-h-28 w-full rounded-2xl border bg-transparent px-4 py-3 text-sm outline-none transition-[color,box-shadow,border-color] duration-200",
+    "text-navy",
+    "dark:text-ivory",
+    fieldState(error),
+  );
 }
 
 // 👤 Native account forms keep profile settings light and reliable.
@@ -178,16 +190,12 @@ export function ProfileInfoPanel() {
     <>
       <section className={PROFILE_CARD}>
         <div>
-          <h2 className="text-navy dark:text-linen text-lg font-black">
-            ویرایش حساب
-          </h2>
+          <h2 className={SECTION_TITLE}>ویرایش حساب</h2>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              نام
-            </span>
+            <span className={FIELD_LABEL}>نام</span>
             <input
               value={account.firstName}
               onChange={(event) => {
@@ -205,16 +213,12 @@ export function ProfileInfoPanel() {
               className={inputClass(accountErrors.firstName)}
             />
             {accountErrors.firstName ? (
-              <p className="text-rose text-xs font-bold">
-                {accountErrors.firstName}
-              </p>
+              <p className={FIELD_ERROR}>{accountErrors.firstName}</p>
             ) : null}
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              نام خانوادگی
-            </span>
+            <span className={FIELD_LABEL}>نام خانوادگی</span>
             <input
               value={account.lastName}
               onChange={(event) =>
@@ -230,9 +234,7 @@ export function ProfileInfoPanel() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              کد ملی
-            </span>
+            <span className={FIELD_LABEL}>کد ملی</span>
             <input
               dir="ltr"
               inputMode="numeric"
@@ -252,20 +254,16 @@ export function ProfileInfoPanel() {
               className={inputClass(accountErrors.nationalId)}
             />
             {accountErrors.nationalId ? (
-              <p className="text-rose text-xs font-bold">
-                {accountErrors.nationalId}
-              </p>
+              <p className={FIELD_ERROR}>{accountErrors.nationalId}</p>
             ) : (
-              <p className="text-navy/45 dark:text-wheat text-[11px] font-bold">
+              <p className={FIELD_HINT}>
                 ۱۰ رقم؛ سالم بودن رقم کنترل هم بررسی می‌شود.
               </p>
             )}
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              شهر
-            </span>
+            <span className={FIELD_LABEL}>شهر</span>
             <input
               value={account.city}
               onChange={(event) => {
@@ -284,16 +282,12 @@ export function ProfileInfoPanel() {
               className={inputClass(accountErrors.city)}
             />
             {accountErrors.city ? (
-              <p className="text-rose text-xs font-bold">
-                {accountErrors.city}
-              </p>
+              <p className={FIELD_ERROR}>{accountErrors.city}</p>
             ) : null}
           </label>
 
           <label className="space-y-1.5 sm:col-span-2">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              آدرس
-            </span>
+            <span className={FIELD_LABEL}>آدرس</span>
             <textarea
               value={account.address}
               onChange={(event) =>
@@ -309,9 +303,7 @@ export function ProfileInfoPanel() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              شماره موبایل
-            </span>
+            <span className={FIELD_LABEL}>شماره موبایل</span>
             <input
               dir="ltr"
               type="tel"
@@ -332,20 +324,14 @@ export function ProfileInfoPanel() {
               className={inputClass(accountErrors.phone)}
             />
             {accountErrors.phone ? (
-              <p className="text-rose text-xs font-bold">
-                {accountErrors.phone}
-              </p>
+              <p className={FIELD_ERROR}>{accountErrors.phone}</p>
             ) : (
-              <p className="text-navy/45 dark:text-wheat text-[11px] font-bold">
-                فقط برای تماس در صورت نیاز.
-              </p>
+              <p className={FIELD_HINT}>فقط برای تماس در صورت نیاز.</p>
             )}
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              ایمیل
-            </span>
+            <span className={FIELD_LABEL}>ایمیل</span>
             <input
               dir="ltr"
               type="email"
@@ -364,9 +350,7 @@ export function ProfileInfoPanel() {
               className={inputClass(accountErrors.email)}
             />
             {accountErrors.email ? (
-              <p className="text-rose text-xs font-bold">
-                {accountErrors.email}
-              </p>
+              <p className={FIELD_ERROR}>{accountErrors.email}</p>
             ) : null}
           </label>
         </div>
@@ -383,19 +367,15 @@ export function ProfileInfoPanel() {
 
       <section className={PROFILE_CARD}>
         <div>
-          <h2 className="text-navy dark:text-linen text-lg font-black">
-            اطلاعات کوچولو
-          </h2>
-          <p className="text-navy/50 dark:text-wheat mt-2 text-xs">
+          <h2 className={SECTION_TITLE}>اطلاعات کوچولو</h2>
+          <p className="text-navy/70 dark:text-wheat mt-2 text-xs">
             اختیاری است؛ اگر پرش کنید، سایز دقیق‌تری پیشنهاد می‌دهیم.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <label className="space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              نام کوچولو
-            </span>
+            <span className={FIELD_LABEL}>نام کوچولو</span>
             <input
               value={child.childName}
               onChange={(event) =>
@@ -411,9 +391,7 @@ export function ProfileInfoPanel() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              سن تقریبی
-            </span>
+            <span className={FIELD_LABEL}>سن تقریبی</span>
             <input
               value={child.childAge}
               onChange={(event) => {
@@ -430,20 +408,14 @@ export function ProfileInfoPanel() {
               className={inputClass(childErrors.childAge)}
             />
             {childErrors.childAge ? (
-              <p className="text-rose text-xs font-bold">
-                {childErrors.childAge}
-              </p>
+              <p className={FIELD_ERROR}>{childErrors.childAge}</p>
             ) : (
-              <p className="text-navy/45 dark:text-wheat text-[11px] font-bold">
-                عدد + سال یا ماه کافی است.
-              </p>
+              <p className={FIELD_HINT}>عدد + سال یا ماه کافی است.</p>
             )}
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-navy/60 dark:text-wheat text-xs font-black">
-              جنسیت
-            </span>
+            <span className={FIELD_LABEL}>جنسیت</span>
             <Select
               value={child.childGender || undefined}
               onValueChange={(value) => {
@@ -460,11 +432,11 @@ export function ProfileInfoPanel() {
             >
               <SelectTrigger
                 aria-invalid={Boolean(childErrors.childGender) || undefined}
-                className={
-                  childErrors.childGender
-                    ? "h-11 bg-transparent shadow-none"
-                    : "border-navy/12 dark:border-gold/25 h-11 bg-transparent shadow-none"
-                }
+                className={cn(
+                  "h-11 bg-transparent shadow-none",
+                  !childErrors.childGender &&
+                    "border-navy/12 dark:border-gold/25",
+                )}
               >
                 <SelectValue placeholder="انتخاب کنید" />
               </SelectTrigger>
@@ -474,9 +446,7 @@ export function ProfileInfoPanel() {
               </SelectContent>
             </Select>
             {childErrors.childGender ? (
-              <p className="text-rose text-xs font-bold">
-                {childErrors.childGender}
-              </p>
+              <p className={FIELD_ERROR}>{childErrors.childGender}</p>
             ) : null}
           </label>
         </div>

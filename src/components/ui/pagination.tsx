@@ -32,13 +32,15 @@ export function Pagination({
     <nav
       aria-label="صفحه‌بندی نتایج"
       className={cn(
-        "admin-pagination border-navy/8 dark:border-gold/14 mt-5 flex flex-col items-center justify-between gap-3 rounded-2xl border bg-white/55 px-3 py-3 sm:flex-row sm:px-4 dark:bg-white/2.5",
+        "mt-5 flex flex-col items-center justify-between gap-3 rounded-2xl border px-3 py-3 sm:flex-row sm:px-4",
+        "admin-pagination border-navy/8 bg-white/55",
+        "dark:border-gold/14 dark:bg-white/2.5",
         className,
       )}
     >
       {hasSummary ? (
         <p
-          className="text-navy/55 dark:text-wheat text-[11px] font-bold"
+          className="text-navy/70 dark:text-wheat text-[11px] font-bold"
           aria-live="polite"
         >
           نمایش {toFaDigits(from)} تا {toFaDigits(to)} از {toFaDigits(total)}{" "}
@@ -65,7 +67,13 @@ export function Pagination({
               </PageButton>
             </li>
             <li>
-              <span className="border-navy/10 text-navy dark:border-gold/18 dark:bg-navy-mid/70 dark:text-ivory flex h-9 min-w-28 items-center justify-center rounded-xl border bg-white px-3 text-[10px] font-black">
+              <span
+                className={cn(
+                  "flex h-9 min-w-28 items-center justify-center rounded-xl border px-3",
+                  "border-navy/10 text-navy bg-white text-[10px] font-black",
+                  "dark:border-gold/18 dark:bg-navy-mid/70 dark:text-ivory",
+                )}
+              >
                 صفحه {toFaDigits(page)} از {toFaDigits(pageCount)}
               </span>
             </li>
@@ -100,7 +108,7 @@ export function Pagination({
                 <li
                   key={`gap-${index}`}
                   aria-hidden="true"
-                  className="text-navy/38 dark:text-wheat/60 grid size-9 place-items-center"
+                  className="text-navy/70 dark:text-wheat/60 grid size-9 place-items-center"
                 >
                   <MoreHorizontal className="size-4" />
                 </li>
@@ -130,7 +138,7 @@ export function Pagination({
           </ul>
         </>
       ) : (
-        <span className="text-navy/35 dark:text-wheat/45 text-[10px] font-bold">
+        <span className="text-navy/70 dark:text-wheat/45 text-[10px] font-bold">
           تنها صفحه
         </span>
       )}
@@ -147,7 +155,8 @@ function PageButton({
     <button
       type="button"
       className={cn(
-        "grid size-9 place-items-center rounded-xl border text-xs font-black transition select-none",
+        "grid size-9 place-items-center rounded-xl border",
+        "text-xs font-black transition select-none",
         "focus-visible:ring-gold/50 focus-visible:ring-2 focus-visible:outline-hidden",
         "disabled:pointer-events-none disabled:opacity-35",
         active

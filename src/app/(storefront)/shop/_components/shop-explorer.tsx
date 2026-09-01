@@ -76,11 +76,24 @@ const STATUS: { label: string; key: keyof ShopState; hint: string }[] = [
 ];
 
 const PRICE_STEP = 50_000;
+const FILTER_ICON_BADGE =
+  "bg-navy text-gold dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl";
+const CLEAR_FILTERS_BTN =
+  "text-gold hover:bg-gold/10 h-8 rounded-full px-3 text-[11px] font-black";
+const SORT_TRIGGER_BASE = cn(
+  "h-auto justify-between rounded-full text-xs font-black",
+  "border-navy/12 bg-sand text-navy",
+  "dark:border-gold/40 dark:bg-dusk-mid dark:text-linen",
+);
 const SECTION_LABEL =
   "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-gold uppercase";
 
-const FILTER_CHIP =
-  "border-navy/12 text-navy/70 hover:border-gold/50 hover:bg-sand hover:text-navy h-auto rounded-full border bg-white px-3.5 py-1.5 text-[12px] font-black dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50 dark:hover:bg-navy-light dark:hover:text-ivory data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] data-[state=on]:hover:bg-navy data-[state=on]:hover:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep dark:data-[state=on]:hover:bg-gold dark:data-[state=on]:hover:text-navy-deep";
+const FILTER_CHIP = cn(
+  "h-auto rounded-full border px-3.5 py-1.5 text-xs font-black",
+  "border-navy/12 bg-white text-navy/70 hover:border-gold/50 hover:bg-sand hover:text-navy",
+  "data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] data-[state=on]:hover:bg-navy data-[state=on]:hover:text-ivory",
+  "dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50 dark:hover:bg-navy-light dark:hover:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep dark:data-[state=on]:hover:bg-gold dark:data-[state=on]:hover:text-navy-deep",
+);
 
 export function ShopExplorer({ state }: { state: ShopState }) {
   const [catalog, setCatalog] = useState(CATALOG);
@@ -278,7 +291,11 @@ export function ShopExplorer({ state }: { state: ShopState }) {
               event.preventDefault();
               commitQuery();
             }}
-            className="border-navy/12 text-navy placeholder:text-navy/35 dark:border-gold/30 dark:text-ivory dark:placeholder:text-wheat h-12 rounded-2xl bg-transparent ps-4 pe-11 text-sm font-bold"
+            className={cn(
+              "h-12 rounded-2xl bg-transparent ps-4 pe-11 text-sm font-bold",
+              "border-navy/12 text-navy placeholder:text-navy/70",
+              "dark:border-gold/30 dark:text-ivory dark:placeholder:text-wheat",
+            )}
           />
         </span>
       </div>
@@ -336,17 +353,18 @@ export function ShopExplorer({ state }: { state: ShopState }) {
             return (
               <label
                 key={key}
-                className={`flex cursor-pointer items-center justify-between gap-3 rounded-2xl border px-3.5 py-2.5 transition ${
+                className={cn(
+                  "flex cursor-pointer items-center justify-between gap-3 rounded-2xl border px-3.5 py-2.5 transition",
                   on
                     ? "border-gold bg-gold-pale/70 dark:border-gold dark:bg-navy-mid"
-                    : "border-navy/8 hover:border-gold/40 dark:border-gold/20 dark:bg-navy-mid/60 bg-white"
-                }`}
+                    : "border-navy/8 hover:border-gold/40 dark:border-gold/20 dark:bg-navy-mid/60 bg-white",
+                )}
               >
                 <span className="min-w-0">
                   <span className="text-navy dark:text-ivory block text-[13px] font-extrabold">
                     {label}
                   </span>
-                  <span className="text-navy/45 dark:text-wheat block text-[10.5px] font-bold">
+                  <span className="text-navy/70 dark:text-wheat block text-[10.5px] font-bold">
                     {hint}
                   </span>
                 </span>
@@ -364,12 +382,24 @@ export function ShopExplorer({ state }: { state: ShopState }) {
       {/* Price range: dual slider + presets */}
       <div className="space-y-3">
         <p className={SECTION_LABEL}>بازه قیمت</p>
-        <div className="border-navy/8 dark:border-gold/20 dark:bg-navy-mid/60 rounded-2xl border bg-white p-4">
-          <div className="text-navy dark:text-ivory mb-4 flex items-center justify-between text-[12px] font-black">
+        <div
+          className={cn(
+            "rounded-2xl border p-4",
+            "border-navy/8 bg-white",
+            "dark:border-gold/20 dark:bg-navy-mid/60",
+          )}
+        >
+          <div
+            className={cn(
+              "mb-4 flex items-center justify-between text-xs font-black",
+              "text-navy",
+              "dark:text-ivory",
+            )}
+          >
             <span className="bg-sand dark:bg-dusk-soft rounded-lg px-2.5 py-1">
               {formatToman(range[0])}
             </span>
-            <span className="text-navy/40 dark:text-wheat text-[10px] font-bold">
+            <span className="text-navy/70 dark:text-wheat text-[10px] font-bold">
               تومان
             </span>
             <span className="bg-sand dark:bg-dusk-soft rounded-lg px-2.5 py-1">
@@ -417,8 +447,14 @@ export function ShopExplorer({ state }: { state: ShopState }) {
                 p.label === "هر قیمتی" && "col-span-2",
               )}
             >
-              <span className="block text-[12px] font-black">{p.label}</span>
-              <span className="text-navy/40 group-data-[state=on]:text-gold-soft dark:text-wheat dark:group-data-[state=on]:text-navy/70 mt-0.5 block text-[10px] font-bold">
+              <span className="block text-xs font-black">{p.label}</span>
+              <span
+                className={cn(
+                  "mt-0.5 block text-[10px] font-bold",
+                  "text-navy/70 group-data-[state=on]:text-gold-soft",
+                  "dark:text-wheat dark:group-data-[state=on]:text-navy/70",
+                )}
+              >
                 {p.hint}
               </span>
             </ToggleGroupItem>
@@ -429,16 +465,27 @@ export function ShopExplorer({ state }: { state: ShopState }) {
   );
 
   const filterHead = (
-    <div className="border-navy/8 dark:border-gold/20 dark:bg-navy-dark/60 flex items-center justify-between gap-3 border-b bg-white/70 px-4 py-4">
+    <div
+      className={cn(
+        "flex items-center justify-between gap-3 border-b px-4 py-4",
+        "border-navy/8 bg-white/70",
+        "dark:border-gold/20 dark:bg-navy-dark/60",
+      )}
+    >
       <div className="flex items-center gap-2.5">
-        <span className="bg-navy text-gold dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl shadow-[0_10px_22px_-12px_rgba(14,42,71,.7)]">
+        <span
+          className={cn(
+            FILTER_ICON_BADGE,
+            "shadow-[0_10px_22px_-12px_rgba(14,42,71,.7)]",
+          )}
+        >
           <SlidersHorizontal className="size-4" />
         </span>
         <div>
           <p className="text-navy dark:text-ivory text-sm font-black">
             فیلتر محصولات
           </p>
-          <p className="text-navy/45 dark:text-gold-soft mt-0.5 text-[10px] font-bold">
+          <p className="text-navy/70 dark:text-gold-soft mt-0.5 text-[10px] font-bold">
             {activeN ? `${toFaDigits(activeN)} مورد فعال` : "بدون فیلتر"}
           </p>
         </div>
@@ -448,7 +495,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
           type="button"
           variant="ghost"
           size="sm"
-          className="text-gold hover:bg-gold/10 h-8 rounded-full px-3 text-[11px] font-black"
+          className={CLEAR_FILTERS_BTN}
           onClick={reset}
         >
           پاک کردن
@@ -458,10 +505,10 @@ export function ShopExplorer({ state }: { state: ShopState }) {
   );
 
   return (
-    <div className="shop-page mx-auto w-full max-w-7xl px-3 xs:px-4 sm:px-5 lg:px-7">
+    <div className="shop-page xs:px-4 mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-7">
       <nav
         aria-label="مسیر صفحه"
-        className="text-navy/45 dark:text-wheat mb-5 text-xs font-bold"
+        className="text-navy/70 dark:text-wheat mb-5 text-xs font-bold"
       >
         <ol className="m-0 flex list-none flex-wrap items-center gap-0 p-0">
           <li>
@@ -474,7 +521,11 @@ export function ShopExplorer({ state }: { state: ShopState }) {
           </li>
           <li>
             {state.cat !== "همه" || state.season !== "همه" ? (
-              <Link href="/shop" prefetch={false} className="hover:text-gold py-1">
+              <Link
+                href="/shop"
+                prefetch={false}
+                className="hover:text-gold py-1"
+              >
                 فروشگاه
               </Link>
             ) : (
@@ -504,23 +555,39 @@ export function ShopExplorer({ state }: { state: ShopState }) {
         {/* Desktop sidebar filter */}
         <aside
           aria-label="فیلتر محصولات"
-          className="border-navy/10 bg-sand-deep/60 dark:border-gold/40 dark:bg-filter-night sticky top-30 hidden overflow-hidden rounded-[28px] border shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col"
+          className={cn(
+            "sticky top-30 hidden overflow-hidden rounded-[28px] shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col",
+            "border-navy/10 bg-sand-deep/60 border",
+            "dark:border-gold/40 dark:bg-filter-night",
+          )}
         >
           {filterHead}
           {filterBody}
         </aside>
 
         {/* Main results */}
-        <section className="border-navy/10 dark:border-gold/35 dark:bg-slate/45 dark:text-ivory min-w-0 rounded-[28px] border bg-white/85 p-3 shadow-[0_22px_54px_-30px_rgba(14,42,71,.32)] backdrop-blur-sm sm:p-5">
+        <section
+          className={cn(
+            "min-w-0 rounded-[28px] p-3 shadow-[0_22px_54px_-30px_rgba(14,42,71,.32)] backdrop-blur-sm sm:p-5",
+            "border-navy/10 border bg-white/85",
+            "dark:border-gold/35 dark:bg-slate/45 dark:text-ivory",
+          )}
+        >
           {/* Toolbar */}
-          <div className="border-navy/6 dark:border-gold/15 mb-4 flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
+          <div
+            className={cn(
+              "mb-4 flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center",
+              "border-navy/6",
+              "dark:border-gold/15",
+            )}
+          >
             <div>
               <h1 className="text-navy dark:text-ivory text-lg font-black sm:text-xl">
                 {shopHeading(state)}
               </h1>
-              <p className="text-navy/45 dark:text-wheat mt-1 text-xs">
+              <h2 className="text-navy/70 dark:text-wheat mt-1 text-xs font-normal">
                 {toFaDigits(filtered.length)} مدل در کالکشن
-              </p>
+              </h2>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <Button
@@ -531,7 +598,12 @@ export function ShopExplorer({ state }: { state: ShopState }) {
               >
                 <SlidersHorizontal className="size-4" /> فیلتر
                 {activeN ? (
-                  <span className="bg-gold text-navy-deep grid size-5 place-items-center rounded-full text-[10px] font-black">
+                  <span
+                    className={cn(
+                      "grid size-5 place-items-center rounded-full text-[10px] font-black",
+                      "bg-gold text-navy-deep",
+                    )}
+                  >
                     {toFaDigits(activeN)}
                   </span>
                 ) : null}
@@ -548,7 +620,10 @@ export function ShopExplorer({ state }: { state: ShopState }) {
                     <Button
                       type="button"
                       variant="outline"
-                      className="border-navy/12 bg-sand text-navy hover:border-gold/50 aria-expanded:border-gold dark:border-gold/40 dark:bg-dusk-mid dark:text-linen h-auto min-w-44 justify-between rounded-full px-4 py-2.5 text-xs font-black"
+                      className={cn(
+                        SORT_TRIGGER_BASE,
+                        "hover:border-gold/50 aria-expanded:border-gold min-w-44 px-4 py-2.5",
+                      )}
                     >
                       <span className="flex items-center gap-1.5">
                         <ArrowUpDown className="text-gold-soft size-4" />{" "}
@@ -559,7 +634,11 @@ export function ShopExplorer({ state }: { state: ShopState }) {
                   <PopoverContent
                     align="end"
                     sideOffset={10}
-                    className="border-navy/12 bg-linen dark:border-gold/40 dark:bg-sort-sheet w-72"
+                    className={cn(
+                      "w-72",
+                      "border-navy/12 bg-linen",
+                      "dark:border-gold/40 dark:bg-sort-sheet",
+                    )}
                   >
                     <p className="text-gold px-2 pt-1 pb-2 text-[11px] font-black tracking-[0.14em] uppercase">
                       مرتب‌سازی
@@ -573,7 +652,10 @@ export function ShopExplorer({ state }: { state: ShopState }) {
               <Button
                 type="button"
                 variant="outline"
-                className="border-navy/12 bg-sand text-navy xs:min-w-36 xs:flex-none dark:border-gold/40 dark:bg-dusk-mid dark:text-linen h-auto min-w-0 flex-1 justify-between rounded-full px-3 py-2.5 text-xs font-black lg:hidden"
+                className={cn(
+                  SORT_TRIGGER_BASE,
+                  "xs:min-w-36 xs:flex-none min-w-0 flex-1 px-3 py-2.5 lg:hidden",
+                )}
                 onClick={() => setSortOpen(true)}
               >
                 <span className="flex items-center gap-1.5 truncate">
@@ -587,7 +669,11 @@ export function ShopExplorer({ state }: { state: ShopState }) {
                 value={state.view}
                 onValueChange={(v) => v && push({ view: v as "grid" | "list" })}
                 aria-label="نحوه نمایش"
-                className="border-navy/10 bg-sand dark:border-gold/30 dark:bg-dusk-mid inline-flex rounded-full border p-0.5"
+                className={cn(
+                  "inline-flex rounded-full border p-0.5",
+                  "border-navy/10 bg-sand",
+                  "dark:border-gold/30 dark:bg-dusk-mid",
+                )}
               >
                 {(
                   [
@@ -600,7 +686,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
                     value={v}
                     aria-label={label}
                     className={cn(
-                      "text-navy/50 dark:text-wheat size-9 rounded-full border-0",
+                      "text-navy/70 dark:text-wheat size-9 rounded-full border-0",
                       "data-[state=on]:bg-navy data-[state=on]:text-ivory",
                       "dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep",
                     )}
@@ -632,10 +718,16 @@ export function ShopExplorer({ state }: { state: ShopState }) {
 
           {slice.length === 0 ? (
             <div className="grid place-items-center py-16 text-center">
-              <span className="bg-sand text-gold dark:bg-navy-mid mb-4 grid size-16 place-items-center rounded-full">
+              <span
+                className={cn(
+                  "mb-4 grid size-16 place-items-center rounded-full",
+                  "bg-sand text-gold",
+                  "dark:bg-navy-mid",
+                )}
+              >
                 <Search className="size-7" />
               </span>
-              <p className="text-navy/60 dark:text-wheat font-black">
+              <p className="text-navy/70 dark:text-wheat font-black">
                 با این پالایش کالایی پیدا نشد.
               </p>
               {activeN ? (
@@ -684,19 +776,23 @@ export function ShopExplorer({ state }: { state: ShopState }) {
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="border-navy/10 bg-sand-deep dark:border-gold/40 dark:bg-filter-night inset-y-0 right-0 flex h-dvh w-[min(88vw,360px)] max-w-90 flex-col gap-0 border-s p-0 sm:max-w-90"
+          className={cn(
+            "inset-y-0 right-0 flex h-dvh w-[min(88vw,360px)] max-w-90 flex-col gap-0 border-s p-0 sm:max-w-90",
+            "border-navy/10 bg-sand-deep",
+            "dark:border-gold/40 dark:bg-filter-night",
+          )}
         >
           <SheetHeader className="gap-0 p-0">
             <div className="flex items-center justify-between px-4 py-4">
               <div className="flex items-center gap-2.5">
-                <span className="bg-navy text-gold dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl">
+                <span className={FILTER_ICON_BADGE}>
                   <SlidersHorizontal className="size-4" />
                 </span>
                 <div className="text-right">
                   <SheetTitle className="text-navy dark:text-ivory text-sm font-black">
                     فیلتر کالکشن
                   </SheetTitle>
-                  <SheetDescription className="text-navy/45 dark:text-gold-soft mt-0.5 text-[10px]">
+                  <SheetDescription className="text-navy/70 dark:text-gold-soft mt-0.5 text-[10px]">
                     {activeN
                       ? `${toFaDigits(activeN)} مورد فعال`
                       : "بدون فیلتر"}
@@ -719,7 +815,11 @@ export function ShopExplorer({ state }: { state: ShopState }) {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="bg-navy/5 text-navy dark:bg-dusk-mid dark:text-ivory size-9 rounded-full"
+                  className={cn(
+                    "size-9 rounded-full",
+                    "bg-navy/5 text-navy",
+                    "dark:bg-dusk-mid dark:text-ivory",
+                  )}
                   onClick={() => setFilterOpen(false)}
                   aria-label="بستن"
                 >
@@ -748,7 +848,11 @@ export function ShopExplorer({ state }: { state: ShopState }) {
         <SheetContent
           side="bottom"
           showCloseButton={false}
-          className="border-gold/30 bg-linen dark:border-gold/40 dark:bg-sort-sheet mx-auto max-w-130 gap-0 rounded-t-[28px] border-t p-0"
+          className={cn(
+            "mx-auto max-w-130 gap-0 rounded-t-[28px] border-t p-0",
+            "border-gold/30 bg-linen",
+            "dark:border-gold/40 dark:bg-sort-sheet",
+          )}
         >
           <div
             className="bg-gold-light mx-auto mt-3 mb-1 h-1.25 w-11 rounded-full"

@@ -3,14 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import {
-  Heart,
-  Home,
-  Package,
-  ShoppingBag,
-  Truck,
-  Wallet,
-} from "lucide-react";
+import { Heart, Home, Package, ShoppingBag, Truck, Wallet } from "lucide-react";
 import type { OrderStatus } from "@/types";
 import { useStore } from "@/providers/store-provider";
 import { formatToman, toFaDigits } from "@/lib/format";
@@ -50,7 +43,9 @@ export function ProfileOrdersPanel() {
   if (!user) return null;
 
   const list =
-    filter === "همه" ? orders : orders.filter((order) => order.status === filter);
+    filter === "همه"
+      ? orders
+      : orders.filter((order) => order.status === filter);
   const paid = orders
     .filter((order) => order.status !== "مرجوعی")
     .reduce((sum, order) => sum + order.total, 0);
@@ -70,12 +65,19 @@ export function ProfileOrdersPanel() {
     <section className={PROFILE_CARD}>
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-black text-navy dark:text-linen">سفارش‌های من</h2>
-          <p className="mt-1 text-xs leading-6 text-navy/50 dark:text-wheat">
+          <h2 className="text-navy dark:text-linen text-lg font-black">
+            سفارش‌های من
+          </h2>
+          <p className="text-navy/70 dark:text-wheat mt-1 text-xs leading-6">
             هر سفارش در چه مرحله‌ای است را همین‌جا دنبال کنید.
           </p>
         </div>
-        <Button asChild variant="gold" size="sm" className="h-10 shrink-0 rounded-full px-5">
+        <Button
+          asChild
+          variant="gold"
+          size="sm"
+          className="h-10 shrink-0 rounded-full px-5"
+        >
           <Link href="/shop" prefetch={false}>
             خرید جدید
           </Link>
@@ -86,20 +88,35 @@ export function ProfileOrdersPanel() {
         {stats.map(({ Icon, label, value }) => (
           <div
             key={label}
-            className="rounded-2xl border border-navy/10 bg-navy/2 px-4 py-3.5 text-center dark:border-gold/25 dark:bg-white/3"
+            className={cn(
+              "rounded-2xl border px-4 py-3.5 text-center",
+              "border-navy/10 bg-navy/2",
+              "dark:border-gold/25 dark:bg-white/3",
+            )}
           >
-            <Icon className="mx-auto size-4 text-gold" />
-            <p className="mt-2 truncate text-sm font-black text-navy dark:text-ivory" dir="ltr">
+            <Icon className="text-gold mx-auto size-4" />
+            <p
+              className={cn(
+                "mt-2 truncate text-sm font-black",
+                "text-navy",
+                "dark:text-ivory",
+              )}
+              dir="ltr"
+            >
               {value}
             </p>
-            <p className="mt-0.5 text-[10px] font-bold text-navy/45 dark:text-wheat">
+            <p className="text-navy/70 dark:text-wheat mt-0.5 text-[10px] font-bold">
               {label}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-1.5" aria-label="فیلتر وضعیت سفارش">
+      <div
+        className="flex flex-wrap gap-1.5"
+        role="group"
+        aria-label="فیلتر وضعیت سفارش"
+      >
         {(["همه", ...ORDER_FLOW] as const).map((item) => (
           <button
             key={item}
@@ -109,7 +126,7 @@ export function ProfileOrdersPanel() {
               "rounded-full border px-3.5 py-1.5 text-[11px] font-black transition-colors",
               filter === item
                 ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep"
-                : "border-navy/15 text-navy/55 hover:border-gold/60 dark:border-gold/25 dark:text-wheat",
+                : "border-navy/15 text-navy/70 hover:border-gold/60 dark:border-gold/25 dark:text-wheat",
             )}
           >
             {item}
@@ -118,18 +135,41 @@ export function ProfileOrdersPanel() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-navy/15 px-6 py-10 text-center dark:border-gold/25">
-          <ShoppingBag className="mx-auto size-9 text-gold" />
-          <p className="mt-3 font-black text-navy dark:text-ivory">هنوز سفارشی ندارید</p>
-          <p className="mx-auto mt-1 max-w-xs text-xs leading-6 text-navy/50 dark:text-wheat">
-            اولین خریدتان را ثبت کنید؛ اینجا مرحله‌به‌مرحله تا دم در خانه پیگیری‌اش می‌کنید.
+        <div
+          className={cn(
+            "rounded-2xl border border-dashed px-6 py-10 text-center",
+            "border-navy/15",
+            "dark:border-gold/25",
+          )}
+        >
+          <ShoppingBag className="text-gold mx-auto size-9" />
+          <p className="text-navy dark:text-ivory mt-3 font-black">
+            هنوز سفارشی ندارید
+          </p>
+          <p
+            className={cn(
+              "mx-auto mt-1 max-w-xs text-xs leading-6",
+              "text-navy/70",
+              "dark:text-wheat",
+            )}
+          >
+            اولین خریدتان را ثبت کنید؛ اینجا مرحله‌به‌مرحله تا دم در خانه
+            پیگیری‌اش می‌کنید.
           </p>
           <Button asChild variant="navy" className="mt-4 h-10 px-6">
-            <Link href="/shop" prefetch={false}>دیدن کالکشن</Link>
+            <Link href="/shop" prefetch={false}>
+              دیدن کالکشن
+            </Link>
           </Button>
         </div>
       ) : list.length === 0 ? (
-        <p className="rounded-2xl bg-navy/3 px-4 py-6 text-center text-xs font-bold text-navy/50 dark:bg-white/4 dark:text-wheat">
+        <p
+          className={cn(
+            "rounded-2xl px-4 py-6 text-center text-xs font-bold",
+            "bg-navy/3 text-navy/70",
+            "dark:text-wheat dark:bg-white/4",
+          )}
+        >
           سفارشی با این وضعیت ندارید.
         </p>
       ) : (
@@ -147,23 +187,45 @@ function OrderCard({ order }: { order: Order }) {
   const stage = stageIndex(order.status);
 
   return (
-    <li className="overflow-hidden rounded-2xl border border-navy/10 dark:border-gold/25">
-      <div className="flex flex-wrap items-center gap-2 border-b border-navy/8 bg-navy/2 px-4 py-3 dark:border-gold/15 dark:bg-white/2">
-        <p className="text-sm font-black text-navy dark:text-ivory" dir="ltr">
+    <li
+      className={cn(
+        "overflow-hidden rounded-2xl border",
+        "border-navy/10",
+        "dark:border-gold/25",
+      )}
+    >
+      <div
+        className={cn(
+          "flex flex-wrap items-center gap-2 border-b px-4 py-3",
+          "border-navy/8 bg-navy/2",
+          "dark:border-gold/15 dark:bg-white/2",
+        )}
+      >
+        <p className="text-navy dark:text-ivory text-sm font-black" dir="ltr">
           {order.id}
         </p>
-        <span className={cn("rounded-full px-3 py-1 text-[10px] font-black", ORDER_TONE[order.status])}>
+        <span
+          className={cn(
+            "rounded-full px-3 py-1 text-[10px] font-black",
+            ORDER_TONE[order.status],
+          )}
+        >
           {order.status}
         </span>
-        <span className="ms-auto text-[10px] font-bold text-navy/45 dark:text-wheat">
+        <span className="text-navy/70 dark:text-wheat ms-auto text-[10px] font-bold">
           {order.date}
         </span>
-        <span className="text-sm font-black text-gold">{formatToman(order.total)} تومان</span>
+        <span className="text-gold text-sm font-black">
+          {formatToman(order.total)} تومان
+        </span>
       </div>
 
       <ul className="space-y-2 px-4 py-3">
         {order.items.map((item) => (
-          <li key={`${item.id}-${item.size}`} className="flex items-center gap-3">
+          <li
+            key={`${item.id}-${item.size}`}
+            className="flex items-center gap-3"
+          >
             <Image
               src={item.img}
               alt=""
@@ -172,12 +234,20 @@ function OrderCard({ order }: { order: Order }) {
               className="size-12 shrink-0 rounded-xl object-cover"
             />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-black text-navy dark:text-ivory">{item.name}</p>
-              <p className="text-[11px] font-bold text-navy/50 dark:text-wheat">
+              <p
+                className={cn(
+                  "truncate text-sm font-black",
+                  "text-navy",
+                  "dark:text-ivory",
+                )}
+              >
+                {item.name}
+              </p>
+              <p className="text-navy/70 dark:text-wheat text-[11px] font-bold">
                 سایز {item.size} × {toFaDigits(item.qty)}
               </p>
             </div>
-            <span className="text-xs font-black text-navy/70 dark:text-ivory/70">
+            <span className="text-navy/70 dark:text-ivory/70 text-xs font-black">
               {formatToman(item.price * item.qty)}
             </span>
           </li>
@@ -185,11 +255,16 @@ function OrderCard({ order }: { order: Order }) {
       </ul>
 
       {stage === -1 ? (
-        <p className="mx-4 mb-4 rounded-xl bg-rose/10 px-4 py-2.5 text-[11px] font-black text-rose">
+        <p
+          className={cn(
+            "mx-4 mb-4 rounded-xl px-4 py-2.5 text-[11px] font-black",
+            "bg-rose/10 text-rose",
+          )}
+        >
           این سفارش مرجوع شده است؛ مبلغ به کیف پول شما برمی‌گردد.
         </p>
       ) : (
-        <ol className="flex items-center gap-0 px-4 pb-5 pt-1">
+        <ol className="flex items-center gap-0 px-4 pt-1 pb-5">
           {ORDER_STAGES.map((label, index) => {
             const Icon = STAGE_ICONS[index];
             const done = index <= stage;
@@ -202,7 +277,7 @@ function OrderCard({ order }: { order: Order }) {
                       "grid size-9 place-items-center rounded-full border-2 transition-colors",
                       done
                         ? "border-gold bg-gold text-navy-deep"
-                        : "border-navy/15 text-navy/35 dark:border-gold/25 dark:text-wheat/50",
+                        : "border-navy/15 text-navy/70 dark:border-gold/25 dark:text-wheat/50",
                     )}
                   >
                     <Icon className="size-4" />
@@ -210,7 +285,9 @@ function OrderCard({ order }: { order: Order }) {
                   <span
                     className={cn(
                       "text-[9px] font-black",
-                      done ? "text-navy dark:text-ivory" : "text-navy/35 dark:text-wheat/50",
+                      done
+                        ? "text-navy dark:text-ivory"
+                        : "text-navy/70 dark:text-wheat/50",
                     )}
                   >
                     {label}

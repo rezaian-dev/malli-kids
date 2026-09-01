@@ -20,7 +20,7 @@ export function Stories() {
                 <OrnStitch className="absolute right-0 -bottom-2 w-14" />
               </span>
             </h2>
-            <p className="text-navy/50 dark:text-wheat mt-2 text-sm">
+            <p className="text-navy/70 dark:text-wheat mt-2 text-sm">
               خواندنی‌های کوتاه برای خرید و استایل کوچولو
             </p>
           </div>

@@ -10,7 +10,7 @@ import {
   Truck,
 } from "lucide-react";
 import { EitaaIcon } from "@/components/shared/eitaa-icon";
-import { shell } from "@/lib/utils";
+import { cn, shell } from "@/lib/utils";
 import { NewsletterForm } from "./newsletter-form";
 
 const PERKS = [
@@ -26,6 +26,8 @@ const PERKS = [
 
 const FOOT_LINK =
   "inline-flex min-h-11 items-center py-1 transition-colors hover:text-gold md:min-h-9";
+const FOOTER_HEADING = "mb-4 text-[15px] font-black text-white";
+const FOOTER_LIST = "m-0 grid list-none gap-0.5 p-0 text-sm";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -107,7 +109,10 @@ export function Footer() {
   return (
     <footer dir="rtl" className="bg-navy-deep text-cream-mute relative">
       <span
-        className="via-gold pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-l from-transparent to-transparent"
+        className={cn(
+          "pointer-events-none absolute inset-x-0 top-0 h-px",
+          "via-gold bg-linear-to-l from-transparent to-transparent",
+        )}
         aria-hidden
       />
       <div className="border-b border-white/10">
@@ -116,7 +121,12 @@ export function Footer() {
         >
           {PERKS.map(({ Icon, t, d }) => (
             <div key={t} className="flex min-w-0 items-center gap-3.5">
-              <span className="text-gold inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-white/10">
+              <span
+                className={cn(
+                  "inline-flex size-11 shrink-0 items-center justify-center",
+                  "text-gold rounded-full bg-white/10",
+                )}
+              >
                 <Icon className="size-5" />
               </span>
               <div className="min-w-0">
@@ -186,10 +196,8 @@ export function Footer() {
           </div>
         </div>
         <nav aria-label="دسته‌بندی‌ها">
-          <p className="mb-4 text-[15px] font-black text-white">
-            دسته‌بندی‌ها
-          </p>
-          <ul className="m-0 grid list-none gap-0.5 p-0 text-sm">
+          <p className={FOOTER_HEADING}>دسته‌بندی‌ها</p>
+          <ul className={FOOTER_LIST}>
             <li>
               <Link href="/shop?category=دخترانه" className={FOOT_LINK}>
                 دخترانه
@@ -218,10 +226,8 @@ export function Footer() {
           </ul>
         </nav>
         <nav aria-label="دسترسی سریع">
-          <p className="mb-4 text-[15px] font-black text-white">
-            دسترسی سریع
-          </p>
-          <ul className="m-0 grid list-none gap-0.5 p-0 text-sm">
+          <p className={FOOTER_HEADING}>دسترسی سریع</p>
+          <ul className={FOOTER_LIST}>
             <li>
               <Link href="/tryon" className={FOOT_LINK}>
                 پرو مجازی
@@ -255,7 +261,7 @@ export function Footer() {
           </ul>
         </nav>
         <div>
-          <p className="mb-4 text-[15px] font-black text-white">تماس با ما</p>
+          <p className={FOOTER_HEADING}>تماس با ما</p>
           <ul className="text-taupe m-0 grid list-none gap-3.5 p-0 text-sm">
             <li className="flex items-start gap-2.5">
               <MapPin className="text-gold-light mt-0.5 size-4 shrink-0" />
@@ -265,7 +271,7 @@ export function Footer() {
               <a
                 href="tel:+982126401234"
                 dir="ltr"
-                aria-label="تماس با ملی‌کیدز"
+                aria-label="تماس با ملی‌کیدز: ۰۲۱ — ۲۶۴۰ ۱۲۳۴"
                 className="hover:text-gold-light focus-visible:text-gold-light inline-flex min-h-11 items-center gap-2.5 rounded-lg px-1 py-1 transition-colors"
               >
                 <Phone className="text-gold-light size-4 shrink-0" />
@@ -310,7 +316,10 @@ export function Footer() {
               target="_blank"
               rel="noreferrer"
               aria-label="نماد اعتماد الکترونیکی"
-              className="hover:ring-gold/50 grid size-20 place-items-center rounded-2xl bg-white p-2 shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5 sm:size-24 sm:p-2.5"
+              className={cn(
+                "grid size-20 place-items-center p-2 sm:size-24 sm:p-2.5",
+                "hover:ring-gold/50 rounded-2xl bg-white shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5",
+              )}
             >
               <Image
                 src="/brand/enamad.png"
@@ -325,7 +334,10 @@ export function Footer() {
               target="_blank"
               rel="noreferrer"
               aria-label="نشان ملی ثبت رسانه‌های دیجیتال (ساماندهی)"
-              className="hover:ring-gold/50 grid h-20 w-32 place-items-center rounded-2xl bg-white p-2 shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5 sm:h-24 sm:w-40 sm:p-2.5"
+              className={cn(
+                "grid h-20 w-32 place-items-center p-2 sm:h-24 sm:w-40 sm:p-2.5",
+                "hover:ring-gold/50 rounded-2xl bg-white shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5",
+              )}
             >
               <Image
                 src="/brand/samandehi.png"
@@ -341,7 +353,7 @@ export function Footer() {
 
       <div className="border-t border-white/10">
         <div
-          className={`${shell} text-cream/40 flex flex-wrap items-center justify-between gap-2.5 py-5 text-center text-xs`}
+          className={`${shell} text-cream/55 flex flex-wrap items-center justify-between gap-2.5 py-5 text-center text-xs`}
         >
           <span>
             © ۱۴۰۴ ملی‌کیدز — تمامی حقوق محفوظ است.{" "}
@@ -353,7 +365,7 @@ export function Footer() {
               حریم خصوصی
             </Link>
           </span>
-          <span className="font-display text-gold/50 tracking-[0.28em]">
+          <span className="font-display text-gold/80 tracking-[0.28em]">
             MALLI KIDS
           </span>
         </div>

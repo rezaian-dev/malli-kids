@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export const PROGRESS_EVENT = "malli:progress";
 
@@ -47,7 +48,10 @@ export function ClickProgress() {
       }}
     >
       <div
-        className="from-gold-deep via-gold to-gold-light h-full rounded-s-full bg-linear-to-l shadow-[0_0_10px_0_var(--color-gold)]"
+        className={cn(
+          "h-full",
+          "from-gold-deep via-gold to-gold-light rounded-s-full bg-linear-to-l shadow-[0_0_10px_0_var(--color-gold)]",
+        )}
         style={{
           marginInlineStart: "auto",
           width: phase === "idle" ? "0%" : phase === "run" ? "72%" : "100%",

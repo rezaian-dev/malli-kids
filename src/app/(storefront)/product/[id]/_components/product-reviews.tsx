@@ -7,14 +7,28 @@ import { toFaDigits } from "@/lib/format";
 import type { AdminReview, Product } from "@/types";
 import { pdpKicker, pdpWell } from "./product-chrome";
 import { useLiveProduct } from "./product-live-context";
+import { cn } from "@/lib/utils";
 
-function Stars({ n, className = "size-3.5" }: { n: number; className?: string }) {
+function Stars({
+  n,
+  className = "size-3.5",
+}: {
+  n: number;
+  className?: string;
+}) {
   return (
-    <span className="inline-flex gap-0.5" aria-label={`${toFaDigits(n)} از ۵`}>
+    <span
+      className="inline-flex gap-0.5"
+      role="img"
+      aria-label={`${toFaDigits(n)} از ۵`}
+    >
       {Array.from({ length: 5 }, (_, i) => (
         <Star
           key={i}
-          className={`${className} ${i < n ? "fill-gold text-gold" : "text-navy/15 dark:text-wheat/25"}`}
+          className={cn(
+            className,
+            i < n ? "fill-gold text-gold" : "text-navy/15 dark:text-wheat/25",
+          )}
         />
       ))}
     </span>
@@ -60,7 +74,8 @@ export function ProductReviews({ product: seed }: { product: Product }) {
     99,
     others.length
       ? Math.round(
-          ((others.filter((r) => r.rate >= 4).length + 1) / (others.length + 1)) *
+          ((others.filter((r) => r.rate >= 4).length + 1) /
+            (others.length + 1)) *
             100,
         )
       : Math.round((avg / 5) * 98),
@@ -74,13 +89,19 @@ export function ProductReviews({ product: seed }: { product: Product }) {
         <p className={pdpKicker}>BUYER NOTES</p>
         <div className="mt-3 grid min-w-0 items-center gap-5 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-6">
           <div className="text-center sm:text-right">
-            <p className="text-navy dark:text-ivory text-[2.75rem] leading-none font-black">
+            <p
+              className={cn(
+                "text-[2.75rem] leading-none font-black",
+                "text-navy",
+                "dark:text-ivory",
+              )}
+            >
               {toFaDigits(avg.toFixed(1))}
             </p>
             <div className="mt-2 flex justify-center sm:justify-start">
               <Stars n={Math.round(avg)} className="size-4" />
             </div>
-            <p className="text-navy/50 dark:text-wheat mt-2 text-[11px] font-bold">
+            <p className="text-navy/70 dark:text-wheat mt-2 text-[11px] font-bold">
               از {toFaDigits(count)} نظر تأییدشده
             </p>
           </div>
@@ -90,16 +111,28 @@ export function ProductReviews({ product: seed }: { product: Product }) {
               const star = 5 - i;
               return (
                 <li key={star} className="flex items-center gap-2">
-                  <span className="text-navy/55 dark:text-wheat w-3 text-[11px] font-black">
+                  <span className="text-navy/70 dark:text-wheat w-3 text-[11px] font-black">
                     {toFaDigits(star)}
                   </span>
-                  <span className="bg-navy/10 dark:bg-ivory/10 h-1.5 min-w-0 flex-1 overflow-hidden rounded-full">
+                  <span
+                    className={cn(
+                      "h-1.5 min-w-0 flex-1 overflow-hidden rounded-full",
+                      "bg-navy/10",
+                      "dark:bg-ivory/10",
+                    )}
+                  >
                     <span
                       className="bg-gold block h-full rounded-full"
                       style={{ width: `${pct}%` }}
                     />
                   </span>
-                  <span className="text-navy/40 dark:text-wheat/80 w-8 text-end text-[10px] font-bold">
+                  <span
+                    className={cn(
+                      "w-8 text-end text-[10px] font-bold",
+                      "text-navy/70",
+                      "dark:text-wheat/80",
+                    )}
+                  >
                     {toFaDigits(pct)}٪
                   </span>
                 </li>
@@ -115,11 +148,23 @@ export function ProductReviews({ product: seed }: { product: Product }) {
               }}
               aria-hidden
             >
-              <span className="bg-white dark:bg-dusk text-navy dark:text-ivory grid size-14 place-items-center rounded-full text-sm font-black">
+              <span
+                className={cn(
+                  "grid size-14 place-items-center rounded-full text-sm font-black",
+                  "text-navy bg-white",
+                  "dark:bg-dusk dark:text-ivory",
+                )}
+              >
                 {toFaDigits(recommend)}٪
               </span>
             </div>
-            <p className="text-navy dark:text-ivory max-w-28 text-center text-[11px] leading-5 font-black sm:max-w-none">
+            <p
+              className={cn(
+                "max-w-28 text-center text-[11px] leading-5 font-black sm:max-w-none",
+                "text-navy",
+                "dark:text-ivory",
+              )}
+            >
               پیشنهاد می‌کنند
             </p>
           </div>
@@ -134,12 +179,16 @@ export function ProductReviews({ product: seed }: { product: Product }) {
           ].map(([label, val]) => (
             <li
               key={label}
-              className="border-navy/8 bg-white/80 dark:border-gold/20 dark:bg-navy-deep/40 rounded-2xl border px-3 py-3 text-center"
+              className={cn(
+                "rounded-2xl border px-3 py-3 text-center",
+                "border-navy/8 bg-white/80",
+                "dark:border-gold/20 dark:bg-navy-deep/40",
+              )}
             >
               <p className="text-navy dark:text-ivory text-base font-black">
                 {val}
               </p>
-              <p className="text-navy/50 dark:text-wheat mt-1 text-[10px] font-bold">
+              <p className="text-navy/70 dark:text-wheat mt-1 text-[10px] font-bold">
                 {label}
               </p>
             </li>
@@ -147,7 +196,13 @@ export function ProductReviews({ product: seed }: { product: Product }) {
         </ul>
       </div>
 
-      <article className="bg-navy text-ivory dark:bg-dusk-deep dark:ring-gold/30 relative min-w-0 overflow-hidden rounded-[22px] p-4 shadow-[0_22px_44px_-28px_rgba(14,42,71,.45)] sm:rounded-[28px] sm:p-6 dark:ring-1">
+      <article
+        className={cn(
+          "relative min-w-0 overflow-hidden rounded-[22px] p-4 shadow-[0_22px_44px_-28px_rgba(14,42,71,.45)] sm:rounded-[28px] sm:p-6",
+          "bg-navy text-ivory",
+          "dark:bg-dusk-deep dark:ring-gold/30 dark:ring-1",
+        )}
+      >
         <Quote
           className="text-gold/20 pointer-events-none absolute top-3 left-3 size-12 sm:size-16"
           strokeWidth={1.15}
@@ -156,7 +211,12 @@ export function ProductReviews({ product: seed }: { product: Product }) {
           <span className="bg-gold text-navy-deep rounded-full px-2.5 py-0.5 text-[10px] font-black">
             نظر منتخب
           </span>
-          <span className="text-gold-light inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 text-[10px] font-bold">
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold",
+              "text-gold-light border-white/15 bg-white/10",
+            )}
+          >
             <BadgeCheck className="size-3.5" /> خرید تأییدشده
           </span>
           <Stars n={featured.rate} />
@@ -166,7 +226,12 @@ export function ProductReviews({ product: seed }: { product: Product }) {
         </p>
         <div className="mt-5 flex flex-col gap-3 border-t border-white/10 pt-4 min-[420px]:flex-row min-[420px]:items-center min-[420px]:justify-between">
           <div className="flex min-w-0 items-center gap-2.5">
-            <span className="bg-gold text-navy-deep grid size-10 shrink-0 place-items-center rounded-xl text-sm font-black">
+            <span
+              className={cn(
+                "grid size-10 shrink-0 place-items-center rounded-xl text-sm font-black",
+                "bg-gold text-navy-deep",
+              )}
+            >
               س
             </span>
             <div className="min-w-0">
@@ -181,7 +246,12 @@ export function ProductReviews({ product: seed }: { product: Product }) {
           <button
             type="button"
             onClick={() => setThanks((v) => !v)}
-            className={`inline-flex min-h-9 w-max shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold ${thanks ? "border-gold bg-gold text-navy-deep" : "text-ivory border-white/20 bg-white/10"}`}
+            className={cn(
+              "inline-flex min-h-9 w-max shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold",
+              thanks
+                ? "border-gold bg-gold text-navy-deep"
+                : "text-ivory border-white/20 bg-white/10",
+            )}
           >
             <ThumbsUp className="size-3.5" />
             {thanks ? "مفید بود" : "مفید"} ({toFaDigits(thanks ? 43 : 42)})
@@ -192,11 +262,20 @@ export function ProductReviews({ product: seed }: { product: Product }) {
       {others.map((r) => (
         <article
           key={r.id}
-          className="border-navy/8 dark:border-gold/30 dark:bg-slate min-w-0 rounded-[22px] border bg-white/90 p-4 shadow-[0_16px_36px_-26px_rgba(14,42,71,.28)] sm:rounded-3xl sm:p-5"
+          className={cn(
+            "min-w-0 rounded-[22px] p-4 shadow-[0_16px_36px_-26px_rgba(14,42,71,.28)] sm:rounded-3xl sm:p-5",
+            "border-navy/8 border bg-white/90",
+            "dark:border-gold/30 dark:bg-slate",
+          )}
         >
           <div className="flex flex-col gap-2 min-[400px]:flex-row min-[400px]:items-center min-[400px]:justify-between">
             <div className="flex min-w-0 items-center gap-2.5">
-              <span className="bg-gold/15 text-gold grid size-9 shrink-0 place-items-center rounded-full text-sm font-black">
+              <span
+                className={cn(
+                  "grid size-9 shrink-0 place-items-center rounded-full text-sm font-black",
+                  "bg-gold/15 text-gold",
+                )}
+              >
                 {r.author.trim().charAt(0)}
               </span>
               <div className="min-w-0">
@@ -206,7 +285,13 @@ export function ProductReviews({ product: seed }: { product: Product }) {
                 <Stars n={r.rate} />
               </div>
             </div>
-            <time className="text-navy/55 dark:text-wheat shrink-0 text-[11px] font-bold no-underline">
+            <time
+              className={cn(
+                "shrink-0 text-[11px] font-bold no-underline",
+                "text-navy/70",
+                "dark:text-wheat",
+              )}
+            >
               تاریخ نظر: {r.date}
             </time>
           </div>

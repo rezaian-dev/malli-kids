@@ -50,15 +50,20 @@ import {
 
 const TAB_TRIGGER = cn(
   "min-w-0 rounded-xl py-2.5 text-[13px] font-extrabold transition-colors",
-  "text-navy/60 hover:text-navy dark:text-linen/70 dark:hover:text-ivory",
+  "text-navy/70 hover:text-navy dark:text-linen/70 dark:hover:text-ivory",
   "data-[state=active]:bg-navy data-[state=active]:text-ivory data-[state=active]:shadow-sm",
   "dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep dark:data-[state=active]:shadow-[0_2px_10px_-2px] dark:data-[state=active]:shadow-gold/50",
 );
 
-const SUBMIT_NAVY =
-  "h-12 w-full gap-2 rounded-full bg-navy font-black text-ivory shadow-[0_10px_24px_-12px] shadow-navy/60 transition-transform hover:bg-navy-mid active:scale-[0.99] dark:bg-gold dark:text-navy-deep dark:shadow-gold/40 dark:hover:bg-gold-light";
-const SUBMIT_GOLD =
-  "h-12 w-full gap-2 rounded-full bg-gold font-black text-navy-deep shadow-[0_10px_24px_-12px] shadow-gold/60 transition-transform hover:bg-gold-light active:scale-[0.99]";
+const SUBMIT_NAVY = cn(
+  "h-12 w-full gap-2 rounded-full font-black transition-transform active:scale-[0.99]",
+  "bg-navy text-ivory shadow-[0_10px_24px_-12px] shadow-navy/60 hover:bg-navy-mid",
+  "dark:bg-gold dark:text-navy-deep dark:shadow-gold/40 dark:hover:bg-gold-light",
+);
+const SUBMIT_GOLD = cn(
+  "h-12 w-full gap-2 rounded-full font-black transition-transform active:scale-[0.99]",
+  "bg-gold text-navy-deep shadow-[0_10px_24px_-12px] shadow-gold/60 hover:bg-gold-light",
+);
 
 const TITLES = {
   login: "ورود به حساب",
@@ -171,7 +176,7 @@ function CodeStep({
 
       <div className="flex items-center justify-between text-[11px] font-bold">
         {flow.cd.sec > 0 ? (
-          <span className="text-navy/50 dark:text-linen/60">
+          <span className="text-navy/70 dark:text-linen/60">
             ارسالِ مجدد تا {flow.cd.sec} ثانیه
           </span>
         ) : (
@@ -187,7 +192,7 @@ function CodeStep({
         <Button
           type="button"
           variant="link"
-          className="text-navy/50 dark:text-linen/60 h-auto p-0 text-[11px] font-bold"
+          className="text-navy/70 dark:text-linen/60 h-auto p-0 text-[11px] font-bold"
           onClick={flow.back}
         >
           تغییرِ شماره
@@ -209,7 +214,13 @@ function LockedCard({
   children: ReactNode;
 }) {
   return (
-    <div className="border-gold/30 bg-sand/80 dark:border-gold/25 dark:bg-navy-deep/60 rounded-2xl border px-3.5 py-3">
+    <div
+      className={cn(
+        "rounded-2xl border px-3.5 py-3",
+        "border-gold/30 bg-sand/80",
+        "dark:border-gold/25 dark:bg-navy-deep/60",
+      )}
+    >
       <p className="text-gold text-[11px] font-black">{title}</p>
       <div className="text-navy dark:text-ivory mt-1 text-sm font-black">
         {children}
@@ -273,7 +284,10 @@ function LoginPanel({ onOtp }: { onOtp: () => void }) {
             type="button"
             variant="ghost"
             size="icon"
-            className="text-gold hover:bg-gold/10 hover:text-gold size-8 shrink-0"
+            className={cn(
+              "size-8 shrink-0",
+              "text-gold hover:bg-gold/10 hover:text-gold",
+            )}
             onClick={() => setShow((s) => !s)}
             aria-label={show ? "پنهان کردنِ رمز" : "نمایشِ رمز"}
           >
@@ -331,7 +345,7 @@ function OtpPanel() {
             <p className="font-black tracking-wide" dir="ltr">
               {flow.phone}
             </p>
-            <p className="text-navy/45 dark:text-linen/55 mt-1 text-[11px] font-bold">
+            <p className="text-navy/70 dark:text-linen/55 mt-1 text-[11px] font-bold">
               برای عوض کردنِ شماره، اول «تغییرِ شماره» را بزنید.
             </p>
           </LockedCard>
@@ -361,7 +375,7 @@ function OtpPanel() {
               دریافتِ کد پیامک <ArrowLeft className="size-4" />
             </Button>
           </AppForm>
-          <p className="text-navy/50 dark:text-linen/60 text-center text-[11px] font-bold">
+          <p className="text-navy/70 dark:text-linen/60 text-center text-[11px] font-bold">
             یک کد ۵ رقمی برای شما پیامک می‌شود. بدونِ نیاز به رمز عبور.
           </p>
           <TrustNote />
@@ -400,7 +414,7 @@ function RegisterPanel() {
             <p className="font-black">
               {flow.name}{" "}
               <span
-                className="text-navy/45 dark:text-linen/55 font-bold"
+                className="text-navy/70 dark:text-linen/55 font-bold"
                 dir="ltr"
               >
                 — {flow.phone}
@@ -445,7 +459,7 @@ function RegisterPanel() {
               دریافتِ کد تأیید <ArrowLeft className="size-4" />
             </Button>
           </AppForm>
-          <p className="text-navy/50 dark:text-linen/60 text-center text-[11px] font-bold">
+          <p className="text-navy/70 dark:text-linen/60 text-center text-[11px] font-bold">
             یک کد ۵ رقمی برای تأیید به موبایل شما پیامک می‌شود.
           </p>
           <TrustNote />
@@ -477,7 +491,7 @@ export function AuthModal() {
         <DialogClose
           className={cn(
             "absolute inset-s-4 top-4 z-20 inline-flex size-9 items-center justify-center rounded-full",
-            "text-navy/60 hover:bg-sand hover:text-navy transition-colors",
+            "text-navy/70 hover:bg-sand hover:text-navy transition-colors",
             "focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none",
             "dark:text-ivory/70 dark:hover:bg-dusk-mid dark:hover:text-ivory",
           )}

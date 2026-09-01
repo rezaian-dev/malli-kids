@@ -4,6 +4,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { SliderArrow } from "@/components/ui/slider-arrow";
+import { cn } from "@/lib/utils";
 
 export function HomeJournal({ children }: { children: ReactNode }) {
   const [emblaRef, embla] = useEmblaCarousel(
@@ -51,7 +52,12 @@ export function HomeJournal({ children }: { children: ReactNode }) {
               type="button"
               aria-label={`اسلاید ${k + 1}`}
               onClick={() => embla?.scrollTo(k)}
-              className={`h-2 rounded-full transition-all ${k === i ? "bg-gold w-7" : "bg-navy/20 dark:bg-gold-soft/40 hover:bg-navy/35 w-2"}`}
+              className={cn(
+                "relative h-2 rounded-full transition-all before:absolute before:-inset-2.5 before:content-['']",
+                k === i
+                  ? "bg-gold w-7"
+                  : "bg-navy/20 dark:bg-gold-soft/40 hover:bg-navy/35 w-2",
+              )}
             />
           ))}
         </div>

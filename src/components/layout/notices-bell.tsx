@@ -51,7 +51,8 @@ export function NoticesBell() {
           }
           className={cn(
             ICON_BTN,
-            "group border-gold/70 bg-gold/12 hover:border-gold hover:bg-gold hover:text-navy-deep relative border-2 transition-colors",
+            "group relative",
+            "border-gold/70 bg-gold/12 hover:border-gold hover:bg-gold hover:text-navy-deep border-2 transition-colors",
             "dark:border-gold/60 dark:bg-gold/15 dark:hover:bg-gold dark:hover:text-navy-deep",
           )}
         >
@@ -59,7 +60,11 @@ export function NoticesBell() {
           {unread > 0 ? (
             <Badge
               aria-hidden
-              className="border-cream bg-rose dark:border-navy-deep pointer-events-none absolute -inset-e-1 -top-1 grid size-5 place-items-center rounded-full border-2 p-0 text-[10px] font-black text-white"
+              className={cn(
+                "pointer-events-none absolute -inset-e-1 -top-1 grid size-5 place-items-center p-0",
+                "border-cream bg-rose rounded-full border-2 text-[10px] font-black text-white",
+                "dark:border-navy-deep",
+              )}
             >
               {unread > 9 ? "+۹" : toFaDigits(unread)}
             </Badge>
@@ -70,9 +75,19 @@ export function NoticesBell() {
       <DropdownMenuContent
         align="end"
         sideOffset={12}
-        className="border-gold bg-paper dark:border-gold/50 dark:bg-dusk z-80 w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border p-0"
+        className={cn(
+          "z-80 w-[min(21rem,calc(100vw-2rem))] overflow-hidden p-0",
+          "border-gold bg-paper rounded-[22px] border",
+          "dark:border-gold/50 dark:bg-dusk",
+        )}
       >
-        <div className="border-gold from-navy to-navy-mid dark:border-gold/40 flex items-center justify-between gap-2 border-b bg-linear-to-br px-4 py-3">
+        <div
+          className={cn(
+            "flex items-center justify-between gap-2 px-4 py-3",
+            "border-gold from-navy to-navy-mid border-b bg-linear-to-br",
+            "dark:border-gold/40",
+          )}
+        >
           <p className="m-0 flex items-center gap-2 text-sm font-black text-white">
             <Bell className="text-gold size-4" /> اعلان‌ها
           </p>
@@ -80,7 +95,10 @@ export function NoticesBell() {
             <Button
               type="button"
               variant="ghost"
-              className="text-gold-soft hover:text-gold h-8 rounded-full px-3 text-[10px] font-black hover:bg-white/10"
+              className={cn(
+                "h-8 px-3",
+                "text-gold-soft hover:text-gold rounded-full text-[10px] font-black hover:bg-white/10",
+              )}
               onClick={() => markAllRead(owner)}
             >
               <CheckCheck className="size-3.5" /> خواندنِ همه
@@ -94,7 +112,7 @@ export function NoticesBell() {
             <p className="text-navy dark:text-ivory mt-3 text-sm font-black">
               اعلانی ندارید
             </p>
-            <p className="text-navy/50 dark:text-wheat mt-1 text-[11px] leading-5 font-bold">
+            <p className="text-navy/70 dark:text-wheat mt-1 text-[11px] leading-5 font-bold">
               پاسخِ تیکت و وضعیتِ سفارش‌هایتان این‌جا خبرتان می‌کند.
             </p>
           </div>
@@ -108,19 +126,25 @@ export function NoticesBell() {
                     type="button"
                     onClick={() => markRead(n.id)}
                     className={cn(
-                      "hover:bg-gold/10 flex w-full items-start gap-3 rounded-2xl px-3 py-3 text-start transition-colors",
+                      "flex w-full items-start gap-3 px-3 py-3",
+                      "hover:bg-gold/10 rounded-2xl text-start transition-colors",
                       !n.read && "bg-gold/8 dark:bg-gold/10",
                     )}
                     title="علامت به‌عنوان خوانده‌شده"
                   >
-                    <span className="bg-gold/15 text-gold grid size-9 shrink-0 place-items-center rounded-xl">
+                    <span
+                      className={cn(
+                        "grid size-9 shrink-0 place-items-center",
+                        "bg-gold/15 text-gold rounded-xl",
+                      )}
+                    >
                       <Icon className="size-4" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="text-navy dark:text-ivory block text-[12px] leading-6 font-bold">
                         {n.text}
                       </span>
-                      <span className="text-navy/40 dark:text-wheat mt-0.5 block text-[10px] font-bold">
+                      <span className="text-navy/70 dark:text-wheat mt-0.5 block text-[10px] font-bold">
                         {n.at}
                       </span>
                     </span>

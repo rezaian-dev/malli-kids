@@ -17,6 +17,7 @@ import { AdminTable, type AdminCol } from "@/components/admin/admin-table";
 import { usePagination } from "@/hooks/use-pagination";
 import { CATS } from "@/lib/constants";
 import { formatToman, toFaDigits } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
 const PER_PAGE = 7;
@@ -133,7 +134,12 @@ export default function AdminInventory() {
           onClick={(event) => event.stopPropagation()}
         >
           <span
-            className={`text-[10px] font-black ${product.stock ? "text-emerald-600 dark:text-emerald-300" : "text-rose"}`}
+            className={cn(
+              "text-[10px] font-black",
+              product.stock
+                ? "text-emerald-600 dark:text-emerald-300"
+                : "text-rose",
+            )}
           >
             {product.stock ? "موجود" : "ناموجود"}
           </span>
@@ -182,7 +188,12 @@ export default function AdminInventory() {
       />
 
       {low > 0 ? (
-        <div className="border-rose/18 bg-rose/7 text-rose mb-4 flex items-start gap-3 rounded-2xl border px-4 py-3">
+        <div
+          className={cn(
+            "mb-4 flex items-start gap-3 rounded-2xl border px-4 py-3",
+            "border-rose/18 bg-rose/7 text-rose",
+          )}
+        >
           <PackageX className="mt-0.5 size-4 shrink-0" />
           <div>
             <p className="text-xs font-black">

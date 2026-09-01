@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Intro } from "@/components/shared/intro";
 import { Button } from "@/components/ui/button";
 import { buildMetadata } from "@/lib/seo";
+import { cn } from "@/lib/utils";
 
 export const metadata = buildMetadata({
   title: "ارسال و بازگشت",
@@ -33,11 +34,15 @@ export default function ShippingPage() {
         title="ارسال سریع، بازگشت آسان"
         path="/shipping"
       />
-      <div className="container mx-auto grid w-full max-w-5xl gap-4 px-3 xs:px-4 sm:px-5 md:grid-cols-3 lg:px-7">
+      <div className="xs:px-4 container mx-auto grid w-full max-w-5xl gap-4 px-3 sm:px-5 md:grid-cols-3 lg:px-7">
         {cards.map((c) => (
           <article
             key={c.t}
-            className="border-navy/10 dark:border-gold/30 dark:bg-dusk rounded-3xl border bg-white p-5"
+            className={cn(
+              "rounded-3xl border p-5",
+              "border-navy/10 bg-white",
+              "dark:border-gold/30 dark:bg-dusk",
+            )}
           >
             <h2 className="text-navy dark:text-ivory text-lg font-black">
               {c.t}
@@ -48,7 +53,7 @@ export default function ShippingPage() {
           </article>
         ))}
       </div>
-      <div className="container mx-auto mt-8 w-full max-w-5xl px-3 xs:px-4 sm:px-5 lg:px-7">
+      <div className="xs:px-4 container mx-auto mt-8 w-full max-w-5xl px-3 sm:px-5 lg:px-7">
         <Button asChild variant="secondary" className="rounded-full">
           <Link href="/faq">سوالات متداول</Link>
         </Button>

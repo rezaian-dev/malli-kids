@@ -55,7 +55,13 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
 
   if (!user || !purchased) {
     return (
-      <p className="border-navy/15 bg-sand text-navy/55 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat rounded-2xl border border-dashed px-4 py-4 text-sm leading-7 sm:rounded-3xl sm:px-5">
+      <p
+        className={cn(
+          "rounded-2xl border border-dashed px-4 py-4 text-sm leading-7 sm:rounded-3xl sm:px-5",
+          "border-navy/15 bg-sand text-navy/70",
+          "dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat",
+        )}
+      >
         ثبت نظر فقط پس از خرید و ورود ممکن است.
       </p>
     );
@@ -91,7 +97,11 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
       form={form}
       onSubmit={onValid}
       ariaLabel="ثبت نظر"
-      className="border-navy/8 dark:border-gold/30 dark:bg-slate space-y-4 rounded-3xl border bg-white/90 p-5 shadow-[0_16px_36px_-26px_rgba(14,42,71,.28)]"
+      className={cn(
+        "space-y-4 rounded-3xl p-5 shadow-[0_16px_36px_-26px_rgba(14,42,71,.28)]",
+        "border-navy/8 border bg-white/90",
+        "dark:border-gold/30 dark:bg-slate",
+      )}
     >
       <p className="text-navy dark:text-ivory text-sm font-black">
         تجربه‌تان از این خرید

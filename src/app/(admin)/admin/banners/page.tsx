@@ -18,6 +18,8 @@ import {
 import { pickBanner, toJalali } from "@/lib/festive/occasions";
 import { usePagination } from "@/hooks/use-pagination";
 import { toFaDigits } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import type { FestiveTheme } from "@/types";
 
 const PER_PAGE = 6;
@@ -87,10 +89,16 @@ export default function AdminBanners() {
         ]}
       />
 
-      <div className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 mb-5 overflow-hidden rounded-[22px] border shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+      <div className={cn(adminGlassCard, "mb-5")}>
         <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="bg-gold/14 text-gold-deep dark:text-gold-soft grid size-11 shrink-0 place-items-center rounded-2xl">
+            <span
+              className={cn(
+                "grid size-11 shrink-0 place-items-center rounded-2xl",
+                "bg-gold/14 text-gold-deep",
+                "dark:text-gold-soft",
+              )}
+            >
               <CalendarDays className="size-5" />
             </span>
             <div className="min-w-0">
@@ -106,7 +114,12 @@ export default function AdminBanners() {
             </div>
           </div>
           <span
-            className={`w-max rounded-xl px-3 py-1.5 text-[9px] font-black ${live ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "bg-navy/6 text-navy/55 dark:text-wheat dark:bg-white/6"}`}
+            className={cn(
+              "w-max rounded-xl px-3 py-1.5 text-[9px] font-black",
+              live
+                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                : "bg-navy/6 text-navy/55 dark:text-wheat dark:bg-white/6",
+            )}
           >
             {live ? "در حال نمایش" : "بدون کمپین فعال"}
           </span>
@@ -169,11 +182,18 @@ export default function AdminBanners() {
           {pg.pageItems.map((banner, index) => (
             <article
               key={banner.id}
-              className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 overflow-hidden rounded-[22px] border shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]"
+              className={adminGlassCard}
               style={{ animationDelay: `${index * 45}ms` }}
             >
               <div
-                className={`h-1 w-full ${banner.theme === "gold" ? "from-gold-deep via-gold-light to-gold bg-linear-to-r" : banner.theme === "night" ? "from-navy-deep to-navy bg-linear-to-r via-purple-500/60" : "from-navy-deep via-navy-soft to-gold bg-linear-to-r"}`}
+                className={cn(
+                  "h-1 w-full",
+                  banner.theme === "gold"
+                    ? "from-gold-deep via-gold-light to-gold bg-linear-to-r"
+                    : banner.theme === "night"
+                      ? "from-navy-deep to-navy bg-linear-to-r via-purple-500/60"
+                      : "from-navy-deep via-navy-soft to-gold bg-linear-to-r",
+                )}
               />
               <div className="p-4 sm:p-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -183,7 +203,13 @@ export default function AdminBanners() {
                         {banner.occasion}
                       </Badge>
                       {banner.pinned ? (
-                        <span className="inline-flex items-center gap-1 rounded-lg bg-sky-500/10 px-2 py-1 text-[9px] font-black text-sky-700 dark:text-sky-300">
+                        <span
+                          className={cn(
+                            "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black",
+                            "bg-sky-500/10 text-sky-700",
+                            "dark:text-sky-300",
+                          )}
+                        >
                           <Pin className="size-3" /> پین‌شده
                         </span>
                       ) : null}
@@ -192,7 +218,13 @@ export default function AdminBanners() {
                       بازه نمایش: {banner.from} تا {banner.to}
                     </p>
                   </div>
-                  <div className="bg-navy/3 flex items-center gap-4 rounded-xl px-3 py-2 dark:bg-white/3">
+                  <div
+                    className={cn(
+                      "flex items-center gap-4 rounded-xl px-3 py-2",
+                      "bg-navy/3",
+                      "dark:bg-white/3",
+                    )}
+                  >
                     <label className="flex items-center gap-2 text-[10px] font-black">
                       <span className="text-navy/55 dark:text-wheat">پین</span>
                       <Switch
@@ -325,7 +357,7 @@ export default function AdminBanners() {
           ))}
         </div>
       ) : (
-        <div className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border px-5 py-14 text-center shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+        <div className={cn(adminGlassCard, "px-5 py-14 text-center")}>
           <Megaphone className="text-gold mx-auto size-10" />
           <p className="mt-3 text-sm font-black">بنری مطابق فیلترها پیدا نشد</p>
         </div>
@@ -352,7 +384,11 @@ function Field({
       <Input
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="border-navy/9 text-navy dark:border-gold/16 dark:text-ivory mt-1.5 h-11 rounded-xl bg-transparent shadow-none"
+        className={cn(
+          "mt-1.5 h-11 rounded-xl bg-transparent shadow-none",
+          "border-navy/9 text-navy",
+          "dark:border-gold/16 dark:text-ivory",
+        )}
       />
     </div>
   );

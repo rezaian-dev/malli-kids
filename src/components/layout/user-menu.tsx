@@ -24,6 +24,8 @@ import {
 import { cn } from "@/lib/utils";
 import { CLUSTER_H } from "./header-styles";
 
+const MENU_ITEM = "rounded-[10px] py-2.5 font-bold";
+
 function Face({
   src,
   letter,
@@ -52,8 +54,8 @@ export function UserMenu() {
         onClick={() => setAuthOpen(true)}
         className={cn(
           CLUSTER_H,
-          "border-gold bg-gold text-navy-deep hover:bg-gold-light shrink-0 gap-1.5 rounded-full border-2 font-extrabold",
-          "px-2.5 text-[11px] min-[400px]:px-3 min-[400px]:text-xs md:px-2.5 lg:px-4",
+          "shrink-0 gap-1.5 px-2.5 min-[400px]:px-3 md:px-2.5 lg:px-4",
+          "border-gold bg-gold text-navy-deep hover:bg-gold-light rounded-full border-2 text-[11px] font-extrabold min-[400px]:text-xs",
           "focus-visible:ring-gold/60 focus-visible:ring-2",
         )}
       >
@@ -87,10 +89,22 @@ export function UserMenu() {
             letter={first.charAt(0)}
             className="size-7 text-xs sm:size-8"
           />
-          <span className="text-navy dark:text-linen hidden max-w-20 truncate text-xs font-extrabold min-[480px]:inline md:hidden lg:inline">
+          <span
+            className={cn(
+              "hidden max-w-20 truncate min-[480px]:inline md:hidden lg:inline",
+              "text-navy text-xs font-extrabold",
+              "dark:text-linen",
+            )}
+          >
             {first}
           </span>
-          <ChevronDown className="text-gold hidden size-3.5 transition-transform group-data-open:rotate-180 min-[480px]:block md:hidden lg:block" />
+          <ChevronDown
+            className={cn(
+              "hidden size-3.5 min-[480px]:block md:hidden lg:block",
+              "text-gold transition-transform",
+              "group-data-open:rotate-180",
+            )}
+          />
         </Button>
       </DropdownMenuTrigger>
 
@@ -102,7 +116,13 @@ export function UserMenu() {
           "dark:border-gold/50 dark:bg-dusk",
         )}
       >
-        <div className="border-gold from-navy to-navy-mid dark:border-gold/40 flex items-center gap-3 border-b bg-linear-to-br px-4 py-3.5">
+        <div
+          className={cn(
+            "flex items-center gap-3 px-4 py-3.5",
+            "border-gold from-navy to-navy-mid border-b bg-linear-to-br",
+            "dark:border-gold/40",
+          )}
+        >
           <Face
             src={user.avatar}
             letter={first.charAt(0)}
@@ -112,36 +132,41 @@ export function UserMenu() {
             <p className="m-0 truncate text-[15px] font-black text-white">
               {name}
             </p>
-            <p className="text-gold-soft mt-1 inline-flex items-center gap-1.5 text-[11px] font-bold">
+            <p
+              className={cn(
+                "mt-1 inline-flex items-center gap-1.5",
+                "text-gold-soft text-[11px] font-bold",
+              )}
+            >
               <Phone className="size-3.5" />
               <span dir="ltr">{user.phone?.trim() || "شماره ثبت نشده"}</span>
             </p>
           </div>
         </div>
         <div className="flex flex-col px-3 py-2">
-          <DropdownMenuItem asChild className="rounded-[10px] py-2.5 font-bold">
+          <DropdownMenuItem asChild className={MENU_ITEM}>
             <Link href="/profile">
               <User className="text-gold size-4" /> حساب کاربری من
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild className="rounded-[10px] py-2.5 font-bold">
+          <DropdownMenuItem asChild className={MENU_ITEM}>
             <Link href="/profile#orders">
               <Truck className="text-gold size-4" /> پیگیری سفارشات
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild className="rounded-[10px] py-2.5 font-bold">
+          <DropdownMenuItem asChild className={MENU_ITEM}>
             <Link href="/profile#wishlist">
               <Heart className="text-rose size-4" /> علاقه‌مندی‌ها
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild className="rounded-[10px] py-2.5 font-bold">
+          <DropdownMenuItem asChild className={MENU_ITEM}>
             <Link href="/profile#support">
               <Headphones className="text-gold size-4" /> پشتیبانی
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"
-            className="rounded-[10px] py-2.5 font-bold"
+            className={MENU_ITEM}
             onSelect={() => logout()}
           >
             <LogOut className="size-4" /> خروج از حساب

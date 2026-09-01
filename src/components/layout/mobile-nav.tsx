@@ -36,16 +36,26 @@ export function MobileNav() {
           variant="ghost"
           size="icon"
           aria-label="منو"
-
           className={cn(
             ICON_BTN,
             "group/menu hover:bg-gold/15 relative md:hidden",
-
             "aria-expanded:bg-gold/25 aria-expanded:text-gold-deep dark:aria-expanded:text-gold-light",
           )}
         >
-          <Menu className="size-5 transition-all duration-300 ease-out group-aria-expanded/menu:scale-0 group-aria-expanded/menu:-rotate-90 group-aria-expanded/menu:opacity-0" />
-          <X className="absolute inset-0 m-auto size-5 scale-0 rotate-90 opacity-0 transition-all duration-300 ease-out group-aria-expanded/menu:scale-100 group-aria-expanded/menu:rotate-0 group-aria-expanded/menu:opacity-100" />
+          <Menu
+            className={cn(
+              "size-5",
+              "transition-all duration-300 ease-out",
+              "group-aria-expanded/menu:scale-0 group-aria-expanded/menu:-rotate-90 group-aria-expanded/menu:opacity-0",
+            )}
+          />
+          <X
+            className={cn(
+              "absolute inset-0 m-auto size-5",
+              "scale-0 rotate-90 opacity-0 transition-all duration-300 ease-out",
+              "group-aria-expanded/menu:scale-100 group-aria-expanded/menu:rotate-0 group-aria-expanded/menu:opacity-100",
+            )}
+          />
         </Button>
       </SheetTrigger>
 
@@ -64,7 +74,10 @@ export function MobileNav() {
               size="icon-sm"
               variant="ghost"
               aria-label="بستن منو"
-              className="text-cream hover:text-gold-light rounded-full transition-transform duration-300 ease-out hover:scale-105 hover:bg-white/15"
+              className={cn(
+                "rounded-full transition-transform duration-300 ease-out",
+                "text-cream hover:text-gold-light hover:scale-105 hover:bg-white/15",
+              )}
             >
               <X className="size-5 text-current" />
             </Button>
@@ -74,11 +87,18 @@ export function MobileNav() {
           </SheetTitle>
         </SheetHeader>
 
-        <nav className="flex flex-col overflow-y-auto px-3 py-2">
+        <nav
+          aria-label="منوی موبایل"
+          className="flex flex-col overflow-y-auto px-3 py-2"
+        >
           <SheetClose asChild>
             <Link
               href="/shop"
-              className="border-navy/5 text-navy dark:border-gold/10 dark:text-ivory flex items-center gap-2 border-b px-2 py-3 text-sm font-bold"
+              className={cn(
+                "flex items-center gap-2 px-2 py-3",
+                "border-navy/5 text-navy border-b text-sm font-bold",
+                "dark:border-gold/10 dark:text-ivory",
+              )}
             >
               <LayoutGrid className="text-gold size-4" /> دسته‌بندی محصولات
             </Link>
@@ -90,7 +110,13 @@ export function MobileNav() {
             className="border-navy/5 dark:border-gold/10 border-b"
           >
             <AccordionItem value="cats" className="border-0">
-              <AccordionTrigger className="text-navy dark:text-ivory px-2 py-3 text-sm font-bold hover:no-underline">
+              <AccordionTrigger
+                className={cn(
+                  "px-2 py-3",
+                  "text-navy text-sm font-bold hover:no-underline",
+                  "dark:text-ivory",
+                )}
+              >
                 <span className="flex items-center gap-2">
                   <LayoutGrid className="text-gold size-4" /> زیردسته‌ها
                 </span>
@@ -130,7 +156,8 @@ export function MobileNav() {
                 <Link
                   href={n.href}
                   className={cn(
-                    "border-navy/5 text-navy flex items-center gap-2 border-b px-2 py-3 text-sm font-bold last:border-0",
+                    "flex items-center gap-2 px-2 py-3 last:border-0",
+                    "border-navy/5 text-navy border-b text-sm font-bold",
                     "dark:border-gold/10 dark:text-ivory",
                     isActive(path, n.href) && "text-gold dark:text-gold-light",
                   )}

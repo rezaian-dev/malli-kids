@@ -40,9 +40,9 @@ export function SliderArrow({
         "hover:from-gold-deep hover:via-gold hover:to-gold-light hover:text-navy-deep hover:scale-110 hover:border-transparent hover:bg-linear-to-l",
         "hover:shadow-[0_12px_28px_-10px_var(--color-gold)]",
         "active:animate-arrow-ripple active:scale-90 active:duration-100",
-        "dark:border-gold/30 dark:bg-dusk-mid/80 dark:text-gold-light dark:hover:text-navy-deep",
         "disabled:pointer-events-none disabled:opacity-40",
         "focus-visible:outline-gold focus-visible:outline-2 focus-visible:outline-offset-2",
+        "dark:border-gold/30 dark:bg-dusk-mid/80 dark:text-gold-light dark:hover:text-navy-deep",
         className,
       )}
     >

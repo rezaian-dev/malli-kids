@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const TABS = ["همه", "دخترانه", "پسرانه", "سیسمونی"] as const;
 
 const TRIGGER = cn(
-  "inline-flex min-h-9 items-center justify-center whitespace-nowrap rounded-full px-2.5 text-[11px] font-extrabold text-navy/55 transition-colors min-[360px]:px-4 min-[360px]:text-xs sm:min-h-10 sm:px-5 sm:text-sm dark:text-khaki",
+  "inline-flex min-h-9 items-center justify-center whitespace-nowrap rounded-full px-2.5 text-[11px] font-extrabold text-navy/70 transition-colors min-[360px]:px-4 min-[360px]:text-xs sm:min-h-10 sm:px-5 sm:text-sm dark:text-khaki",
   "data-[state=active]:bg-navy data-[state=active]:text-ivory data-[state=active]:shadow-md",
   "dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep",
 );
@@ -23,7 +23,13 @@ export function Styles() {
               <span className="text-gold text-sm font-bold tracking-wide">
                 انتخاب سردبیر
               </span>
-              <h2 className="text-navy dark:text-ivory mt-2 text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black">
+              <h2
+                className={cn(
+                  "mt-2",
+                  "text-navy text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black",
+                  "dark:text-ivory",
+                )}
+              >
                 استایل‌های{" "}
                 <span className="text-gold relative inline-block">
                   منتخب
@@ -34,7 +40,13 @@ export function Styles() {
 
             {}
             <div className="flex w-full justify-center lg:w-auto">
-              <TabsList className="border-navy/5 dark:border-gold/20 dark:bg-dusk-alt h-auto max-w-full flex-nowrap justify-center gap-0.5 rounded-full border bg-white p-2 shadow-sm min-[360px]:gap-1 sm:gap-1.5 sm:p-2.5">
+              <TabsList
+                className={cn(
+                  "h-auto max-w-full flex-nowrap justify-center gap-0.5 rounded-full border p-2 shadow-sm min-[360px]:gap-1 sm:gap-1.5 sm:p-2.5",
+                  "border-navy/5 bg-white",
+                  "dark:border-gold/20 dark:bg-dusk-alt",
+                )}
+              >
                 {TABS.map((name) => (
                   <TabsTrigger key={name} value={name} className={TRIGGER}>
                     {name}
@@ -52,7 +64,7 @@ export function Styles() {
             return (
               <TabsContent key={name} value={name} className="mt-0">
                 {}
-                <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] sm:gap-4">
+                <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] sm:gap-4">
                   {items.map((p, i) => (
                     <div
                       key={p.id}

@@ -32,7 +32,9 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="input-otp-group"
       className={cn(
-        "has-aria-invalid:border-destructive has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40 flex items-center rounded-lg has-aria-invalid:ring-3",
+        "flex items-center rounded-lg",
+        "has-aria-invalid:border-destructive has-aria-invalid:ring-destructive/20 has-aria-invalid:ring-3",
+        "dark:has-aria-invalid:ring-destructive/40",
         className,
       )}
       {...props}
@@ -55,7 +57,10 @@ function InputOTPSlot({
       data-slot="input-otp-slot"
       data-active={isActive}
       className={cn(
-        "border-input aria-invalid:border-destructive data-[active=true]:border-gold data-[active=true]:aria-invalid:border-destructive relative flex size-8 items-center justify-center border-y border-e bg-transparent text-sm shadow-none transition-[color,box-shadow,border-color] duration-200 outline-none first:rounded-s-lg first:border-s last:rounded-e-lg data-[active=true]:z-10 data-[active=true]:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)] dark:data-[active=true]:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
+        "relative flex size-8 items-center justify-center first:rounded-s-lg first:border-s last:rounded-e-lg",
+        "border-input aria-invalid:border-destructive border-y border-e bg-transparent text-sm shadow-none transition-[color,box-shadow,border-color] duration-200 outline-none",
+        "data-[active=true]:border-gold data-[active=true]:aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:shadow-[0_18px_50px_-14px_rgba(193,147,87,0.48),0_0_0_4px_rgba(193,147,87,0.16)]",
+        "dark:data-[active=true]:shadow-[0_18px_50px_-14px_rgba(232,197,122,0.32),0_0_0_4px_rgba(232,197,122,0.16)]",
         className,
       )}
       {...props}

@@ -1,4 +1,5 @@
 import { Camera, Ruler, Shirt, Sparkles, Wand2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { NotifyForm } from "./try-on-notify-form";
 
 const STEPS = [
@@ -23,19 +24,34 @@ export function TryOnComingSoon() {
   return (
     <div className="container mx-auto w-full max-w-5xl px-4 pb-10 sm:px-5 lg:px-7">
       {/* Hero */}
-      <div className="border-gold/30 from-navy via-navy-mid to-navy-deep text-ivory relative isolate overflow-hidden rounded-4xl border bg-linear-to-b p-8 text-center shadow-[0_30px_80px_-30px_rgba(4,20,39,.6)] sm:p-14">
+      <div
+        className={cn(
+          "relative isolate overflow-hidden rounded-4xl p-8 text-center shadow-[0_30px_80px_-30px_rgba(4,20,39,.6)] sm:p-14",
+          "border-gold/30 from-navy via-navy-mid to-navy-deep text-ivory border bg-linear-to-b",
+        )}
+      >
         {/* decorative glows + shimmer */}
         <span className="animate-floaty bg-gold/20 pointer-events-none absolute -inset-s-16 top-4 size-48 rounded-full blur-3xl motion-reduce:animate-none" />
         <span className="animate-floaty-slow bg-gold-glow/15 pointer-events-none absolute -inset-e-10 -top-8 size-40 rounded-full blur-2xl motion-reduce:animate-none" />
         <span className="animate-shimmer pointer-events-none absolute -inset-x-1/3 inset-y-0 w-1/3 -skew-x-12 bg-linear-to-r from-transparent via-white/10 to-transparent motion-reduce:animate-none" />
 
         <div className="relative">
-          <span className="bg-gold/15 text-gold-light ring-gold/40 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-black ring-1">
+          <span
+            className={cn(
+              "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-black ring-1",
+              "bg-gold/15 text-gold-light ring-gold/40",
+            )}
+          >
             <Sparkles className="animate-twinkle size-4 motion-reduce:animate-none" />{" "}
             به‌زودی
           </span>
 
-          <div className="bg-gold/15 ring-gold/40 mx-auto mt-6 flex size-20 items-center justify-center rounded-3xl ring-1">
+          <div
+            className={cn(
+              "mx-auto mt-6 flex size-20 items-center justify-center rounded-3xl ring-1",
+              "bg-gold/15 ring-gold/40",
+            )}
+          >
             <Wand2 className="text-gold size-9" />
           </div>
 
@@ -62,15 +78,24 @@ export function TryOnComingSoon() {
           {STEPS.map((s, i) => (
             <div
               key={i}
-              className="border-navy/10 dark:border-gold/25 dark:bg-dusk rounded-3xl border bg-white p-5"
+              className={cn(
+                "rounded-3xl p-5",
+                "border-navy/10 border bg-white",
+                "dark:border-gold/25 dark:bg-dusk",
+              )}
             >
-              <div className="bg-gold/15 text-gold flex size-11 items-center justify-center rounded-2xl">
+              <div
+                className={cn(
+                  "flex size-11 items-center justify-center rounded-2xl",
+                  "bg-gold/15 text-gold",
+                )}
+              >
                 <s.icon className="size-5" />
               </div>
               <p className="text-navy dark:text-ivory mt-3 font-black">
                 <span className="text-gold">{["۱", "۲", "۳"][i]}.</span> {s.t}
               </p>
-              <p className="text-navy/55 dark:text-wheat mt-1.5 text-xs leading-6">
+              <p className="text-navy/70 dark:text-wheat mt-1.5 text-xs leading-6">
                 {s.d}
               </p>
             </div>

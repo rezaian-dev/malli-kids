@@ -36,14 +36,10 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "group/select border-navy/12 text-navy flex w-full items-center justify-between gap-2 rounded-2xl border bg-white px-3.5 text-sm font-bold shadow-none transition-[color,box-shadow,border-color] duration-200 outline-none",
-        "data-[size=default]:h-11 data-[size=sm]:h-9",
-        "hover:border-gold/50",
+        "flex w-full items-center justify-between gap-2 rounded-2xl border px-3.5 data-[size=default]:h-11 data-[size=sm]:h-9 [&>span]:line-clamp-1 [&>span]:text-right",
+        "group/select border-navy/12 text-navy hover:border-gold/50 aria-invalid:border-destructive data-placeholder:text-navy/70 bg-white text-sm font-bold shadow-none transition-[color,box-shadow,border-color] duration-200 outline-none disabled:cursor-not-allowed disabled:opacity-50",
         FIELD_FOCUS,
-        "aria-invalid:border-destructive",
-        "data-placeholder:text-navy/40 disabled:cursor-not-allowed disabled:opacity-50",
         "dark:border-gold/25 dark:bg-navy-mid dark:text-ivory dark:hover:border-gold/50 dark:data-placeholder:text-wheat/70",
-        "[&>span]:line-clamp-1 [&>span]:text-right",
         className,
       )}
       {...props}
@@ -67,7 +63,8 @@ function SelectContent({
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          "border-gold/25 bg-popover text-popover-foreground ring-foreground/10 relative z-130 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-hidden rounded-2xl border p-1 shadow-xl ring-1 duration-150",
+          "relative z-130 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-hidden rounded-2xl border p-1",
+          "border-gold/25 bg-popover text-popover-foreground ring-foreground/10 shadow-xl ring-1 duration-150",
           "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           position === "popper" &&
@@ -115,9 +112,9 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "text-navy relative flex w-full cursor-pointer items-center rounded-xl py-2 ps-3 pe-9 text-sm font-bold outline-none select-none",
-        "focus:bg-gold/12 focus:text-gold-deep data-[state=checked]:bg-gold/15 data-[state=checked]:text-gold-deep",
-        "data-disabled:pointer-events-none data-disabled:opacity-50",
+        "relative flex w-full cursor-pointer items-center rounded-xl py-2 ps-3 pe-9",
+        "text-navy focus:bg-gold/12 focus:text-gold-deep text-sm font-bold outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50",
+        "data-[state=checked]:bg-gold/15 data-[state=checked]:text-gold-deep",
         "dark:text-ivory dark:focus:bg-gold/20 dark:focus:text-gold-soft dark:data-[state=checked]:bg-gold/20 dark:data-[state=checked]:text-gold-soft",
         className,
       )}

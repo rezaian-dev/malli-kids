@@ -31,10 +31,14 @@ import {
   type TicketStatus,
 } from "@/lib/tickets";
 import { cn } from "@/lib/utils";
+import { adminGlassCard } from "@/lib/admin/admin-chrome";
 
 const PER_PAGE = 6;
 type StatusFilter = "all" | TicketStatus;
 type SortFilter = "newest" | "oldest" | "most-replies";
+
+const TICKET_ACTION_BUTTON =
+  "min-h-9 flex-1 rounded-xl text-[10px] sm:flex-none";
 
 const STATUS: Record<
   TicketStatus,
@@ -182,7 +186,7 @@ export default function AdminMessages() {
       </AdminFilterBar>
 
       {list.length === 0 ? (
-        <div className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border px-5 py-14 text-center shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+        <div className={cn(adminGlassCard, "px-5 py-14 text-center")}>
           <span className="bg-gold/12 text-gold mx-auto grid size-14 place-items-center rounded-2xl">
             <MessagesSquare className="size-6" />
           </span>
@@ -207,7 +211,7 @@ export default function AdminMessages() {
               <article
                 key={ticket.id}
                 className={cn(
-                  "border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 overflow-hidden rounded-[22px] border shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]",
+                  adminGlassCard,
                   ticket.status === "open" &&
                     "border-rose/20 dark:border-rose/25",
                 )}
@@ -216,7 +220,13 @@ export default function AdminMessages() {
                 <div className="p-3.5 sm:p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex min-w-0 items-start gap-3">
-                      <span className="bg-navy text-gold dark:bg-gold/15 dark:text-gold-soft relative grid size-10 shrink-0 place-items-center rounded-xl font-black">
+                      <span
+                        className={cn(
+                          "relative grid size-10 shrink-0 place-items-center rounded-xl font-black",
+                          "bg-navy text-gold",
+                          "dark:bg-gold/15 dark:text-gold-soft",
+                        )}
+                      >
                         {ticket.name.charAt(0)}
                         <span
                           className={cn(
@@ -309,7 +319,7 @@ export default function AdminMessages() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="min-h-9 flex-1 rounded-xl text-[10px] sm:flex-none"
+                        className={TICKET_ACTION_BUTTON}
                         onClick={() =>
                           changeStatus(
                             ticket.id,
@@ -324,7 +334,7 @@ export default function AdminMessages() {
                         type="button"
                         variant={replying ? "outline" : "navy"}
                         size="sm"
-                        className="min-h-9 flex-1 rounded-xl text-[10px] sm:flex-none"
+                        className={TICKET_ACTION_BUTTON}
                         onClick={() => {
                           setOpenId(replying ? null : ticket.id);
                           setReply("");
@@ -359,7 +369,11 @@ export default function AdminMessages() {
                               current ? `${current}\n${text}` : text,
                             )
                           }
-                          className="border-navy/8 text-navy/60 hover:border-gold/40 dark:border-gold/14 dark:bg-navy-deep/35 dark:text-wheat shrink-0 rounded-xl border bg-white/70 px-3 py-1.5 text-[10px] font-bold transition"
+                          className={cn(
+                            "shrink-0 rounded-xl border bg-white/70 px-3 py-1.5 text-[10px] font-bold transition",
+                            "border-navy/8 text-navy/60 hover:border-gold/40",
+                            "dark:border-gold/14 dark:bg-navy-deep/35 dark:text-wheat",
+                          )}
                         >
                           {text}
                         </button>

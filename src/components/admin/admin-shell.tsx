@@ -46,10 +46,34 @@ import { useAdmin, type AdminIdentity } from "@/lib/admin/admin-store";
 import { ADMIN_NAV, ADMIN_NAV_GROUPS } from "@/lib/admin/nav";
 import { toFaDigits } from "@/lib/format";
 import { useTickets } from "@/lib/tickets";
+import { cn } from "@/lib/utils";
+
+const SCROLL_EDGE_TOP = cn(
+  "pointer-events-none absolute inset-x-0 top-0 z-3 h-4",
+  "bg-[linear-gradient(to_bottom,rgba(255,255,255,0.78),transparent)]",
+  "dark:bg-[linear-gradient(to_bottom,rgba(3,17,31,0.9),transparent)]",
+);
+
+const SCROLL_EDGE_BOTTOM = cn(
+  "pointer-events-none absolute inset-x-0 bottom-0 z-3 h-4",
+  "bg-[linear-gradient(to_top,rgba(255,255,255,0.78),transparent)]",
+  "dark:bg-[linear-gradient(to_top,rgba(3,17,31,0.9),transparent)]",
+);
+
+const ORBIT_DOT_A =
+  "bg-gold absolute inset-s-[15%] top-[12%] size-1.25 rounded-full shadow-[0_0_16px_rgba(193,147,87,0.55)]";
+const ORBIT_DOT_B =
+  "bg-gold absolute inset-e-[8%] bottom-[25%] size-0.75 rounded-full shadow-[0_0_16px_rgba(193,147,87,0.55)]";
 
 const BRAND = (
   <div className="flex min-w-0 items-center gap-3">
-    <span className="bg-navy ring-gold/25 relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-2xl shadow-[0_12px_28px_-14px_rgba(4,20,39,.8)] ring-1 dark:bg-white/8">
+    <span
+      className={cn(
+        "relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-2xl ring-1",
+        "bg-navy ring-gold/25 shadow-[0_12px_28px_-14px_rgba(4,20,39,.8)]",
+        "dark:bg-white/8",
+      )}
+    >
       <Image
         src="/brand/logo-white.png"
         alt="ملی کیدز"
@@ -57,10 +81,21 @@ const BRAND = (
         height={42}
         className="size-10 object-contain p-1.5"
       />
-      <span className="via-gold absolute inset-x-2 bottom-0 h-px bg-linear-to-r from-transparent to-transparent" />
+      <span
+        className={cn(
+          "absolute inset-x-2 bottom-0 h-px",
+          "via-gold bg-linear-to-r from-transparent to-transparent",
+        )}
+      />
     </span>
     <div className="min-w-0 leading-none">
-      <p className="font-display text-navy dark:text-ivory text-sm font-bold tracking-[0.2em]">
+      <p
+        className={cn(
+          "font-display text-sm font-bold tracking-[0.2em]",
+          "text-navy",
+          "dark:text-ivory",
+        )}
+      >
         MALLI
       </p>
       <p className="text-gold mt-1.5 text-[9px] font-black tracking-[0.29em]">
@@ -132,22 +167,31 @@ function SidebarScroller({
       <div
         ref={viewportRef}
         onScroll={updateScroll}
-        className={`h-full scrollbar-none overflow-y-auto overscroll-contain pe-2 [&::-webkit-scrollbar]:size-0 ${className}`}
+        className={cn(
+          "h-full scrollbar-none overflow-y-auto overscroll-contain pe-2 [&::-webkit-scrollbar]:size-0",
+          className,
+        )}
       >
         {children}
       </div>
       <span
         aria-hidden="true"
-        className={`bg-navy/[0.07] dark:bg-gold-soft/5.5 pointer-events-none absolute inset-y-[1.1rem] inset-e-0.75 z-5 w-1 rounded-full shadow-[inset_0_0_0_1px_rgba(14,42,71,0.04)] transition-[opacity,transform,width] duration-220 dark:shadow-[inset_0_0_0_1px_rgba(232,197,122,0.06)] ${
+        className={cn(
+          "pointer-events-none absolute inset-y-[1.1rem] inset-e-0.75 z-5 w-1 rounded-full transition-[opacity,transform,width] duration-220",
+          "bg-navy/[0.07] shadow-[inset_0_0_0_1px_rgba(14,42,71,0.04)]",
+          "dark:bg-gold-soft/5.5 dark:shadow-[inset_0_0_0_1px_rgba(232,197,122,0.06)]",
           scroll.visible
             ? "scale-y-100 opacity-[0.64] group-hover:w-1.25 group-hover:opacity-100"
-            : "scale-y-[0.88] opacity-0"
-        }`}
+            : "scale-y-[0.88] opacity-0",
+        )}
       >
         <span className="bg-gold/55 absolute inset-s-1/2 -top-2 size-1 -translate-x-1/2 rounded-full shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
         <span className="bg-gold/55 absolute inset-s-1/2 -bottom-2 size-1 -translate-x-1/2 rounded-full shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
         <span
-          className="from-gold-light to-gold-deep absolute inset-x-0 rounded-full bg-linear-to-b shadow-[0_0_0_1px_rgba(255,248,236,0.24),0_0_14px_rgba(193,147,87,0.38)] transition-[top,height,filter] duration-180 group-hover:brightness-[1.12]"
+          className={cn(
+            "absolute inset-x-0 rounded-full transition-[top,height,filter] duration-180",
+            "from-gold-light to-gold-deep bg-linear-to-b shadow-[0_0_0_1px_rgba(255,248,236,0.24),0_0_14px_rgba(193,147,87,0.38)] group-hover:brightness-[1.12]",
+          )}
           style={
             {
               "--admin-scroll-top": `${scroll.top}px`,
@@ -187,7 +231,11 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
                 {group.label}
               </p>
               <span
-                className="from-navy/10 dark:from-gold/14 h-px flex-1 bg-linear-to-l to-transparent"
+                className={cn(
+                  "h-px flex-1",
+                  "from-navy/10 bg-linear-to-l to-transparent",
+                  "dark:from-gold/14",
+                )}
                 aria-hidden="true"
               />
             </div>
@@ -207,26 +255,37 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
                     href={item.href}
                     onClick={onNavigate}
                     aria-current={active ? "page" : undefined}
-                    className={`group relative flex items-center gap-3 overflow-hidden rounded-2xl px-2.5 py-2 transition-all duration-300 ${
+                    className={cn(
+                      "group relative flex items-center gap-3 overflow-hidden rounded-2xl px-2.5 py-2 transition-all duration-300",
                       active
                         ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep shadow-[0_14px_30px_-18px_rgba(4,20,39,.85)]"
-                        : "text-navy/68 hover:bg-navy/5 hover:text-navy dark:text-ivory/68 dark:hover:text-ivory dark:hover:bg-white/6"
-                    }`}
+                        : "text-navy/68 hover:bg-navy/5 hover:text-navy dark:text-ivory/68 dark:hover:text-ivory dark:hover:bg-white/6",
+                    )}
                   >
                     {}
                     <span
                       aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 translate-x-[105%] bg-[linear-gradient(105deg,transparent_30%,rgba(255,255,255,.1),transparent_70%)] transition-transform duration-520 ease-[cubic-bezier(.25,.1,.25,1)] group-hover:translate-x-[-105%] motion-reduce:hidden"
+                      className={cn(
+                        "pointer-events-none absolute inset-0 translate-x-[105%] transition-transform duration-520 ease-[cubic-bezier(.25,.1,.25,1)] group-hover:translate-x-[-105%] motion-reduce:hidden",
+                        "bg-[linear-gradient(105deg,transparent_30%,rgba(255,255,255,.1),transparent_70%)]",
+                      )}
                     />
                     {active ? (
-                      <span className="bg-gold dark:bg-navy-deep/45 absolute inset-y-2 inset-s-0 w-0.5 rounded-full" />
+                      <span
+                        className={cn(
+                          "absolute inset-y-2 inset-s-0 w-0.5 rounded-full",
+                          "bg-gold",
+                          "dark:bg-navy-deep/45",
+                        )}
+                      />
                     ) : null}
                     <span
-                      className={`grid size-9 shrink-0 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-105 ${
+                      className={cn(
+                        "grid size-9 shrink-0 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-105",
                         active
                           ? "bg-gold text-navy-deep dark:bg-navy-deep dark:text-gold"
-                          : "bg-navy/6 text-navy/55 dark:text-gold-soft dark:bg-white/6"
-                      }`}
+                          : "bg-navy/6 text-navy/55 dark:text-gold-soft dark:bg-white/6",
+                      )}
                     >
                       <item.Icon className="size-4" />
                     </span>
@@ -235,14 +294,24 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
                         {item.label}
                       </span>
                       <span
-                        className={`block truncate text-[9px] font-bold ${active ? "text-ivory/55 dark:text-navy/55" : "text-navy/36 dark:text-ivory/34"}`}
+                        className={cn(
+                          "block truncate text-[9px] font-bold",
+                          active
+                            ? "text-ivory/55 dark:text-navy/55"
+                            : "text-navy/36 dark:text-ivory/34",
+                        )}
                       >
                         {item.hint}
                       </span>
                     </span>
                     <span className="grid size-7 shrink-0 place-items-center">
                       {badge > 0 ? (
-                        <span className="bg-rose grid min-w-5 place-items-center rounded-lg px-1.5 py-1 text-[9px] leading-none font-black text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]">
+                        <span
+                          className={cn(
+                            "grid min-w-5 place-items-center rounded-lg px-1.5 py-1 text-[9px] leading-none font-black",
+                            "bg-rose text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]",
+                          )}
+                        >
                           {toFaDigits(badge)}
                         </span>
                       ) : active ? (
@@ -268,7 +337,10 @@ function AccountFooter({ onLogout }: { onLogout: () => void }) {
       <button
         type="button"
         onClick={onLogout}
-        className="text-rose hover:bg-rose/9 focus-visible:bg-rose/9 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl px-3 text-[11px] font-black transition"
+        className={cn(
+          "flex min-h-10 w-full items-center justify-center gap-2 rounded-xl px-3 text-[11px] font-black transition",
+          "text-rose hover:bg-rose/9 focus-visible:bg-rose/9",
+        )}
       >
         <LogOut className="size-4" /> خروج از پنل
       </button>
@@ -311,12 +383,21 @@ function HeaderNotifications() {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="border-navy/8 text-navy/65 hover:border-gold/35 hover:text-gold dark:border-gold/14 dark:text-wheat/70 relative hidden size-10 shrink-0 place-items-center rounded-xl border bg-white/60 transition md:grid dark:bg-white/[0.035]"
+          className={cn(
+            "relative hidden size-10 shrink-0 place-items-center rounded-xl border transition md:grid",
+            "border-navy/8 text-navy/65 hover:border-gold/35 hover:text-gold bg-white/60",
+            "dark:border-gold/14 dark:text-wheat/70 dark:bg-white/[0.035]",
+          )}
           aria-label={`${toFaDigits(total)} اعلان مدیریتی`}
         >
           <Bell className="size-4" />
           {total > 0 ? (
-            <span className="bg-rose absolute -inset-e-1 -top-1 grid min-w-4 place-items-center rounded-full px-1 text-[8px] leading-4 font-black text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]">
+            <span
+              className={cn(
+                "absolute -inset-e-1 -top-1 grid min-w-4 place-items-center rounded-full px-1 text-[8px] leading-4 font-black",
+                "bg-rose text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]",
+              )}
+            >
               {toFaDigits(total)}
             </span>
           ) : null}
@@ -325,7 +406,11 @@ function HeaderNotifications() {
       <DropdownMenuContent
         align="end"
         sideOffset={10}
-        className="border-navy/9 bg-fog/98 dark:border-gold/18 dark:bg-navy-deep/98 w-[min(20rem,calc(100vw-1.5rem))] rounded-2xl p-2 shadow-[0_24px_70px_-26px_rgba(4,20,39,.72)]"
+        className={cn(
+          "w-[min(20rem,calc(100vw-1.5rem))] rounded-2xl p-2 shadow-[0_24px_70px_-26px_rgba(4,20,39,.72)]",
+          "border-navy/9 bg-fog/98",
+          "dark:border-gold/18 dark:bg-navy-deep/98",
+        )}
       >
         <DropdownMenuLabel className="flex items-center justify-between px-2.5 py-2">
           <span className="text-navy dark:text-ivory text-xs font-black">
@@ -346,18 +431,36 @@ function HeaderNotifications() {
               href={notice.href}
               className="flex w-full items-center gap-3 px-2.5 py-2.5 outline-none"
             >
-              <span className="bg-navy/6 text-gold grid size-9 shrink-0 place-items-center rounded-xl dark:bg-white/6">
+              <span
+                className={cn(
+                  "grid size-9 shrink-0 place-items-center rounded-xl",
+                  "bg-navy/6 text-gold",
+                  "dark:bg-white/6",
+                )}
+              >
                 <notice.Icon className="size-4" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="text-navy dark:text-ivory block text-[11px] font-black">
                   {notice.label}
                 </span>
-                <span className="text-navy/38 dark:text-wheat/48 mt-0.5 block truncate text-[9px] font-bold">
+                <span
+                  className={cn(
+                    "mt-0.5 block truncate text-[9px] font-bold",
+                    "text-navy/38",
+                    "dark:text-wheat/48",
+                  )}
+                >
                   {notice.hint}
                 </span>
               </span>
-              <span className="bg-navy text-gold dark:bg-gold dark:text-navy-deep grid size-7 shrink-0 place-items-center rounded-lg text-[10px] font-black">
+              <span
+                className={cn(
+                  "grid size-7 shrink-0 place-items-center rounded-lg text-[10px] font-black",
+                  "bg-navy text-gold",
+                  "dark:bg-gold dark:text-navy-deep",
+                )}
+              >
                 {toFaDigits(notice.count)}
               </span>
             </Link>
@@ -372,7 +475,11 @@ function HeaderIdentity({ profile }: { profile: AdminIdentity }) {
   const letter = profile.name.trim().charAt(0) || "م";
   return (
     <div
-      className="border-navy/8 dark:border-gold/15 flex h-10 min-w-0 items-center gap-2 rounded-xl border bg-white/62 px-2.5 shadow-[0_10px_24px_-22px_rgba(14,42,71,0.55)] sm:px-3 dark:bg-white/4 dark:shadow-[0_12px_28px_-22px_rgba(0,0,0,0.85)]"
+      className={cn(
+        "flex h-10 min-w-0 items-center gap-2 rounded-xl border px-2.5 sm:px-3",
+        "border-navy/8 bg-white/62 shadow-[0_10px_24px_-22px_rgba(14,42,71,0.55)]",
+        "dark:border-gold/15 dark:bg-white/4 dark:shadow-[0_12px_28px_-22px_rgba(0,0,0,0.85)]",
+      )}
       aria-label={`ادمین واردشده: ${profile.name}`}
     >
       <Avatar size="sm" className="ring-gold/25 shrink-0 ring-1">
@@ -383,7 +490,13 @@ function HeaderIdentity({ profile }: { profile: AdminIdentity }) {
           {letter}
         </AvatarFallback>
       </Avatar>
-      <span className="text-navy dark:text-ivory max-w-22 truncate text-[10px] font-black sm:max-w-40 sm:text-[11px]">
+      <span
+        className={cn(
+          "max-w-22 truncate text-[10px] font-black sm:max-w-40 sm:text-[11px]",
+          "text-navy",
+          "dark:text-ivory",
+        )}
+      >
         {profile.name}
       </span>
     </div>
@@ -403,11 +516,21 @@ export function AdminShell({ children }: { children: ReactNode }) {
   if (path === "/admin/login") return <>{children}</>;
 
   return (
-    <div className="text-navy bg-fog dark:text-ivory relative isolate min-h-dvh overflow-x-clip bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-size-[auto,auto,36px_36px,36px_36px] dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-size-[auto,auto,42px_42px,42px_42px]">
+    <div
+      className={cn(
+        "relative isolate min-h-dvh overflow-x-clip",
+        "text-navy bg-fog bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-size-[auto,auto,36px_36px,36px_36px]",
+        "dark:text-ivory dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-size-[auto,auto,42px_42px,42px_42px]",
+      )}
+    >
       {}
       <span
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-[0.22] max-[639px]:bg-size-[20rem] max-[639px]:opacity-[0.14] dark:opacity-[0.52] dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]"
+        className={cn(
+          "pointer-events-none fixed inset-0 z-0 mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-[0.22]",
+          "max-[639px]:bg-size-[20rem] max-[639px]:opacity-[0.14]",
+          "dark:opacity-[0.52] dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]",
+        )}
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c19357' stroke-opacity='.28'%3E%3Ccircle cx='90' cy='90' r='42'/%3E%3Ccircle cx='90' cy='90' r='28' stroke-dasharray='3 7'/%3E%3Cpath d='M90 34v112M34 90h112M50 50l80 80M130 50l-80 80' stroke-opacity='.15'/%3E%3C/g%3E%3C/svg%3E\")",
@@ -417,29 +540,39 @@ export function AdminShell({ children }: { children: ReactNode }) {
         className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
         aria-hidden="true"
       >
-        <span className="border-gold/13 animate-admin-orbit absolute -inset-e-72 top-[14%] block aspect-square w-[min(46vw,36rem)] rounded-full border shadow-[inset_0_0_60px_rgba(193,147,87,0.025)] motion-reduce:animate-none max-[639px]:w-96">
-          <span className="bg-gold absolute inset-s-[15%] top-[12%] size-1.25 rounded-full shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
-          <span className="bg-gold absolute inset-e-[8%] bottom-[25%] size-0.75 rounded-full shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
+        <span
+          className={cn(
+            "animate-admin-orbit absolute -inset-e-72 top-[14%] block aspect-square w-[min(46vw,36rem)] rounded-full border motion-reduce:animate-none max-[639px]:w-96",
+            "border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)]",
+          )}
+        >
+          <span className={ORBIT_DOT_A} />
+          <span className={ORBIT_DOT_B} />
         </span>
-        <span className="border-gold/13 animate-admin-orbit absolute -inset-s-40 -bottom-36 block aspect-square w-[min(32vw,24rem)] rounded-full border shadow-[inset_0_0_60px_rgba(193,147,87,0.025)] [animation-direction:reverse] motion-reduce:animate-none max-[639px]:hidden">
-          <span className="bg-gold absolute inset-s-[15%] top-[12%] size-1.25 rounded-full shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
-          <span className="bg-gold absolute inset-e-[8%] bottom-[25%] size-0.75 rounded-full shadow-[0_0_16px_rgba(193,147,87,0.55)]" />
+        <span
+          className={cn(
+            "animate-admin-orbit absolute -inset-s-40 -bottom-36 block aspect-square w-[min(32vw,24rem)] rounded-full border [animation-direction:reverse] motion-reduce:animate-none max-[639px]:hidden",
+            "border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)]",
+          )}
+        >
+          <span className={ORBIT_DOT_A} />
+          <span className={ORBIT_DOT_B} />
         </span>
         <span className="bg-gold/4.5 animate-admin-glow absolute inset-e-[18%] top-[42%] size-96 rounded-full blur-[90px] motion-reduce:animate-none" />
       </div>
 
-      <aside className="border-navy/8 dark:border-gold/16 dark:bg-navy-deep/62 fixed inset-y-0 inset-s-0 z-40 hidden w-69 flex-col overflow-hidden border-e bg-white/68 shadow-[0_18px_55px_-40px_rgba(4,20,39,0.62)] backdrop-blur-2xl lg:flex dark:shadow-[0_20px_60px_-38px_rgba(0,0,0,0.82)]">
+      <aside
+        className={cn(
+          "fixed inset-y-0 inset-s-0 z-40 hidden w-69 flex-col overflow-hidden border-e backdrop-blur-2xl lg:flex",
+          "border-navy/8 bg-white/68 shadow-[0_18px_55px_-40px_rgba(4,20,39,0.62)]",
+          "dark:border-gold/16 dark:bg-navy-deep/62 dark:shadow-[0_20px_60px_-38px_rgba(0,0,0,0.82)]",
+        )}
+      >
         <div className="bg-gold/12 dark:bg-gold/9 pointer-events-none absolute inset-s-0 -top-20 size-56 rounded-full blur-3xl" />
         <div className="relative px-5 pt-6 pb-5">{BRAND}</div>
         <div className="relative min-h-0 flex-1 overflow-hidden">
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 z-3 h-4 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.78),transparent)] dark:bg-[linear-gradient(to_bottom,rgba(3,17,31,0.9),transparent)]"
-          />
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-3 h-4 bg-[linear-gradient(to_top,rgba(255,255,255,0.78),transparent)] dark:bg-[linear-gradient(to_top,rgba(3,17,31,0.9),transparent)]"
-          />
+          <span aria-hidden="true" className={SCROLL_EDGE_TOP} />
+          <span aria-hidden="true" className={SCROLL_EDGE_BOTTOM} />
           <SidebarScroller className="pb-2">
             <NavList />
           </SidebarScroller>
@@ -453,7 +586,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="border-navy/10 bg-fog/98 dark:border-gold/18 dark:bg-navy-deep/98 w-[min(88vw,19rem)] gap-0 border-s p-0 sm:max-w-76"
+          className={cn(
+            "w-[min(88vw,19rem)] gap-0 border-s p-0 sm:max-w-76",
+            "border-navy/10 bg-fog/98",
+            "dark:border-gold/18 dark:bg-navy-deep/98",
+          )}
         >
           <SheetHeader className="flex-row items-center justify-between p-4 text-start">
             <SheetTitle asChild>{BRAND}</SheetTitle>
@@ -461,7 +598,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
               type="button"
               variant="ghost"
               size="icon"
-              className="bg-navy/5 text-navy dark:text-ivory size-9 rounded-xl dark:bg-white/8"
+              className={cn(
+                "size-9 rounded-xl",
+                "bg-navy/5 text-navy",
+                "dark:text-ivory dark:bg-white/8",
+              )}
               onClick={() => setOpen(false)}
               aria-label="بستن منو"
             >
@@ -470,14 +611,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </SheetHeader>
           <Separator className="bg-navy/8 dark:bg-gold/14" />
           <div className="relative min-h-0 flex-1 overflow-hidden">
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-0 z-3 h-4 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.78),transparent)] dark:bg-[linear-gradient(to_bottom,rgba(3,17,31,0.9),transparent)]"
-            />
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 bottom-0 z-3 h-4 bg-[linear-gradient(to_top,rgba(255,255,255,0.78),transparent)] dark:bg-[linear-gradient(to_top,rgba(3,17,31,0.9),transparent)]"
-            />
+            <span aria-hidden="true" className={SCROLL_EDGE_TOP} />
+            <span aria-hidden="true" className={SCROLL_EDGE_BOTTOM} />
             <SidebarScroller className="pt-3 pb-2">
               <NavList onNavigate={() => setOpen(false)} />
             </SidebarScroller>
@@ -492,18 +627,30 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </Sheet>
 
       <div className="relative z-10 min-w-0 lg:ps-69">
-        <header className="border-navy/7 bg-fog/76 dark:border-gold/14 dark:bg-navy-deep/64 relative sticky top-0 z-30 border-b shadow-[0_18px_55px_-40px_rgba(4,20,39,0.62)] backdrop-blur-2xl dark:shadow-[0_20px_60px_-38px_rgba(0,0,0,0.82)]">
+        <header
+          className={cn(
+            "relative sticky top-0 z-30 border-b backdrop-blur-2xl",
+            "border-navy/7 bg-fog/76 shadow-[0_18px_55px_-40px_rgba(4,20,39,0.62)]",
+            "dark:border-gold/14 dark:bg-navy-deep/64 dark:shadow-[0_20px_60px_-38px_rgba(0,0,0,0.82)]",
+          )}
+        >
           {}
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-[linear-gradient(to_left,transparent,rgba(193,147,87,0.58)_28%,rgba(193,147,87,0.12)_72%,transparent)] opacity-42"
+            className={cn(
+              "pointer-events-none absolute inset-x-0 -bottom-px h-px opacity-42",
+              "bg-[linear-gradient(to_left,transparent,rgba(193,147,87,0.58)_28%,rgba(193,147,87,0.12)_72%,transparent)]",
+            )}
           />
           <div className="mx-auto flex h-18 max-w-[100rem] items-center gap-2 px-3 sm:gap-2.5 sm:px-5 lg:px-8">
             <Button
               type="button"
               variant="gold"
               size="icon"
-              className="size-10 shrink-0 rounded-xl shadow-[0_10px_24px_-14px_rgba(193,147,87,.9)] lg:hidden"
+              className={cn(
+                "size-10 shrink-0 rounded-xl lg:hidden",
+                "shadow-[0_10px_24px_-14px_rgba(193,147,87,.9)]",
+              )}
               onClick={() => setOpen(true)}
               aria-label="بازکردن منوی مدیریت"
             >
@@ -511,14 +658,32 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </Button>
 
             <div className="flex min-w-0 items-center gap-2">
-              <span className="bg-navy/5 text-gold hidden size-8 shrink-0 place-items-center rounded-xl sm:grid dark:bg-white/5">
+              <span
+                className={cn(
+                  "hidden size-8 shrink-0 place-items-center rounded-xl sm:grid",
+                  "bg-navy/5 text-gold",
+                  "dark:bg-white/5",
+                )}
+              >
                 <current.Icon className="size-4" />
               </span>
               <div className="min-w-0">
-                <p className="text-navy dark:text-ivory truncate text-[10px] font-black sm:text-[11px]">
+                <p
+                  className={cn(
+                    "truncate text-[10px] font-black sm:text-[11px]",
+                    "text-navy",
+                    "dark:text-ivory",
+                  )}
+                >
                   {current.label}
                 </p>
-                <p className="text-navy/40 dark:text-wheat/55 hidden truncate text-[9px] font-bold sm:block">
+                <p
+                  className={cn(
+                    "hidden truncate text-[9px] font-bold sm:block",
+                    "text-navy/40",
+                    "dark:text-wheat/55",
+                  )}
+                >
                   فضای عملیاتی ملی کیدز
                 </p>
               </div>
@@ -526,7 +691,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
             <div className="ms-auto flex min-w-0 items-center gap-1.5 sm:gap-2">
               <HeaderNotifications />
-              <ModeToggle className="border-navy/9 text-navy dark:border-gold/16 dark:text-gold-soft size-10 shrink-0 rounded-xl border bg-white/70 shadow-sm dark:bg-white/4" />
+              <ModeToggle
+                className={cn(
+                  "size-10 shrink-0 rounded-xl border shadow-sm",
+                  "border-navy/9 text-navy bg-white/70",
+                  "dark:border-gold/16 dark:text-gold-soft dark:bg-white/4",
+                )}
+              />
               <HeaderIdentity profile={profile} />
             </div>
           </div>

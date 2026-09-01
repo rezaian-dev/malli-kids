@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { Button } from "@/components/ui/button";
 import { BRAND } from "@/lib/constants";
 import { buildMetadata, contactPageSchema } from "@/lib/seo";
+import { cn } from "@/lib/utils";
 import { ContactMap } from "./_components/contact-map";
 
 export const metadata = buildMetadata({
@@ -27,11 +28,21 @@ export default function ContactPage() {
       />
       <JsonLd data={contactPageSchema()} />
 
-      <div className="container mx-auto w-full max-w-5xl space-y-9 px-3 xs:px-4 sm:px-5 lg:px-7">
-        <section className="from-navy via-navy-mid to-navy-light overflow-hidden rounded-[28px] bg-linear-to-br px-6 py-8 shadow-[0_24px_60px_-30px_rgba(4,20,39,.6)] sm:px-10 sm:py-10">
+      <div className="xs:px-4 container mx-auto w-full max-w-5xl space-y-9 px-3 sm:px-5 lg:px-7">
+        <section
+          className={cn(
+            "overflow-hidden rounded-[28px] px-6 py-8 sm:px-10 sm:py-10",
+            "from-navy via-navy-mid to-navy-light bg-linear-to-br shadow-[0_24px_60px_-30px_rgba(4,20,39,.6)]",
+          )}
+        >
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
             <div className="min-w-0 flex-1">
-              <p className="text-gold flex items-center gap-2 text-[11px] font-black tracking-[0.22em]">
+              <p
+                className={cn(
+                  "flex items-center gap-2",
+                  "text-gold text-[11px] font-black tracking-[0.22em]",
+                )}
+              >
                 <Headphones className="size-4" /> SUPPORT
               </p>
               <h2 className="mt-2 text-xl font-black text-white sm:text-2xl">
@@ -124,7 +135,12 @@ function Info({
 }) {
   const body = (
     <>
-      <span className="bg-gold/15 text-gold flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
+      <span
+        className={cn(
+          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+          "bg-gold/15 text-gold",
+        )}
+      >
         <Icon className="h-5 w-5" />
       </span>
       <span className="min-w-0">
@@ -141,14 +157,17 @@ function Info({
     </>
   );
 
-  const cls =
-    "flex items-start gap-3 rounded-[26px] border border-navy/8 bg-white/94 p-4 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60";
+  const CARD_CLS = cn(
+    "flex items-start gap-3 rounded-[26px] border p-4",
+    "border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]",
+    "dark:border-gold/30 dark:bg-slate/60",
+  );
 
   return href ? (
-    <a href={href} className={cls}>
+    <a href={href} className={CARD_CLS}>
       {body}
     </a>
   ) : (
-    <div className={`${cls} hover:translate-y-0`}>{body}</div>
+    <div className={`${CARD_CLS} hover:translate-y-0`}>{body}</div>
   );
 }

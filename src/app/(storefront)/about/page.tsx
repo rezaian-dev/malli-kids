@@ -4,6 +4,7 @@ import { Intro } from "@/components/shared/intro";
 import { BRAND } from "@/lib/constants";
 import { ABOUT } from "@/lib/data/pages";
 import { buildMetadata } from "@/lib/seo";
+import { cn } from "@/lib/utils";
 
 export const metadata = buildMetadata({
   title: "درباره ما",
@@ -12,6 +13,11 @@ export const metadata = buildMetadata({
 });
 
 const ICONS = [Heart, Scissors, ScanFace, ShieldCheck];
+
+const CARD_BASE = cn(
+  "border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]",
+  "dark:border-gold/30 dark:bg-slate/60",
+);
 
 export default function AboutPage() {
   return (
@@ -28,13 +34,19 @@ export default function AboutPage() {
       <div className="container mx-auto mb-10 flex max-w-5xl flex-wrap gap-3 px-3 sm:px-5 lg:px-7">
         <Link
           href="/shop"
-          className="bg-navy text-ivory shadow-navy/20 inline-flex rounded-full px-6 py-3 font-black shadow-lg transition-transform hover:-translate-y-0.5"
+          className={cn(
+            "inline-flex rounded-full px-6 py-3 font-black transition-transform hover:-translate-y-0.5",
+            "bg-navy text-ivory shadow-navy/20 shadow-lg",
+          )}
         >
           مشاهده کالکشن
         </Link>
         <Link
           href="/tryon"
-          className="border-gold text-gold inline-flex rounded-full border-2 px-6 py-3 font-black transition-transform hover:-translate-y-0.5"
+          className={cn(
+            "inline-flex rounded-full border-2 px-6 py-3 font-black transition-transform hover:-translate-y-0.5",
+            "border-gold text-gold",
+          )}
         >
           پرو مجازی
         </Link>
@@ -44,12 +56,12 @@ export default function AboutPage() {
         {ABOUT.stats.map((s) => (
           <div
             key={s.n}
-            className="border-navy/8 hover:border-gold/50 dark:border-gold/30 dark:bg-slate/60 rounded-[26px] border bg-white/94 p-4 text-center shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]"
+            className={cn(CARD_BASE, "rounded-[26px] border p-4 text-center")}
           >
             <p className="text-navy dark:text-ivory text-xl font-black">
               {s.n}
             </p>
-            <p className="text-navy/50 dark:text-wheat mt-1 text-[11px] leading-5">
+            <p className="text-navy/70 dark:text-wheat mt-1 text-[11px] leading-5">
               {s.l}
             </p>
           </div>
@@ -64,13 +76,13 @@ export default function AboutPage() {
           {ABOUT.story.map((s) => (
             <article
               key={s.n}
-              className="border-navy/8 hover:border-gold/50 dark:border-gold/30 dark:bg-slate/60 rounded-[26px] border bg-white/94 p-5 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]"
+              className={cn(CARD_BASE, "rounded-[26px] border p-5")}
             >
               <p className="text-gold font-black">{s.n}</p>
               <h3 className="text-navy dark:text-ivory mt-2 font-black">
                 {s.t}
               </h3>
-              <p className="text-navy/55 dark:text-wheat mt-2 text-sm leading-7">
+              <p className="text-navy/70 dark:text-wheat mt-2 text-sm leading-7">
                 {s.d}
               </p>
             </article>
@@ -88,16 +100,24 @@ export default function AboutPage() {
             return (
               <article
                 key={p.t}
-                className="border-navy/8 hover:border-gold/50 dark:border-gold/30 dark:bg-slate/60 flex gap-4 rounded-[26px] border bg-white/94 p-5 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]"
+                className={cn(
+                  CARD_BASE,
+                  "flex gap-4 rounded-[26px] border p-5",
+                )}
               >
-                <span className="bg-gold/15 text-gold flex size-11 shrink-0 items-center justify-center rounded-2xl">
+                <span
+                  className={cn(
+                    "flex size-11 shrink-0 items-center justify-center rounded-2xl",
+                    "bg-gold/15 text-gold",
+                  )}
+                >
                   <Icon className="size-5" />
                 </span>
                 <div>
                   <h3 className="text-navy dark:text-ivory font-black">
                     {p.t}
                   </h3>
-                  <p className="text-navy/55 dark:text-wheat mt-2 text-sm leading-7">
+                  <p className="text-navy/70 dark:text-wheat mt-2 text-sm leading-7">
                     {p.d}
                   </p>
                 </div>
@@ -107,7 +127,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-navy text-cream relative container mx-auto max-w-5xl overflow-hidden rounded-[28px] p-8 sm:px-5 lg:px-7">
+      <section
+        className={cn(
+          "relative container mx-auto max-w-5xl overflow-hidden rounded-[28px] p-8 sm:px-5 lg:px-7",
+          "bg-navy text-cream",
+        )}
+      >
         <h2 className="text-2xl font-black">از انتخاب نخ تا جعبه کادویی</h2>
         <p className="text-cream/75 mt-3 leading-8">
           گالری ملی‌کیدز در ولیعصر است؛ اما دوخت در کارگاه‌های کوچک ایرانی انجام
@@ -116,7 +141,10 @@ export default function AboutPage() {
         <p className="text-gold-light mt-4 text-sm">{BRAND.address}</p>
         <Link
           href="/contact"
-          className="bg-gold text-navy-deep mt-5 inline-flex rounded-full px-6 py-3 font-black"
+          className={cn(
+            "mt-5 inline-flex rounded-full px-6 py-3 font-black",
+            "bg-gold text-navy-deep",
+          )}
         >
           تماس و آدرس کامل
         </Link>

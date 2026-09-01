@@ -25,6 +25,7 @@ import { AdminTable, type AdminCol } from "@/components/admin/admin-table";
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/use-pagination";
 import { formatToman, toFaDigits } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { AdminCustomer } from "@/types";
 
 const PER_PAGE = 8;
@@ -103,7 +104,12 @@ export default function AdminCustomers() {
       render: (customer) => (
         <div className="flex min-w-0 items-center gap-3">
           <span
-            className={`grid size-10 shrink-0 place-items-center rounded-xl font-black ${customer.role === "admin" ? "bg-gold text-navy-deep" : "bg-navy text-gold dark:bg-gold/15 dark:text-gold-soft"}`}
+            className={cn(
+              "grid size-10 shrink-0 place-items-center rounded-xl font-black",
+              customer.role === "admin"
+                ? "bg-gold text-navy-deep"
+                : "bg-navy text-gold dark:bg-gold/15 dark:text-gold-soft",
+            )}
           >
             {customer.role === "admin" ? (
               <ShieldCheck className="size-4" />
@@ -118,7 +124,13 @@ export default function AdminCustomers() {
             >
               {customer.firstName} {customer.lastName}
             </p>
-            <p className="text-navy/40 dark:text-wheat mt-0.5 truncate text-[10px] font-bold">
+            <p
+              className={cn(
+                "mt-0.5 truncate text-[10px] font-bold",
+                "text-navy/40",
+                "dark:text-wheat",
+              )}
+            >
               {customer.city} · عضویت {customer.joined}
             </p>
           </div>
@@ -132,11 +144,23 @@ export default function AdminCustomers() {
       align: "center",
       render: (customer) =>
         customer.role === "admin" ? (
-          <span className="bg-gold/15 text-gold-deep dark:text-gold-soft inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black">
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black",
+              "bg-gold/15 text-gold-deep",
+              "dark:text-gold-soft",
+            )}
+          >
             <ShieldCheck className="size-3" /> ادمین
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 rounded-lg bg-sky-500/10 px-2 py-1 text-[10px] font-black text-sky-700 dark:text-sky-300">
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black",
+              "bg-sky-500/10 text-sky-700",
+              "dark:text-sky-300",
+            )}
+          >
             <UserRound className="size-3" /> کاربر
           </span>
         ),
@@ -154,7 +178,11 @@ export default function AdminCustomers() {
             <Phone className="text-gold size-3.5 shrink-0" /> {customer.phone}
           </span>
           <span
-            className="text-navy/65 dark:text-wheat flex w-max max-w-full items-center gap-1.5 text-[11px] font-bold"
+            className={cn(
+              "flex w-max max-w-full items-center gap-1.5 text-[11px] font-bold",
+              "text-navy/65",
+              "dark:text-wheat",
+            )}
             dir="ltr"
           >
             <Mail className="text-gold size-3.5 shrink-0" />
@@ -193,11 +221,22 @@ export default function AdminCustomers() {
       align: "center",
       render: (customer) =>
         (customer.status ?? "فعال") === "فعال" ? (
-          <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2 py-1 text-[10px] font-black text-emerald-700 dark:text-emerald-300">
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black",
+              "bg-emerald-500/10 text-emerald-700",
+              "dark:text-emerald-300",
+            )}
+          >
             <CircleCheckBig className="size-3" /> فعال
           </span>
         ) : (
-          <span className="bg-rose/10 text-rose inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black">
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black",
+              "bg-rose/10 text-rose",
+            )}
+          >
             <Ban className="size-3" /> مسدود
           </span>
         ),
@@ -209,7 +248,13 @@ export default function AdminCustomers() {
       align: "end",
       renderMobile: (customer) =>
         customer.role === "admin" ? (
-          <div className="bg-gold/8 text-gold-deep dark:text-gold-soft flex items-center gap-2 rounded-xl px-3 py-2 text-[10px] font-black">
+          <div
+            className={cn(
+              "flex items-center gap-2 rounded-xl px-3 py-2 text-[10px] font-black",
+              "bg-gold/8 text-gold-deep",
+              "dark:text-gold-soft",
+            )}
+          >
             <ShieldCheck className="size-3.5" /> حساب مدیر محافظت‌شده
           </div>
         ) : (
@@ -220,7 +265,11 @@ export default function AdminCustomers() {
                 event.stopPropagation();
                 toggleStatus(customer);
               }}
-              className="border-navy/10 text-navy hover:border-gold dark:border-gold/20 dark:text-wheat inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl border px-2 text-[10px] font-black transition"
+              className={cn(
+                "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl border px-2 text-[10px] font-black transition",
+                "border-navy/10 text-navy hover:border-gold",
+                "dark:border-gold/20 dark:text-wheat",
+              )}
             >
               <Ban className="size-3.5" />{" "}
               {(customer.status ?? "فعال") === "فعال"
@@ -233,7 +282,10 @@ export default function AdminCustomers() {
                 event.stopPropagation();
                 removeCustomer(customer.id);
               }}
-              className="bg-rose/10 text-rose hover:bg-rose/15 inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl px-2 text-[10px] font-black transition"
+              className={cn(
+                "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl px-2 text-[10px] font-black transition",
+                "bg-rose/10 text-rose hover:bg-rose/15",
+              )}
             >
               <Trash2 className="size-3.5" /> حذف کاربر
             </button>
@@ -265,7 +317,11 @@ export default function AdminCustomers() {
                 event.stopPropagation();
                 toggleStatus(customer);
               }}
-              className="border-navy/10 text-navy/60 hover:border-gold hover:text-gold-deep dark:border-gold/20 dark:text-wheat grid size-9 shrink-0 place-items-center rounded-xl border transition"
+              className={cn(
+                "grid size-9 shrink-0 place-items-center rounded-xl border transition",
+                "border-navy/10 text-navy/60 hover:border-gold hover:text-gold-deep",
+                "dark:border-gold/20 dark:text-wheat",
+              )}
             >
               <Ban className="size-4" />
             </button>
@@ -277,7 +333,10 @@ export default function AdminCustomers() {
                 event.stopPropagation();
                 removeCustomer(customer.id);
               }}
-              className="bg-rose/10 text-rose hover:bg-rose/15 grid size-9 shrink-0 place-items-center rounded-xl transition"
+              className={cn(
+                "grid size-9 shrink-0 place-items-center rounded-xl transition",
+                "bg-rose/10 text-rose hover:bg-rose/15",
+              )}
             >
               <Trash2 className="size-4" />
             </button>

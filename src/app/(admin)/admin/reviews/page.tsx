@@ -21,10 +21,15 @@ import {
 } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
 import { toFaDigits } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { adminGlassCard } from "@/lib/admin/admin-chrome";
 
 const PER_PAGE = 6;
 type VisibilityFilter = "all" | "approved" | "pending";
 type SortFilter = "newest" | "rating-desc" | "rating-asc";
+
+const ACTION_BUTTON_BASE =
+  "inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl px-3 text-[10px] font-black transition hover:-translate-y-0.5";
 
 export default function AdminReviews() {
   const { db, saveReview, removeReview } = useAdmin();
@@ -161,7 +166,11 @@ export default function AdminReviews() {
           {pg.pageItems.map((review, index) => (
             <article
               key={review.id}
-              className={`border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 relative overflow-hidden rounded-[22px] border shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)] ${!review.visible ? "border-amber-400/22 dark:border-amber-300/20" : ""}`}
+              className={cn(
+                adminGlassCard,
+                !review.visible &&
+                  "border-amber-400/22 dark:border-amber-300/20",
+              )}
               style={{ animationDelay: `${index * 45}ms` }}
             >
               {!review.visible ? (
@@ -174,7 +183,12 @@ export default function AdminReviews() {
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span
-                        className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black ${review.visible ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "bg-amber-500/12 text-amber-700 dark:text-amber-300"}`}
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black",
+                          review.visible
+                            ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                            : "bg-amber-500/12 text-amber-700 dark:text-amber-300",
+                        )}
                       >
                         {review.visible ? (
                           <>
@@ -192,7 +206,13 @@ export default function AdminReviews() {
                     </div>
 
                     <div className="mt-3 flex items-center gap-3">
-                      <span className="bg-navy text-gold dark:bg-gold/15 dark:text-gold-soft grid size-9 shrink-0 place-items-center rounded-xl text-xs font-black">
+                      <span
+                        className={cn(
+                          "grid size-9 shrink-0 place-items-center rounded-xl text-xs font-black",
+                          "bg-navy text-gold",
+                          "dark:bg-gold/15 dark:text-gold-soft",
+                        )}
+                      >
                         {review.author.charAt(0)}
                       </span>
                       <div className="min-w-0">
@@ -206,7 +226,12 @@ export default function AdminReviews() {
                           {Array.from({ length: 5 }).map((_, starIndex) => (
                             <Star
                               key={starIndex}
-                              className={`size-3.5 ${starIndex < review.rate ? "fill-gold text-gold" : "text-khaki/70 fill-transparent"}`}
+                              className={cn(
+                                "size-3.5",
+                                starIndex < review.rate
+                                  ? "fill-gold text-gold"
+                                  : "text-khaki/70 fill-transparent",
+                              )}
                             />
                           ))}
                           <span className="text-navy/45 dark:text-wheat ms-1.5 text-[9px] font-black">
@@ -216,7 +241,13 @@ export default function AdminReviews() {
                       </div>
                     </div>
 
-                    <blockquote className="bg-navy/[0.035] text-navy/78 dark:text-ivory/78 mt-3 rounded-2xl px-4 py-3 text-xs leading-7 dark:bg-white/[0.035]">
+                    <blockquote
+                      className={cn(
+                        "mt-3 rounded-2xl px-4 py-3 text-xs leading-7",
+                        "bg-navy/[0.035] text-navy/78",
+                        "dark:text-ivory/78 dark:bg-white/[0.035]",
+                      )}
+                    >
                       “{review.text}”
                     </blockquote>
                     <p className="text-navy/35 dark:text-wheat/55 mt-2 text-[9px] font-bold">
@@ -230,7 +261,12 @@ export default function AdminReviews() {
                       onClick={() =>
                         saveReview({ ...review, visible: !review.visible })
                       }
-                      className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl px-3 text-[10px] font-black transition hover:-translate-y-0.5 ${review.visible ? "border-navy/10 text-navy/65 hover:border-gold dark:border-gold/18 dark:text-wheat border" : "bg-emerald-500 text-white shadow-[0_10px_24px_-15px_rgba(16,185,129,.8)] hover:bg-emerald-600"}`}
+                      className={cn(
+                        ACTION_BUTTON_BASE,
+                        review.visible
+                          ? "border-navy/10 text-navy/65 hover:border-gold dark:border-gold/18 dark:text-wheat border"
+                          : "bg-emerald-500 text-white shadow-[0_10px_24px_-15px_rgba(16,185,129,.8)] hover:bg-emerald-600",
+                      )}
                     >
                       {review.visible ? (
                         <>
@@ -245,7 +281,10 @@ export default function AdminReviews() {
                     <button
                       type="button"
                       onClick={() => removeReview(review.id)}
-                      className="bg-rose/9 text-rose hover:bg-rose/14 inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl px-3 text-[10px] font-black transition hover:-translate-y-0.5"
+                      className={cn(
+                        ACTION_BUTTON_BASE,
+                        "bg-rose/9 text-rose hover:bg-rose/14",
+                      )}
                     >
                       <Trash2 className="size-3.5" /> حذف نظر
                     </button>
@@ -256,7 +295,7 @@ export default function AdminReviews() {
           ))}
         </div>
       ) : (
-        <div className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border px-5 py-14 text-center shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+        <div className={cn(adminGlassCard, "px-5 py-14 text-center")}>
           <MessageSquareText className="text-gold mx-auto size-10" />
           <p className="mt-3 text-sm font-black">نظری مطابق فیلترها پیدا نشد</p>
         </div>

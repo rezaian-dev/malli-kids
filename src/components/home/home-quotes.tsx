@@ -7,6 +7,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BadgeCheck, Quote, Star, ThumbsUp } from "lucide-react";
 import { SliderArrow } from "@/components/ui/slider-arrow";
+import { cn } from "@/lib/utils";
 
 const REVIEWS = [
   {
@@ -64,11 +65,14 @@ const REVIEWS = [
 
 function Stars({ n }: { n: number }) {
   return (
-    <div className="flex shrink-0 gap-0.5" aria-label={`${n} از ۵`}>
+    <div className="flex shrink-0 gap-0.5" role="img" aria-label={`${n} از ۵`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
-          className={`size-3.5 ${i < n ? "fill-gold text-gold" : "text-ivory/25"}`}
+          className={cn(
+            "size-3.5",
+            i < n ? "fill-gold text-gold" : "text-ivory/25",
+          )}
         />
       ))}
     </div>
@@ -114,7 +118,12 @@ export function HomeQuotes() {
                 className="box-border flex min-w-0 shrink-0 basis-[min(100%,22rem)] px-1.5 sm:basis-[78%] sm:px-2.5 lg:basis-[62%]"
               >
                 <article
-                  className={`bg-navy text-ivory dark:bg-dusk-deep dark:ring-gold/30 relative flex h-full w-full flex-col overflow-hidden rounded-[22px] p-4 shadow-lg transition-opacity duration-500 sm:rounded-[28px] sm:p-6 dark:ring-1 ${on ? "opacity-100" : "opacity-55"}`}
+                  className={cn(
+                    "relative flex h-full w-full flex-col overflow-hidden rounded-[22px] p-4 shadow-lg transition-opacity duration-500 sm:rounded-[28px] sm:p-6",
+                    "bg-navy text-ivory",
+                    on ? "opacity-100" : "opacity-55",
+                    "dark:bg-dusk-deep dark:ring-gold/30 dark:ring-1",
+                  )}
                 >
                   <Quote
                     className="text-gold/15 pointer-events-none absolute inset-e-3 top-3 size-12 sm:size-16"
@@ -139,7 +148,12 @@ export function HomeQuotes() {
                             نظر منتخب
                           </span>
                         ) : null}
-                        <span className="text-gold-glow inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-2 py-0.5 text-[10px] font-bold">
+                        <span
+                          className={cn(
+                            "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold",
+                            "text-gold-glow border-white/15 bg-white/10",
+                          )}
+                        >
                           <BadgeCheck className="size-3.5" /> تأییدشده
                         </span>
                         <Stars n={r.rate} />
@@ -147,9 +161,19 @@ export function HomeQuotes() {
                       <p className="text-ivory line-clamp-3 min-h-18 text-sm leading-6 font-medium sm:min-h-21 sm:leading-7">
                         «{r.text}»
                       </p>
-                      <div className="mt-auto flex flex-col gap-3 border-t border-white/10 pt-3 min-[420px]:flex-row min-[420px]:items-center min-[420px]:justify-between">
+                      <div
+                        className={cn(
+                          "mt-auto flex flex-col gap-3 border-t pt-3 min-[420px]:flex-row min-[420px]:items-center min-[420px]:justify-between",
+                          "border-white/10",
+                        )}
+                      >
                         <div className="flex min-w-0 items-center gap-2.5">
-                          <span className="bg-gold text-navy-deep flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-black">
+                          <span
+                            className={cn(
+                              "flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-black",
+                              "bg-gold text-navy-deep",
+                            )}
+                          >
                             {r.initial}
                           </span>
                           <div className="min-w-0">
@@ -169,7 +193,12 @@ export function HomeQuotes() {
                           onClick={() =>
                             setLiked((s) => ({ ...s, [r.name]: !s[r.name] }))
                           }
-                          className={`inline-flex min-h-9 w-max shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold ${thanks ? "border-gold bg-gold text-navy-deep" : "text-ivory border-white/20 bg-white/10"}`}
+                          className={cn(
+                            "inline-flex min-h-9 w-max shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold",
+                            thanks
+                              ? "border-gold bg-gold text-navy-deep"
+                              : "text-ivory border-white/20 bg-white/10",
+                          )}
                         >
                           <ThumbsUp className="size-3.5" />
                           {thanks ? "مفید بود" : "مفید"} ({count})
@@ -192,7 +221,12 @@ export function HomeQuotes() {
               type="button"
               aria-label={`نظر ${k + 1}`}
               onClick={() => embla?.scrollTo(k)}
-              className={`rounded-full ${k === i ? "bg-gold h-1.5 w-8" : "bg-navy/20 dark:bg-gold-glow/35 h-1.5 w-2"}`}
+              className={cn(
+                "relative rounded-full before:absolute before:-inset-2.5 before:content-['']",
+                k === i
+                  ? "bg-gold h-1.5 w-8"
+                  : "bg-navy/20 dark:bg-gold-glow/35 h-1.5 w-2",
+              )}
             />
           ))}
         </div>

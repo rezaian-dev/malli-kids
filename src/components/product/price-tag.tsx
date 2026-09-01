@@ -2,6 +2,7 @@
 
 import { useStore } from "@/providers/store-provider";
 import { formatToman, toFaDigits } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 export function PriceTag({
   price,
@@ -16,11 +17,11 @@ export function PriceTag({
   if (campaign.active && eff < price) {
     return (
       <span
-        className={`inline-flex flex-wrap items-center gap-1.5 ${className ?? ""}`}
+        className={cn("inline-flex flex-wrap items-center gap-1.5", className)}
       >
         <span className="text-navy dark:text-ivory text-[13px] font-black whitespace-nowrap">
           {formatToman(eff)}{" "}
-          <span className="text-navy/50 dark:text-gold-soft text-[10px] font-semibold">
+          <span className="text-navy/70 dark:text-gold-soft text-[10px] font-semibold">
             تومان
           </span>
         </span>
@@ -36,10 +37,13 @@ export function PriceTag({
 
   return (
     <span
-      className={`text-navy dark:text-ivory text-[13px] font-black whitespace-nowrap ${className ?? ""}`}
+      className={cn(
+        "text-navy dark:text-ivory text-[13px] font-black whitespace-nowrap",
+        className,
+      )}
     >
       {formatToman(price)}{" "}
-      <span className="text-navy/50 dark:text-gold-soft text-[10px] font-semibold">
+      <span className="text-navy/70 dark:text-gold-soft text-[10px] font-semibold">
         تومان
       </span>
     </span>

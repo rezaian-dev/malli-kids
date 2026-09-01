@@ -1,7 +1,13 @@
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export const PROFILE_CARD =
-  "mt-5 space-y-5 rounded-[24px] border border-navy/10 bg-white p-5 dark:border-gold/35 dark:bg-dusk sm:p-7";
+export const PROFILE_CARD = cn(
+  "mt-5 space-y-5 rounded-3xl p-5 sm:p-7",
+  "border border-navy/10 bg-white",
+  "dark:border-gold/35 dark:bg-dusk",
+);
+
+const SKELETON_BAR = "rounded-2xl bg-navy/4 dark:bg-white/4";
 
 // 🪶 Small skeleton while each profile panel hydrates.
 export function ProfilePanelFallback({
@@ -14,18 +20,20 @@ export function ProfilePanelFallback({
   return (
     <section className={PROFILE_CARD} aria-live="polite" aria-busy="true">
       <div className="flex items-center gap-3">
-        <span className="grid size-10 place-items-center rounded-2xl bg-gold/15 text-gold">
+        <span className="bg-gold/15 text-gold grid size-10 place-items-center rounded-2xl">
           <Loader2 className="size-5 animate-spin" />
         </span>
         <div>
-          <h2 className="text-lg font-black text-navy dark:text-linen">{title}</h2>
-          <p className="mt-1 text-xs text-navy/50 dark:text-wheat">{text}</p>
+          <h2 className="text-navy dark:text-linen text-lg font-black">
+            {title}
+          </h2>
+          <p className="text-navy/70 dark:text-wheat mt-1 text-xs">{text}</p>
         </div>
       </div>
       <div className="space-y-3">
-        <div className="h-12 rounded-2xl bg-navy/4 dark:bg-white/4" />
-        <div className="h-24 rounded-2xl bg-navy/4 dark:bg-white/4" />
-        <div className="h-12 rounded-2xl bg-navy/4 dark:bg-white/4" />
+        <div className={cn("h-12", SKELETON_BAR)} />
+        <div className={cn("h-24", SKELETON_BAR)} />
+        <div className={cn("h-12", SKELETON_BAR)} />
       </div>
     </section>
   );

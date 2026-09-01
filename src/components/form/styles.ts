@@ -4,7 +4,7 @@ export const INPUT: Record<Skin, string> = {
   lux: "h-12 rounded-2xl border-gold/40 bg-transparent px-4 text-sm font-semibold text-navy placeholder:text-brown dark:border-gold-soft/50 dark:text-ivory dark:placeholder:text-cream-mute",
   soft: "h-[46px] rounded-2xl border-gold/40 bg-transparent px-4 text-sm font-semibold dark:text-linen",
   admin: "h-11 rounded-2xl px-4",
-  bare: "h-11 w-full bg-transparent px-2 text-base font-bold text-navy outline-none placeholder:text-navy/30 dark:text-ivory dark:placeholder:text-ivory/30",
+  bare: "h-11 w-full bg-transparent px-2 text-base font-bold text-navy outline-none placeholder:text-navy/70 dark:text-ivory dark:placeholder:text-ivory/30",
   inset:
     "min-w-0 appearance-none rounded-none border-0 bg-transparent text-sm font-semibold text-navy shadow-none outline-none placeholder:text-brown focus-visible:border-transparent focus-visible:ring-0 focus-visible:shadow-none aria-invalid:border-0 aria-invalid:ring-0 dark:text-ivory dark:placeholder:text-cream-mute",
 };
@@ -13,7 +13,7 @@ export const TEXTAREA: Record<Skin, string> = {
   lux: "min-h-28 rounded-2xl border-gold/40 bg-transparent px-4 py-3 text-sm font-semibold text-navy placeholder:text-brown dark:border-gold-soft/50 dark:text-ivory dark:placeholder:text-cream-mute",
   soft: "min-h-24 rounded-2xl border-gold/40 bg-transparent px-4 py-3 text-sm font-semibold dark:text-linen",
   admin: "min-h-24 rounded-2xl px-4 py-3",
-  bare: "min-h-24 w-full bg-transparent py-2 text-sm font-semibold text-navy outline-none placeholder:text-navy/30 dark:text-ivory",
+  bare: "min-h-24 w-full bg-transparent py-2 text-sm font-semibold text-navy outline-none placeholder:text-navy/70 dark:text-ivory",
   inset:
     "min-h-24 w-full rounded-[inherit] border-0 bg-transparent py-2 text-sm font-semibold shadow-none focus-visible:border-transparent focus-visible:ring-0 focus-visible:shadow-none",
 };
@@ -45,6 +45,6 @@ export const SHELL_BARE_BAD = "border-rose";
 
 export const ERROR_TEXT =
   "flex items-start gap-1 text-[11px] font-bold leading-5 text-rose animate-fade-up";
-export const HINT_TEXT = "text-[11px] leading-5 text-navy/45 dark:text-wheat";
+export const HINT_TEXT = "text-[11px] leading-5 text-navy/70 dark:text-wheat";
 export const COUNT_TEXT =
-  "text-[10px] font-bold tabular-nums text-navy/35 dark:text-wheat/60";
+  "text-[10px] font-bold tabular-nums text-navy/70 dark:text-wheat/60";

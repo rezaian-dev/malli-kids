@@ -224,6 +224,8 @@ export function TextField({
             autoComplete={autoComplete}
             maxLength={maxLength}
             placeholder={placeholder}
+            required={required}
+            aria-required={required || undefined}
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
 
@@ -281,6 +283,8 @@ export function TextareaField({
             rows={rows}
             maxLength={maxLength}
             placeholder={placeholder}
+            required={required}
+            aria-required={required || undefined}
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
             className={cn(TEXTAREA[skin], LATIN_ANCHOR)}
@@ -340,6 +344,8 @@ export function MoneyField({
           inputMode="numeric"
           autoComplete="off"
           placeholder={placeholder}
+          required={required}
+          aria-required={required || undefined}
           aria-invalid={invalid || undefined}
           aria-describedby={describedBy}
           className={cn(INPUT[skin], LATIN_ANCHOR, "tabular-nums")}
@@ -397,6 +403,7 @@ export function SelectField({
           onOpenChange={(o) => !o && field.onBlur()}
         >
           <SelectTrigger
+            aria-required={required || undefined}
             aria-invalid={invalid || undefined}
             className={cn("w-full", INPUT[skin])}
           >
@@ -430,7 +437,9 @@ export function SwitchField({
   return (
     <label
       className={cn(
-        "border-navy/10 hover:border-gold/50 dark:border-gold/20 flex cursor-pointer items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition-colors",
+        "flex cursor-pointer items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition-colors",
+        "border-navy/10 hover:border-gold/50",
+        "dark:border-gold/20",
         className,
       )}
       data-field={name}
@@ -440,7 +449,7 @@ export function SwitchField({
           {label}
         </span>
         {description ? (
-          <span className="text-navy/45 dark:text-wheat block text-[11px] font-bold">
+          <span className="text-navy/70 dark:text-wheat block text-[11px] font-bold">
             {description}
           </span>
         ) : null}

@@ -12,7 +12,12 @@ import { SalesChart } from "@/components/admin";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AdminTable } from "@/components/admin/admin-table";
+import { cn } from "@/lib/utils";
+import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import type { AdminOrder } from "@/types";
+
+const META_TEXT = "text-navy/40 dark:text-wheat mt-0.5 text-[9px] font-bold";
+const HIGHLIGHT_TEXT = "text-gold-deep dark:text-gold-soft font-black";
 
 export default function AdminHome() {
   const { db } = useAdmin();
@@ -47,7 +52,12 @@ export default function AdminHome() {
           priority
           className="absolute inset-0 size-full object-cover opacity-20"
         />
-        <div className="from-navy-deep via-navy-deep/90 to-navy/75 absolute inset-0 bg-linear-to-l" />
+        <div
+          className={cn(
+            "absolute inset-0",
+            "from-navy-deep via-navy-deep/90 to-navy/75 bg-linear-to-l",
+          )}
+        />
         <div className="relative grid gap-4 p-5 sm:grid-cols-2 sm:p-7 xl:grid-cols-4">
           <Stat
             t="فروش این ماه"
@@ -87,7 +97,7 @@ export default function AdminHome() {
         <SalesChart orders={db.orders} />
 
         {/* Category share */}
-        <section className="border-navy/9 bg-paper/94 hover:border-gold/40 dark:border-gold-soft/16 dark:hover:border-gold-soft/30 rounded-[22px] border p-5 shadow-[0_20px_48px_-34px_rgba(14,42,71,0.38),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:shadow-[0_24px_52px_-34px_rgba(14,42,71,0.44)] max-[639px]:rounded-[19px] sm:p-6 dark:bg-[rgba(16,43,70,0.72)] dark:shadow-[0_25px_60px_-35px_rgba(0,0,0,0.76),inset_0_1px_0_rgba(255,255,255,0.045),0_0_0_1px_rgba(193,147,87,0.025)] dark:hover:shadow-[0_28px_64px_-36px_rgba(0,0,0,0.88),0_0_34px_rgba(193,147,87,0.035)]">
+        <section className={cn(adminGlassCard, "p-5 sm:p-6")}>
           <h2 className="text-navy dark:text-ivory mb-5 font-black">
             سهم دسته‌ها
           </h2>
@@ -121,14 +131,16 @@ export default function AdminHome() {
               <h2 className="text-navy dark:text-ivory text-sm font-black">
                 آخرین سفارش‌ها
               </h2>
-              <p className="text-navy/40 dark:text-wheat mt-0.5 text-[9px] font-bold">
-                آخرین فعالیت‌های فروشگاه
-              </p>
+              <p className={META_TEXT}>آخرین فعالیت‌های فروشگاه</p>
             </div>
             <Button
               asChild
               variant="ghost"
-              className="text-gold hover:bg-gold/10 hover:text-gold-deep dark:hover:text-gold-soft h-8 rounded-xl text-[10px] font-black"
+              className={cn(
+                "h-8 rounded-xl text-[10px] font-black",
+                "text-gold hover:bg-gold/10 hover:text-gold-deep",
+                "dark:hover:text-gold-soft",
+              )}
             >
               <Link href="/admin/orders">
                 همه سفارش‌ها <ArrowLeft className="size-3.5" />
@@ -142,10 +154,7 @@ export default function AdminHome() {
             title: "شناسه",
             width: "9rem",
             render: (order) => (
-              <span
-                className="text-gold-deep dark:text-gold-soft font-black"
-                dir="ltr"
-              >
+              <span className={HIGHLIGHT_TEXT} dir="ltr">
                 {order.id}
               </span>
             ),
@@ -157,9 +166,7 @@ export default function AdminHome() {
             render: (order) => (
               <div>
                 <p>{order.customer}</p>
-                <p className="text-navy/40 dark:text-wheat mt-0.5 text-[9px] font-bold">
-                  {order.city}
-                </p>
+                <p className={META_TEXT}>{order.city}</p>
               </div>
             ),
           },
@@ -179,7 +186,7 @@ export default function AdminHome() {
             width: "9rem",
             align: "center",
             render: (order) => (
-              <span className="text-gold-deep dark:text-gold-soft font-black">
+              <span className={HIGHLIGHT_TEXT}>
                 {formatToman(order.total)} ت
               </span>
             ),
@@ -191,7 +198,7 @@ export default function AdminHome() {
             align: "center",
             render: (order) => (
               <Badge
-                className={`rounded-lg border-0 ${statusTone(order.status)}`}
+                className={cn("rounded-lg border-0", statusTone(order.status))}
               >
                 {order.status}
               </Badge>
@@ -219,11 +226,19 @@ function Stat({
   warn?: boolean;
 }) {
   return (
-    <article className="border-gold/20 bg-navy-deep/55 rounded-[22px] border p-4 backdrop-blur-sm max-[639px]:rounded-[19px]">
+    <article
+      className={cn(
+        "rounded-[22px] border p-4 backdrop-blur-sm max-[639px]:rounded-[19px]",
+        "border-gold/20 bg-navy-deep/55",
+      )}
+    >
       <div className="flex items-start justify-between">
         <p className="text-wheat text-[11px] font-black">{t}</p>
         <span
-          className={`grid size-9 place-items-center rounded-2xl ${warn ? "bg-rose text-white" : "bg-gold text-navy-deep"}`}
+          className={cn(
+            "grid size-9 place-items-center rounded-2xl",
+            warn ? "bg-rose text-white" : "bg-gold text-navy-deep",
+          )}
         >
           <Icon className="size-4" />
         </span>

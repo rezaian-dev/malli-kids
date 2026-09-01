@@ -54,11 +54,17 @@ export function NotifyForm() {
               onChange={field.onChange}
               onBlur={field.onBlur}
               ref={field.ref}
-              className="text-cream placeholder:text-taupe h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-right text-sm outline-none"
+              className={cn(
+                "h-10 min-w-0 flex-1 rounded-full bg-transparent px-4 text-right text-sm outline-none",
+                "text-cream placeholder:text-taupe",
+              )}
             />
             <button
               type="submit"
-              className="group bg-gold text-navy-deep inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-xs font-black transition hover:scale-[1.03]"
+              className={cn(
+                "group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-xs font-black transition hover:scale-[1.03]",
+                "bg-gold text-navy-deep",
+              )}
             >
               خبرم کن{" "}
               <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />

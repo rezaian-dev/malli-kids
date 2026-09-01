@@ -3,14 +3,23 @@ import { ArrowLeft, Heart } from "lucide-react";
 import { ProductCard } from "@/components/product";
 import { OrnBow } from "@/components/home/home-ornaments";
 import { CORE_PRODUCTS } from "@/lib/data/products";
+import { cn } from "@/lib/utils";
 
 export function Handmade() {
   return (
     <section
       id="handmade"
-      className="bg-navy relative overflow-hidden bg-[radial-gradient(rgba(255,255,255,.09)_1px,transparent_1px)] bg-size-[22px_22px] py-12 sm:py-16 lg:py-20"
+      className={cn(
+        "relative overflow-hidden py-12 sm:py-16 lg:py-20",
+        "bg-navy bg-[radial-gradient(rgba(255,255,255,.09)_1px,transparent_1px)] bg-size-[22px_22px]",
+      )}
     >
-      <div className="bg-gold/10 pointer-events-none absolute -top-32 right-1/4 h-100 w-100 rounded-full blur-3xl" />
+      <div
+        className={cn(
+          "pointer-events-none absolute -top-32 right-1/4 h-100 w-100 rounded-full blur-3xl",
+          "bg-gold/10",
+        )}
+      />
       <div className="relative container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="mb-10 flex flex-col justify-between gap-5 transition-all duration-700 ease-out sm:mb-12 sm:flex-row sm:items-end">
           <div>
@@ -32,7 +41,10 @@ export function Handmade() {
           </div>
           <Link
             href="/shop?category=دستدوز"
-            className="border-gold/40 text-gold-light hover:bg-gold hover:text-navy-deep inline-flex w-max shrink-0 items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold transition-all sm:px-6 sm:py-3"
+            className={cn(
+              "inline-flex w-max shrink-0 items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold transition-all sm:px-6 sm:py-3",
+              "border-gold/40 text-gold-light hover:bg-gold hover:text-navy-deep",
+            )}
           >
             مشاهده همه
             <ArrowLeft className="h-4 w-4" />

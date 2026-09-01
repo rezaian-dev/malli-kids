@@ -162,7 +162,7 @@ export function FormHead({
     <div className={className}>
       <h2 className="text-navy dark:text-linen text-lg font-black">{title}</h2>
       {desc ? (
-        <p className="text-navy/50 dark:text-khaki mt-1 text-sm">{desc}</p>
+        <p className="text-navy/70 dark:text-khaki mt-1 text-sm">{desc}</p>
       ) : null}
     </div>
   );
