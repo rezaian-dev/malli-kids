@@ -58,7 +58,10 @@ export function UserMenu() {
         )}
       >
         <LogIn className="size-4 shrink-0" />
-        <span className="whitespace-nowrap">ورود | ثبت‌نام</span>
+        <span className="whitespace-nowrap">
+          ورود
+          <span className="hidden min-[360px]:inline"> | ثبت‌نام</span>
+        </span>
       </Button>
     );
   }

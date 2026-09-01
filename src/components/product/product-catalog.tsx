@@ -12,7 +12,7 @@ export function ProductCatalog({
   cta: string;
 }) {
   return (
-    <div className="container mx-auto grid w-full max-w-6xl gap-4 px-4 sm:grid-cols-2 sm:px-5 lg:grid-cols-3 lg:px-7">
+    <div className="container mx-auto grid w-full max-w-6xl gap-4 px-3 xs:px-4 sm:grid-cols-2 sm:px-5 lg:grid-cols-3 lg:px-7">
       {items.map((it) => (
         <article
           key={it.t}

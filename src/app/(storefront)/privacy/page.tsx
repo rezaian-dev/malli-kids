@@ -42,7 +42,7 @@ export default function PrivacyPage() {
         lead="فقط داده‌هایی را نگه می‌داریم که برای سفارش، ارسال و پشتیبانی لازم است."
         path="/privacy"
       />
-      <div className="container mx-auto w-full max-w-3xl space-y-4 px-4 sm:px-5 lg:px-7">
+      <div className="container mx-auto w-full max-w-3xl space-y-4 px-3 xs:px-4 sm:px-5 lg:px-7">
         {ITEMS.map(({ Icon, t, d }) => (
           <article
             key={t}

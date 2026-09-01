@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 
 import { ModeToggle } from "@/components/shared/mode-toggle";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -240,13 +240,17 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
                         {item.hint}
                       </span>
                     </span>
-                    {badge > 0 ? (
-                      <span className="bg-rose grid min-w-5 shrink-0 place-items-center rounded-lg px-1.5 py-1 text-[9px] leading-none font-black text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]">
-                        {toFaDigits(badge)}
-                      </span>
-                    ) : active ? (
-                      <ChevronLeft className="size-3.5 shrink-0 opacity-45" />
-                    ) : null}
+                    <span className="grid size-7 shrink-0 place-items-center">
+                      {badge > 0 ? (
+                        <span className="bg-rose grid min-w-5 place-items-center rounded-lg px-1.5 py-1 text-[9px] leading-none font-black text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]">
+                          {toFaDigits(badge)}
+                        </span>
+                      ) : active ? (
+                        <ChevronLeft className="size-3.5 opacity-45" />
+                      ) : (
+                        <span className="size-3.5" aria-hidden />
+                      )}
+                    </span>
                   </Link>
                 );
               })}
@@ -365,17 +369,21 @@ function HeaderNotifications() {
 }
 
 function HeaderIdentity({ profile }: { profile: AdminIdentity }) {
+  const letter = profile.name.trim().charAt(0) || "م";
   return (
     <div
-      className="border-navy/8 dark:border-gold/15 flex h-10 min-w-0 items-center gap-2 rounded-xl border bg-white/62 px-3 shadow-[0_10px_24px_-22px_rgba(14,42,71,0.55)] dark:bg-white/4 dark:shadow-[0_12px_28px_-22px_rgba(0,0,0,0.85)]"
+      className="border-navy/8 dark:border-gold/15 flex h-10 min-w-0 items-center gap-2 rounded-xl border bg-white/62 px-2.5 shadow-[0_10px_24px_-22px_rgba(14,42,71,0.55)] sm:px-3 dark:bg-white/4 dark:shadow-[0_12px_28px_-22px_rgba(0,0,0,0.85)]"
       aria-label={`ادمین واردشده: ${profile.name}`}
     >
-      {profile.avatar ? (
-        <Avatar size="sm" className="ring-gold/25 ring-1">
+      <Avatar size="sm" className="ring-gold/25 shrink-0 ring-1">
+        {profile.avatar ? (
           <AvatarImage src={profile.avatar} alt={`تصویر ${profile.name}`} />
-        </Avatar>
-      ) : null}
-      <span className="text-navy dark:text-ivory max-w-26 truncate text-[10px] font-black sm:max-w-40 sm:text-[11px]">
+        ) : null}
+        <AvatarFallback className="bg-navy text-gold-soft text-[10px] font-black">
+          {letter}
+        </AvatarFallback>
+      </Avatar>
+      <span className="text-navy dark:text-ivory max-w-22 truncate text-[10px] font-black sm:max-w-40 sm:text-[11px]">
         {profile.name}
       </span>
     </div>

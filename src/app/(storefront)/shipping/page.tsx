@@ -35,7 +35,7 @@ export default function ShippingPage() {
         title="ارسال سریع، بازگشت آسان"
         path="/shipping"
       />
-      <div className="container mx-auto grid w-full max-w-5xl gap-4 px-4 sm:px-5 md:grid-cols-3 lg:px-7">
+      <div className="container mx-auto grid w-full max-w-5xl gap-4 px-3 xs:px-4 sm:px-5 md:grid-cols-3 lg:px-7">
         {cards.map((c) => (
           <article
             key={c.t}
@@ -50,7 +50,7 @@ export default function ShippingPage() {
           </article>
         ))}
       </div>
-      <div className="container mx-auto mt-8 w-full max-w-5xl px-4 sm:px-5 lg:px-7">
+      <div className="container mx-auto mt-8 w-full max-w-5xl px-3 xs:px-4 sm:px-5 lg:px-7">
         <Button asChild variant="secondary" className="rounded-full">
           <Link href="/faq">سوالات متداول</Link>
         </Button>

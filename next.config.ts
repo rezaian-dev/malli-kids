@@ -19,16 +19,17 @@ const nextConfig: NextConfig = {
   compress: process.env.NODE_ENV === "production",
   // 🔐 Allow local and Arena preview origins in dev.
   allowedDevOrigins: ["*.e2b.app", "127.0.0.1", "localhost"],
-  experimental: {
-    // Heavy `.next/dev` LSM cache on a slow D: drive trips the FS
-    // benchmark and must stay in-repo (PostCSS resolves from distDir).
-    turbopackFileSystemCacheForDev: !onSlowWin,
-  },
   images: {
     qualities: [75, 85, 90, 95],
     formats: ["image/avif", "image/webp"],
     remotePatterns: [{ protocol: "https", hostname: "kimi-web-img.kimi.ai" }],
   },
 };
+
+if (onSlowWin) {
+  // Default-on since 16.1 — only opt out on a slow non-C: Windows volume.
+  // Setting the flag at all prints "Experiments (use with caution)".
+  nextConfig.experimental = { turbopackFileSystemCacheForDev: false };
+}
 
 export default nextConfig;

@@ -29,7 +29,7 @@ export default function ContactPage() {
       />
       <JsonLd data={contactPageSchema()} />
 
-      <div className="container mx-auto w-full max-w-5xl space-y-9 px-4 sm:px-5 lg:px-7">
+      <div className="container mx-auto w-full max-w-5xl space-y-9 px-3 xs:px-4 sm:px-5 lg:px-7">
         <section className="from-navy via-navy-mid to-navy-light overflow-hidden rounded-[28px] bg-linear-to-br px-6 py-8 shadow-[0_24px_60px_-30px_rgba(4,20,39,.6)] sm:px-10 sm:py-10">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
             <div className="min-w-0 flex-1">

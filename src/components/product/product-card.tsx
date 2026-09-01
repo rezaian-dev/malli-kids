@@ -19,7 +19,7 @@ const VIEW =
 const CART =
   "inline-flex items-center justify-center gap-1.5 font-extrabold border-0 cursor-pointer bg-navy text-ivory rounded-[12px] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 dark:bg-gold dark:text-navy-deep";
 const GRID_SIZES =
-  "(max-width: 639px) calc(100vw - 3.5rem), (max-width: 1023px) calc((100vw - 5.5rem) / 2), (max-width: 1535px) 33vw, 18rem";
+  "(max-width: 479px) calc((100vw - 3.75rem) / 2), (max-width: 639px) calc((100vw - 5.5rem) / 2), (max-width: 1023px) calc((100vw - 5.5rem) / 2), (max-width: 1535px) 33vw, 18rem";
 const LIST_SIZES = "104px";
 
 // 🪶 Server-first card with tiny client actions.

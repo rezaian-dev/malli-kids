@@ -30,7 +30,7 @@ export default function FaqPage() {
         schemaType="FAQPage"
       />
       <JsonLd data={faqSchema(FAQ)} />
-      <div className="container mx-auto w-full max-w-3xl px-4 sm:px-5 lg:px-7">
+      <div className="container mx-auto w-full max-w-3xl px-3 xs:px-4 sm:px-5 lg:px-7">
         <Faq />
         <div className="border-navy/8 hover:border-gold/50 dark:border-gold/30 dark:bg-slate/60 mt-10 rounded-[26px] border bg-white/94 p-6 text-center shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]">
           <p className="text-navy dark:text-ivory leading-snug font-black">

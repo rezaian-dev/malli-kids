@@ -456,7 +456,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
   );
 
   return (
-    <div className="shop-page container mx-auto w-full px-4 sm:px-5 lg:px-7">
+    <div className="shop-page mx-auto w-full max-w-7xl px-3 xs:px-4 sm:px-5 lg:px-7">
       <p className="text-navy/45 dark:text-wheat mb-5 text-xs font-bold">
         خانه <span className="text-gold mx-1.5">/</span> فروشگاه
         {state.cat !== "همه" ? (
@@ -580,7 +580,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
             className={
               state.view === "list"
                 ? "flex flex-col gap-4"
-                : "grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4"
+                : "grid grid-cols-2 gap-3 min-[480px]:grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] sm:gap-4"
             }
           >
             {slice.map((p, index) => (

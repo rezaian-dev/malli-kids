@@ -103,7 +103,7 @@ export function Studio() {
   const shown = result ?? person;
 
   return (
-    <div className="container mx-auto grid w-full max-w-6xl gap-8 px-4 sm:px-5 lg:grid-cols-2 lg:px-7">
+    <div className="container mx-auto grid w-full max-w-6xl gap-8 px-3 xs:px-4 sm:px-5 lg:grid-cols-2 lg:px-7">
       {/* 🖼️ Live preview panel. */}
       <div className="border-navy/10 dark:border-gold/30 dark:bg-dusk rounded-[28px] border bg-white p-5">
         <div className="flex items-center justify-between">
@@ -198,7 +198,7 @@ export function Studio() {
         <p className="text-navy/50 dark:text-wheat mt-4 text-[11px] font-black">
           یا یک مدل نمونه:
         </p>
-        <div className="mt-2 flex gap-2">
+        <div className="mt-2 flex flex-wrap gap-2">
           {SAMPLE_MODELS.map((src) => (
             <button
               key={src}

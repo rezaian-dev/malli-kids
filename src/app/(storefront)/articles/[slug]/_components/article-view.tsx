@@ -30,7 +30,7 @@ export function ArticleView({
   const isHtml = article.body.trimStart().startsWith("<");
 
   return (
-    <article className="container mx-auto w-full max-w-3xl px-4 sm:px-5 lg:px-7">
+    <article className="container mx-auto w-full max-w-3xl px-3 xs:px-4 sm:px-5 lg:px-7">
       <header>
         <nav aria-label="مسیر مقاله" className="text-muted-foreground text-xs">
           <ol className="flex flex-wrap items-center gap-1.5">

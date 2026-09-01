@@ -21,7 +21,10 @@ function GuestButtonFallback() {
       className="pointer-events-none h-full shrink-0 gap-1.5 rounded-full border-2 border-gold bg-gold px-2.5 text-[11px] font-extrabold text-navy-deep min-[400px]:px-3 min-[400px]:text-xs md:px-2.5 lg:px-4"
     >
       <LogIn className="size-4 shrink-0" />
-      <span className="whitespace-nowrap">ورود | ثبت‌نام</span>
+      <span className="whitespace-nowrap">
+        ورود
+        <span className="hidden min-[360px]:inline"> | ثبت‌نام</span>
+      </span>
     </Button>
   );
 }

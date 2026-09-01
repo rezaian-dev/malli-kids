@@ -126,7 +126,7 @@ export function ProfileView() {
   }
 
   return (
-    <div className="container mx-auto w-full max-w-5xl min-w-0 px-4 pb-10 sm:px-5 lg:px-7">
+    <div className="container mx-auto w-full max-w-5xl min-w-0 px-3 pb-10 xs:px-4 sm:px-5 lg:px-7">
       <section className="overflow-hidden rounded-[28px] bg-linear-to-br from-navy via-navy-mid to-navy-light">
         <div className="flex flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:px-8 sm:py-9">
           <div className="relative self-start">

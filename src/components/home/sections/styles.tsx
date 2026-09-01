@@ -52,7 +52,7 @@ export function Styles() {
             return (
               <TabsContent key={name} value={name} className="mt-0">
                 {}
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4">
+                <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] sm:gap-4">
                   {items.map((p, i) => (
                     <div
                       key={p.id}

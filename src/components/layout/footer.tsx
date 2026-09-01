@@ -310,7 +310,7 @@ export function Footer() {
               target="_blank"
               rel="noreferrer"
               aria-label="نماد اعتماد الکترونیکی"
-              className="hover:ring-gold/50 grid size-24 place-items-center rounded-2xl bg-white p-2.5 shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5"
+              className="hover:ring-gold/50 grid size-20 place-items-center rounded-2xl bg-white p-2 shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5 sm:size-24 sm:p-2.5"
             >
               <Image
                 src="/brand/enamad.png"
@@ -325,7 +325,7 @@ export function Footer() {
               target="_blank"
               rel="noreferrer"
               aria-label="نشان ملی ثبت رسانه‌های دیجیتال (ساماندهی)"
-              className="hover:ring-gold/50 grid h-24 w-40 place-items-center rounded-2xl bg-white p-2.5 shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5"
+              className="hover:ring-gold/50 grid h-20 w-32 place-items-center rounded-2xl bg-white p-2 shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5 sm:h-24 sm:w-40 sm:p-2.5"
             >
               <Image
                 src="/brand/samandehi.png"

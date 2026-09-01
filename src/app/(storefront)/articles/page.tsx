@@ -37,7 +37,7 @@ export default function ArticlesPage() {
           )}
         />
       ) : null}
-      <div className="container mx-auto w-full max-w-4xl space-y-4 px-4 sm:px-5 lg:px-7">
+      <div className="container mx-auto w-full max-w-4xl space-y-4 px-3 xs:px-4 sm:px-5 lg:px-7">
         <ArticlesList initial={seed} />
       </div>
     </>

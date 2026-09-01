@@ -45,7 +45,7 @@ export default function CollabPage() {
         path="/collab"
       />
 
-      <div className="container mx-auto w-full max-w-5xl space-y-9 px-4 sm:px-5 lg:px-7">
+      <div className="container mx-auto w-full max-w-5xl space-y-9 px-3 xs:px-4 sm:px-5 lg:px-7">
         <section className="grid gap-4 sm:grid-cols-2">
           {KINDS.map(({ Icon, t, d }) => (
             <div
