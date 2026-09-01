@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, Ruler, Sparkles } from "lucide-react";
+import { Ruler, Sparkles } from "lucide-react";
 import type { Product } from "@/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -95,13 +95,9 @@ export function ProductDetailsTabs({ product }: { product: Product }) {
           </TabsContent>
 
           <TabsContent value="rev" className="mt-0">
-            <p className="text-navy dark:text-ivory mb-4 flex items-center gap-2 text-sm font-black">
-              <BadgeCheck className="text-gold size-4" />
-              نظر خریداران تأییدشده
-            </p>
             <div className="max-w-3xl space-y-4">
-              <ProductReviewForm product={product} />
               <ProductReviews product={product} />
+              <ProductReviewForm product={product} />
             </div>
           </TabsContent>
         </div>
