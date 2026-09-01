@@ -175,7 +175,7 @@ export function ComingSoon() {
                   aria-hidden="true"
                   className="relative mx-auto hidden w-full max-w-65 select-none sm:block"
                 >
-                  <div className="border-gold/30 absolute inset-6 animate-spin rounded-full border border-dashed animation-duration-[24s]" />
+                  <div className="border-gold/30 absolute inset-6 animate-spin rounded-full border border-dashed [animation-duration:24s]" />
                   <div className="border-gold/40 from-navy-mid via-navy-deep to-navy-deep relative aspect-3/4 overflow-hidden rounded-4xl border bg-linear-to-b shadow-[inset_0_0_60px_rgba(193,147,87,.15)]">
                     {/* light sweep */}
                     <div className="via-ivory/10 absolute inset-y-0 inset-s-1/4 w-1/3 -skew-x-12 animate-pulse bg-linear-to-b from-transparent to-transparent" />
@@ -199,10 +199,10 @@ export function ComingSoon() {
                     </div>
                   </div>
                   {/* floating chips */}
-                  <div className="border-gold/40 bg-ivory text-navy-deep absolute -inset-e-8 -top-3 animate-bounce rounded-2xl border px-3 py-2 text-[11px] font-black shadow-xl animation-duration-[2.6s]">
+                  <div className="border-gold/40 bg-ivory text-navy-deep absolute -inset-e-8 -top-3 animate-bounce rounded-2xl border px-3 py-2 text-[11px] font-black shadow-xl [animation-duration:2.6s]">
                     پیراهن مجلسی
                   </div>
-                  <div className="border-gold/40 bg-ivory text-navy-deep absolute -inset-s-10 bottom-8 animate-bounce rounded-2xl border px-3 py-2 text-[11px] font-black shadow-xl [animation-delay:.4s] animation-duration-[3.1s]">
+                  <div className="border-gold/40 bg-ivory text-navy-deep absolute -inset-s-10 bottom-8 animate-bounce rounded-2xl border px-3 py-2 text-[11px] font-black shadow-xl [animation-delay:.4s] [animation-duration:3.1s]">
                     سایز پیشنهادی: ۴
                   </div>
                 </div>

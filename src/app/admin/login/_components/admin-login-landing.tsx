@@ -97,8 +97,8 @@ export function AdminLoginLanding() {
         aria-hidden="true"
         className={cn(
           "pointer-events-none fixed inset-0 z-0",
-          "mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-[0.22] max-[639px]:bg-size-[20rem] max-[639px]:opacity-[0.14]",
-          "dark:opacity-[0.52] dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]",
+          "mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-22 max-[639px]:bg-size-[20rem] max-[639px]:opacity-14",
+          "dark:opacity-52 dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]",
         )}
         style={{
           backgroundImage:

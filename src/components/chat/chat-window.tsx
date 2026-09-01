@@ -285,7 +285,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
       className={cn(
         "fixed z-75 flex overflow-hidden rounded-3xl border shadow-2xl",
         "max-sm:inset-x-3 max-sm:bottom-3 max-sm:h-[calc(100dvh-5.5rem)]",
-        "sm:inset-s-6 sm:bottom-24 sm:h-[min(36rem,calc(100dvh-8rem))] sm:w-[24rem]",
+        "sm:inset-s-6 sm:bottom-24 sm:h-[min(36rem,calc(100dvh-8rem))] sm:w-96",
         "border-gold/40 bg-paper text-navy",
         "dark:border-gold/50 dark:bg-dusk dark:text-ivory",
         "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-300",

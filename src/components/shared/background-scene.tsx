@@ -320,7 +320,7 @@ export function BackgroundScene() {
       <div className="via-gold/10 absolute inset-y-0 inset-e-[18%] hidden w-px bg-linear-to-b from-transparent to-transparent dark:block" />
 
       <svg
-        className="text-gold absolute inset-0 hidden h-full w-full opacity-[0.16] mix-blend-screen dark:block"
+        className="text-gold absolute inset-0 hidden h-full w-full opacity-16 mix-blend-screen dark:block"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>

@@ -23,7 +23,10 @@ export function Hero() {
   return (
     <section
       id="heroSection"
-      className={cn(wash.gold, "pt-8 pb-14 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24")}
+      className={cn(
+        wash.gold,
+        "pt-8 pb-14 sm:pt-12 sm:pb-20 lg:pt-14 lg:pb-24",
+      )}
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden dark:hidden">
         <div
@@ -160,7 +163,7 @@ export function Hero() {
             incl. right after refresh), so the photo stays perfectly static.
             No shimmer sweep over the photo either — the only thing covering
             it now is a static gradient, so nothing can flash across it. */}
-        <div className="group/hero xs:max-w-[20rem] xs:px-4 relative mx-auto w-full max-w-[18rem] px-2 sm:max-w-110 sm:px-0">
+        <div className="group/hero xs:max-w-80 xs:px-4 relative mx-auto w-full max-w-72 px-2 sm:max-w-110 sm:px-0">
           <div
             className={cn(
               "relative aspect-3/4 overflow-hidden rounded-t-[999px] rounded-b-4xl border-8 sm:rounded-b-[40px] sm:border-10",

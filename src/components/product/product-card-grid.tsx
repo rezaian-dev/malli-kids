@@ -248,7 +248,7 @@ export function ProductCardGrid({
                 id={p.id}
                 className={cn(
                   out ? "bg-rose-50 text-[#be123c]" : CART,
-                  "h-9 min-w-0 rounded-[10px] border-0 text-[11px] font-black whitespace-nowrap",
+                  "h-9 min-w-0 rounded-lg border-0 text-[11px] font-black whitespace-nowrap",
                 )}
               >
                 {out ? "اطلاع موجودی" : "افزودن به سبد"}

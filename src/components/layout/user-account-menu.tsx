@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { announceProfileTab, profileTabHref } from "@/lib/profile-nav";
 import { AccountIcon, Face, TRIGGER_SHELL } from "./account-trigger";
 
-const MENU_ITEM = "rounded-[10px] py-2.5 font-bold";
+const MENU_ITEM = "rounded-lg py-2.5 font-bold";
 
 export default function UserAccountMenu({
   user,
@@ -86,7 +86,10 @@ export default function UserAccountMenu({
         </div>
         <div className="flex flex-col px-3 py-2">
           <DropdownMenuItem asChild className={MENU_ITEM}>
-            <Link href={profileTabHref("info")} onClick={() => announceProfileTab("info")}>
+            <Link
+              href={profileTabHref("info")}
+              onClick={() => announceProfileTab("info")}
+            >
               <User className="text-gold size-4" /> حساب کاربری من
             </Link>
           </DropdownMenuItem>

@@ -33,7 +33,7 @@ function Diamond() {
     <span
       aria-hidden="true"
       className={cn(
-        "mx-1 block size-1.5 rotate-45 rounded-[2px]",
+        "mx-1 block size-1.5 rotate-45 rounded-xs",
         "from-gold-soft to-gold-deep bg-gradient-to-br",
         "transition-transform duration-500 group-hover:rotate-[225deg]",
       )}

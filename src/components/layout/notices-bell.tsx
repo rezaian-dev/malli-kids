@@ -51,7 +51,9 @@ export function NoticesBell() {
   const unread = notices.filter((n) => !n.read).length;
 
   function markRead(id: string) {
-    setNotices((list) => list.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    setNotices((list) =>
+      list.map((n) => (n.id === id ? { ...n, read: true } : n)),
+    );
     markNotificationReadAction(id);
   }
 
@@ -168,8 +170,10 @@ export function NoticesBell() {
                       <Icon className="size-4" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="text-navy dark:text-ivory block text-[12px] leading-6 font-bold">
-                        {!n.read ? <span className="sr-only">نخوانده — </span> : null}
+                      <span className="text-navy dark:text-ivory block text-xs leading-6 font-bold">
+                        {!n.read ? (
+                          <span className="sr-only">نخوانده — </span>
+                        ) : null}
                         {n.text}
                       </span>
                       <span className="text-navy/70 dark:text-wheat mt-0.5 block text-[10px] font-bold">

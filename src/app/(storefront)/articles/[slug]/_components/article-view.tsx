@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 
 const BODY_HTML = cn(
   "mt-6 text-[0.95rem] leading-[2.1]",
-  "[&_a]:font-extrabold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-[3px]",
-  "[&_blockquote]:my-4 [&_blockquote]:border-s-[3px] [&_blockquote]:border-gold [&_blockquote]:ps-[0.9rem] [&_blockquote]:font-semibold [&_blockquote]:opacity-80",
+  "[&_a]:font-extrabold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-3",
+  "[&_blockquote]:my-4 [&_blockquote]:border-s-3 [&_blockquote]:border-gold [&_blockquote]:ps-[0.9rem] [&_blockquote]:font-semibold [&_blockquote]:opacity-80",
   "[&_h2]:my-[1.4rem_0.6rem] [&_h2]:text-[1.25rem] [&_h2]:font-black",
   "[&_h3]:my-[1.2rem_0.5rem] [&_h3]:text-[1.05rem] [&_h3]:font-black",
   "[&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-[1.25rem]",

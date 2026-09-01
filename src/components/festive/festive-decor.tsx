@@ -25,7 +25,7 @@ export function FestiveDecor({ tone = "dark" }: { tone?: "dark" | "light" }) {
       <span
         className={cn(
           "pointer-events-none absolute inset-0",
-          light ? "opacity-[0.22]" : "opacity-[0.12]",
+          light ? "opacity-22" : "opacity-12",
         )}
         style={{
           backgroundImage: light
@@ -83,15 +83,15 @@ export function FestiveDecor({ tone = "dark" }: { tone?: "dark" | "light" }) {
         className="pointer-events-none absolute inset-y-0 start-0 hidden w-44 md:block"
       >
         <Gift3D
-          className="animate-floaty absolute start-[-8px] bottom-[-46px] w-[88px] motion-reduce:animate-none"
+          className="animate-floaty absolute -start-2 -bottom-11.5 w-22 motion-reduce:animate-none"
           style={{ animationDelay: ".4s" }}
         />
         <Coin3D
-          className="animate-floaty-slow absolute start-[66px] top-[-12px] w-[42px] motion-reduce:animate-none"
+          className="animate-floaty-slow absolute start-16.5 -top-3 w-10.5 motion-reduce:animate-none"
           style={{ animationDelay: "1.2s" }}
         />
         <Gem3D
-          className="animate-twinkle absolute start-[80px] bottom-[2px] w-[26px] motion-reduce:animate-none"
+          className="animate-twinkle absolute start-20 bottom-0.5 w-6.5 motion-reduce:animate-none"
           style={{ animationDelay: ".8s" }}
         />
       </div>
@@ -100,15 +100,15 @@ export function FestiveDecor({ tone = "dark" }: { tone?: "dark" | "light" }) {
         className="pointer-events-none absolute inset-y-0 end-0 hidden w-44 md:block"
       >
         <Balloon3D
-          className="animate-floaty-slow absolute end-[2px] top-[-14px] h-[88px] motion-reduce:animate-none"
+          className="animate-floaty-slow absolute end-0.5 -top-3.5 h-22 motion-reduce:animate-none"
           style={{ animationDelay: ".9s" }}
         />
         <Coin3D
-          className="animate-floaty absolute end-[58px] top-[-10px] w-[36px] opacity-90 blur-[0.6px] motion-reduce:animate-none"
+          className="animate-floaty absolute end-14.5 -top-2.5 w-9 opacity-90 blur-[0.6px] motion-reduce:animate-none"
           style={{ animationDelay: "1.6s" }}
         />
         <Gem3D
-          className="animate-twinkle absolute end-[54px] bottom-[-6px] w-[30px] motion-reduce:animate-none"
+          className="animate-twinkle absolute end-13.5 -bottom-1.5 w-7.5 motion-reduce:animate-none"
           style={{ animationDelay: ".2s" }}
         />
       </div>

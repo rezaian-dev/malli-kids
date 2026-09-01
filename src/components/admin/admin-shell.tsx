@@ -176,7 +176,7 @@ export function AdminShell({
         </span>
         <span
           className={cn(
-            "animate-admin-orbit absolute -inset-s-40 -bottom-36 block aspect-square w-[min(32vw,24rem)] rounded-full border direction-[reverse] motion-reduce:animate-none max-[639px]:hidden",
+            "animate-admin-orbit absolute -inset-s-40 -bottom-36 block aspect-square w-[min(32vw,24rem)] rounded-full border [animation-direction:reverse] motion-reduce:animate-none max-[639px]:hidden",
             "border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)]",
           )}
         >
@@ -239,7 +239,10 @@ export function AdminShell({
             <span aria-hidden="true" className={SCROLL_EDGE_TOP} />
             <span aria-hidden="true" className={SCROLL_EDGE_BOTTOM} />
             <AdminSidebarScroller className="pt-3 pb-2">
-              <AdminSidebarNav onNavigate={() => setOpen(false)} counts={counts} />
+              <AdminSidebarNav
+                onNavigate={() => setOpen(false)}
+                counts={counts}
+              />
             </AdminSidebarScroller>
           </div>
           <AdminAccountFooter

@@ -16,7 +16,7 @@ export function ClosingQuote() {
       >
         <span
           className={cn(
-            "animate-orn-spin pointer-events-none absolute inset-e-[8%] top-[18%] hidden select-none opacity-[0.07] sm:block",
+            "animate-orn-spin pointer-events-none absolute inset-e-[8%] top-[18%] hidden opacity-7 select-none sm:block",
             "text-gold",
           )}
           aria-hidden
@@ -31,7 +31,7 @@ export function ClosingQuote() {
           <br className="hidden sm:block" /> {studio.closingBold}
         </p>
         <span
-          className="from-transparent via-gold to-transparent mx-auto mt-6 block h-px w-24 bg-linear-to-l"
+          className="via-gold mx-auto mt-6 block h-px w-24 bg-linear-to-l from-transparent to-transparent"
           aria-hidden
         />
         <p className="text-brown-mid dark:text-gold mt-6 text-sm font-black tracking-widest sm:text-base">

@@ -152,7 +152,7 @@ export function AdminTable<T extends { id: string | number }>({
                           key={column.key}
                           role="cell"
                           className={cn(
-                            "flex min-w-0 flex-col justify-center px-3.5 py-2.5 text-[12px] leading-5 font-bold not-last:border-e not-last:border-[rgba(14,42,71,0.075)] 2xl:text-[13px]",
+                            "flex min-w-0 flex-col justify-center px-3.5 py-2.5 text-xs leading-5 font-bold not-last:border-e not-last:border-[rgba(14,42,71,0.075)] 2xl:text-[13px]",
                             "text-navy",
                             "dark:text-ivory dark:not-last:border-[rgba(232,197,122,0.105)]",
                             ALIGN[column.align ?? "start"],
