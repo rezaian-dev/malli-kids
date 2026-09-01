@@ -92,7 +92,8 @@ export function shopHeading(state: ShopState) {
 }
 
 export function parseShopState(params: Record<string, SearchValue>): ShopState {
-  const cat = readText(readAlias(params, "category", "cat"));
+  // `category` is the single, canonical category parameter — one model only.
+  const cat = readText(params.category);
   const season = readText(params.season);
   const sort = readText(params.sort);
   const min = Math.max(0, readNumber(readAlias(params, "minPrice", "min"), 0));

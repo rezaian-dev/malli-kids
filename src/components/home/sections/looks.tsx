@@ -4,19 +4,19 @@ import { wash } from "@/components/home/section-wash";
 
 const LOOKS = [
   {
-    href: "/shop?cat=دخترانه",
+    href: "/shop?category=دخترانه",
     img: "/brand/look-party.jpg",
     k: "GIRLS",
     t: "دخترانه",
   },
   {
-    href: "/shop?cat=پسرانه",
+    href: "/shop?category=پسرانه",
     img: "/brand/cat-boy-portrait.jpg",
     k: "BOYS",
     t: "پسرانه",
   },
   {
-    href: "/shop?cat=سیسمونی",
+    href: "/shop?category=سیسمونی",
     img: "/brand/cat-baby-portrait.jpg",
     k: "BABY",
     t: "سیسمونی",

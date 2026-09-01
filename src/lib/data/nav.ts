@@ -8,7 +8,7 @@ export const NAV_MAIN = [
 
 export const CAT_LINKS = [
   {
-    href: "/shop?cat=دخترانه",
+    href: "/shop?category=دخترانه",
     label: "دخترانه",
     hint: "+۱۴۰ مدل فعال",
     icon: "crown",
@@ -16,7 +16,7 @@ export const CAT_LINKS = [
       "bg-pink-100 text-pink-600 dark:bg-pink-400/12 dark:text-pink-300 dark:ring-1 dark:ring-pink-400/40 dark:shadow-[0_0_18px_-6px_rgba(244,114,182,.55)]",
   },
   {
-    href: "/shop?cat=پسرانه",
+    href: "/shop?category=پسرانه",
     label: "پسرانه",
     hint: "+۱۲۰ مدل فعال",
     icon: "shirt",
@@ -24,7 +24,7 @@ export const CAT_LINKS = [
       "bg-sky-100 text-sky-600 dark:bg-sky-400/12 dark:text-sky-300 dark:ring-1 dark:ring-sky-400/40 dark:shadow-[0_0_18px_-6px_rgba(56,189,248,.5)]",
   },
   {
-    href: "/shop?cat=سیسمونی",
+    href: "/shop?category=سیسمونی",
     label: "سیسمونی",
     hint: "۰ تا ۲۴ ماه",
     icon: "baby",
@@ -32,7 +32,7 @@ export const CAT_LINKS = [
       "bg-emerald-100 text-emerald-600 dark:bg-emerald-400/12 dark:text-emerald-300 dark:ring-1 dark:ring-emerald-400/40 dark:shadow-[0_0_18px_-6px_rgba(52,211,153,.5)]",
   },
   {
-    href: "/shop?cat=لباس مشاغل",
+    href: "/shop?category=لباس مشاغل",
     label: "لباس مشاغل",
     hint: "رویاهای بزرگ",
     icon: "briefcase",
@@ -40,7 +40,7 @@ export const CAT_LINKS = [
       "bg-orange-100 text-orange-600 dark:bg-orange-400/12 dark:text-orange-300 dark:ring-1 dark:ring-orange-400/40 dark:shadow-[0_0_18px_-6px_rgba(251,146,60,.5)]",
   },
   {
-    href: "/shop?cat=اکسسوری",
+    href: "/shop?category=اکسسوری",
     label: "اکسسوری",
     hint: "تکمیلِ استایل",
     icon: "gem",
@@ -48,7 +48,7 @@ export const CAT_LINKS = [
       "bg-violet-100 text-violet-600 dark:bg-violet-400/12 dark:text-violet-300 dark:ring-1 dark:ring-violet-400/40 dark:shadow-[0_0_18px_-6px_rgba(167,139,250,.5)]",
   },
   {
-    href: "/shop?cat=دستدوز",
+    href: "/shop?category=دستدوز",
     label: "دستدوز خاص",
     hint: "تک‌نسخه‌ای",
     icon: "hand-heart",

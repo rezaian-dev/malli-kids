@@ -110,8 +110,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
     const currentQuery =
       currentParams.get("query") ?? currentParams.get("q") ?? "";
     const nextQuery = nextParams.get("query") ?? "";
-    const currentCat =
-      currentParams.get("category") ?? currentParams.get("cat") ?? "";
+    const currentCat = currentParams.get("category") ?? "";
     const nextCat = nextParams.get("category") ?? "";
 
     if (currentQuery !== nextQuery || currentCat !== nextCat) {

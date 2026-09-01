@@ -191,22 +191,22 @@ export function Footer() {
           </p>
           <ul className="m-0 grid list-none gap-0.5 p-0 text-sm">
             <li>
-              <Link href="/shop?cat=دخترانه" className={FOOT_LINK}>
+              <Link href="/shop?category=دخترانه" className={FOOT_LINK}>
                 دخترانه
               </Link>
             </li>
             <li>
-              <Link href="/shop?cat=پسرانه" className={FOOT_LINK}>
+              <Link href="/shop?category=پسرانه" className={FOOT_LINK}>
                 پسرانه
               </Link>
             </li>
             <li>
-              <Link href="/shop?cat=سیسمونی" className={FOOT_LINK}>
+              <Link href="/shop?category=سیسمونی" className={FOOT_LINK}>
                 سیسمونی
               </Link>
             </li>
             <li>
-              <Link href="/shop?cat=دستدوز" className={FOOT_LINK}>
+              <Link href="/shop?category=دستدوز" className={FOOT_LINK}>
                 دستدوز خاص
               </Link>
             </li>

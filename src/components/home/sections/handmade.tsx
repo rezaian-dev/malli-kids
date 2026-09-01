@@ -31,7 +31,7 @@ export function Handmade() {
             </p>
           </div>
           <Link
-            href="/shop?cat=دستدوز"
+            href="/shop?category=دستدوز"
             className="border-gold/40 text-gold-light hover:bg-gold hover:text-navy-deep inline-flex w-max shrink-0 items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold transition-all sm:px-6 sm:py-3"
           >
             مشاهده همه
