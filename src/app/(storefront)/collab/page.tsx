@@ -81,7 +81,7 @@ export default function CollabPage() {
           <p
             className={cn(
               "flex items-center gap-2",
-              "text-gold text-[11px] font-black tracking-[0.22em]",
+              "text-brown-mid dark:text-gold text-[11px] font-black tracking-[0.22em]",
             )}
           >
             <Handshake className="size-4" /> فرم درخواست

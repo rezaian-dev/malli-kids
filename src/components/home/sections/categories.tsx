@@ -140,7 +140,7 @@ export function Categories() {
                 alt={card.t}
                 width={600}
                 height={750}
-                sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(50vw - 2rem), 25vw"
+                sizes="(max-width: 359px) calc(100vw - 2rem), (max-width: 639px) calc(50vw - 1.375rem), (max-width: 1023px) calc(50vw - 2rem), 25vw"
                 className={cn(
                   "absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110",
                   card.top && "object-top",

@@ -176,7 +176,9 @@ export function Hero() {
             </div>
           </div>
         </div>
-        <div className="group/hero animate-hero-in xs:max-w-[20rem] xs:px-4 relative mx-auto w-full max-w-[18rem] px-2 delay-200 sm:max-w-110 sm:px-0">
+        {/* ⚡ No entrance fade here — this frame holds the LCP image, and
+            animating its opacity in delays when Chrome can score the paint. */}
+        <div className="group/hero xs:max-w-[20rem] xs:px-4 relative mx-auto w-full max-w-[18rem] px-2 sm:max-w-110 sm:px-0">
           <div
             className={cn(
               "relative aspect-3/4 overflow-hidden rounded-t-[999px] rounded-b-4xl border-8 sm:rounded-b-[40px] sm:border-10",

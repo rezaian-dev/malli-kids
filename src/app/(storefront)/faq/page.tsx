@@ -26,6 +26,11 @@ export default function FaqPage() {
       />
       <JsonLd data={faqSchema(FAQ)} />
       <div className="xs:px-4 container mx-auto w-full max-w-3xl px-3 sm:px-5 lg:px-7">
+        {/* ♿ Each accordion question renders as an h3 (Radix's Accordion
+            Header default) — without this, the page jumps h1 → h3 and
+            skips a level. Visually hidden since Intro's h1 already reads
+            fine on its own here. */}
+        <h2 className="sr-only">سوالات متداول</h2>
         <Faq />
         <div
           className={cn(

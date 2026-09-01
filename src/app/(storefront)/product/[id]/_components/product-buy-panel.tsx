@@ -182,11 +182,15 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
                 type="button"
                 aria-label={`اسلاید ${i + 1}`}
                 onClick={() => go(i)}
-                className={cn(
-                  "relative h-2 rounded-full before:absolute before:-inset-2.5 before:content-['']",
-                  i === slide ? "bg-gold w-6" : "w-2 bg-white/70",
-                )}
-              />
+                className="flex h-6 min-w-6 items-center justify-center rounded-full"
+              >
+                <span
+                  className={cn(
+                    "h-2 rounded-full",
+                    i === slide ? "bg-gold w-6" : "w-2 bg-white/70",
+                  )}
+                />
+              </button>
             ))}
           </div>
         </div>

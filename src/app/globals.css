@@ -208,12 +208,16 @@
       transform: translateY(-10px);
     }
   }
+  /* 🎞️ transform-only so this loops on the compositor instead of forcing
+     layout every frame (was animating `top`, flagged as a non-composited
+     animation). Travel distance is a fixed rem value, clipped by the
+     parent's `overflow-hidden`, instead of a container-relative %. */
   @keyframes scanline {
     0% {
-      top: -10%;
+      transform: translateY(-4rem);
     }
     100% {
-      top: 110%;
+      transform: translateY(32rem);
     }
   }
   @keyframes heroKen {
@@ -609,9 +613,12 @@ textarea:-internal-autofill-selected {
   display: none;
 }
 [data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill,
-[data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:hover,
-[data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:focus,
-[data-field-shell][data-skin="inset"] :is(input, textarea):-webkit-autofill:active,
+[data-field-shell][data-skin="inset"]
+  :is(input, textarea):-webkit-autofill:hover,
+[data-field-shell][data-skin="inset"]
+  :is(input, textarea):-webkit-autofill:focus,
+[data-field-shell][data-skin="inset"]
+  :is(input, textarea):-webkit-autofill:active,
 [data-field-shell][data-skin="inset"] :is(input, textarea):autofill {
   background-image: none !important;
   box-shadow: none !important;

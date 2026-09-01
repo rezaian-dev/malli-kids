@@ -132,7 +132,7 @@ export function TryOn() {
                   className="aspect-4/3 h-full w-full object-cover"
                 />
                 <div className="from-navy-deep/80 to-navy/20 absolute inset-0 bg-linear-to-t via-transparent" />
-                <div className="animate-scan via-gold/25 absolute inset-x-0 h-16 bg-linear-to-b from-transparent to-transparent" />
+                <div className="animate-scan via-gold/25 absolute inset-x-0 top-0 h-16 bg-linear-to-b from-transparent to-transparent" />
                 <div
                   className={cn(
                     "absolute top-4 right-4 h-8 w-8 rounded-tr-lg border-t-2 border-r-2 sm:top-5 sm:right-5 sm:h-10 sm:w-10",

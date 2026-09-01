@@ -193,7 +193,12 @@ function LightAtelier() {
           y="548"
           fill="#0e2a47"
           fillOpacity="0.14"
-          fontFamily="var(--font-display), 'Playfair Display', Georgia, serif"
+          // 🖋️ Deliberately NOT the Playfair Display webfont: this "ML"
+          // monogram is a 14%-opacity background watermark, indistinguishable
+          // at a glance in any serif — but Chrome still treats it as an LCP
+          // text-node candidate and blocks its paint on the custom font
+          // finishing its download. A system serif paints instantly instead.
+          fontFamily="Georgia, 'Times New Roman', serif"
           fontSize="268"
           fontWeight="700"
         >
@@ -204,7 +209,7 @@ function LightAtelier() {
           y="612"
           fill="#0e2a47"
           fillOpacity="0.14"
-          fontFamily="var(--font-display), 'Playfair Display', Georgia, serif"
+          fontFamily="Georgia, 'Times New Roman', serif"
           fontSize="268"
           fontWeight="700"
         >

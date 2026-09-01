@@ -29,6 +29,10 @@ export default function SizeGuidePage() {
         path="/size-guide"
       />
       <div className="xs:px-4 container mx-auto w-full max-w-4xl px-3 sm:px-5 lg:px-7">
+        {/* ♿ This page has no h2/h3 of its own, so the footer's h3
+            (shared across the site) followed straight after Intro's h1 —
+            a skipped level. */}
+        <h2 className="sr-only">جدول سایزبندی</h2>
         <div
           className={cn(
             "overflow-x-auto rounded-3xl border shadow-sm",

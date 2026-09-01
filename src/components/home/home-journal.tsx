@@ -52,13 +52,17 @@ export function HomeJournal({ children }: { children: ReactNode }) {
               type="button"
               aria-label={`اسلاید ${k + 1}`}
               onClick={() => embla?.scrollTo(k)}
-              className={cn(
-                "relative h-2 rounded-full transition-all before:absolute before:-inset-2.5 before:content-['']",
-                k === i
-                  ? "bg-gold w-7"
-                  : "bg-navy/20 dark:bg-gold-soft/40 hover:bg-navy/35 w-2",
-              )}
-            />
+              className="group flex h-6 min-w-6 items-center justify-center rounded-full"
+            >
+              <span
+                className={cn(
+                  "h-2 rounded-full transition-all",
+                  k === i
+                    ? "bg-gold w-7"
+                    : "bg-navy/20 dark:bg-gold-soft/40 group-hover:bg-navy/35 w-2",
+                )}
+              />
+            </button>
           ))}
         </div>
         <div className="flex gap-2">

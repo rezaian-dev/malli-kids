@@ -71,7 +71,7 @@ export function TryOnComingSoon() {
 
       {/* How it will work */}
       <div className="mt-8">
-        <p className="text-gold mb-4 text-center text-xs font-black tracking-[0.24em]">
+        <p className="text-brown-mid dark:text-gold mb-4 text-center text-xs font-black tracking-[0.24em]">
           این‌طور کار خواهد کرد
         </p>
         <div className="grid gap-3 sm:grid-cols-3">
@@ -93,7 +93,10 @@ export function TryOnComingSoon() {
                 <s.icon className="size-5" />
               </div>
               <p className="text-navy dark:text-ivory mt-3 font-black">
-                <span className="text-gold">{["۱", "۲", "۳"][i]}.</span> {s.t}
+                <span className="text-brown-mid dark:text-gold">
+                  {["۱", "۲", "۳"][i]}.
+                </span>{" "}
+                {s.t}
               </p>
               <p className="text-navy/70 dark:text-wheat mt-1.5 text-xs leading-6">
                 {s.d}

@@ -1,8 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 🧪 Skip dev gzip to avoid noisy upstream listener warnings in Next 16.
-  compress: process.env.NODE_ENV === "production",
+  // 🧪 Off everywhere, not just dev: Next's built-in gzip (the `compression`
+  // package) can leak `drain` listeners on its shared Gzip stream under
+  // concurrent requests to the same route ("MaxListenersExceededWarning...
+  // added to [Gzip]") — we saw it happen in `next start`, not just dev. A
+  // real host (Vercel, a CDN, nginx) already compresses at the edge, so
+  // Next doing it again in-process is redundant on top of being the thing
+  // that leaks.
+  compress: false,
   // 🔐 Allow local and Arena preview origins in dev.
   allowedDevOrigins: ["*.e2b.app", "127.0.0.1", "localhost"],
   images: {

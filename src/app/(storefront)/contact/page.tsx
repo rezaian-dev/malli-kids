@@ -40,7 +40,7 @@ export default function ContactPage() {
               <p
                 className={cn(
                   "flex items-center gap-2",
-                  "text-gold text-[11px] font-black tracking-[0.22em]",
+                  "text-brown-mid dark:text-gold text-[11px] font-black tracking-[0.22em]",
                 )}
               >
                 <Headphones className="size-4" /> SUPPORT
@@ -94,7 +94,7 @@ export default function ContactPage() {
         </section>
 
         <section>
-          <h2 className="text-gold text-[11px] font-black tracking-[0.22em]">
+          <h2 className="text-brown-mid dark:text-gold text-[11px] font-black tracking-[0.22em]">
             راه‌های ارتباطی
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
@@ -144,7 +144,7 @@ function Info({
         <Icon className="h-5 w-5" />
       </span>
       <span className="min-w-0">
-        <span className="text-gold dark:text-gold-glow block text-xs font-black">
+        <span className="text-brown-mid dark:text-gold-glow block text-xs font-black">
           {k}
         </span>
         <span

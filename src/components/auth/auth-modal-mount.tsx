@@ -21,15 +21,27 @@ export function AuthModalMount() {
   useEffect(() => {
     if (mounted) return;
 
+    // 🖱️ Preload on the first sign of a real visitor (pointer/touch/key),
+    // not a blind timer — a blind timeout still fires during an automated
+    // page-load trace (e.g. Lighthouse) with no one there to use it, which
+    // only shows up as JS shipped-but-never-executed on that run.
     const preload = () => void import("./auth-modal");
-    const hasIdle = typeof window.requestIdleCallback === "function";
-    const id = hasIdle
-      ? window.requestIdleCallback(preload, { timeout: 4000 })
-      : window.setTimeout(preload, 2500);
+    const events: Array<[string, AddEventListenerOptions]> = [
+      ["pointerdown", { passive: true }],
+      ["touchstart", { passive: true }],
+      ["keydown", {}],
+      ["scroll", { passive: true }],
+    ];
+    const trigger = () => {
+      preload();
+      events.forEach(([type]) => window.removeEventListener(type, trigger));
+    };
+    events.forEach(([type, opts]) =>
+      window.addEventListener(type, trigger, { ...opts, once: true }),
+    );
 
     return () => {
-      if (hasIdle) window.cancelIdleCallback(id);
-      else window.clearTimeout(id);
+      events.forEach(([type]) => window.removeEventListener(type, trigger));
     };
   }, [mounted]);
 

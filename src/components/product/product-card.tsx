@@ -48,10 +48,12 @@ export function ProductCard({
   };
 
   const sold = (
+    // ♿ brown-mid, not gold: gold-on-white card text is ~2.2:1, below the
+    // 4.5:1 minimum. Dark mode (gold-on-slate) already passes, untouched.
     <p
       className={cn(
         "m-0 mt-1.5 inline-flex flex-row items-center gap-1.5 text-[11px] leading-none font-extrabold",
-        "text-gold",
+        "text-brown-mid",
         "dark:text-gold-soft",
       )}
     >
@@ -257,7 +259,9 @@ export function ProductCard({
             <>
               {price}
               {p.old ? (
-                <span className="text-silver text-[11px] whitespace-nowrap line-through">
+                // ♿ silver-on-white is ~2.5:1 here; brown-mid clears 4.5:1
+                // and dark mode's own silver-on-dark contrast is untouched.
+                <span className="text-brown-mid dark:text-silver text-[11px] whitespace-nowrap line-through">
                   {formatToman(p.old)}
                 </span>
               ) : null}

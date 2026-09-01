@@ -85,8 +85,11 @@ const SORT_TRIGGER_BASE = cn(
   "border-navy/12 bg-sand text-navy",
   "dark:border-gold/40 dark:bg-dusk-mid dark:text-linen",
 );
+// ♿ brown-mid, not gold, in light mode: gold-on-white sidebar text is
+// ~2.2:1, below the 4.5:1 minimum. Dark mode keeps the original gold,
+// which already passes against the dark sidebar background.
 const SECTION_LABEL =
-  "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-gold uppercase";
+  "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-brown-mid dark:text-gold uppercase";
 
 const FILTER_CHIP = cn(
   "h-auto rounded-full border px-3.5 py-1.5 text-xs font-black",

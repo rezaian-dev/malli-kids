@@ -19,57 +19,55 @@ import {
   type ThemePreference,
 } from "@/lib/storefront-state";
 
-type Theme = ThemePreference;
-type Resolved = ResolvedTheme;
+type ThemeContextValue = {
+  theme: ThemePreference;
+  resolvedTheme: ResolvedTheme;
+  setTheme: (theme: ThemePreference) => void;
+};
 
-const Ctx = createContext<{
-  theme: Theme;
-  resolvedTheme: Resolved;
-  setTheme: (t: Theme) => void;
-}>({
+const ThemeContext = createContext<ThemeContextValue>({
   theme: "system",
   resolvedTheme: "light",
   setTheme: () => {},
 });
 
-function readStoredTheme(fallback: Theme) {
-  if (typeof window === "undefined") return fallback;
+function prefersDark() {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
 
+function readStoredTheme(fallback: ThemePreference): ThemePreference {
   try {
-    return readThemePreference(
-      window.localStorage.getItem(THEME_KEY) ?? undefined,
-    );
+    return readThemePreference(localStorage.getItem(THEME_KEY) ?? undefined);
   } catch {
     return fallback;
   }
 }
 
-function systemPrefersDark() {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
-}
-
-function disableThemeTransitions() {
+// 🎞️ Toggling `.dark` cascades every `transition-colors` on the page;
+// suppressing transitions for one frame swaps it instantly instead of a
+// page-wide colour wipe. Not part of Tailwind's dark-mode guide — a small
+// addition on top of its documented class strategy.
+function setDarkClass(dark: boolean) {
   const root = document.documentElement;
+  if (root.classList.contains("dark") === dark) return;
   root.classList.add("theme-transitioning");
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      root.classList.remove("theme-transitioning");
-    });
-  });
+  root.classList.toggle("dark", dark);
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => root.classList.remove("theme-transitioning")),
+  );
 }
 
-function applyTheme(nextTheme: Theme, nextResolved: Resolved) {
-  const root = document.documentElement;
-  const isDark = nextResolved === "dark";
-  if (root.classList.contains("dark") !== isDark) {
-    disableThemeTransitions();
-    root.classList.toggle("dark", isDark);
-  }
-  if (root.style.colorScheme !== nextResolved) {
-    root.style.colorScheme = nextResolved;
-  }
-  writeCookie(THEME_KEY, encodeURIComponent(nextTheme));
-  writeCookie(THEME_RESOLVED_KEY, nextResolved);
+// The one place that applies + persists a theme: DOM class, `color-scheme`,
+// localStorage (read by the inline anti-FOUC script on the *next* load) and
+// the cookie (read by the server on the *next* SSR pass).
+function commit(theme: ThemePreference, resolved: ResolvedTheme) {
+  setDarkClass(resolved === "dark");
+  document.documentElement.style.colorScheme = resolved;
+  try {
+    localStorage.setItem(THEME_KEY, theme);
+  } catch {}
+  writeCookie(THEME_KEY, encodeURIComponent(theme));
+  writeCookie(THEME_RESOLVED_KEY, resolved);
 }
 
 export function ThemeProvider({
@@ -78,62 +76,52 @@ export function ThemeProvider({
   initialResolved = "light",
 }: {
   children: ReactNode;
-  initialTheme?: Theme;
-  initialResolved?: Resolved;
+  initialTheme?: ThemePreference;
+  initialResolved?: ResolvedTheme;
 }) {
-  const [theme, setThemeState] = useState<Theme>(initialTheme);
-  const [resolved, setResolved] = useState<Resolved>(initialResolved);
+  const [theme, setThemeState] = useState(initialTheme);
+  const [resolvedTheme, setResolvedTheme] = useState(initialResolved);
 
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-
-    const sync = (nextTheme: Theme) => {
-      const nextResolved = resolveThemePreference(nextTheme, mq.matches);
-      applyTheme(nextTheme, nextResolved);
-      setThemeState(nextTheme);
-      setResolved(nextResolved);
-    };
-
-    sync(readStoredTheme(initialTheme));
-
-    const onScheme = () => {
-      const current = readStoredTheme(initialTheme);
-      if (current !== "system") return;
-      sync(current);
-    };
-
-    const onStorage = (event: StorageEvent) => {
-      if (event.key !== THEME_KEY) return;
-      sync(readStoredTheme(initialTheme));
-    };
-
-    mq.addEventListener("change", onScheme);
-    window.addEventListener("storage", onStorage);
-    return () => {
-      mq.removeEventListener("change", onScheme);
-      window.removeEventListener("storage", onStorage);
-    };
-  }, [initialTheme]);
-
-  const setTheme = useCallback((nextTheme: Theme) => {
-    try {
-      window.localStorage.setItem(THEME_KEY, nextTheme);
-    } catch {}
-
-    const nextResolved = resolveThemePreference(nextTheme, systemPrefersDark());
-    applyTheme(nextTheme, nextResolved);
-    setThemeState(nextTheme);
-    setResolved(nextResolved);
+  const setTheme = useCallback((next: ThemePreference) => {
+    const resolved = resolveThemePreference(next, prefersDark());
+    commit(next, resolved);
+    setThemeState(next);
+    setResolvedTheme(resolved);
   }, []);
 
+  useEffect(() => {
+    // Reconcile with localStorage once on mount — it's the freshest source
+    // (e.g. changed from another tab while this one was closed) and may
+    // differ from the cookie the server rendered `initialTheme` from.
+    setTheme(readStoredTheme(initialTheme));
+
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const onMediaChange = () => {
+      const stored = readStoredTheme(initialTheme);
+      if (stored === "system") setTheme(stored);
+    };
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === THEME_KEY) setTheme(readStoredTheme(initialTheme));
+    };
+
+    media.addEventListener("change", onMediaChange);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      media.removeEventListener("change", onMediaChange);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, [initialTheme, setTheme]);
+
   const value = useMemo(
-    () => ({ theme, resolvedTheme: resolved, setTheme }),
-    [theme, resolved, setTheme],
+    () => ({ theme, resolvedTheme, setTheme }),
+    [theme, resolvedTheme, setTheme],
   );
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 }
 
 export function useTheme() {
-  return useContext(Ctx);
+  return useContext(ThemeContext);
 }

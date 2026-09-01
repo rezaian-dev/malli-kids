@@ -53,7 +53,10 @@ export function Header() {
               >
                 MALLI
               </span>
-              <span className="font-display text-gold mt-0.5 block text-[10px] tracking-[0.3em]">
+              {/* ♿ brown-mid, not gold: gold-on-cream is ~2.2:1 at this
+                  size, below the 4.5:1 text-contrast minimum. Gold-on-navy
+                  in dark mode already clears it, so only light mode changes. */}
+              <span className="font-display text-brown-mid dark:text-gold mt-0.5 block text-[10px] tracking-[0.3em]">
                 KIDS
               </span>
             </span>

@@ -216,18 +216,24 @@ export function HomeQuotes() {
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex max-w-full flex-wrap items-center gap-1.5">
           {Array.from({ length: n }).map((_, k) => (
+            // ♿ The dot stays visually tiny; the button underneath still
+            // fills a full 24×24 tap target so it passes touch-target rules.
             <button
               key={k}
               type="button"
               aria-label={`نظر ${k + 1}`}
               onClick={() => embla?.scrollTo(k)}
-              className={cn(
-                "relative rounded-full before:absolute before:-inset-2.5 before:content-['']",
-                k === i
-                  ? "bg-gold h-1.5 w-8"
-                  : "bg-navy/20 dark:bg-gold-glow/35 h-1.5 w-2",
-              )}
-            />
+              className="flex h-6 min-w-6 items-center justify-center rounded-full"
+            >
+              <span
+                className={cn(
+                  "rounded-full",
+                  k === i
+                    ? "bg-gold h-1.5 w-8"
+                    : "bg-navy/20 dark:bg-gold-glow/35 h-1.5 w-2",
+                )}
+              />
+            </button>
           ))}
         </div>
         <div className="flex gap-2">

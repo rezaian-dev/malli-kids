@@ -395,16 +395,22 @@ export function SelectField({
       required={required}
       className={className}
     >
-      {({ field, invalid }) => (
+      {({ field, invalid, id, describedBy }) => (
         <Select
           name={field.name}
           value={(field.value as string) ?? ""}
           onValueChange={field.onChange}
           onOpenChange={(o) => !o && field.onBlur()}
         >
+          {/* ♿ Without `id` here, the Field's <label htmlFor> above points
+              at nothing — the trigger renders as a button with no
+              accessible name once a placeholder (not a real value) is
+              showing. */}
           <SelectTrigger
+            id={id}
             aria-required={required || undefined}
             aria-invalid={invalid || undefined}
+            aria-describedby={describedBy}
             className={cn("w-full", INPUT[skin])}
           >
             <SelectValue placeholder={placeholder ?? items[0]?.label} />
