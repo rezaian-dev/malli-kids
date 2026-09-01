@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useLiveProduct } from "./product-live-context";
 import { pdpCard, pdpKicker, pdpWell } from "./product-chrome";
+import { ProductReadMore } from "./product-read-more";
 
 const SIZES = ["۸۰", "۸۶", "۹۲", "۹۸", "۱۰۴", "۱۱۰", "۱۱۶", "۱۲۲"];
 
@@ -265,9 +266,11 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
             {toFaDigits(product.sold)} فروش
           </li>
         </ul>
-        <p className="text-navy/60 dark:text-wheat mt-5 text-sm leading-8 sm:text-[15px]">
-          {product.desc}
-        </p>
+        <ProductReadMore
+          text={product.desc}
+          lines={3}
+          className="text-navy/60 dark:text-wheat mt-5 text-sm leading-8 sm:text-[15px]"
+        />
 
         <div className={`${pdpWell} mt-6 p-4 sm:p-5`}>
           <p className="text-navy/40 dark:text-wheat mb-1 text-[11px] font-bold">

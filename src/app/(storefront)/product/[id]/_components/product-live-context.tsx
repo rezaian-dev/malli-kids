@@ -9,6 +9,7 @@ import {
 } from "react";
 import type { Product } from "@/types";
 import { findCatalogProduct } from "@/lib/admin-sync";
+import { ProductReadMore } from "./product-read-more";
 
 // 🧩 Tiny client bridge for admin-updated product data.
 const LiveCtx = createContext<Product | null>(null);
@@ -47,5 +48,11 @@ export function LiveName({ product }: { product: Product }) {
 }
 
 export function LiveDesc({ product }: { product: Product }) {
-  return <p>{useLiveProduct(product).desc}</p>;
+  return (
+    <ProductReadMore
+      text={useLiveProduct(product).desc}
+      lines={4}
+      className="leading-8"
+    />
+  );
 }
