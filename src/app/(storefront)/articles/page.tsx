@@ -5,11 +5,9 @@ import { buildMetadata, itemListSchema } from "@/lib/seo";
 import { ArticlesList } from "./_components/articles-list";
 
 export const metadata = buildMetadata({
-  title: "مجله ملی‌کیدز",
-  description:
-    "راهنمای سایز، مراقبت از پارچه، استایل‌های فصلی و نکته‌های خرید پوشاک کودک در مجله ملی‌کیدز.",
+  title: "مجله",
+  description: "راهنمای سایز، نگهداری پارچه و استایل کودک.",
   path: "/articles",
-  keywords: ["مجله پوشاک کودک", "راهنمای سایز کودک", "استایل کودک"],
 });
 
 export default function ArticlesPage() {

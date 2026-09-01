@@ -11,35 +11,25 @@ const SOCIALS = [
   "https://eitaa.com/mallikids",
 ] as const;
 
+const TITLE_MAX = 56;
+const DESC_MAX = 155;
+
 export const SEO = {
   siteNameFa: BRAND.nameFa,
   siteNamePlainFa: "ملی کیدز",
   siteNameEn: BRAND.nameEn,
-  defaultTitle: "ملی‌کیدز | فروشگاه اینترنتی پوشاک کودک",
+  defaultTitle: "ملی‌کیدز | پوشاک کودک",
   titleTemplate: "%s | ملی‌کیدز",
-  defaultDescription:
-    "فروشگاه اینترنتی پوشاک کودک ملی‌کیدز با کالکشن‌های دخترانه، پسرانه، سیسمونی و دستدوز، راهنمای سایز دقیق، دوخت ظریف و تجربه خرید امن.",
-  defaultImage: "/opengraph-image",
-  defaultImageAlt:
-    "ملی‌کیدز، بوتیک آنلاین پوشاک کودک با کالکشن‌های خاص و تجربه خرید امن",
+  defaultDescription: "پوشاک کودک با دوخت ظریف؛ دخترانه، پسرانه و سیسمونی.",
+  defaultImage: "/og.jpg",
+  defaultImageAlt: "ملی‌کیدز — دنیای شیکِ کوچولوها",
   locale: "fa_IR",
-  keywords: [
-    "ملی کیدز",
-    "ملی‌کیدز",
-    "پوشاک کودک",
-    "لباس بچه",
-    "بوتیک کودک",
-    "فروشگاه لباس کودک",
-    "راهنمای سایز کودک",
-    "پرو مجازی لباس کودک",
-    "لباس دخترانه کودک",
-    "لباس پسرانه کودک",
-    "سیسمونی",
-    "دستدوز کودک",
-  ],
+  keywords: ["ملی‌کیدز", "پوشاک کودک", "لباس بچه", "سیسمونی"],
   themeColorLight: "#fcf7ef",
   themeColorDark: "#061728",
   searchParam: "query",
+  ogWidth: 1200,
+  ogHeight: 630,
 } as const;
 
 type PageType = "website" | "article";
@@ -60,6 +50,7 @@ type PageMetadataInput = {
   keywords?: string[];
   noIndex?: boolean;
   type?: PageType;
+  absoluteTitle?: boolean;
 };
 
 type PageSchemaInput = {
@@ -113,14 +104,19 @@ export function buildOgImage(
   image: string = SEO.defaultImage,
   alt: string = SEO.defaultImageAlt,
 ) {
+  const isDefault = image === SEO.defaultImage;
   return {
     url: image,
     alt,
-    type: image.endsWith(".jpg") || image.endsWith(".jpeg")
-      ? "image/jpeg"
-      : image.endsWith(".webp")
-        ? "image/webp"
-        : "image/png",
+    type:
+      image.endsWith(".jpg") || image.endsWith(".jpeg")
+        ? "image/jpeg"
+        : image.endsWith(".webp")
+          ? "image/webp"
+          : "image/png",
+    ...(isDefault
+      ? { width: SEO.ogWidth, height: SEO.ogHeight }
+      : {}),
   } as const;
 }
 
@@ -155,7 +151,7 @@ export function buildRobots(noIndex = false): Metadata["robots"] {
   };
 }
 
-// 🧩 Reuse one metadata shape across the public routes.
+// 🧩 One short metadata shape for public routes.
 export function buildMetadata({
   title,
   description = SEO.defaultDescription,
@@ -165,33 +161,34 @@ export function buildMetadata({
   keywords = [],
   noIndex = false,
   type = "website",
+  absoluteTitle = false,
 }: PageMetadataInput = {}): Metadata {
-  const fullTitle = toFullTitle(title);
-  const fullImageAlt = imageAlt ?? fullTitle;
+  const desc = clipMeta(description, DESC_MAX);
+  const ogTitle = clipMeta(
+    absoluteTitle || !title ? (title ?? SEO.defaultTitle) : toFullTitle(title),
+    TITLE_MAX,
+  );
+  const fullImageAlt = imageAlt ?? ogTitle;
 
   return {
-    title,
-    description,
-    keywords: dedupe([...SEO.keywords, ...keywords]),
+    title: toMetadataTitle(title, absoluteTitle),
+    description: desc,
+    keywords: keywords.length ? dedupe(keywords) : undefined,
     alternates: { canonical: path },
     robots: buildRobots(noIndex),
-    category: "shopping",
-    creator: SEO.siteNamePlainFa,
-    publisher: SEO.siteNamePlainFa,
-    authors: [{ name: SEO.siteNamePlainFa, url: absoluteUrl("/") }],
     openGraph: {
-      title: fullTitle,
-      description,
+      title: ogTitle,
+      description: desc,
       url: path,
-      siteName: SEO.siteNamePlainFa,
+      siteName: SEO.siteNameFa,
       locale: SEO.locale,
       type,
       images: [buildOgImage(image, fullImageAlt)],
     },
     twitter: {
       card: "summary_large_image",
-      title: fullTitle,
-      description,
+      title: ogTitle,
+      description: desc,
       images: [image],
     },
   };
@@ -203,14 +200,14 @@ export function getRootMetadata(): Metadata {
     metadataBase: new URL(getSiteUrl()),
     title: { default: SEO.defaultTitle, template: SEO.titleTemplate },
     description: SEO.defaultDescription,
-    applicationName: SEO.siteNamePlainFa,
+    applicationName: SEO.siteNameFa,
     alternates: { canonical: "/" },
     robots: buildRobots(false),
     referrer: "origin-when-cross-origin",
     category: "shopping",
-    creator: SEO.siteNamePlainFa,
-    publisher: SEO.siteNamePlainFa,
-    authors: [{ name: SEO.siteNamePlainFa, url: absoluteUrl("/") }],
+    creator: SEO.siteNameFa,
+    publisher: SEO.siteNameFa,
+    authors: [{ name: SEO.siteNameFa, url: absoluteUrl("/") }],
     keywords: [...SEO.keywords],
     manifest: "/manifest.webmanifest",
     icons: {
@@ -222,7 +219,7 @@ export function getRootMetadata(): Metadata {
       title: SEO.defaultTitle,
       description: SEO.defaultDescription,
       url: "/",
-      siteName: SEO.siteNamePlainFa,
+      siteName: SEO.siteNameFa,
       locale: SEO.locale,
       type: "website",
       images: [buildOgImage()],
@@ -236,7 +233,7 @@ export function getRootMetadata(): Metadata {
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
-      title: SEO.siteNamePlainFa,
+      title: SEO.siteNameFa,
     },
     formatDetection: {
       telephone: false,
@@ -251,8 +248,8 @@ export function organizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "ClothingStore",
-    name: SEO.siteNamePlainFa,
-    alternateName: [SEO.siteNameFa, SEO.siteNameEn],
+    name: SEO.siteNameFa,
+    alternateName: [SEO.siteNamePlainFa, SEO.siteNameEn],
     description: SEO.defaultDescription,
     url: absoluteUrl("/"),
     logo: absoluteUrl("/brand/logo.png"),
@@ -273,7 +270,7 @@ export function websiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: SEO.siteNamePlainFa,
+    name: SEO.siteNameFa,
     alternateName: SEO.siteNameEn,
     url: absoluteUrl("/"),
     inLanguage: "fa-IR",
@@ -302,7 +299,7 @@ export function pageSchema({
     inLanguage: "fa-IR",
     isPartOf: {
       "@type": "WebSite",
-      name: SEO.siteNamePlainFa,
+      name: SEO.siteNameFa,
       url: absoluteUrl("/"),
     },
   };
@@ -364,7 +361,7 @@ export function contactPageSchema() {
     url: absoluteUrl("/contact"),
     mainEntity: {
       "@type": "ClothingStore",
-      name: SEO.siteNamePlainFa,
+      name: SEO.siteNameFa,
       url: absoluteUrl("/"),
       telephone: BRAND.phone,
       address: {
@@ -379,17 +376,20 @@ export function contactPageSchema() {
 
 // 🛍️ Product schema powers rich product snippets.
 export function productSchema(product: Product) {
+  const url = absoluteUrl(pdpHref(product.id));
+
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     description: product.desc,
     image: [absoluteUrl(product.img)],
+    url,
     sku: `MK-${product.id}`,
     category: product.cat,
     brand: {
       "@type": "Brand",
-      name: SEO.siteNamePlainFa,
+      name: SEO.siteNameFa,
     },
     aggregateRating: {
       "@type": "AggregateRating",
@@ -400,7 +400,7 @@ export function productSchema(product: Product) {
     },
     offers: {
       "@type": "Offer",
-      url: absoluteUrl(pdpHref(product.id)),
+      url,
       priceCurrency: "IRR",
       price: String(product.price * 10),
       availability: product.stock
@@ -409,7 +409,7 @@ export function productSchema(product: Product) {
       itemCondition: "https://schema.org/NewCondition",
       seller: {
         "@type": "Organization",
-        name: SEO.siteNamePlainFa,
+        name: SEO.siteNameFa,
       },
     },
   };
@@ -431,11 +431,11 @@ export function articleSchema(
     inLanguage: "fa-IR",
     author: {
       "@type": "Organization",
-      name: SEO.siteNamePlainFa,
+      name: SEO.siteNameFa,
     },
     publisher: {
       "@type": "Organization",
-      name: SEO.siteNamePlainFa,
+      name: SEO.siteNameFa,
       logo: {
         "@type": "ImageObject",
         url: absoluteUrl("/brand/logo.png"),
@@ -444,12 +444,38 @@ export function articleSchema(
   };
 }
 
+function containsBrand(title: string) {
+  return (
+    title.includes(SEO.siteNameFa) || title.includes(SEO.siteNamePlainFa)
+  );
+}
+
+function toMetadataTitle(
+  title: string | undefined,
+  absoluteTitle: boolean,
+): Metadata["title"] {
+  if (absoluteTitle) return { absolute: title || SEO.defaultTitle };
+  if (!title) return undefined;
+  if (containsBrand(title)) return { absolute: title };
+  return title;
+}
+
 function toFullTitle(title?: string) {
   if (!title) return SEO.defaultTitle;
-  if (title.includes(SEO.siteNamePlainFa) || title.includes(SEO.siteNameFa)) {
-    return title;
-  }
-  return `${title} | ${SEO.siteNamePlainFa}`;
+  if (containsBrand(title)) return title;
+  return `${title} | ${SEO.siteNameFa}`;
+}
+
+function clipMeta(value: string, max: number) {
+  const text = value.replace(/\s+/g, " ").trim();
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  const space = cut.lastIndexOf(" ");
+  const base = (space > 24 ? cut.slice(0, space) : cut).replace(
+    /[،,؛.\s]+$/u,
+    "",
+  );
+  return `${base}…`;
 }
 
 function normalizeSiteUrl(value?: string) {

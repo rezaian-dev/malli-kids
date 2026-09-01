@@ -45,11 +45,11 @@ export async function generateMetadata({
 
   return buildMetadata({
     title: product.name,
-    description: `${product.desc} خرید آنلاین از ملی‌کیدز با راهنمای سایز و ارسال سریع.`,
+    description: product.desc,
     path: pdpHref(product.id),
     image: product.img,
     imageAlt: product.name,
-    keywords: [product.name, product.cat, product.season ?? ""],
+    keywords: [product.cat, product.season ?? ""].filter(Boolean),
   });
 }
 

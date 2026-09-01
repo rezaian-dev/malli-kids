@@ -4,11 +4,9 @@ import { buildMetadata } from "@/lib/seo";
 import { CollabForm } from "./_components/collab-form";
 
 export const metadata = buildMetadata({
-  title: "همکاری با ملی‌کیدز",
-  description:
-    "فرصت‌های همکاری با ملی‌کیدز برای خرید عمده، دوخت و تولید، تولید محتوا، عکاسی و مدلینگ کودک.",
+  title: "همکاری با ما",
+  description: "خرید عمده، دوخت، محتوا و مدلینگ کودک.",
   path: "/collab",
-  keywords: ["همکاری با ملی‌کیدز", "خرید عمده لباس کودک", "تولید محتوا کودک"],
 });
 
 const KINDS = [

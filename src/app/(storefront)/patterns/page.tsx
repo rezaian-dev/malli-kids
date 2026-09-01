@@ -5,10 +5,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "الگوهای آماده دوخت",
-  description:
-    "الگوهای آماده دوخت کودک با سایزبندی دقیق، راهنمای برش و مسیر ساده‌تر برای دوخت خانگی.",
+  description: "الگوی لباس کودک با سایزبندی و راهنمای برش.",
   path: "/patterns",
-  keywords: ["الگوی لباس کودک", "الگوی آماده دوخت", "خیاطی کودک"],
 });
 
 export default function PatternsPage() {

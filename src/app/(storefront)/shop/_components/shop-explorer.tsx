@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowDownNarrowWide,
@@ -23,7 +24,7 @@ import { formatToman, toFaDigits } from "@/lib/format";
 import { ProductCard } from "@/components/product";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toShopHref, type ShopState } from "../_lib/shop-state";
+import { shopHeading, toShopHref, type ShopState } from "../_lib/shop-state";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
@@ -297,6 +298,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
             setFilterOpen(false);
           }}
           className="flex flex-wrap justify-start gap-1.5"
+          aria-label="دسته‌بندی"
         >
           {CATS.map((c) => (
             <ToggleGroupItem key={c} value={c} className={FILTER_CHIP}>
@@ -316,6 +318,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
           value={state.season}
           onValueChange={(sn) => sn && push({ season: sn, page: 1 })}
           className="flex flex-wrap justify-start gap-1.5"
+          aria-label="فصل"
         >
           {["همه", ...SEASONS].map((sn) => (
             <ToggleGroupItem key={sn} value={sn} className={FILTER_CHIP}>
@@ -457,19 +460,53 @@ export function ShopExplorer({ state }: { state: ShopState }) {
 
   return (
     <div className="shop-page mx-auto w-full max-w-7xl px-3 xs:px-4 sm:px-5 lg:px-7">
-      <p className="text-navy/45 dark:text-wheat mb-5 text-xs font-bold">
-        خانه <span className="text-gold mx-1.5">/</span> فروشگاه
-        {state.cat !== "همه" ? (
-          <>
-            {" "}
-            <span className="text-gold mx-1.5">/</span> {state.cat}
-          </>
-        ) : null}
-      </p>
+      <nav
+        aria-label="مسیر صفحه"
+        className="text-navy/45 dark:text-wheat mb-5 text-xs font-bold"
+      >
+        <ol className="m-0 flex list-none flex-wrap items-center gap-0 p-0">
+          <li>
+            <Link href="/" prefetch={false} className="hover:text-gold py-1">
+              خانه
+            </Link>
+          </li>
+          <li aria-hidden className="text-gold mx-1.5">
+            /
+          </li>
+          <li>
+            {state.cat !== "همه" || state.season !== "همه" ? (
+              <Link href="/shop" prefetch={false} className="hover:text-gold py-1">
+                فروشگاه
+              </Link>
+            ) : (
+              <span>فروشگاه</span>
+            )}
+          </li>
+          {state.cat !== "همه" ? (
+            <>
+              <li aria-hidden className="text-gold mx-1.5">
+                /
+              </li>
+              <li>{state.cat}</li>
+            </>
+          ) : null}
+          {state.season !== "همه" ? (
+            <>
+              <li aria-hidden className="text-gold mx-1.5">
+                /
+              </li>
+              <li>{state.season}</li>
+            </>
+          ) : null}
+        </ol>
+      </nav>
 
       <div className="grid items-start gap-5 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-7">
         {/* Desktop sidebar filter */}
-        <aside className="border-navy/10 bg-sand-deep/60 dark:border-gold/40 dark:bg-filter-night sticky top-30 hidden overflow-hidden rounded-[28px] border shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col">
+        <aside
+          aria-label="فیلتر محصولات"
+          className="border-navy/10 bg-sand-deep/60 dark:border-gold/40 dark:bg-filter-night sticky top-30 hidden overflow-hidden rounded-[28px] border shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col"
+        >
           {filterHead}
           {filterBody}
         </aside>
@@ -480,7 +517,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
           <div className="border-navy/6 dark:border-gold/15 mb-4 flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
             <div>
               <h1 className="text-navy dark:text-ivory text-lg font-black sm:text-xl">
-                کالکشن پوشاک کودک
+                {shopHeading(state)}
               </h1>
               <p className="text-navy/45 dark:text-wheat mt-1 text-xs">
                 {toFaDigits(filtered.length)} مدل در کالکشن
@@ -550,6 +587,7 @@ export function ShopExplorer({ state }: { state: ShopState }) {
                 type="single"
                 value={state.view}
                 onValueChange={(v) => v && push({ view: v as "grid" | "list" })}
+                aria-label="نحوه نمایش"
                 className="border-navy/10 bg-sand dark:border-gold/30 dark:bg-dusk-mid inline-flex rounded-full border p-0.5"
               >
                 {(

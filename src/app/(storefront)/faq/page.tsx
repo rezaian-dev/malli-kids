@@ -8,14 +8,8 @@ import { buildMetadata, faqSchema } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "سوال‌های پرتکرار",
-  description:
-    "پاسخ سوال‌های پرتکرار درباره سایز، ارسال، بازگشت کالا، پشتیبانی و پرو مجازی در ملی‌کیدز.",
+  description: "سایز، ارسال، بازگشت و پشتیبانی ملی‌کیدز.",
   path: "/faq",
-  keywords: [
-    "سوالات متداول پوشاک کودک",
-    "راهنمای ارسال کودک",
-    "پشتیبانی ملی‌کیدز",
-  ],
 });
 
 export default function FaqPage() {

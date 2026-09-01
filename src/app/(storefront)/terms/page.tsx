@@ -3,10 +3,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "قوانین و مقررات",
-  description:
-    "شرایط خرید، قیمت‌گذاری، مالکیت محتوا و استفاده از خدمات فروشگاه ملی‌کیدز.",
+  description: "شرایط خرید، قیمت و استفاده از فروشگاه.",
   path: "/terms",
-  keywords: ["قوانین فروشگاه", "مقررات خرید", "شرایط استفاده ملی‌کیدز"],
 });
 
 export default function TermsPage() {

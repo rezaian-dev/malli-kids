@@ -5,10 +5,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "ارسال و بازگشت",
-  description:
-    "شرایط ارسال سریع، هزینه پست، بازگشت کالا و ضمانت پارچه در فروشگاه ملی‌کیدز.",
+  description: "ارسال ۲ تا ۴ روزه، بازگشت ۷ روزه و ضمانت پارچه.",
   path: "/shipping",
-  keywords: ["ارسال لباس کودک", "بازگشت کالا کودک", "ضمانت پارچه کودک"],
 });
 
 export default function ShippingPage() {

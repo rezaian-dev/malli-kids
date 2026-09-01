@@ -43,7 +43,7 @@ export async function generateMetadata({
     image: article.cover,
     imageAlt: article.title,
     type: "article",
-    keywords: [article.tag, article.title],
+    keywords: article.tag ? [article.tag] : undefined,
   });
 }
 

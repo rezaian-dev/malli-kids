@@ -5,10 +5,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "آموزش‌های آتلیه",
-  description:
-    "آموزش‌های کوتاه دوخت کودک، نگهداری پارچه و نکته‌های کاربردی آتلیه ملی‌کیدز.",
+  description: "درس‌های کوتاه دوخت و نگهداری پارچه.",
   path: "/tutorials",
-  keywords: ["آموزش دوخت کودک", "آموزش خیاطی لباس بچه", "آموزش آتلیه"],
 });
 
 export default function TutorialsPage() {

@@ -4,14 +4,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "حریم خصوصی",
-  description:
-    "سیاست حریم خصوصی ملی کیدز درباره نگهداری داده‌های سفارش، حساب کاربری و پشتیبانی فروشگاه.",
+  description: "چگونه داده‌های سفارش و حساب شما نگهداری می‌شود.",
   path: "/privacy",
-  keywords: [
-    "حریم خصوصی فروشگاه",
-    "داده‌های حساب کاربری",
-    "سیاست داده ملی‌کیدز",
-  ],
 });
 
 const ITEMS = [

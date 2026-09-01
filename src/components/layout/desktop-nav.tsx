@@ -33,6 +33,7 @@ export function DesktopNav() {
       skipDelayDuration={120}
       value={value}
       onValueChange={setValue}
+      aria-label="منوی اصلی"
       className="mx-auto hidden max-w-none min-w-0 flex-1 justify-center md:flex"
     >
       <NavigationMenuList className="gap-0.5 lg:gap-1">

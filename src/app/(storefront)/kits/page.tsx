@@ -5,10 +5,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "کیت‌های آماده دوخت",
-  description:
-    "کیت‌های آماده دوخت ملی‌کیدز با الگو، پارچه و متعلقات کامل برای مادران و آتلیه‌های خانگی.",
+  description: "الگو، پارچه و متعلقات کامل در یک جعبه.",
   path: "/kits",
-  keywords: ["کیت دوخت کودک", "کیت خیاطی کودک", "الگو و پارچه آماده"],
 });
 
 export default function KitsPage() {

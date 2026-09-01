@@ -82,13 +82,15 @@ export function ProductCard({
               <p className="text-navy/45 dark:text-khaki m-0 text-[11px]">
                 {p.cat}
               </p>
-              <Link
-                href={href}
-                prefetch={false}
-                className="text-navy dark:text-ivory block text-sm leading-snug font-black no-underline"
-              >
-                {p.name}
-              </Link>
+              <h3 className="text-navy dark:text-ivory m-0 text-sm leading-snug font-black">
+                <Link
+                  href={href}
+                  prefetch={false}
+                  className="text-inherit no-underline"
+                >
+                  {p.name}
+                </Link>
+              </h3>
             </div>
           </div>
           {sold}

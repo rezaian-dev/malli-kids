@@ -14,10 +14,8 @@ import { cn } from "@/lib/utils";
 
 export const metadata = buildMetadata({
   title: "راهنمای سایز",
-  description:
-    "جدول سایز پوشاک کودک ملی کیدز بر اساس قد و سن، همراه با نکته‌های انتخاب سایز دقیق‌تر.",
+  description: "جدول سایز پوشاک کودک بر اساس قد و سن.",
   path: "/size-guide",
-  keywords: ["راهنمای سایز کودک", "جدول سایز لباس بچه", "سایز پوشاک کودک"],
 });
 
 export default function SizeGuidePage() {

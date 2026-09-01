@@ -41,6 +41,56 @@ function readNumber(value: SearchValue, fallback: number) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+export function defaultShopState(): ShopState {
+  return {
+    cat: "همه",
+    season: "همه",
+    page: 1,
+    sort: "new",
+    view: "grid",
+    stock: false,
+    disc: false,
+    hot: false,
+    onlyNew: false,
+    q: "",
+    min: 0,
+    max: PRICE_CAP,
+  };
+}
+
+export function isShopIndexable(state: ShopState) {
+  return (
+    !state.q &&
+    state.page <= 1 &&
+    state.sort === "new" &&
+    state.view === "grid" &&
+    !state.stock &&
+    !state.disc &&
+    !state.hot &&
+    !state.onlyNew &&
+    state.min === 0 &&
+    state.max === PRICE_CAP
+  );
+}
+
+export function shopCanonicalHref(state: ShopState) {
+  if (isShopIndexable(state)) return toShopHref(state);
+  return toShopHref({
+    ...defaultShopState(),
+    cat: state.cat,
+    season: state.season,
+  });
+}
+
+export function shopHeading(state: ShopState) {
+  if (state.q) return `جستجو برای «${state.q}»`;
+  const parts = [
+    state.cat !== "همه" ? state.cat : "",
+    state.season !== "همه" ? state.season : "",
+  ].filter(Boolean);
+  return parts.length ? parts.join(" · ") : "کالکشن پوشاک کودک";
+}
+
 export function parseShopState(params: Record<string, SearchValue>): ShopState {
   const cat = readText(readAlias(params, "category", "cat"));
   const season = readText(params.season);

@@ -8,7 +8,7 @@ import { HeaderNavMount } from "./header-nav-mount";
 // 🧭 Keep the storefront shell visually stable on first paint. ✨
 export function Header() {
   return (
-    <header dir="rtl" className="fixed inset-x-0 top-0 z-70">
+    <header dir="rtl" aria-label="سربرگ" className="fixed inset-x-0 top-0 z-70">
       <FestiveBanner />
 
       <div
@@ -21,7 +21,12 @@ export function Header() {
         <div
           className={cn(shell, "flex h-14 items-center gap-1 sm:h-16 sm:gap-2")}
         >
-          <Link href="/" prefetch={false} className="flex shrink-0 items-center gap-1.5">
+          <Link
+            href="/"
+            prefetch={false}
+            aria-label="ملی‌کیدز"
+            className="flex shrink-0 items-center gap-1.5"
+          >
             <Image
               src="/brand/logo.png"
               alt="لوگوی ملی‌کیدز"

@@ -120,7 +120,7 @@ export function Footer() {
                 <Icon className="size-5" />
               </span>
               <div className="min-w-0">
-                <h4 className="m-0 text-sm font-bold text-white">{t}</h4>
+                <p className="m-0 text-sm font-bold text-white">{t}</p>
                 <p className="text-taupe mt-1 text-xs leading-snug">{d}</p>
               </div>
             </div>
@@ -185,10 +185,10 @@ export function Footer() {
             ))}
           </div>
         </div>
-        <div>
-          <h5 className="mb-4 text-[15px] font-black text-white">
+        <nav aria-label="دسته‌بندی‌ها">
+          <p className="mb-4 text-[15px] font-black text-white">
             دسته‌بندی‌ها
-          </h5>
+          </p>
           <ul className="m-0 grid list-none gap-0.5 p-0 text-sm">
             <li>
               <Link href="/shop?cat=دخترانه" className={FOOT_LINK}>
@@ -216,11 +216,11 @@ export function Footer() {
               </Link>
             </li>
           </ul>
-        </div>
-        <div>
-          <h5 className="mb-4 text-[15px] font-black text-white">
+        </nav>
+        <nav aria-label="دسترسی سریع">
+          <p className="mb-4 text-[15px] font-black text-white">
             دسترسی سریع
-          </h5>
+          </p>
           <ul className="m-0 grid list-none gap-0.5 p-0 text-sm">
             <li>
               <Link href="/tryon" className={FOOT_LINK}>
@@ -253,9 +253,9 @@ export function Footer() {
               </Link>
             </li>
           </ul>
-        </div>
+        </nav>
         <div>
-          <h5 className="mb-4 text-[15px] font-black text-white">تماس با ما</h5>
+          <p className="mb-4 text-[15px] font-black text-white">تماس با ما</p>
           <ul className="text-taupe m-0 grid list-none gap-3.5 p-0 text-sm">
             <li className="flex items-start gap-2.5">
               <MapPin className="text-gold-light mt-0.5 size-4 shrink-0" />

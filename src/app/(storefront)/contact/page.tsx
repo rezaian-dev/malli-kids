@@ -10,10 +10,8 @@ import { ContactMap } from "./_components/contact-map";
 
 export const metadata = buildMetadata({
   title: "تماس با ما",
-  description:
-    "راه‌های ارتباط با ملی‌کیدز، آدرس گالری، ساعت پاسخ‌گویی و پشتیبانی سفارش‌ها از طریق سایت.",
+  description: "آدرس گالری، تلفن و پشتیبانی سفارش‌ها.",
   path: "/contact",
-  keywords: ["تماس با ملی‌کیدز", "آدرس گالری ملی‌کیدز", "پشتیبانی سفارش کودک"],
 });
 
 export default function ContactPage() {

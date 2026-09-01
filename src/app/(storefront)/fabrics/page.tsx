@@ -5,10 +5,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "پارچه‌های کالکشن",
-  description:
-    "پارچه‌های همان کالکشن ملی‌کیدز با راهنمای شست‌وشو، جنس دقیق و انتخاب مناسب برای دوخت خانگی.",
+  description: "پارچه‌های کالکشن با راهنمای شست‌وشو.",
   path: "/fabrics",
-  keywords: ["پارچه لباس کودک", "پارچه ارگانیک کودک", "پارچه کالکشن ملی‌کیدز"],
 });
 
 export default function FabricsPage() {

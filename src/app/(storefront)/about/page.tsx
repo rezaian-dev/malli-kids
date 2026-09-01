@@ -7,10 +7,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "درباره ما",
-  description:
-    "قصه آتلیه ملی کیدز؛ بوتیک تخصصی پوشاک کودک با دوخت ایرانی، پارچه‌های امن و تجربه خرید دقیق‌تر.",
+  description: "آتلیه پوشاک کودک با دوخت ایرانی و پارچه‌های امن.",
   path: "/about",
-  keywords: ["درباره ملی کیدز", "آتلیه پوشاک کودک", "بوتیک کودک"],
 });
 
 const ICONS = [Heart, Scissors, ScanFace, ShieldCheck];

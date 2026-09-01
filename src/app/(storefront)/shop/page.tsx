@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { JsonLd } from "@/components/shared/json-ld";
-import { PRICE_CAP } from "@/lib/constants";
 import { CATALOG, pdpHref } from "@/lib/data/products";
 import {
   breadcrumbSchema,
@@ -10,7 +9,15 @@ import {
   pageSchema,
 } from "@/lib/seo";
 import { ShopExplorer } from "./_components/shop-explorer";
-import { parseShopState, type ShopPageSearchParams } from "./_lib/shop-state";
+import {
+  defaultShopState,
+  isShopIndexable,
+  parseShopState,
+  shopCanonicalHref,
+  shopHeading,
+  toShopHref,
+  type ShopPageSearchParams,
+} from "./_lib/shop-state";
 
 export async function generateMetadata({
   searchParams,
@@ -18,38 +25,23 @@ export async function generateMetadata({
   searchParams: ShopPageSearchParams;
 }): Promise<Metadata> {
   const state = parseShopState(await searchParams);
-  const filters = [
-    state.cat !== "همه" ? state.cat : "",
-    state.season !== "همه" ? state.season : "",
-    state.q,
-  ].filter(Boolean);
-  const hasFilters =
-    state.cat !== "همه" ||
-    state.season !== "همه" ||
-    state.page > 1 ||
-    state.sort !== "new" ||
-    state.view !== "grid" ||
-    state.stock ||
-    state.disc ||
-    state.hot ||
-    state.onlyNew ||
-    !!state.q ||
-    state.min > 0 ||
-    state.max !== PRICE_CAP;
+  const heading = shopHeading(state);
+  const indexable = isShopIndexable(state);
+  const keywords = [
+    ...(state.cat !== "همه" ? [state.cat] : []),
+    ...(state.season !== "همه" ? [state.season] : []),
+  ];
 
   return buildMetadata({
-    title: filters.length ? `فروشگاه ${filters.join(" · ")}` : "فروشگاه پوشاک کودک",
-    description:
-      "کالکشن کامل پوشاک کودک ملی‌کیدز با فیلتر دسته، فصل، قیمت، موجودی و جست‌وجوی سریع.",
-    path: "/shop",
-    noIndex: hasFilters,
-    keywords: [
-      "فروشگاه پوشاک کودک",
-      "خرید لباس بچه",
-      "کالکشن کودک",
-      "فروشگاه دخترانه کودک",
-      "فروشگاه پسرانه کودک",
-    ],
+    title: heading === "کالکشن پوشاک کودک" ? "فروشگاه" : heading,
+    description: state.q
+      ? `نتایج «${state.q}» در فروشگاه ملی‌کیدز.`
+      : heading === "کالکشن پوشاک کودک"
+        ? "پوشاک کودک؛ دخترانه، پسرانه و سیسمونی."
+        : `کالکشن ${heading} در ملی‌کیدز.`,
+    path: shopCanonicalHref(state),
+    noIndex: !indexable,
+    keywords,
   });
 }
 
@@ -59,6 +51,29 @@ export default async function ShopPage({
   searchParams: ShopPageSearchParams;
 }) {
   const state = parseShopState(await searchParams);
+  const heading = shopHeading(state);
+  const canonical = shopCanonicalHref(state);
+  const crumbs = [
+    { name: "خانه", path: "/" },
+    { name: "فروشگاه", path: "/shop" },
+  ];
+  if (state.cat !== "همه") {
+    crumbs.push({
+      name: state.cat,
+      path: toShopHref({ ...defaultShopState(), cat: state.cat }),
+    });
+  }
+  if (state.season !== "همه") {
+    crumbs.push({
+      name: state.season,
+      path: toShopHref({
+        ...defaultShopState(),
+        cat: state.cat,
+        season: state.season,
+      }),
+    });
+  }
+
   const items = CATALOG.filter((product) => {
     if (state.cat !== "همه" && product.cat !== state.cat) return false;
     if (state.season !== "همه" && product.season !== state.season) return false;
@@ -84,22 +99,19 @@ export default async function ShopPage({
 
   return (
     <>
-      <JsonLd
-        data={breadcrumbSchema([
-          { name: "خانه", path: "/" },
-          { name: "فروشگاه", path: "/shop" },
-        ])}
-      />
+      <JsonLd data={breadcrumbSchema(crumbs)} />
       <JsonLd
         data={pageSchema({
-          title: "فروشگاه پوشاک کودک ملی‌کیدز",
+          title: heading,
           description:
-            "جست‌وجو و فیلتر کالکشن‌های دخترانه، پسرانه، سیسمونی و دستدوز در فروشگاه ملی‌کیدز.",
-          path: "/shop",
+            heading === "کالکشن پوشاک کودک"
+              ? "کالکشن دخترانه، پسرانه، سیسمونی و دستدوز."
+              : `کالکشن ${heading} در ملی‌کیدز.`,
+          path: canonical,
           type: "CollectionPage",
         })}
       />
-      {items.length ? <JsonLd data={itemListSchema(items, "کالکشن فروشگاه")} /> : null}
+      {items.length ? <JsonLd data={itemListSchema(items, heading)} /> : null}
       <ShopExplorer state={state} />
     </>
   );
