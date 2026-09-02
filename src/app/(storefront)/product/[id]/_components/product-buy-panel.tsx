@@ -37,7 +37,8 @@ const TAG_PILL = cn(
   "border-navy/10 bg-sand/80 text-navy",
   "dark:border-gold/25 dark:bg-night dark:text-ivory",
 );
-const QTY_BTN = "flex size-10 items-center justify-center rounded-full";
+const QTY_BTN =
+  "flex size-10 items-center justify-center rounded-full transition-transform duration-150 motion-safe:hover:scale-110 motion-safe:active:scale-90";
 const CTA_BUTTON =
   "h-auto min-h-12 w-full rounded-2xl px-3 py-3 text-[13px] leading-5 font-black whitespace-normal sm:text-sm";
 const SHIP_ITEM =
@@ -182,11 +183,11 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
                 type="button"
                 aria-label={`اسلاید ${i + 1}`}
                 onClick={() => go(i)}
-                className="flex h-6 min-w-6 items-center justify-center rounded-full"
+                className="flex h-6 min-w-6 items-center justify-center rounded-full transition-transform duration-150 motion-safe:hover:scale-125 motion-safe:active:scale-90"
               >
                 <span
                   className={cn(
-                    "h-2 rounded-full",
+                    "h-2 rounded-full transition-[width,background-color] duration-300",
                     i === slide ? "bg-gold w-6" : "w-2 bg-white/70",
                   )}
                 />
@@ -204,10 +205,10 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
                 aria-label={`تصویر ${i + 1} ${product.name}`}
                 aria-current={i === slide || undefined}
                 className={cn(
-                  "size-14 shrink-0 overflow-hidden rounded-xl border-2 sm:size-18 sm:rounded-2xl",
+                  "size-14 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 motion-safe:hover:-translate-y-0.5 sm:size-18 sm:rounded-2xl",
                   i === slide
                     ? "border-gold ring-gold/30 ring-2"
-                    : "border-navy/10 dark:border-gold/20 opacity-70",
+                    : "border-navy/10 dark:border-gold/20 opacity-70 hover:opacity-100",
                 )}
               >
                 <Image
@@ -310,10 +311,10 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
                 type="button"
                 onClick={() => setSize(s)}
                 className={cn(
-                  "min-h-10 min-w-10 rounded-xl border-2 px-2.5 py-2 text-[11px] font-bold sm:px-3.5 sm:text-xs",
+                  "min-h-10 min-w-10 rounded-xl border-2 px-2.5 py-2 text-[11px] font-bold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95 sm:px-3.5 sm:text-xs",
                   size === s
-                    ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep"
-                    : "border-navy/10 text-navy/70 dark:border-gold/30 dark:text-ivory",
+                    ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep motion-safe:hover:shadow-md"
+                    : "border-navy/10 text-navy/70 hover:border-navy/30 dark:border-gold/30 dark:text-ivory dark:hover:border-gold/60",
                 )}
               >
                 {s}

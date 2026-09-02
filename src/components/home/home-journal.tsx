@@ -52,7 +52,7 @@ export function HomeJournal({ children }: { children: ReactNode }) {
               type="button"
               aria-label={`اسلاید ${k + 1}`}
               onClick={() => embla?.scrollTo(k)}
-              className="group flex h-6 min-w-6 items-center justify-center rounded-full"
+              className="group flex h-6 min-w-6 items-center justify-center rounded-full transition-transform duration-150 motion-safe:hover:scale-125 motion-safe:active:scale-90"
             >
               <span
                 className={cn(

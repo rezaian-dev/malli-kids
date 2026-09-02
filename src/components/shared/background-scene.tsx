@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-const STARS = Array.from({ length: 30 }, (_, i) => i);
+const STARS = Array.from({ length: 18 }, (_, i) => i);
 const DELAYS = [
   "[animation-delay:-.2s]",
   "[animation-delay:-.8s]",
@@ -30,11 +30,11 @@ function LightAtelier() {
         }}
       />
       <div className="absolute inset-[-20%] blur-2xl">
-        <div className="animate-silk-glow absolute top-[-10%] left-[10%] h-[48%] w-[54%] rounded-full bg-[rgba(193,147,87,0.52)]" />
+        <div className="animate-silk-glow absolute top-[-10%] left-[10%] h-[48%] w-[54%] rounded-full bg-[rgba(193,147,87,0.52)] motion-reduce:animate-none" />
         <div className="absolute top-[6%] right-[-10%] h-[42%] w-[46%] rounded-full bg-[rgba(14,42,71,0.22)]" />
-        <div className="animate-silk-glow absolute bottom-[-12%] left-[-8%] h-[50%] w-[52%] rounded-full bg-[rgba(14,42,71,0.28)] [animation-delay:-7s]" />
+        <div className="animate-silk-glow absolute bottom-[-12%] left-[-8%] h-[50%] w-[52%] rounded-full bg-[rgba(14,42,71,0.28)] [animation-delay:-7s] motion-reduce:animate-none" />
         <div className="absolute top-[30%] right-[8%] h-[38%] w-[42%] rounded-full bg-[rgba(250,246,239,0.52)]" />
-        <div className="animate-silk-glow absolute right-[-6%] bottom-[2%] h-[36%] w-[40%] rounded-full bg-[rgba(232,197,122,0.38)] [animation-delay:-4s]" />
+        <div className="animate-silk-glow absolute right-[-6%] bottom-[2%] h-[36%] w-[40%] rounded-full bg-[rgba(232,197,122,0.38)] [animation-delay:-4s] motion-reduce:animate-none" />
       </div>
 
       <svg
@@ -373,7 +373,7 @@ export function BackgroundScene() {
             <span
               key={i}
               className={cn(
-                "animate-twinkle absolute rounded-full shadow-[0_0_8px_color-mix(in_srgb,var(--color-gold)_45%,transparent)]",
+                "animate-twinkle absolute rounded-full shadow-[0_0_8px_color-mix(in_srgb,var(--color-gold)_45%,transparent)] motion-reduce:animate-none",
                 size,
                 "bg-gold-light/40",
                 DELAYS[i % DELAYS.length],

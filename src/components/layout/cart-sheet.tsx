@@ -259,7 +259,7 @@ export function CartSheet() {
                         onClick={() => removeCartItem(item.id, item.size)}
                         className={cn(
                           "grid size-7 shrink-0 place-items-center",
-                          "text-navy/70 hover:bg-rose/10 hover:text-rose rounded-full transition-colors",
+                          "text-navy/70 hover:bg-rose/10 hover:text-rose rounded-full transition-all motion-safe:hover:scale-110 motion-safe:active:scale-90",
                           "dark:text-wheat/50 dark:hover:bg-rose/15 dark:hover:text-rose",
                         )}
                       >
@@ -312,7 +312,7 @@ export function CartSheet() {
                           }
                           className={cn(
                             "grid size-6.5 place-items-center",
-                            "text-navy hover:bg-gold hover:text-navy-deep disabled:hover:text-navy rounded-full bg-white shadow-sm transition disabled:opacity-35 disabled:hover:bg-white",
+                            "text-navy hover:bg-gold hover:text-navy-deep disabled:hover:text-navy rounded-full bg-white shadow-sm transition disabled:opacity-35 disabled:hover:bg-white motion-safe:hover:scale-110 motion-safe:active:scale-90 disabled:motion-safe:hover:scale-100",
                             "dark:bg-navy dark:text-ivory dark:hover:bg-gold dark:hover:text-navy-deep",
                           )}
                         >
@@ -335,7 +335,7 @@ export function CartSheet() {
                           }
                           className={cn(
                             "grid size-6.5 place-items-center",
-                            "text-navy hover:bg-rose/10 hover:text-rose rounded-full bg-white shadow-sm transition",
+                            "text-navy hover:bg-rose/10 hover:text-rose rounded-full bg-white shadow-sm transition motion-safe:hover:scale-110 motion-safe:active:scale-90",
                             "dark:bg-navy dark:text-ivory dark:hover:bg-rose/15 dark:hover:text-rose",
                           )}
                         >

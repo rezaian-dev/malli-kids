@@ -123,9 +123,9 @@ export function ProfileOrdersPanel() {
             type="button"
             onClick={() => setFilter(item)}
             className={cn(
-              "rounded-full border px-3.5 py-1.5 text-[11px] font-black transition-colors",
+              "rounded-full border px-3.5 py-1.5 text-[11px] font-black transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95",
               filter === item
-                ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep"
+                ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep motion-safe:hover:shadow-md"
                 : "border-navy/15 text-navy/70 hover:border-gold/60 dark:border-gold/25 dark:text-wheat",
             )}
           >

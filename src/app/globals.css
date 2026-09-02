@@ -368,6 +368,37 @@
   }
 }
 
+/* ♿️⚡ One switch for every *decorative, infinite-loop* animation token
+   above (marquee, floaty, shimmer, orbit/spin/pulse, scanline, silk-glow,
+   twinkle, the hero Ken Burns pan…). Utilities like `animate-marquee`
+   compile to `animation: var(--animate-marquee)`, so redefining the token
+   here turns them off everywhere they're used — no per-component edits —
+   for anyone who asked the OS for less motion. This intentionally leaves
+   the short, state-driven ones alone (accordion/drawer/overlay open-close,
+   the shake/ripple feedback, fade/hero-in entrances): those communicate a
+   UI change rather than looping forever, so Tailwind's own
+   `motion-safe:`/`motion-reduce:` variants govern them at the call site
+   instead (see `button.tsx`). */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animate-st-pulse: none;
+    --animate-st-bob: none;
+    --animate-marquee: none;
+    --animate-floaty: none;
+    --animate-floaty-slow: none;
+    --animate-scan: none;
+    --animate-hero-ken: none;
+    --animate-orn-spin: none;
+    --animate-orn-sway: none;
+    --animate-orn-pulse: none;
+    --animate-shimmer: none;
+    --animate-twinkle: none;
+    --animate-silk-glow: none;
+    --animate-admin-orbit: none;
+    --animate-admin-glow: none;
+  }
+}
+
 /* ─────────────────────────── 🌗 Theme vars ─────────────────────────────── */
 :root {
   color-scheme: light;

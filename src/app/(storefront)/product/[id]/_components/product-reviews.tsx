@@ -247,10 +247,10 @@ export function ProductReviews({ product: seed }: { product: Product }) {
             type="button"
             onClick={() => setThanks((v) => !v)}
             className={cn(
-              "inline-flex min-h-9 w-max shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold",
+              "inline-flex min-h-9 w-max shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95",
               thanks
-                ? "border-gold bg-gold text-navy-deep"
-                : "text-ivory border-white/20 bg-white/10",
+                ? "border-gold bg-gold text-navy-deep motion-safe:hover:shadow-gold/30 motion-safe:hover:shadow-md"
+                : "text-ivory border-white/20 bg-white/10 hover:border-white/40 hover:bg-white/15",
             )}
           >
             <ThumbsUp className="size-3.5" />

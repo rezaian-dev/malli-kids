@@ -36,7 +36,7 @@ export function FavButton({
         );
       }}
       className={cn(
-        "z-3 inline-flex size-9 items-center justify-center rounded-full border shadow-md backdrop-blur transition-all duration-300 hover:scale-110 active:scale-95",
+        "z-3 inline-flex size-9 items-center justify-center rounded-full border shadow-md backdrop-blur transition-all duration-300 motion-safe:hover:scale-110 motion-safe:active:scale-90",
         on
           ? "border-rose bg-rose text-white"
           : "text-navy hover:text-rose border-white/40 bg-white/85",
@@ -45,8 +45,8 @@ export function FavButton({
     >
       <Heart
         className={cn(
-          "size-4 transition-transform",
-          on && "scale-110 fill-current",
+          "size-4 transition-transform motion-safe:duration-300",
+          on && "fill-current motion-safe:scale-125",
         )}
       />
     </button>

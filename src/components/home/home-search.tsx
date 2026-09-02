@@ -126,8 +126,8 @@ export function HomeSearch() {
             <button
               type="submit"
               className={cn(
-                "shrink-0 rounded-2xl px-4 py-3 text-xs font-black sm:px-6 sm:text-sm",
-                "bg-navy text-ivory",
+                "shrink-0 rounded-2xl px-4 py-3 text-xs font-black transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md motion-safe:active:translate-y-0 motion-safe:active:scale-95 sm:px-6 sm:text-sm",
+                "bg-navy text-ivory hover:bg-navy-mid",
               )}
             >
               جستجو
@@ -165,9 +165,9 @@ export function HomeSearch() {
                     key={chip.q}
                     type="button"
                     className={cn(
-                      "inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold",
-                      "bg-sand text-navy",
-                      "dark:bg-dusk-mid dark:text-linen",
+                      "inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95",
+                      "bg-sand text-navy hover:bg-gold/25",
+                      "dark:bg-dusk-mid dark:text-linen dark:hover:bg-dusk",
                     )}
                     onPointerDown={(event) => event.preventDefault()}
                     onClick={() => goChip(chip)}
@@ -191,7 +191,7 @@ export function HomeSearch() {
                     onPointerDown={(event) => event.preventDefault()}
                     onClick={() => selectSuggestion(p.name)}
                     className={cn(
-                      "flex w-full items-center gap-3 px-3.5 py-2.5 text-start",
+                      "flex w-full items-center gap-3 px-3.5 py-2.5 text-start transition-colors duration-150",
                       "hover:bg-gold/10 focus-visible:bg-gold/10",
                     )}
                   >

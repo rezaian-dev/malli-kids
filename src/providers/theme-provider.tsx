@@ -31,23 +31,18 @@ const ThemeContext = createContext<ThemeContextValue>({
   setTheme: () => {},
 });
 
-function prefersDark() {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
-}
-
 function readStoredTheme(fallback: ThemePreference): ThemePreference {
   try {
     return readThemePreference(localStorage.getItem(THEME_KEY) ?? undefined);
   } catch {
-    return fallback;
+    return fallback; // localStorage blocked (private mode, etc.)
   }
 }
 
-// 🎞️ Toggling `.dark` cascades every `transition-colors` on the page;
-// suppressing transitions for one frame swaps it instantly instead of a
-// page-wide colour wipe. Not part of Tailwind's dark-mode guide — a small
-// addition on top of its documented class strategy.
-function setDarkClass(dark: boolean) {
+// Swapping `.dark` re-triggers every `transition-colors` on the page.
+// Freezing transitions for one paint makes the swap instant instead of a
+// page-wide colour wipe.
+function applyDarkClass(dark: boolean) {
   const root = document.documentElement;
   if (root.classList.contains("dark") === dark) return;
   root.classList.add("theme-transitioning");
@@ -57,11 +52,11 @@ function setDarkClass(dark: boolean) {
   );
 }
 
-// The one place that applies + persists a theme: DOM class, `color-scheme`,
-// localStorage (read by the inline anti-FOUC script on the *next* load) and
-// the cookie (read by the server on the *next* SSR pass).
-function commit(theme: ThemePreference, resolved: ResolvedTheme) {
-  setDarkClass(resolved === "dark");
+// Applies + persists a theme in one place: DOM class, `color-scheme`,
+// localStorage (read by the anti-flash script on the next page load) and
+// cookies (read by the server on the next SSR render).
+function persistTheme(theme: ThemePreference, resolved: ResolvedTheme) {
+  applyDarkClass(resolved === "dark");
   document.documentElement.style.colorScheme = resolved;
   try {
     localStorage.setItem(THEME_KEY, theme);
@@ -83,31 +78,33 @@ export function ThemeProvider({
   const [resolvedTheme, setResolvedTheme] = useState(initialResolved);
 
   const setTheme = useCallback((next: ThemePreference) => {
-    const resolved = resolveThemePreference(next, prefersDark());
-    commit(next, resolved);
+    const systemDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    const resolved = resolveThemePreference(next, systemDark);
+    persistTheme(next, resolved);
     setThemeState(next);
     setResolvedTheme(resolved);
   }, []);
 
   useEffect(() => {
     // Reconcile with localStorage once on mount — it's the freshest source
-    // (e.g. changed from another tab while this one was closed) and may
-    // differ from the cookie the server rendered `initialTheme` from.
-    setTheme(readStoredTheme(initialTheme));
+    // (e.g. changed in another tab while this one was closed) and may
+    // differ from the cookie the server rendered `initialTheme` from. The
+    // same resync also answers a live OS theme change and a theme change
+    // made in another tab, so both listeners below just call it.
+    const resync = () => setTheme(readStoredTheme(initialTheme));
+    resync();
 
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onMediaChange = () => {
-      const stored = readStoredTheme(initialTheme);
-      if (stored === "system") setTheme(stored);
-    };
     const onStorage = (event: StorageEvent) => {
-      if (event.key === THEME_KEY) setTheme(readStoredTheme(initialTheme));
+      if (event.key === THEME_KEY) resync();
     };
 
-    media.addEventListener("change", onMediaChange);
+    media.addEventListener("change", resync);
     window.addEventListener("storage", onStorage);
     return () => {
-      media.removeEventListener("change", onMediaChange);
+      media.removeEventListener("change", resync);
       window.removeEventListener("storage", onStorage);
     };
   }, [initialTheme, setTheme]);

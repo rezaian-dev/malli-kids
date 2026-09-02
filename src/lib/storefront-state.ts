@@ -37,6 +37,12 @@ function decode(value?: string) {
   }
 }
 
+// An optional field from cookie/localStorage JSON: keep it only if it's
+// actually a (trimmed) string — used by every sanitize* below.
+function str(value: unknown): string | undefined {
+  return typeof value === "string" ? value.trim() : undefined;
+}
+
 function parseJson<T>(value: string | undefined, fallback: T) {
   const raw = decode(value);
   if (!raw) return fallback;
@@ -80,31 +86,22 @@ export function sanitizeUser(value: unknown): User | null {
   if (!value || typeof value !== "object") return null;
 
   const user = value as Record<string, unknown>;
-  const firstName =
-    typeof user.firstName === "string" ? user.firstName.trim() : "";
-  const email = typeof user.email === "string" ? user.email.trim() : "";
-
+  const firstName = str(user.firstName) ?? "";
+  const email = str(user.email) ?? "";
   if (!firstName || !email) return null;
 
   return {
     firstName,
     email,
-    lastName:
-      typeof user.lastName === "string" ? user.lastName.trim() : undefined,
-    phone: typeof user.phone === "string" ? user.phone.trim() : undefined,
-    avatar: typeof user.avatar === "string" ? user.avatar.trim() : undefined,
-    nationalId:
-      typeof user.nationalId === "string" ? user.nationalId.trim() : undefined,
-    city: typeof user.city === "string" ? user.city.trim() : undefined,
-    address: typeof user.address === "string" ? user.address.trim() : undefined,
-    childName:
-      typeof user.childName === "string" ? user.childName.trim() : undefined,
-    childAge:
-      typeof user.childAge === "string" ? user.childAge.trim() : undefined,
-    childGender:
-      typeof user.childGender === "string"
-        ? user.childGender.trim()
-        : undefined,
+    lastName: str(user.lastName),
+    phone: str(user.phone),
+    avatar: str(user.avatar),
+    nationalId: str(user.nationalId),
+    city: str(user.city),
+    address: str(user.address),
+    childName: str(user.childName),
+    childAge: str(user.childAge),
+    childGender: str(user.childGender),
   };
 }
 
@@ -171,8 +168,7 @@ export function sanitizeBanner(value: unknown): BannerItem | null {
     subtitle: banner.subtitle.trim(),
     cta: banner.cta.trim(),
     href: banner.href.trim(),
-    coupon:
-      typeof banner.coupon === "string" ? banner.coupon.trim() : undefined,
+    coupon: str(banner.coupon),
     theme,
     from: banner.from.trim(),
     to: banner.to.trim(),

@@ -2,6 +2,15 @@
   "name": "mallikids",
   "version": "1.0.0",
   "private": true,
+  "browserslist": [
+    "chrome >= 107",
+    "edge >= 107",
+    "firefox >= 104",
+    "safari >= 16",
+    "ios_saf >= 16",
+    "samsung >= 20",
+    "not dead"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",

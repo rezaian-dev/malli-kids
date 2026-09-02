@@ -194,10 +194,10 @@ export function HomeQuotes() {
                             setLiked((s) => ({ ...s, [r.name]: !s[r.name] }))
                           }
                           className={cn(
-                            "inline-flex min-h-9 w-max shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold",
+                            "inline-flex min-h-9 w-max shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95",
                             thanks
-                              ? "border-gold bg-gold text-navy-deep"
-                              : "text-ivory border-white/20 bg-white/10",
+                              ? "border-gold bg-gold text-navy-deep motion-safe:hover:shadow-gold/30 motion-safe:hover:shadow-md"
+                              : "text-ivory border-white/20 bg-white/10 hover:border-white/40 hover:bg-white/15",
                           )}
                         >
                           <ThumbsUp className="size-3.5" />
@@ -223,7 +223,7 @@ export function HomeQuotes() {
               type="button"
               aria-label={`نظر ${k + 1}`}
               onClick={() => embla?.scrollTo(k)}
-              className="flex h-6 min-w-6 items-center justify-center rounded-full"
+              className="flex h-6 min-w-6 items-center justify-center rounded-full transition-transform duration-150 motion-safe:hover:scale-125 motion-safe:active:scale-90"
             >
               <span
                 className={cn(

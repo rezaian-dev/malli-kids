@@ -55,46 +55,60 @@ type Ctx = {
 
 const StoreCtx = createContext<Ctx | null>(null);
 
-function readCampaignFromAdminDb(current: Campaign) {
+// 📦 Every localStorage read below is "parse this key's JSON, sanitize it,
+// fall back to what we already have if anything goes wrong" — private
+// browsing, a corrupted value, whatever. One generic reader instead of a
+// near-identical try/catch per key.
+function readLocalJson<T>(
+  key: string,
+  sanitize: (raw: unknown) => T,
+  current: T,
+): T {
   try {
-    const raw = window.localStorage.getItem(STORAGE.adminDb);
-    if (!raw) return current;
-    return sanitizeCampaign(JSON.parse(raw)?.settings?.campaign);
-  } catch {
-    return current;
-  }
-}
-
-function readBannerFromAdminDb(current: BannerItem | null) {
-  try {
-    const raw = window.localStorage.getItem(STORAGE.adminDb);
-    if (!raw) return current;
-    const banners = JSON.parse(raw)?.banners;
-    if (!Array.isArray(banners)) return current;
-    return pickBanner(banners) ?? null;
+    const raw = window.localStorage.getItem(key);
+    return raw === null ? current : sanitize(JSON.parse(raw));
   } catch {
     return current;
   }
 }
 
 function readLocalUser(current: User | null) {
-  try {
-    const raw = window.localStorage.getItem(STORAGE.user);
-    if (raw === null) return current;
-    return sanitizeUser(JSON.parse(raw));
-  } catch {
-    return current;
-  }
+  return readLocalJson(STORAGE.user, sanitizeUser, current);
 }
 
 function readLocalCart(current: CartItem[]) {
+  return readLocalJson(STORAGE.cart, sanitizeCart, current);
+}
+
+// 🎉 Campaign + festive banner both live inside the admin panel's own
+// localStorage blob, so they share one parse of it.
+function readAdminDb(): {
+  settings?: { campaign?: unknown };
+  banners?: unknown;
+} | null {
   try {
-    const raw = window.localStorage.getItem(STORAGE.cart);
-    if (raw === null) return current;
-    return sanitizeCart(JSON.parse(raw));
+    const raw = window.localStorage.getItem(STORAGE.adminDb);
+    return raw ? JSON.parse(raw) : null;
   } catch {
-    return current;
+    return null;
   }
+}
+
+function readCampaignFromAdminDb(current: Campaign) {
+  const db = readAdminDb();
+  return db ? sanitizeCampaign(db.settings?.campaign) : current;
+}
+
+function readBannerFromAdminDb(current: BannerItem | null) {
+  const db = readAdminDb();
+  return db && Array.isArray(db.banners)
+    ? (pickBanner(db.banners) ?? null)
+    : current;
+}
+
+// A cart line is identified by product + size together, never id alone.
+function sameLine(item: CartItem, id: number, size: string) {
+  return item.id === id && item.size === size;
 }
 
 function normalizeUser(input: User) {
@@ -167,7 +181,9 @@ export function StoreProvider({
           ? prev
           : currentCampaign,
       );
-      setBanner((prev) => (prev?.id === currentBanner?.id ? prev : currentBanner));
+      setBanner((prev) =>
+        prev?.id === currentBanner?.id ? prev : currentBanner,
+      );
     };
 
     window.addEventListener("storage", syncFestive);
@@ -193,24 +209,21 @@ export function StoreProvider({
 
   const addToCart = useCallback((id: number, size: string, qty = 1) => {
     setCart((current) => {
-      const hit = current.find((item) => item.id === id && item.size === size);
+      const hit = current.find((item) => sameLine(item, id, size));
+      if (!hit) return [...current, { id, size, qty: Math.min(9, qty) }];
 
-      if (hit) {
-        return current.map((item) =>
-          item === hit ? { ...item, qty: Math.min(9, item.qty + qty) } : item,
-        );
-      }
-
-      return [...current, { id, size, qty: Math.min(9, qty) }];
+      return current.map((item) =>
+        item === hit ? { ...item, qty: Math.min(9, item.qty + qty) } : item,
+      );
     });
   }, []);
 
   const setCartQty = useCallback((id: number, size: string, qty: number) => {
     setCart((current) =>
       qty <= 0
-        ? current.filter((item) => !(item.id === id && item.size === size))
+        ? current.filter((item) => !sameLine(item, id, size))
         : current.map((item) =>
-            item.id === id && item.size === size
+            sameLine(item, id, size)
               ? { ...item, qty: Math.min(9, qty) }
               : item,
           ),
@@ -218,14 +231,15 @@ export function StoreProvider({
   }, []);
 
   const removeCartItem = useCallback((id: number, size: string) => {
-    setCart((current) =>
-      current.filter((item) => !(item.id === id && item.size === size)),
-    );
+    setCart((current) => current.filter((item) => !sameLine(item, id, size)));
   }, []);
 
   const clearCart = useCallback(() => setCart([]), []);
 
-  const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.qty, 0), [cart]);
+  const cartCount = useMemo(
+    () => cart.reduce((sum, item) => sum + item.qty, 0),
+    [cart],
+  );
 
   const showToast = useCallback((text: string) => toast(text), []);
 

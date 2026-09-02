@@ -131,7 +131,7 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
                     field.onBlur();
                   }}
                   className={cn(
-                    "inline-flex size-11 items-center justify-center rounded-xl transition-all",
+                    "inline-flex size-11 items-center justify-center rounded-xl transition-all motion-safe:hover:scale-110 motion-safe:active:scale-90",
                     "hover:bg-gold/10 focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none",
                     on
                       ? "text-gold scale-105"
