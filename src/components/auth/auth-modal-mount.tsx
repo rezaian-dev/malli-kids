@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 
 // 🚪 Lazy mount the auth modal only when it matters. ✨
 const AuthModal = dynamic(
@@ -11,7 +11,7 @@ const AuthModal = dynamic(
 );
 
 export function AuthModalMount() {
-  const { authOpen } = useStore();
+  const { authOpen } = useAuth();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

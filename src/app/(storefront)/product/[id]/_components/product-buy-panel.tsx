@@ -19,7 +19,9 @@ import { toast } from "@/lib/toast";
 import { getMissingShippingFields } from "@/lib/shop/shipping";
 import { resolvePrice } from "@/lib/shop/pricing";
 import { sizeForHeightCm } from "@/lib/data/sizing";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
+import { useCampaign } from "@/providers/campaign-provider";
+import { useAddToCart } from "@/hooks/use-add-to-cart";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -81,7 +83,9 @@ export function ProductBuyPanel({
   product: Product;
   subscribedSizes: string[];
 }) {
-  const { addToCart, showToast, user, setAuthOpen, campaign } = useStore();
+  const { user, setAuthOpen } = useAuth();
+  const { campaign } = useCampaign();
+  const addToCart = useAddToCart();
   const router = useRouter();
   const sizeOptions = useSizeOptions(product);
 
@@ -127,10 +131,10 @@ export function ProductBuyPanel({
   const unit = resolved.price;
 
   function openCheckout() {
-    if (!canOrder) return showToast("این سایز ناموجود است");
+    if (!canOrder) return toast("این سایز ناموجود است");
     if (!user) {
       setAuthOpen(true);
-      showToast("برای ثبت سفارش اول وارد شوید");
+      toast("برای ثبت سفارش اول وارد شوید");
       return;
     }
 
@@ -155,11 +159,11 @@ export function ProductBuyPanel({
   // 🛒 Shared by the main CTA and the mobile sticky bar so both add exactly
   // the same line the exact same way.
   function handleAddToCart() {
-    if (!canOrder) return showToast("این سایز ناموجود است");
+    if (!canOrder) return toast("این سایز ناموجود است");
     // 🔐 `addToCart` gates guests itself (login dialog + toast); only
     // celebrate success when it actually added the line.
     if (addToCart(product.id, size, qty))
-      showToast(`${toFaDigits(qty)} عدد سایز ${size} به سبد اضافه شد`);
+      toast(`${toFaDigits(qty)} عدد سایز ${size} به سبد اضافه شد`);
   }
 
   return (

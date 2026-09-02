@@ -2,7 +2,7 @@
 
 import { lazy, Suspense } from "react";
 import { LogIn } from "lucide-react";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { fullName, givenName } from "@/lib/text/name";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,7 @@ import { AccountIcon, TRIGGER_SHELL } from "./account-trigger";
 const UserAccountMenu = lazy(() => import("./user-account-menu"));
 
 export function UserMenu() {
-  const { user, setAuthOpen, logout } = useStore();
+  const { user, setAuthOpen, logout } = useAuth();
 
   if (!user) {
     return (

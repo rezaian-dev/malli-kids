@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toFaDigits } from "@/lib/locale/fa";
@@ -31,7 +31,7 @@ const OPENED_KEY = "mk-chat-opened";
  *  changes. Guests are routed to the login dialog — chat itself is
  *  authenticated-only in the MVP (no guest identity infra to secure). */
 export function ChatWidget() {
-  const { user, setAuthOpen } = useStore();
+  const { user, setAuthOpen } = useAuth();
   const [open, setOpen] = useState(false);
   const [invite, setInvite] = useState(false);
   // 🚪 A guest tapped "talk to support" before signing in — open the real

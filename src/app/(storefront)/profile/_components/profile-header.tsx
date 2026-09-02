@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, type ChangeEvent } from "react";
 import { Camera, LogOut, Mail, Phone, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { fullName, givenName } from "@/lib/text/name";
 import { cn } from "@/lib/utils";
 import { removeAvatarAction, updateAvatarAction } from "../_lib/avatar-actions";
@@ -13,7 +13,7 @@ import type { User } from "@/types";
 
 /** 🪪 Avatar (with upload + remove), name/contact, and the logout button. */
 export function ProfileHeader({ user }: { user: User }) {
-  const { updateUser, logout } = useStore();
+  const { updateUser, logout } = useAuth();
   const [avatarBusy, setAvatarBusy] = useState(false);
 
   const nick = givenName(user.firstName);

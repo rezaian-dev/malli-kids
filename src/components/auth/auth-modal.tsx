@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import {
   Dialog,
   DialogClose,
@@ -33,7 +33,7 @@ type View = keyof typeof TITLES;
 // 🔐 Auth dialog: login/register tabs, plus a "forgot password" step that
 // swaps in over the login tab (not a third tab — it isn't a sign-in method).
 export function AuthModal() {
-  const { authOpen, setAuthOpen } = useStore();
+  const { authOpen, setAuthOpen } = useAuth();
   const [view, setView] = useState<View>("login");
 
   function onOpenChange(next: boolean) {

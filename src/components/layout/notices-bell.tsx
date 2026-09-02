@@ -9,7 +9,7 @@ import {
   PackageCheck,
   Sparkles,
 } from "lucide-react";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import {
   getMyNotificationsAction,
   markAllNotificationsReadAction,
@@ -38,7 +38,7 @@ const KIND_ICON: Record<NotificationKind, typeof Bell> = {
 const POLL_MS = 8_000;
 
 export function NoticesBell() {
-  const { user } = useStore();
+  const { user } = useAuth();
   const [notices, setNotices] = usePolling<Notice[]>(
     getMyNotificationsAction,
     POLL_MS,

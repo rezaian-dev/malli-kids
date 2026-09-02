@@ -8,7 +8,7 @@ import { z } from "zod";
 // throw is caught and Zod falls back correctly on its own. `jitless: true`
 // skips the probe entirely — see the comment above `allowsEval` in
 // `node_modules/zod/v4/core/util.js`, which documents this exact case.
-// Imported once, for this side effect, from `store-provider.tsx` (the
+// Imported once, for this side effect, from `auth-provider.tsx` (the
 // outermost client boundary) so it runs before any schema in the app
 // validates anything in the browser; on the server this is a no-op (no CSP
 // there), so it's harmless to have evaluated there too.

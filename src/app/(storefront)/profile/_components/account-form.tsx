@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@/lib/toast";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import {
   AppForm,
   ComboboxField,
@@ -38,7 +38,7 @@ function toValues(user: User): UpdateAccountValues {
  *  from `user` via react-hook-form's `defaultValues` (not a post-mount
  *  `useEffect`) so it's never blank-then-filled on the first render. */
 export function AccountForm() {
-  const { user, updateUser } = useStore();
+  const { user, updateUser } = useAuth();
   const form = useAppForm({
     schema: updateAccountSchema,
     defaultValues: user ? toValues(user) : updateAccountDefaults,

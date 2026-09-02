@@ -2,7 +2,7 @@ import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
 // ⚙️ One singleton document (`key: "site"`) — currently backs only the
-// storefront's site-wide campaign banner (see `store-provider.tsx`). No
+// storefront's site-wide campaign banner (see `campaign-provider.tsx`). No
 // admin UI edits this yet (none exists in `ADMIN_NAV`); it's real and
 // server-action-ready for whenever one is added.
 export type SettingsCampaign = {

@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { Bell, BellRing } from "lucide-react";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,7 +26,7 @@ export function BackInStockButton({
   subscribed: boolean;
   onSubscribed: () => void;
 }) {
-  const { user, setAuthOpen } = useStore();
+  const { user, setAuthOpen } = useAuth();
   const [pending, startTransition] = useTransition();
 
   function handleClick() {

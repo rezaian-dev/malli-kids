@@ -43,8 +43,8 @@ function Diamond() {
 
 const SWEEP = cn(
   "bg-gradient-to-l from-gold-deep to-gold bg-no-repeat",
-  "[background-size:0%_2px] [background-position:0_100%]",
-  "transition-[background-size] duration-300 hover:[background-size:100%_2px]",
+  "bg-size-[0%_2px] bg-position-[0_100%]",
+  "transition-[background-size] duration-300 hover:bg-size-[100%_2px]",
 );
 
 export function Breadcrumb({

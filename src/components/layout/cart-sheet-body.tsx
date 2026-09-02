@@ -11,7 +11,8 @@ import {
   XIcon,
 } from "lucide-react";
 import { EASE_OUT } from "@/components/motion";
-import type { Campaign, CartItem } from "@/providers/store-provider";
+import type { CartItem } from "@/stores/cart-store";
+import type { StoredCampaign } from "@/lib/storefront-state";
 import { resolvePrice } from "@/lib/shop/pricing";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { getProductsByIdsAction } from "@/lib/shop/products-actions";
@@ -50,7 +51,7 @@ export function CartSheetBody({
 }: {
   cart: CartItem[];
   cartCount: number;
-  campaign: Campaign;
+  campaign: StoredCampaign;
   checkoutOpen: boolean;
   onCheckoutOpenChange: (open: boolean) => void;
   onQtyChange: (id: number, size: string, qty: number) => void;

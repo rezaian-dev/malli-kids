@@ -3,7 +3,10 @@ import type { Viewport } from "next";
 import { cookies, headers } from "next/headers";
 import localFont from "next/font/local";
 import NextTopLoader from "nextjs-toploader";
-import { StoreProvider } from "@/providers/store-provider";
+import { AuthProvider } from "@/providers/auth-provider";
+import { CartStoreProvider } from "@/providers/cart-store-provider";
+import { FavoritesStoreProvider } from "@/providers/favorites-store-provider";
+import { CampaignProvider } from "@/providers/campaign-provider";
 import { MotionProvider } from "@/components/motion";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { ToasterMount } from "@/components/ui/toaster-mount";
@@ -96,7 +99,6 @@ export default async function RootLayout({
     user,
     campaign ?? { active: false, percent: 0, title: "" },
     banner,
-    favorites,
   );
 
   return (
@@ -130,10 +132,19 @@ export default async function RootLayout({
             prefers-reduced-motion کاربر احترام می‌گذارند. */}
         <MotionProvider>
           <ThemeProvider>
-            <StoreProvider initialState={initialState}>
-              {children}
-              <ToasterMount />
-            </StoreProvider>
+            <AuthProvider initialUser={user}>
+              <CartStoreProvider initialCart={initialState.cart}>
+                <FavoritesStoreProvider initialFavorites={favorites}>
+                  <CampaignProvider
+                    campaign={initialState.campaign}
+                    banner={initialState.banner}
+                  >
+                    {children}
+                    <ToasterMount />
+                  </CampaignProvider>
+                </FavoritesStoreProvider>
+              </CartStoreProvider>
+            </AuthProvider>
           </ThemeProvider>
         </MotionProvider>
       </body>

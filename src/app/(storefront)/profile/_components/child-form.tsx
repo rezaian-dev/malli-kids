@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@/lib/toast";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import {
   AppForm,
   SelectField,
@@ -33,7 +33,7 @@ function toValues(user: User): UpdateChildValues {
 
 /** 🧸 The optional "your kid" half of the profile info panel. */
 export function ChildForm() {
-  const { user, updateUser } = useStore();
+  const { user, updateUser } = useAuth();
   const form = useAppForm({
     schema: updateChildSchema,
     defaultValues: user ? toValues(user) : updateChildDefaults,

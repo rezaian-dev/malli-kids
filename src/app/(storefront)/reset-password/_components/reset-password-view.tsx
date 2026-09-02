@@ -12,7 +12,7 @@ import {
   PartyPopper,
   ShieldAlert,
 } from "lucide-react";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { toast } from "@/lib/toast";
 import { AppForm, InsetField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
@@ -103,7 +103,7 @@ function InvalidCard() {
 }
 
 function SuccessCard() {
-  const { setAuthOpen } = useStore();
+  const { setAuthOpen } = useAuth();
   const router = useRouter();
 
   return (

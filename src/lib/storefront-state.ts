@@ -9,12 +9,9 @@ export type StoredCampaign = {
 };
 
 export type StoreBootstrap = {
-  user: User | null;
   cart: StoredCartItem[];
   campaign: StoredCampaign;
   banner: BannerItem | null;
-  favorites: number[];
-  ready: boolean;
 };
 
 const COOKIE_AGE = 60 * 60 * 24 * 180;
@@ -141,33 +138,26 @@ function sanitizeBanner(value: unknown): BannerItem | null {
 
 // 👤 `user` isn't read from a cookie here — the real session lives in
 // Better Auth's httpOnly cookie, only readable server-side via
-// `getSessionUser()`. Likewise `campaign`/`banner`/`favorites` are real,
-// freshly-read DB values (`@/lib/shop/settings`, `@/lib/shop/banners`,
-// `@/lib/shop/favorites`) computed on every request — the caller
-// (`app/layout.tsx`) passes them in directly instead of this module trying
-// to resync them from a client-side source. `favorites` rides along here
-// (rather than `FavButton`/`useFavorites` fetching it after mount) so a
-// returning signed-in user's hearts are already filled on the very first
-// paint instead of flashing empty-then-filled. `cart` is the one genuinely
-// client-only piece (no backend), so it's still bootstrapped from its cookie.
+// `getSessionUser()`. Likewise `campaign`/`banner` are real, freshly-read DB
+// values (`@/lib/shop/settings`, `@/lib/shop/banners`) computed on every
+// request — the caller (`app/layout.tsx`) passes them in directly instead of
+// this module trying to resync them from a client-side source. `cart` is the
+// one genuinely client-only piece (no backend), so it's still bootstrapped
+// from its cookie (`user` only decides *which* identity's cart cookie to
+// read — see `cartScopeOf`).
 export function readStoreBootstrap(
   getCookie: (name: string) => string | undefined,
   user: User | null,
   campaign: StoredCampaign,
   banner: BannerItem | null,
-  favorites: number[],
-) {
+): StoreBootstrap {
   const cartCookie = getCookie(cartStorageKey(cartScopeOf(user)));
-  const bootCookie = getCookie(STORAGE.boot);
 
   return {
-    user,
     cart: sanitizeCart(parseJson(cartCookie, [])),
     campaign: sanitizeCampaign(campaign),
     banner: sanitizeBanner(banner),
-    favorites,
-    ready: bootCookie === "1" || Boolean(cartCookie),
-  } satisfies StoreBootstrap;
+  };
 }
 
 export function writeCookie(name: string, value: string) {

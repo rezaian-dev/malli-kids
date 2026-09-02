@@ -7,7 +7,7 @@
 // pageview, which is the majority of storefront traffic. ✨
 import Link from "next/link";
 import { Heart, Headphones, LogOut, Phone, Truck, User } from "lucide-react";
-import type { useStore } from "@/providers/store-provider";
+import type { User as UserType } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,7 +27,7 @@ export default function UserAccountMenu({
   name,
   logout,
 }: {
-  user: NonNullable<ReturnType<typeof useStore>["user"]>;
+  user: UserType;
   first: string;
   name: string;
   logout: () => void;

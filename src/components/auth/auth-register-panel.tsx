@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { toast } from "@/lib/toast";
 import { AppForm, InsetField, SubmitButton, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import { SUBMIT_GOLD } from "./auth-shared";
 
 /** 🆕 Name + email + password → account-creation tab. */
 export function RegisterPanel() {
-  const { login, showToast } = useStore();
+  const { login } = useAuth();
   const [show, setShow] = useState(false);
   const form = useAppForm({ schema: signUpSchema, defaultValues: signUpDefaults });
 
@@ -29,7 +29,7 @@ export function RegisterPanel() {
       return;
     }
     login(result.data);
-    showToast(`حسابِ «${result.data.firstName}» ساخته شد ✨`);
+    toast(`حسابِ «${result.data.firstName}» ساخته شد ✨`);
     form.reset();
   }
 

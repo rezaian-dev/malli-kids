@@ -4,7 +4,8 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { ShoppingBag } from "lucide-react";
-import { useStore } from "@/providers/store-provider";
+import { useCartStore } from "@/providers/cart-store-provider";
+import { useCampaign } from "@/providers/campaign-provider";
 import { toFaDigits } from "@/lib/locale/fa";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,8 +21,14 @@ const CartSheetBody = dynamic(
 );
 
 export function CartSheet() {
-  const { cart, cartCount, setCartQty, removeCartItem, clearCart, campaign } =
-    useStore();
+  const cart = useCartStore((state) => state.cart);
+  const setCartQty = useCartStore((state) => state.setCartQty);
+  const removeCartItem = useCartStore((state) => state.removeCartItem);
+  const clearCart = useCartStore((state) => state.clearCart);
+  const { campaign } = useCampaign();
+  // 🧮 A plain reduce over the cart — cheap enough (a handful of line
+  // items) that memoizing it buys nothing.
+  const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
   const empty = cartCount === 0;
   // 🛍️ Controlled (not just `<SheetTrigger>` uncontrolled) so a successful
   // whole-cart checkout can close the sheet itself — see `onSuccess` below.

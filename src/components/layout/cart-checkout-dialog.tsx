@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
-import { useStore } from "@/providers/store-provider";
+import { toast } from "@/lib/toast";
+import { useAuth } from "@/providers/auth-provider";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
 import { createCartOrderAction } from "@/lib/shop/checkout-actions";
 import { useCheckoutDeliveryForm } from "@/hooks/use-checkout-delivery-form";
@@ -36,12 +37,12 @@ export function CartCheckoutDialog({
   rows: CartCheckoutRow[];
   onSuccess: () => void;
 }) {
-  const { user, showToast } = useStore();
+  const { user } = useAuth();
   const subtotal = rows.reduce(
     (sum, { item, unitPrice }) => sum + unitPrice * item.qty,
     0,
   );
-  const form = useCheckoutDeliveryForm({ open, user, subtotal, showToast });
+  const form = useCheckoutDeliveryForm({ open, user, subtotal });
   const {
     city,
     setCity,
@@ -87,13 +88,13 @@ export function CartCheckoutDialog({
       });
 
       if (!result.ok) {
-        showToast(result.error);
+        toast(result.error);
         return;
       }
 
       onOpenChange(false);
       onSuccess();
-      showToast(
+      toast(
         `سفارش ${result.data.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`,
       );
     });

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff, KeyRound, Lock, Mail } from "lucide-react";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { toast } from "@/lib/toast";
 import { AppForm, InsetField, SubmitButton, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
@@ -73,7 +73,7 @@ export function LoginPanel({ onForgot }: { onForgot: () => void }) {
 
 /** 🔑 Email + password sign-in — the original login form, unchanged. */
 function PasswordLoginPanel({ onForgot }: { onForgot: () => void }) {
-  const { login, showToast } = useStore();
+  const { login } = useAuth();
   const [show, setShow] = useState(false);
   const form = useAppForm({ schema: signInSchema, defaultValues: signInDefaults });
 
@@ -84,7 +84,7 @@ function PasswordLoginPanel({ onForgot }: { onForgot: () => void }) {
       return;
     }
     login(result.data);
-    showToast(`خوش آمدید، ${result.data.firstName} ✨`);
+    toast(`خوش آمدید، ${result.data.firstName} ✨`);
     form.reset();
   }
 

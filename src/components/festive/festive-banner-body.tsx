@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft, Gift, Ticket } from "lucide-react";
-import { useStore } from "@/providers/store-provider";
+import { useCampaign } from "@/providers/campaign-provider";
 import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import type { FestiveTheme } from "@/types";
@@ -56,7 +56,7 @@ function BannerFrame({
 // matches instantly on load — any hover movement would replay as a tick.
 // Hover feedback is brightness/shadow/underline only.
 export function FestiveBannerBody() {
-  const { campaign, banner } = useStore();
+  const { campaign, banner } = useCampaign();
 
   if (campaign.active && campaign.percent > 0) {
     return (

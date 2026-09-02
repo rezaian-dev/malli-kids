@@ -1,6 +1,6 @@
 "use client";
 
-import { useStore } from "@/providers/store-provider";
+import { useCampaign } from "@/providers/campaign-provider";
 import { resolvePrice } from "@/lib/shop/pricing";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ export function PriceTag({
   old?: number;
   className?: string;
 }) {
-  const { campaign } = useStore();
+  const { campaign } = useCampaign();
   const resolved = resolvePrice({ price, old }, campaign);
 
   // 🏷️ The one and only discount indicator a card shows — no separate

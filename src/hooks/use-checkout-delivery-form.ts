@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { phoneDigits } from "@/lib/digits";
 import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
+import { toast } from "@/lib/toast";
 import { checkCouponAction } from "@/lib/shop/checkout-actions";
 import type { AppliedCoupon } from "@/lib/shop/coupons";
 import type { User } from "@/types";
@@ -43,12 +44,10 @@ export function useCheckoutDeliveryForm({
   open,
   user,
   subtotal,
-  showToast,
 }: {
   open: boolean;
   user: Pick<User, "city" | "address" | "phone" | "postalCode"> | null;
   subtotal: number;
-  showToast: (message: string) => void;
 }) {
   const [city, setCity] = useState(user?.city || "");
   const [address, setAddress] = useState(user?.address || "");
@@ -93,7 +92,7 @@ export function useCheckoutDeliveryForm({
       if (hit) {
         setApplied(hit);
         setCouponBad(false);
-        showToast(
+        toast(
           `کد ${hit.code} اعمال شد — ${toFaDigits(Math.round(hit.rate * 100))}٪ تخفیف 🎉`,
         );
       } else {

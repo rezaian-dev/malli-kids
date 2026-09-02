@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Heart, ShoppingBag, Truck, Wallet } from "lucide-react";
 import type { AdminOrder, OrderStatus } from "@/types";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { useFavorites } from "@/lib/favorites";
 import { ORDER_FLOW, stageIndex } from "@/lib/shop/order-status";
@@ -19,7 +19,7 @@ const POLL_MS = 20_000;
 
 // 📦 Orders panel stays isolated from the default profile bundle.
 export function ProfileOrdersPanel() {
-  const { user } = useStore();
+  const { user } = useAuth();
   const [orders] = usePolling<AdminOrder[]>(
     getMyOrdersAction,
     POLL_MS,

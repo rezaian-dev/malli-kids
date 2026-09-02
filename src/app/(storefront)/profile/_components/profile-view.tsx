@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import { ProfilePanelFallback } from "./profile-shared";
 import { ProfileHeader } from "./profile-header";
 import { ProfileTabs, type ProfileTab } from "./profile-tabs";
@@ -54,7 +54,7 @@ function readHashTab(): ProfileTab {
 
 // 👤 Profile shell stays light and loads each panel on demand.
 export function ProfileView() {
-  const { user, setAuthOpen } = useStore();
+  const { user, setAuthOpen } = useAuth();
   const [tab, setTab] = useState<ProfileTab>("info");
 
   useEffect(() => {

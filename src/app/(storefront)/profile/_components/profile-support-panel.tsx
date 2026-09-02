@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Headphones, Plus } from "lucide-react";
 import { toast } from "@/lib/toast";
-import { useStore } from "@/providers/store-provider";
+import { useAuth } from "@/providers/auth-provider";
 import type {
   Ticket,
   TicketCategory,
@@ -57,7 +57,7 @@ function fieldClass(error?: string) {
 
 // 🎫 Support panel keeps ticket logic out of the first profile paint.
 export function ProfileSupportPanel() {
-  const { user } = useStore();
+  const { user } = useAuth();
   const [tickets, setTickets] = usePolling<Ticket[]>(
     getMyTicketsAction,
     POLL_MS,

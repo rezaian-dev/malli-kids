@@ -109,7 +109,7 @@ export function AdminTable<T extends { id: string | number }>({
             <div
               className={cn(
                 "scrollbar-thin overflow-x-auto [&::-webkit-scrollbar]:h-2.25 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent",
-                "[&::-webkit-scrollbar-track]:bg-navy/4.5 [scrollbar-color:rgba(193,147,87,0.78)_rgba(14,42,71,0.04)] [&::-webkit-scrollbar-thumb]:bg-[linear-gradient(to_right,var(--color-gold-deep),var(--color-gold-light))] [&::-webkit-scrollbar-thumb]:bg-clip-padding",
+                "[&::-webkit-scrollbar-track]:bg-navy/4.5 scrollbar-thumb-[rgba(193,147,87,0.78)] scrollbar-track-[rgba(14,42,71,0.04)] [&::-webkit-scrollbar-thumb]:bg-[linear-gradient(to_right,var(--color-gold-deep),var(--color-gold-light))] [&::-webkit-scrollbar-thumb]:bg-clip-padding",
                 "dark:[&::-webkit-scrollbar-track]:bg-gold-soft/4",
               )}
             >
