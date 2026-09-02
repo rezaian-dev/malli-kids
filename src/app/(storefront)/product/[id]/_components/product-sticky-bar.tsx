@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import { formatToman } from "@/lib/locale/fa";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 /** 📱 A slim purchase bar pinned to the bottom of the screen on small
  *  viewports, shown only once the buy panel's own "افزودن به سبد" button
@@ -43,11 +42,7 @@ export function ProductStickyBar({
     <div
       ref={ref}
       hidden={hidden}
-      className={cn(
-        "fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] sm:hidden",
-        "border-navy/10 bg-paper/95 backdrop-blur",
-        "dark:border-gold/25 dark:bg-dusk/95",
-      )}
+      className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] sm:hidden border-navy/10 bg-paper/95 backdrop-blur dark:border-gold/25 dark:bg-dusk/95"
     >
       <div className="min-w-0 flex-1">
         <p className="text-navy dark:text-ivory truncate text-xs font-bold">

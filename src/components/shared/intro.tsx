@@ -2,7 +2,6 @@ import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Stagger, StaggerItem } from "@/components/motion/static";
 import { pageSchema } from "@/lib/seo";
-import { cn } from "@/lib/utils";
 
 type IntroProps = {
   crumb: string;
@@ -39,11 +38,7 @@ export function Intro({
       <header className="relative mb-10 sm:mb-14">
         <div className="xs:px-4 container mx-auto w-full max-w-5xl px-3 sm:px-5 lg:px-7">
           <Stagger
-            className={cn(
-              "overflow-hidden rounded-[28px] border px-5 py-7 sm:px-8 sm:py-9",
-              "border-gold/30 bg-white/90 shadow-[0_18px_40px_-28px_rgba(14,42,71,.28)]",
-              "dark:border-gold/35 dark:bg-slate/50",
-            )}
+            className="overflow-hidden rounded-[28px] border px-5 py-7 sm:px-8 sm:py-9 border-gold/30 bg-white/90 shadow-[0_18px_40px_-28px_rgba(14,42,71,.28)] dark:border-gold/35 dark:bg-slate/50"
           >
             <StaggerItem>
               <Breadcrumb
@@ -68,11 +63,7 @@ export function Intro({
             ) : null}
             <StaggerItem>
               <h1
-                className={cn(
-                  "mt-2 text-[clamp(1.6rem,4.5vw,2.6rem)] leading-snug font-black",
-                  "text-navy",
-                  "dark:text-ivory",
-                )}
+                className="mt-2 text-[clamp(1.6rem,4.5vw,2.6rem)] leading-snug font-black text-navy dark:text-ivory"
               >
                 {title}
               </h1>
@@ -86,11 +77,7 @@ export function Intro({
             {lead ? (
               <StaggerItem>
                 <p
-                  className={cn(
-                    "mt-4 max-w-2xl text-sm leading-8 sm:text-base",
-                    "text-navy/70",
-                    "dark:text-wheat",
-                  )}
+                  className="mt-4 max-w-2xl text-sm leading-8 sm:text-base text-navy/70 dark:text-wheat"
                 >
                   {lead}
                 </p>

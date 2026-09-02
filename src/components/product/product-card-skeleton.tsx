@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 
 /** 🦴 Loading placeholder for `ProductCardGrid` — same rounded-3xl shell,
  *  same `pt-[125%]` image aspect box, same content padding/rows as the real
@@ -8,11 +7,7 @@ export function ProductCardGridSkeleton() {
   return (
     <div
       aria-hidden
-      className={cn(
-        "flex h-full min-w-0 flex-col overflow-hidden rounded-3xl border",
-        "border-navy/10 bg-white/94",
-        "dark:border-gold-soft/35 dark:bg-slate/60",
-      )}
+      className="flex h-full min-w-0 flex-col overflow-hidden rounded-3xl border border-navy/10 bg-white/94 dark:border-gold-soft/35 dark:bg-slate/60"
     >
       <div className="bg-sand dark:bg-navy-mid/40 relative w-full shrink-0 overflow-hidden pt-[125%]">
         <Skeleton className="absolute inset-0 size-full rounded-none" />

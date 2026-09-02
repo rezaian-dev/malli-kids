@@ -54,11 +54,7 @@ export function buildCustomerColumns({
               {customer.firstName} {customer.lastName}
             </p>
             <p
-              className={cn(
-                "mt-0.5 truncate text-[10px] font-bold",
-                "text-navy/70",
-                "dark:text-wheat",
-              )}
+              className="mt-0.5 truncate text-[10px] font-bold text-navy/70 dark:text-wheat"
             >
               {customer.city} · عضویت {customer.joined}
             </p>
@@ -74,21 +70,13 @@ export function buildCustomerColumns({
       render: (customer) =>
         customer.role === "admin" ? (
           <span
-            className={cn(
-              "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black",
-              "bg-gold/15 text-gold-deep",
-              "dark:text-gold-soft",
-            )}
+            className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black bg-gold/15 text-gold-deep dark:text-gold-soft"
           >
             <ShieldCheck className="size-3" /> ادمین
           </span>
         ) : (
           <span
-            className={cn(
-              "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black",
-              "bg-sky-500/10 text-sky-700",
-              "dark:text-sky-300",
-            )}
+            className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black bg-sky-500/10 text-sky-700 dark:text-sky-300"
           >
             <UserRound className="size-3" /> کاربر
           </span>
@@ -107,11 +95,7 @@ export function buildCustomerColumns({
             <Phone className="text-gold size-3.5 shrink-0" /> {customer.phone}
           </span>
           <span
-            className={cn(
-              "flex w-max max-w-full items-center gap-1.5 text-[11px] font-bold",
-              "text-navy/70",
-              "dark:text-wheat",
-            )}
+            className="flex w-max max-w-full items-center gap-1.5 text-[11px] font-bold text-navy/70 dark:text-wheat"
             dir="ltr"
           >
             <Mail className="text-gold size-3.5 shrink-0" />
@@ -151,20 +135,13 @@ export function buildCustomerColumns({
       render: (customer) =>
         (customer.status ?? "فعال") === "فعال" ? (
           <span
-            className={cn(
-              "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black",
-              "bg-emerald-500/10 text-emerald-700",
-              "dark:text-emerald-300",
-            )}
+            className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
           >
             <CircleCheckBig className="size-3" /> فعال
           </span>
         ) : (
           <span
-            className={cn(
-              "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black",
-              "bg-rose/10 text-rose",
-            )}
+            className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-black bg-rose/10 text-rose"
           >
             <Ban className="size-3" /> مسدود
           </span>
@@ -178,11 +155,7 @@ export function buildCustomerColumns({
       renderMobile: (customer) =>
         customer.role === "admin" ? (
           <div
-            className={cn(
-              "flex items-center gap-2 rounded-xl px-3 py-2 text-[10px] font-black",
-              "bg-gold/8 text-gold-deep",
-              "dark:text-gold-soft",
-            )}
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-[10px] font-black bg-gold/8 text-gold-deep dark:text-gold-soft"
           >
             <ShieldCheck className="size-3.5" /> حساب مدیر محافظت‌شده
           </div>
@@ -194,11 +167,7 @@ export function buildCustomerColumns({
                 event.stopPropagation();
                 onPromote(customer);
               }}
-              className={cn(
-                "col-span-2 inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl border px-2 text-[10px] font-black transition",
-                "border-gold/40 text-gold-deep hover:border-gold hover:bg-gold/10",
-                "dark:border-gold/30 dark:text-gold-soft",
-              )}
+              className="col-span-2 inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl border px-2 text-[10px] font-black transition border-gold/40 text-gold-deep hover:border-gold hover:bg-gold/10 dark:border-gold/30 dark:text-gold-soft"
             >
               <Crown className="size-3.5" /> ارتقا به ادمین
             </button>
@@ -208,11 +177,7 @@ export function buildCustomerColumns({
                 event.stopPropagation();
                 onToggleStatus(customer);
               }}
-              className={cn(
-                "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl border px-2 text-[10px] font-black transition",
-                "border-navy/10 text-navy hover:border-gold",
-                "dark:border-gold/20 dark:text-wheat",
-              )}
+              className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl border px-2 text-[10px] font-black transition border-navy/10 text-navy hover:border-gold dark:border-gold/20 dark:text-wheat"
             >
               {(customer.status ?? "فعال") === "فعال" ? (
                 <Ban className="size-3.5" />
@@ -232,10 +197,7 @@ export function buildCustomerColumns({
                 <button
                   type="button"
                   onClick={(event) => event.stopPropagation()}
-                  className={cn(
-                    "inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-xl px-2 text-[10px] font-black transition",
-                    "bg-rose/10 text-rose hover:bg-rose/15",
-                  )}
+                  className="inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-xl px-2 text-[10px] font-black transition bg-rose/10 text-rose hover:bg-rose/15"
                 >
                   <Trash2 className="size-3.5" /> حذف کاربر
                 </button>
@@ -261,11 +223,7 @@ export function buildCustomerColumns({
                 event.stopPropagation();
                 onPromote(customer);
               }}
-              className={cn(
-                "grid size-9 shrink-0 place-items-center rounded-xl border transition",
-                "border-navy/10 text-navy/70 hover:border-gold hover:text-gold-deep",
-                "dark:border-gold/20 dark:text-wheat",
-              )}
+              className="grid size-9 shrink-0 place-items-center rounded-xl border transition border-navy/10 text-navy/70 hover:border-gold hover:text-gold-deep dark:border-gold/20 dark:text-wheat"
             >
               <Crown className="size-4" />
             </button>
@@ -285,11 +243,7 @@ export function buildCustomerColumns({
                 event.stopPropagation();
                 onToggleStatus(customer);
               }}
-              className={cn(
-                "grid size-9 shrink-0 place-items-center rounded-xl border transition",
-                "border-navy/10 text-navy/70 hover:border-gold hover:text-gold-deep",
-                "dark:border-gold/20 dark:text-wheat",
-              )}
+              className="grid size-9 shrink-0 place-items-center rounded-xl border transition border-navy/10 text-navy/70 hover:border-gold hover:text-gold-deep dark:border-gold/20 dark:text-wheat"
             >
               {(customer.status ?? "فعال") === "فعال" ? (
                 <Ban className="size-4" />
@@ -308,10 +262,7 @@ export function buildCustomerColumns({
                   title="حذف کاربر"
                   aria-label="حذف کاربر"
                   onClick={(event) => event.stopPropagation()}
-                  className={cn(
-                    "grid size-9 shrink-0 place-items-center rounded-xl transition",
-                    "bg-rose/10 text-rose hover:bg-rose/15",
-                  )}
+                  className="grid size-9 shrink-0 place-items-center rounded-xl transition bg-rose/10 text-rose hover:bg-rose/15"
                 >
                   <Trash2 className="size-4" />
                 </button>

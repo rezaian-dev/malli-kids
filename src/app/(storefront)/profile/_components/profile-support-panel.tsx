@@ -241,22 +241,14 @@ export function ProfileSupportPanel() {
         </div>
       ) : tickets.length === 0 ? (
         <div
-          className={cn(
-            "mt-6 rounded-2xl border border-dashed px-6 py-10 text-center",
-            "border-navy/15",
-            "dark:border-gold/25",
-          )}
+          className="mt-6 rounded-2xl border border-dashed px-6 py-10 text-center border-navy/15 dark:border-gold/25"
         >
           <Headphones className="text-gold mx-auto size-9" />
           <p className="text-navy dark:text-ivory mt-3 font-black">
             هنوز تیکتی ندارید
           </p>
           <p
-            className={cn(
-              "mx-auto mt-1 max-w-xs text-xs leading-6",
-              "text-navy/70",
-              "dark:text-wheat",
-            )}
+            className="mx-auto mt-1 max-w-xs text-xs leading-6 text-navy/70 dark:text-wheat"
           >
             مشاوره سایز، پیگیری سفارش یا هر سوال دیگر — تیکت بسازید تا همین‌جا
             پاسخ بگیرید.
@@ -269,38 +261,22 @@ export function ProfileSupportPanel() {
             return (
               <li
                 key={ticket.id}
-                className={cn(
-                  "overflow-hidden rounded-2xl border",
-                  "border-navy/10",
-                  "dark:border-gold/25",
-                )}
+                className="overflow-hidden rounded-2xl border border-navy/10 dark:border-gold/25"
               >
                 <button
                   type="button"
-                  className={cn(
-                    "flex w-full items-center justify-between gap-3 px-4 py-3.5 text-start transition-colors",
-                    "hover:bg-navy/3",
-                    "dark:hover:bg-white/4",
-                  )}
+                  className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-start transition-colors hover:bg-navy/3 dark:hover:bg-white/4"
                   onClick={() => setOpenId(open ? null : ticket.id)}
                   aria-expanded={open}
                 >
                   <span className="min-w-0">
                     <span
-                      className={cn(
-                        "block truncate text-sm font-black",
-                        "text-navy",
-                        "dark:text-ivory",
-                      )}
+                      className="block truncate text-sm font-black text-navy dark:text-ivory"
                     >
                       {ticket.subject}
                     </span>
                     <span
-                      className={cn(
-                        "mt-0.5 block text-[10px] font-bold",
-                        "text-navy/70",
-                        "dark:text-wheat",
-                      )}
+                      className="mt-0.5 block text-[10px] font-bold text-navy/70 dark:text-wheat"
                     >
                       {toFaDigits(
                         ticket.number

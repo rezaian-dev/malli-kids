@@ -2,7 +2,6 @@
 
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
 import { ICON_BTN } from "./header-styles";
 import { UserMenu } from "./user-menu";
 import { NoticesBell } from "./notices-bell";
@@ -30,12 +29,7 @@ export function HeaderActions() {
 
       <Separator
         orientation="vertical"
-        className={cn(
-          "mx-1 hidden h-5! w-px min-[480px]:block md:hidden lg:block",
-          "bg-navy/15",
-          "data-vertical:self-center",
-          "dark:bg-gold/25",
-        )}
+        className="mx-1 hidden h-5! w-px min-[480px]:block md:hidden lg:block bg-navy/15 data-vertical:self-center dark:bg-gold/25"
       />
 
       <ModeToggle className={ICON_BTN} />

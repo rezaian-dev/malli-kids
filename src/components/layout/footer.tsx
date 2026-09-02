@@ -10,10 +10,7 @@ export function Footer() {
   return (
     <footer dir="rtl" className="bg-navy-deep text-cream-mute relative">
       <span
-        className={cn(
-          "pointer-events-none absolute inset-x-0 top-0 h-px",
-          "via-gold bg-linear-to-l from-transparent to-transparent",
-        )}
+        className="pointer-events-none absolute inset-x-0 top-0 h-px via-gold bg-linear-to-l from-transparent to-transparent"
         aria-hidden
       />
       <Reveal>

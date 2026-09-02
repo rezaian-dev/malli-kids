@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 
 /** 🦴 Mirrors the real hero + `ArticlesList` card shape instead of a
  *  generic spinner. */
@@ -21,11 +20,7 @@ export default function ArticlesLoading() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className={cn(
-              "flex gap-4 rounded-3xl border p-4 sm:p-6",
-              "border-navy/10 bg-white",
-              "dark:border-gold/30 dark:bg-dusk",
-            )}
+            className="flex gap-4 rounded-3xl border p-4 sm:p-6 border-navy/10 bg-white dark:border-gold/30 dark:bg-dusk"
           >
             <Skeleton className="h-24 w-24 shrink-0 rounded-2xl sm:h-32 sm:w-40" />
             <div className="min-w-0 flex-1 space-y-2.5 py-1">

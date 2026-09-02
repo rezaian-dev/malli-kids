@@ -15,16 +15,7 @@ export function Header() {
         <FestiveBanner />
 
         <div
-          className={cn(
-            // 🪶 blur-md, not blur-xl: this header is `fixed`, so the browser
-            // re-runs the backdrop blur every scroll frame for the lifetime of
-            // the page. xl (24px sigma) was the single heaviest recurring GPU
-            // cost on every route on mobile; md (12px) still reads as frosted
-            // glass but roughly halves that per-frame compositing cost.
-            "border-navy/10 bg-cream/80 border-b shadow-[0_8px_24px_-16px_rgba(14,42,71,.2)]",
-            "supports-backdrop-filter:bg-cream/70 backdrop-blur-md",
-            "dark:border-gold/20 dark:bg-navy-deep/60 dark:supports-backdrop-filter:bg-navy-deep/55 dark:backdrop-blur-md",
-          )}
+          className="border-navy/10 bg-cream/80 border-b shadow-[0_8px_24px_-16px_rgba(14,42,71,.2)] supports-backdrop-filter:bg-cream/70 backdrop-blur-md dark:border-gold/20 dark:bg-navy-deep/60 dark:supports-backdrop-filter:bg-navy-deep/55 dark:backdrop-blur-md"
         >
           <div
             className={cn(
@@ -60,11 +51,7 @@ export function Header() {
               />
               <span className="hidden leading-none min-[480px]:block md:hidden lg:block">
                 <span
-                  className={cn(
-                    "block",
-                    "font-display text-navy text-xs font-bold tracking-[0.16em]",
-                    "dark:text-linen",
-                  )}
+                  className="block font-display text-navy text-xs font-bold tracking-[0.16em] dark:text-linen"
                 >
                   MALLI
                 </span>

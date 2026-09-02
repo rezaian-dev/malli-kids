@@ -185,11 +185,7 @@ export function ArticleList({
               />
             ) : (
               <div
-                className={cn(
-                  "grid h-32 w-full shrink-0 place-items-center rounded-2xl bg-linear-to-br sm:h-24 sm:w-32",
-                  "from-sand to-gold/25 text-gold-deep",
-                  "dark:from-navy-deep dark:to-gold/12 dark:text-gold-soft",
-                )}
+                className="grid h-32 w-full shrink-0 place-items-center rounded-2xl bg-linear-to-br sm:h-24 sm:w-32 from-sand to-gold/25 text-gold-deep dark:from-navy-deep dark:to-gold/12 dark:text-gold-soft"
               >
                 <FilePenLine className="size-6" />
               </div>
@@ -227,11 +223,7 @@ export function ArticleList({
             </div>
             <div className="flex shrink-0 items-center gap-2 sm:flex-col lg:flex-row">
               <label
-                className={cn(
-                  "flex min-h-9 flex-1 items-center justify-center gap-2 rounded-xl border px-3 text-[10px] font-black sm:flex-none",
-                  "border-navy/8 text-navy/70",
-                  "dark:border-gold/14 dark:text-wheat",
-                )}
+                className="flex min-h-9 flex-1 items-center justify-center gap-2 rounded-xl border px-3 text-[10px] font-black sm:flex-none border-navy/8 text-navy/70 dark:border-gold/14 dark:text-wheat"
               >
                 <Switch
                   checked={article.published}

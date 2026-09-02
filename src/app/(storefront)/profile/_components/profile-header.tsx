@@ -76,18 +76,12 @@ export function ProfileHeader({ user }: { user: User }) {
 
   return (
     <section
-      className={cn(
-        "overflow-hidden rounded-[28px]",
-        "from-navy via-navy-mid to-navy-light bg-linear-to-br",
-      )}
+      className="overflow-hidden rounded-[28px] from-navy via-navy-mid to-navy-light bg-linear-to-br"
     >
       <div className="flex flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:px-8 sm:py-9">
         <div className="relative self-start">
           <span
-            className={cn(
-              "relative inline-flex size-19 items-center justify-center overflow-hidden rounded-full ring-3 sm:size-24",
-              "bg-navy text-gold-soft ring-gold/45 text-[28px] font-black sm:text-[34px]",
-            )}
+            className="relative inline-flex size-19 items-center justify-center overflow-hidden rounded-full ring-3 sm:size-24 bg-navy text-gold-soft ring-gold/45 text-[28px] font-black sm:text-[34px]"
           >
             {user.avatar ? (
               <Image

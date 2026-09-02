@@ -2,7 +2,6 @@ import type { AdminReview, Product } from "@/types";
 import { ReviewSummary } from "./review-summary";
 import { FeaturedReview } from "./featured-review";
 import { BuyerReviewCard } from "./buyer-review-card";
-import { cn } from "@/lib/utils";
 
 export function ProductReviews({
   product,
@@ -27,11 +26,7 @@ export function ProductReviews({
         others.map((r) => <BuyerReviewCard key={r.id} review={r} />)
       ) : !featured ? (
         <p
-          className={cn(
-            "rounded-3xl border border-dashed px-5 py-6 text-center text-sm leading-7",
-            "border-navy/15 bg-sand text-navy/70",
-            "dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat",
-          )}
+          className="rounded-3xl border border-dashed px-5 py-6 text-center text-sm leading-7 border-navy/15 bg-sand text-navy/70 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat"
         >
           هنوز نظری برای این محصول ثبت نشده است.
         </p>

@@ -39,11 +39,7 @@ function BannerField({
       <Input
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className={cn(
-          "mt-1.5 h-11 rounded-xl bg-transparent shadow-none",
-          "border-navy/9 text-navy",
-          "dark:border-gold/16 dark:text-ivory",
-        )}
+        className="mt-1.5 h-11 rounded-xl bg-transparent shadow-none border-navy/9 text-navy dark:border-gold/16 dark:text-ivory"
       />
     </div>
   );
@@ -89,11 +85,7 @@ export function BannerCard({
               </span>
               {banner.pinned ? (
                 <span
-                  className={cn(
-                    "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black",
-                    "bg-sky-500/10 text-sky-700",
-                    "dark:text-sky-300",
-                  )}
+                  className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black bg-sky-500/10 text-sky-700 dark:text-sky-300"
                 >
                   <Pin className="size-3" /> پین‌شده
                 </span>
@@ -104,11 +96,7 @@ export function BannerCard({
             </p>
           </div>
           <div
-            className={cn(
-              "flex items-center gap-4 rounded-xl px-3 py-2",
-              "bg-navy/3",
-              "dark:bg-white/3",
-            )}
+            className="flex items-center gap-4 rounded-xl px-3 py-2 bg-navy/3 dark:bg-white/3"
           >
             <label className="flex items-center gap-2 text-[10px] font-black">
               <span className="text-navy/70 dark:text-wheat">پین</span>

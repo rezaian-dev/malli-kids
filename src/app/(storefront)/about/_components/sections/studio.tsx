@@ -10,7 +10,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { ABOUT } from "@/lib/data/pages";
-import { cn } from "@/lib/utils";
 
 const ROLE_ICONS = [PenTool, Scissors, Boxes, BadgeCheck, Camera, Headset];
 
@@ -42,11 +41,7 @@ export function Studio() {
           and simply grows/shrinks with the container across breakpoints. */}
       <div className="group/studio relative mx-auto mt-8 w-full sm:mt-10">
         <div
-          className={cn(
-            "relative aspect-1280/853 overflow-hidden rounded-4xl border-6 sm:border-10",
-            "bg-sand shadow-navy/20 border-white shadow-2xl",
-            "dark:border-linen",
-          )}
+          className="relative aspect-1280/853 overflow-hidden rounded-4xl border-6 sm:border-10 bg-sand shadow-navy/20 border-white shadow-2xl dark:border-linen"
         >
           <Image
             src="/brand/studio-team.jpg"
@@ -66,25 +61,16 @@ export function Studio() {
             className="h-full w-full object-cover transition-transform duration-1400 ease-out group-hover/studio:scale-105"
           />
           <div
-            className={cn(
-              "animate-shimmer pointer-events-none absolute inset-0",
-              "bg-[linear-gradient(115deg,transparent_32%,rgba(255,255,255,.32)_48%,transparent_62%)]",
-            )}
+            className="animate-shimmer pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,transparent_32%,rgba(255,255,255,.32)_48%,transparent_62%)]"
             aria-hidden
           />
           <div className="from-navy/25 absolute inset-0 bg-linear-to-t via-transparent to-transparent" />
         </div>
         <div
-          className={cn(
-            "animate-orn-sway pointer-events-none absolute -inset-3 -z-10 rounded-[38px] border-2 border-dashed sm:-inset-4",
-            "border-gold/50",
-          )}
+          className="animate-orn-sway pointer-events-none absolute -inset-3 -z-10 rounded-[38px] border-2 border-dashed sm:-inset-4 border-gold/50"
         />
         <div
-          className={cn(
-            "animate-floaty absolute -top-4 -inset-s-2 flex max-w-46 items-center gap-2 rounded-2xl p-3 shadow-xl sm:-top-6 sm:-inset-s-6",
-            "shadow-navy/15 bg-white",
-          )}
+          className="animate-floaty absolute -top-4 -inset-s-2 flex max-w-46 items-center gap-2 rounded-2xl p-3 shadow-xl sm:-top-6 sm:-inset-s-6 shadow-navy/15 bg-white"
         >
           <span className="bg-gold/15 text-gold flex size-9 shrink-0 items-center justify-center rounded-xl">
             <Heart className="size-4" />
@@ -97,10 +83,7 @@ export function Studio() {
           </div>
         </div>
         <div
-          className={cn(
-            "animate-floaty-slow absolute -bottom-4 -inset-e-2 rounded-2xl px-4 py-3 shadow-xl sm:-bottom-6 sm:-inset-e-6",
-            "bg-navy text-cream shadow-navy/30",
-          )}
+          className="animate-floaty-slow absolute -bottom-4 -inset-e-2 rounded-2xl px-4 py-3 shadow-xl sm:-bottom-6 sm:-inset-e-6 bg-navy text-cream shadow-navy/30"
         >
           <div className="flex items-center gap-1.5">
             <Scissors className="text-gold-light size-4" />
@@ -126,11 +109,7 @@ export function Studio() {
           return (
             <li
               key={role}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-colors duration-300",
-                "border-gold/30 bg-white/80 text-navy hover:border-gold/60",
-                "dark:border-gold/25 dark:bg-slate/50 dark:text-ivory",
-              )}
+              className="inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-colors duration-300 border-gold/30 bg-white/80 text-navy hover:border-gold/60 dark:border-gold/25 dark:bg-slate/50 dark:text-ivory"
             >
               <Icon className="text-gold size-3.5 shrink-0" />
               {role}

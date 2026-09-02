@@ -74,10 +74,7 @@ export function HomeQuotes({ reviews }: { reviews: AdminReview[] }) {
                   <div className="relative flex min-h-0 flex-1 flex-col">
                     <div className="mb-2 flex flex-wrap items-center gap-1.5">
                       <span
-                        className={cn(
-                          "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold",
-                          "text-gold-glow border-white/15 bg-white/10",
-                        )}
+                        className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold text-gold-glow border-white/15 bg-white/10"
                       >
                         <BadgeCheck className="size-3.5" /> تأییدشده
                       </span>
@@ -87,16 +84,10 @@ export function HomeQuotes({ reviews }: { reviews: AdminReview[] }) {
                       «{r.text}»
                     </p>
                     <div
-                      className={cn(
-                        "mt-auto flex items-center gap-2.5 border-t pt-3",
-                        "border-white/10",
-                      )}
+                      className="mt-auto flex items-center gap-2.5 border-t pt-3 border-white/10"
                     >
                       <span
-                        className={cn(
-                          "flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-black",
-                          "bg-gold text-navy-deep",
-                        )}
+                        className="flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-black bg-gold text-navy-deep"
                       >
                         {r.author.trim().charAt(0)}
                       </span>

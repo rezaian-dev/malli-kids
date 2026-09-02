@@ -48,19 +48,11 @@ export function AdminFilterBar({
       aria-label="جستجو و فیلترها"
     >
       <div
-        className={cn(
-          "flex flex-wrap items-center justify-between gap-3 border-b px-3.5 py-3 sm:px-4",
-          "border-navy/8",
-          "dark:border-gold/15",
-        )}
+        className="flex flex-wrap items-center justify-between gap-3 border-b px-3.5 py-3 sm:px-4 border-navy/8 dark:border-gold/15"
       >
         <div className="flex min-w-0 items-center gap-2.5">
           <span
-            className={cn(
-              "grid size-9 shrink-0 place-items-center rounded-xl shadow-sm",
-              "bg-navy text-gold-soft",
-              "dark:bg-gold/15 dark:text-gold-soft",
-            )}
+            className="grid size-9 shrink-0 place-items-center rounded-xl shadow-sm bg-navy text-gold-soft dark:bg-gold/15 dark:text-gold-soft"
           >
             <SlidersHorizontal className="size-4" />
           </span>
@@ -83,10 +75,7 @@ export function AdminFilterBar({
             variant="ghost"
             size="sm"
             onClick={onReset}
-            className={cn(
-              "h-8 rounded-xl px-2.5 text-[11px] font-black",
-              "text-rose hover:bg-rose/10 hover:text-rose",
-            )}
+            className="h-8 rounded-xl px-2.5 text-[11px] font-black text-rose hover:bg-rose/10 hover:text-rose"
           >
             <RotateCcw className="size-3.5" /> پاک‌کردن فیلترها
           </Button>
@@ -99,10 +88,7 @@ export function AdminFilterBar({
             <span className={FILTER_LABEL}>جستجو</span>
             <span className="dark:bg-navy-deep/45 relative block rounded-xl bg-white">
               <Search
-                className={cn(
-                  "pointer-events-none absolute inset-s-3 top-1/2 size-4 -translate-y-1/2",
-                  "text-gold",
-                )}
+                className="pointer-events-none absolute inset-s-3 top-1/2 size-4 -translate-y-1/2 text-gold"
               />
               <Input
                 value={search}
@@ -115,11 +101,7 @@ export function AdminFilterBar({
                   type="button"
                   onClick={() => onSearchChange("")}
                   aria-label="پاک‌کردن جستجو"
-                  className={cn(
-                    "absolute inset-e-2.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-lg transition",
-                    "text-navy/70 hover:bg-navy/7 hover:text-navy",
-                    "dark:text-wheat/70 dark:hover:text-ivory dark:hover:bg-white/8",
-                  )}
+                  className="absolute inset-e-2.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-lg transition text-navy/70 hover:bg-navy/7 hover:text-navy dark:text-wheat/70 dark:hover:text-ivory dark:hover:bg-white/8"
                 >
                   <X className="size-3.5" />
                 </button>

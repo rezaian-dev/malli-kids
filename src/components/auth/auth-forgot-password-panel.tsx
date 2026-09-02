@@ -5,7 +5,6 @@ import { ArrowLeft, ArrowRight, Mail, MailCheck } from "lucide-react";
 import { useCooldown } from "@/hooks/use-cooldown";
 import { AppForm, InsetField, SubmitButton, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { forgotPasswordAction } from "@/lib/auth/actions";
 import {
   forgotPasswordDefaults,
@@ -19,11 +18,7 @@ import { SUBMIT_GOLD } from "./auth-shared";
 function SentCard({ email }: { email: string }) {
   return (
     <div
-      className={cn(
-        "mx-auto flex flex-col items-center gap-3 rounded-2xl border px-5 py-6 text-center",
-        "border-gold/30 bg-sand/80",
-        "dark:border-gold/25 dark:bg-navy-deep/60",
-      )}
+      className="mx-auto flex flex-col items-center gap-3 rounded-2xl border px-5 py-6 text-center border-gold/30 bg-sand/80 dark:border-gold/25 dark:bg-navy-deep/60"
     >
       <span className="bg-gold/12 text-gold flex size-14 items-center justify-center rounded-full">
         <MailCheck className="size-6" />

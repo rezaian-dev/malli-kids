@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { toFaDigits } from "@/lib/locale/fa";
 import { usePolling } from "@/hooks/use-polling";
 import { getMyChatUnreadAction } from "@/lib/shop/chat-actions";
@@ -106,11 +105,7 @@ export function ChatWidget() {
           aria-expanded={open}
           aria-controls="support-chat-window"
           onClick={openChat}
-          className={cn(
-            "shadow-gold/40 fixed inset-s-4 bottom-4 z-65 size-14 rounded-full shadow-lg",
-            "sm:inset-s-6 sm:bottom-6",
-            "motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-105 motion-safe:active:scale-95",
-          )}
+          className="shadow-gold/40 fixed inset-s-4 bottom-4 z-65 size-14 rounded-full shadow-lg sm:inset-s-6 sm:bottom-6 motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-105 motion-safe:active:scale-95"
         >
           <MessageCircle className="size-6" />
           {shown > 0 ? (
@@ -120,12 +115,7 @@ export function ChatWidget() {
               // loop running in the background.
               key={shown}
               aria-hidden
-              className={cn(
-                "pointer-events-none absolute -inset-e-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full px-1",
-                "bg-rose text-[10px] font-black text-white",
-                "ring-paper dark:ring-dusk shadow ring-2",
-                "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-200",
-              )}
+              className="pointer-events-none absolute -inset-e-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full px-1 bg-rose text-[10px] font-black text-white ring-paper dark:ring-dusk shadow ring-2 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-200"
             >
               {shown > 9 ? "+۹" : toFaDigits(shown)}
             </span>
@@ -136,24 +126,13 @@ export function ChatWidget() {
       {invite && !open ? (
         <div
           role="status"
-          className={cn(
-            "fixed inset-s-4 bottom-20 z-65 w-[min(19rem,calc(100vw-2rem))]",
-            "sm:inset-s-6 sm:bottom-24",
-            "rounded-3xl border p-4 shadow-2xl",
-            "border-gold/40 bg-paper text-navy",
-            "dark:border-gold/50 dark:bg-dusk dark:text-ivory",
-            "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-300",
-          )}
+          className="fixed inset-s-4 bottom-20 z-65 w-[min(19rem,calc(100vw-2rem))] sm:inset-s-6 sm:bottom-24 rounded-3xl border p-4 shadow-2xl border-gold/40 bg-paper text-navy dark:border-gold/50 dark:bg-dusk dark:text-ivory motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-300"
         >
           <button
             type="button"
             onClick={dismissInvite}
             aria-label="بستن دعوت به گفتگو"
-            className={cn(
-              "absolute inset-e-2 top-2 grid size-8 place-items-center rounded-full",
-              "text-navy/60 hover:bg-navy/5 hover:text-navy",
-              "dark:text-ivory/60 dark:hover:text-ivory dark:hover:bg-white/10",
-            )}
+            className="absolute inset-e-2 top-2 grid size-8 place-items-center rounded-full text-navy/60 hover:bg-navy/5 hover:text-navy dark:text-ivory/60 dark:hover:text-ivory dark:hover:bg-white/10"
           >
             <X className="size-4" />
           </button>

@@ -40,29 +40,18 @@ function Slider({
     >
       <SliderPrimitive.Track
         data-slot="slider-track"
-        className={cn(
-          "relative grow overflow-hidden rounded-full data-horizontal:h-2 data-vertical:w-2",
-          "bg-navy/12",
-          "dark:bg-navy-deep/70",
-        )}
+        className="relative grow overflow-hidden rounded-full data-horizontal:h-2 data-vertical:w-2 bg-navy/12 dark:bg-navy-deep/70"
       >
         <SliderPrimitive.Range
           data-slot="slider-range"
-          className={cn(
-            "absolute rounded-full data-horizontal:h-full data-vertical:w-full",
-            "from-gold to-gold-light bg-linear-to-l",
-          )}
+          className="absolute rounded-full data-horizontal:h-full data-vertical:w-full from-gold to-gold-light bg-linear-to-l"
         />
       </SliderPrimitive.Track>
       {Array.from({ length: values.length }, (_, i) => (
         <SliderPrimitive.Thumb
           data-slot="slider-thumb"
           key={i}
-          className={cn(
-            "block size-5 shrink-0 rounded-full",
-            "border-gold ring-gold/40 border-2 bg-white shadow-md transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none",
-            "dark:bg-navy-deep",
-          )}
+          className="block size-5 shrink-0 rounded-full border-gold ring-gold/40 border-2 bg-white shadow-md transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none dark:bg-navy-deep"
         />
       ))}
     </SliderPrimitive.Root>

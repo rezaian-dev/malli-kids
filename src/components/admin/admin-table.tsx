@@ -27,11 +27,7 @@ const ALIGN: Record<NonNullable<AdminCol<never>["align"]>, string> = {
   end: "text-end",
 };
 
-const HEAD_ROW = cn(
-  "grid border-b",
-  "border-[rgba(232,197,122,0.26)] bg-[linear-gradient(100deg,rgba(193,147,87,0.14),transparent_42%),var(--color-navy)] text-[rgba(255,248,236,0.9)] shadow-[inset_0_-1px_0_rgba(4,20,39,0.24)]",
-  "dark:border-[rgba(232,197,122,0.23)] dark:bg-[linear-gradient(100deg,rgba(193,147,87,0.12),transparent_45%),rgba(4,20,39,0.86)] dark:text-[rgba(255,248,236,0.88)]",
-);
+const HEAD_ROW = "grid border-b border-[rgba(232,197,122,0.26)] bg-[linear-gradient(100deg,rgba(193,147,87,0.14),transparent_42%),var(--color-navy)] text-[rgba(255,248,236,0.9)] shadow-[inset_0_-1px_0_rgba(4,20,39,0.24)] dark:border-[rgba(232,197,122,0.23)] dark:bg-[linear-gradient(100deg,rgba(193,147,87,0.12),transparent_45%),rgba(4,20,39,0.86)] dark:text-[rgba(255,248,236,0.88)]";
 
 export function AdminTable<T extends { id: string | number }>({
   cols,
@@ -88,11 +84,7 @@ export function AdminTable<T extends { id: string | number }>({
     >
       {header ? (
         <div
-          className={cn(
-            "border-b px-4 py-3.5 sm:px-5",
-            "border-navy/11 bg-[linear-gradient(to_left,rgba(193,147,87,0.055),transparent_42%)]",
-            "dark:border-gold-soft/16 dark:bg-[linear-gradient(to_left,rgba(232,197,122,0.055),transparent_42%)]",
-          )}
+          className="border-b px-4 py-3.5 sm:px-5 border-navy/11 bg-[linear-gradient(to_left,rgba(193,147,87,0.055),transparent_42%)] dark:border-gold-soft/16 dark:bg-[linear-gradient(to_left,rgba(232,197,122,0.055),transparent_42%)]"
         >
           {header}
         </div>
@@ -107,11 +99,7 @@ export function AdminTable<T extends { id: string | number }>({
             aria-label="جدول اطلاعات"
           >
             <div
-              className={cn(
-                "scrollbar-thin overflow-x-auto [&::-webkit-scrollbar]:h-2.25 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent",
-                "[&::-webkit-scrollbar-track]:bg-navy/4.5 scrollbar-thumb-[rgba(193,147,87,0.78)] scrollbar-track-[rgba(14,42,71,0.04)] [&::-webkit-scrollbar-thumb]:bg-[linear-gradient(to_right,var(--color-gold-deep),var(--color-gold-light))] [&::-webkit-scrollbar-thumb]:bg-clip-padding",
-                "dark:[&::-webkit-scrollbar-track]:bg-gold-soft/4",
-              )}
+              className="scrollbar-thin overflow-x-auto [&::-webkit-scrollbar]:h-2.25 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-track]:bg-navy/4.5 scrollbar-thumb-[rgba(193,147,87,0.78)] scrollbar-track-[rgba(14,42,71,0.04)] [&::-webkit-scrollbar-thumb]:bg-[linear-gradient(to_right,var(--color-gold-deep),var(--color-gold-light))] [&::-webkit-scrollbar-thumb]:bg-clip-padding dark:[&::-webkit-scrollbar-track]:bg-gold-soft/4"
             >
               <div style={{ minWidth }}>
                 <div className={HEAD_ROW} style={gridStyle} role="row">
@@ -227,11 +215,7 @@ export function AdminTable<T extends { id: string | number }>({
 
           {}
           <div
-            className={cn(
-              "grid gap-2 bg-size-[100%_34px] p-2 min-[700px]:hidden sm:p-2.5",
-              "bg-[linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),rgba(14,42,71,0.018)]",
-              "dark:bg-[linear-gradient(rgba(232,197,122,0.022)_1px,transparent_1px),rgba(4,20,39,0.24)]",
-            )}
+            className="grid gap-2 bg-size-[100%_34px] p-2 min-[700px]:hidden sm:p-2.5 bg-[linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),rgba(14,42,71,0.018)] dark:bg-[linear-gradient(rgba(232,197,122,0.022)_1px,transparent_1px),rgba(4,20,39,0.24)]"
           >
             {rows.map((row) => (
               <article
@@ -249,11 +233,7 @@ export function AdminTable<T extends { id: string | number }>({
               >
                 {primary ? (
                   <div
-                    className={cn(
-                      "flex min-h-15 min-w-0 items-center justify-between gap-2.5 border-b px-3 py-2.5 sm:px-3.5",
-                      "border-[rgba(14,42,71,0.115)] bg-[linear-gradient(to_left,rgba(193,147,87,0.09),transparent_55%),rgba(14,42,71,0.025)]",
-                      "dark:border-[rgba(232,197,122,0.17)] dark:bg-[linear-gradient(to_left,rgba(193,147,87,0.085),transparent_58%),rgba(255,255,255,0.018)]",
-                    )}
+                    className="flex min-h-15 min-w-0 items-center justify-between gap-2.5 border-b px-3 py-2.5 sm:px-3.5 border-[rgba(14,42,71,0.115)] bg-[linear-gradient(to_left,rgba(193,147,87,0.09),transparent_55%),rgba(14,42,71,0.025)] dark:border-[rgba(232,197,122,0.17)] dark:bg-[linear-gradient(to_left,rgba(193,147,87,0.085),transparent_58%),rgba(255,255,255,0.018)]"
                   >
                     <span className="sr-only">{primary.title}</span>
                     <div
@@ -268,11 +248,7 @@ export function AdminTable<T extends { id: string | number }>({
                     </div>
                     {onRowClick ? (
                       <span
-                        className={cn(
-                          "shrink-0 rounded-md border px-2 py-1 text-[8px] font-black",
-                          "border-gold/18 bg-gold/10 text-gold-deep",
-                          "dark:text-gold-soft",
-                        )}
+                        className="shrink-0 rounded-md border px-2 py-1 text-[8px] font-black border-gold/18 bg-gold/10 text-gold-deep dark:text-gold-soft"
                       >
                         مشاهده
                       </span>
@@ -282,36 +258,20 @@ export function AdminTable<T extends { id: string | number }>({
 
                 {details.length > 0 ? (
                   <dl
-                    className={cn(
-                      "grid grid-cols-2",
-                      "bg-[rgba(14,42,71,0.025)]",
-                      "dark:bg-[rgba(4,20,39,0.28)]",
-                    )}
+                    className="grid grid-cols-2 bg-[rgba(14,42,71,0.025)] dark:bg-[rgba(4,20,39,0.28)]"
                   >
                     {details.map((column) => (
                       <div
                         key={column.key}
-                        className={cn(
-                          "min-h-11 min-w-0 px-3 py-2 transition-[background-color] duration-180 max-[340px]:flex max-[340px]:min-h-[2.65rem] max-[340px]:items-center max-[340px]:justify-between max-[340px]:gap-3 [&:last-child:nth-child(odd)]:col-span-full [&:last-child:nth-child(odd)]:border-e-0 [&>dd>*]:ms-auto",
-                          "hover:bg-gold/7.5 border-b border-[rgba(14,42,71,0.105)] bg-[rgba(255,255,255,0.44)] odd:border-e odd:border-[rgba(14,42,71,0.105)]",
-                          "dark:hover:bg-gold-soft/5.5 dark:border-[rgba(232,197,122,0.145)] dark:bg-[rgba(16,43,70,0.22)] dark:odd:border-[rgba(232,197,122,0.145)]",
-                        )}
+                        className="min-h-11 min-w-0 px-3 py-2 transition-[background-color] duration-180 max-[340px]:flex max-[340px]:min-h-[2.65rem] max-[340px]:items-center max-[340px]:justify-between max-[340px]:gap-3 [&:last-child:nth-child(odd)]:col-span-full [&:last-child:nth-child(odd)]:border-e-0 [&>dd>*]:ms-auto hover:bg-gold/7.5 border-b border-[rgba(14,42,71,0.105)] bg-[rgba(255,255,255,0.44)] odd:border-e odd:border-[rgba(14,42,71,0.105)] dark:hover:bg-gold-soft/5.5 dark:border-[rgba(232,197,122,0.145)] dark:bg-[rgba(16,43,70,0.22)] dark:odd:border-[rgba(232,197,122,0.145)]"
                       >
                         <dt
-                          className={cn(
-                            "mb-0.5 text-[8px] leading-4 font-black max-[340px]:mb-0 max-[340px]:flex-none",
-                            "text-navy/70",
-                            "dark:text-wheat/72",
-                          )}
+                          className="mb-0.5 text-[8px] leading-4 font-black max-[340px]:mb-0 max-[340px]:flex-none text-navy/70 dark:text-wheat/72"
                         >
                           {column.title}
                         </dt>
                         <dd
-                          className={cn(
-                            "min-w-0 text-[11px] leading-5 font-extrabold wrap-break-word max-[340px]:min-w-0 max-[340px]:flex-1 max-[340px]:text-end",
-                            "text-navy",
-                            "dark:text-ivory",
-                          )}
+                          className="min-w-0 text-[11px] leading-5 font-extrabold wrap-break-word max-[340px]:min-w-0 max-[340px]:flex-1 max-[340px]:text-end text-navy dark:text-ivory"
                         >
                           {(column.renderMobile ?? column.render)(row)}
                         </dd>
@@ -322,11 +282,7 @@ export function AdminTable<T extends { id: string | number }>({
 
                 {actions ? (
                   <div
-                    className={cn(
-                      "border-t-0 px-3 py-2 sm:px-3.5",
-                      "bg-[rgba(14,42,71,0.025)]",
-                      "dark:bg-white/[0.018]",
-                    )}
+                    className="border-t-0 px-3 py-2 sm:px-3.5 bg-[rgba(14,42,71,0.025)] dark:bg-white/[0.018]"
                   >
                     <span className="sr-only">{actions.title}</span>
                     <div className="min-w-0">
@@ -342,10 +298,7 @@ export function AdminTable<T extends { id: string | number }>({
         <div className="grid min-h-52 place-items-center px-5 py-10 text-center">
           <div>
             <span
-              className={cn(
-                "mx-auto grid size-12 place-items-center rounded-2xl",
-                "bg-gold/12 text-gold",
-              )}
+              className="mx-auto grid size-12 place-items-center rounded-2xl bg-gold/12 text-gold"
             >
               <Inbox className="size-5" />
             </span>

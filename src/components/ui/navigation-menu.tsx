@@ -61,13 +61,7 @@ function NavigationMenuItem({
 }
 
 const navigationMenuTriggerStyle = cva(
-  cn(
-    "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium",
-    "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-    "disabled:pointer-events-none disabled:opacity-50",
-    "data-open:bg-accent/50 data-open:text-accent-foreground data-open:hover:bg-accent data-open:focus:bg-accent",
-    "outline-none transition-[color,box-shadow] focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1",
-  ),
+  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-open:bg-accent/50 data-open:text-accent-foreground data-open:hover:bg-accent data-open:focus:bg-accent outline-none transition-[color,box-shadow] focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1",
 );
 
 function NavigationMenuTrigger({
@@ -83,11 +77,7 @@ function NavigationMenuTrigger({
     >
       {children}{" "}
       <ChevronDownIcon
-        className={cn(
-          "relative top-px ms-1 size-3 shrink-0",
-          "text-current transition duration-300",
-          "group-data-open:rotate-180",
-        )}
+        className="relative top-px ms-1 size-3 shrink-0 text-current transition duration-300 group-data-open:rotate-180"
         aria-hidden="true"
       />
     </NavigationMenuPrimitive.Trigger>
@@ -133,9 +123,7 @@ function NavigationMenuViewport({
 }: React.ComponentProps<typeof NavigationMenuPrimitive.Viewport>) {
   return (
     <div
-      className={cn(
-        "absolute inset-s-0 top-full isolate z-50 flex justify-center",
-      )}
+      className="absolute inset-s-0 top-full isolate z-50 flex justify-center"
     >
       <NavigationMenuPrimitive.Viewport
         data-slot="navigation-menu-viewport"

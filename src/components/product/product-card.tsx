@@ -5,7 +5,6 @@ import { pdpHref } from "@/lib/data/products";
 import { PriceTag } from "./price-tag";
 import { ProductCardList } from "./product-card-list";
 import { ProductCardGrid } from "./product-card-grid";
-import { cn } from "@/lib/utils";
 
 // 🪶 Server-first card with tiny client actions.
 export function ProductCard({
@@ -38,11 +37,7 @@ export function ProductCard({
     // ♿ brown-mid, not gold: gold-on-white card text is ~2.2:1, below the
     // 4.5:1 minimum. Dark mode (gold-on-slate) already passes, untouched.
     <p
-      className={cn(
-        "m-0 mt-1.5 inline-flex flex-row items-center gap-1.5 text-[11px] leading-none font-extrabold",
-        "text-brown-mid",
-        "dark:text-gold-soft",
-      )}
+      className="m-0 mt-1.5 inline-flex flex-row items-center gap-1.5 text-[11px] leading-none font-extrabold text-brown-mid dark:text-gold-soft"
     >
       <ShoppingBag className="block size-3.25 shrink-0" />
       {toFaDigits(p.sold)} فروش

@@ -27,19 +27,11 @@ export function OrderCard({ order }: { order: AdminOrder }) {
   return (
     <Card
       asChild
-      className={cn(
-        "gap-0 overflow-hidden rounded-2xl p-0 py-0",
-        "border-navy/10",
-        "dark:border-gold/25",
-      )}
+      className="gap-0 overflow-hidden rounded-2xl p-0 py-0 border-navy/10 dark:border-gold/25"
     >
       <li>
       <CardHeader
-        className={cn(
-          "flex-row flex-wrap items-center gap-2 border-b px-4 py-3",
-          "border-navy/8 bg-navy/2",
-          "dark:border-gold/15 dark:bg-white/2",
-        )}
+        className="flex-row flex-wrap items-center gap-2 border-b px-4 py-3 border-navy/8 bg-navy/2 dark:border-gold/15 dark:bg-white/2"
       >
         <p className="text-navy dark:text-ivory text-sm font-black" dir="ltr">
           {order.id}
@@ -63,11 +55,7 @@ export function OrderCard({ order }: { order: AdminOrder }) {
             href={`/api/orders/${order.id}/invoice`}
             target="_blank"
             rel="noreferrer"
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black transition",
-              "bg-navy/5 text-navy hover:bg-navy/10",
-              "dark:bg-white/8 dark:text-ivory dark:hover:bg-white/12",
-            )}
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black transition bg-navy/5 text-navy hover:bg-navy/10 dark:bg-white/8 dark:text-ivory dark:hover:bg-white/12"
           >
             <FileDown className="size-3.5" /> دانلود فاکتور
           </a>
@@ -89,11 +77,7 @@ export function OrderCard({ order }: { order: AdminOrder }) {
             />
             <div className="min-w-0 flex-1">
               <p
-                className={cn(
-                  "truncate text-sm font-black",
-                  "text-navy",
-                  "dark:text-ivory",
-                )}
+                className="truncate text-sm font-black text-navy dark:text-ivory"
               >
                 {item.name}
               </p>
@@ -110,10 +94,7 @@ export function OrderCard({ order }: { order: AdminOrder }) {
 
       {stage === -1 ? (
         <p
-          className={cn(
-            "mx-4 mb-4 rounded-xl px-4 py-2.5 text-[11px] font-black",
-            "bg-rose/10 text-rose",
-          )}
+          className="mx-4 mb-4 rounded-xl px-4 py-2.5 text-[11px] font-black bg-rose/10 text-rose"
         >
           این سفارش مرجوع شده است؛ مبلغ به کیف پول شما برمی‌گردد.
         </p>

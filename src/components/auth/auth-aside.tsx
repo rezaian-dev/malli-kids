@@ -1,16 +1,12 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { Percent, ShieldCheck, Sparkles, Star } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 function Perk({ icon, t, d }: { icon: ReactNode; t: string; d: string }) {
   return (
     <li className="flex items-center gap-3">
       <span
-        className={cn(
-          "flex size-9 shrink-0 items-center justify-center rounded-xl border",
-          "text-gold-light border-white/15 bg-white/10",
-        )}
+        className="flex size-9 shrink-0 items-center justify-center rounded-xl border text-gold-light border-white/15 bg-white/10"
       >
         {icon}
       </span>
@@ -25,10 +21,7 @@ function Perk({ icon, t, d }: { icon: ReactNode; t: string; d: string }) {
 export function AuthAside() {
   return (
     <aside
-      className={cn(
-        "relative hidden w-[46%] shrink-0 overflow-hidden rounded-s-[28px] lg:block",
-        "bg-navy text-ivory",
-      )}
+      className="relative hidden w-[46%] shrink-0 overflow-hidden rounded-s-[28px] lg:block bg-navy text-ivory"
     >
       <Image
         src="/brand/auth-aside.jpg"
@@ -38,16 +31,10 @@ export function AuthAside() {
         className="absolute inset-0 size-full object-cover object-[center_18%]"
       />
       <div
-        className={cn(
-          "absolute inset-0",
-          "from-navy-deep via-navy-deep/55 bg-linear-to-t to-transparent",
-        )}
+        className="absolute inset-0 from-navy-deep via-navy-deep/55 bg-linear-to-t to-transparent"
       />
       <div
-        className={cn(
-          "pointer-events-none absolute inset-3 rounded-[22px] border",
-          "border-gold/45",
-        )}
+        className="pointer-events-none absolute inset-3 rounded-[22px] border border-gold/45"
       />
 
       <div className="relative flex h-full min-h-0 flex-col justify-between p-7 pe-8">
@@ -64,10 +51,7 @@ export function AuthAside() {
               MALLI
             </span>
             <span
-              className={cn(
-                "font-display mt-1 block text-[10px] tracking-[0.38em]",
-                "text-gold-light",
-              )}
+              className="font-display mt-1 block text-[10px] tracking-[0.38em] text-gold-light"
             >
               KIDS
             </span>
@@ -106,10 +90,7 @@ export function AuthAside() {
           </ul>
 
           <p
-            className={cn(
-              "mt-5 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold ring-1",
-              "bg-navy-deep/80 text-ivory ring-gold/40",
-            )}
+            className="mt-5 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold ring-1 bg-navy-deep/80 text-ivory ring-gold/40"
           >
             <Star className="fill-gold-light text-gold-light size-3.5" />
             <span>

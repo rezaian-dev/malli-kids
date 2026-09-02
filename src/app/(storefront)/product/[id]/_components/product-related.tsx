@@ -26,11 +26,7 @@ export async function ProductRelated({
       <p className={pdpKicker}>MORE LIKE THIS</p>
       <h2
         id="related-products-heading"
-        className={cn(
-          "mt-1 mb-4 text-lg font-black sm:mb-6 sm:text-xl",
-          "text-navy",
-          "dark:text-ivory",
-        )}
+        className="mt-1 mb-4 text-lg font-black sm:mb-6 sm:text-xl text-navy dark:text-ivory"
       >
         مدل‌های مشابه
       </h2>

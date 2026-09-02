@@ -1,7 +1,6 @@
 import { Lock, Share2, UserRound } from "lucide-react";
 import { Intro } from "@/components/shared/intro";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 const ITEMS = [
   {
@@ -35,17 +34,10 @@ export function PrivacyLanding() {
         {ITEMS.map(({ Icon, t, d }) => (
           <Card
             key={t}
-            className={cn(
-              "flex-row gap-4 rounded-3xl p-5 py-5 sm:p-6 sm:py-6",
-              "border-navy/8 hover:border-gold/40 bg-white shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-xl",
-              "dark:border-gold/30 dark:bg-slate",
-            )}
+            className="flex-row gap-4 rounded-3xl p-5 py-5 sm:p-6 sm:py-6 border-navy/8 hover:border-gold/40 bg-white shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-xl dark:border-gold/30 dark:bg-slate"
           >
             <span
-              className={cn(
-                "flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl",
-                "bg-gold/15 text-gold",
-              )}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gold/15 text-gold"
             >
               <Icon className="h-5 w-5" />
             </span>

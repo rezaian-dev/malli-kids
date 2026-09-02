@@ -7,17 +7,9 @@ import { MagneticGlow } from "@/components/motion";
 import { wash } from "@/components/shared/section-wash";
 import { cn } from "@/lib/utils";
 
-const STAT_VALUE = cn(
-  "text-base font-black min-[380px]:text-xl sm:text-3xl",
-  "text-navy",
-  "dark:text-ivory",
-);
+const STAT_VALUE = "text-base font-black min-[380px]:text-xl sm:text-3xl text-navy dark:text-ivory";
 
-const STAT_LABEL = cn(
-  "mt-1 text-[10px] leading-4 min-[380px]:text-xs sm:text-sm",
-  "text-navy/70",
-  "dark:text-wheat",
-);
+const STAT_LABEL = "mt-1 text-[10px] leading-4 min-[380px]:text-xs sm:text-sm text-navy/70 dark:text-wheat";
 
 export function Hero() {
   return (
@@ -30,40 +22,24 @@ export function Hero() {
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden dark:hidden">
         <div
-          className={cn(
-            "animate-silk-glow xs:size-88 pointer-events-none absolute -inset-s-16 -top-28 size-72 rounded-full blur-[56px]",
-            "bg-gold/32",
-          )}
+          className="animate-silk-glow xs:size-88 pointer-events-none absolute -inset-s-16 -top-28 size-72 rounded-full blur-[56px] bg-gold/32"
         />
         <div
-          className={cn(
-            "xs:size-96 pointer-events-none absolute -inset-e-20 top-24 size-80 rounded-full blur-3xl",
-            "bg-navy/16",
-          )}
+          className="xs:size-96 pointer-events-none absolute -inset-e-20 top-24 size-80 rounded-full blur-3xl bg-navy/16"
         />
         <div
-          className={cn(
-            "animate-silk-glow pointer-events-none absolute inset-s-[28%] bottom-[-10%] size-72 rounded-full blur-[52px] [animation-delay:-7s]",
-            "bg-gold-soft/24",
-          )}
+          className="animate-silk-glow pointer-events-none absolute inset-s-[28%] bottom-[-10%] size-72 rounded-full blur-[52px] [animation-delay:-7s] bg-gold-soft/24"
         />
       </div>
       <span
-        className={cn(
-          "pointer-events-none absolute inset-e-[5%] top-[22%] hidden rotate-6 select-none xl:block",
-          "font-display text-[130px] leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(196,163,106,.55)]",
-        )}
+        className="pointer-events-none absolute inset-e-[5%] top-[22%] hidden rotate-6 select-none xl:block font-display text-[130px] leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(196,163,106,.55)]"
       >
         kids
       </span>
       <div className="relative container mx-auto grid w-full items-center gap-12 px-4 sm:px-5 lg:grid-cols-2 lg:gap-8 lg:px-7">
         <div className="relative z-10 text-center lg:text-right">
           <div
-            className={cn(
-              "mb-6 inline-flex items-center gap-2 rounded-full border-[1.5px] px-3.5 py-1.5 transition-transform duration-500 hover:-translate-y-0.5 sm:mb-7 sm:px-4 sm:py-2",
-              "border-gold text-navy bg-white shadow-[0_8px_24px_-12px_rgba(193,147,87,.7)]",
-              "dark:bg-linen dark:text-navy",
-            )}
+            className="mb-6 inline-flex items-center gap-2 rounded-full border-[1.5px] px-3.5 py-1.5 transition-transform duration-500 hover:-translate-y-0.5 sm:mb-7 sm:px-4 sm:py-2 border-gold text-navy bg-white shadow-[0_8px_24px_-12px_rgba(193,147,87,.7)] dark:bg-linen dark:text-navy"
           >
             <Sparkles className="h-4 w-4 shrink-0" />
             <span className="text-xs font-semibold sm:text-sm">
@@ -71,20 +47,14 @@ export function Hero() {
             </span>
           </div>
           <h1
-            className={cn(
-              "text-navy text-[clamp(1.75rem,7vw,4rem)] leading-[1.3] font-black",
-              "dark:text-linen",
-            )}
+            className="text-navy text-[clamp(1.75rem,7vw,4rem)] leading-[1.3] font-black dark:text-linen"
           >
             دنیای شیکِ
             <span className="text-gold relative mx-1.5 inline-block sm:mx-3">
               کوچولوها
               <GoldMark className="absolute right-0 -bottom-1.5 w-full sm:-bottom-2" />
               <span
-                className={cn(
-                  "animate-twinkle absolute -top-1 -left-2 size-2 rounded-full",
-                  "bg-gold shadow-[0_0_0_3px_rgba(193,147,87,0.18)]",
-                )}
+                className="animate-twinkle absolute -top-1 -left-2 size-2 rounded-full bg-gold shadow-[0_0_0_3px_rgba(193,147,87,0.18)]"
                 aria-hidden
               />
               <OrnStar className="absolute -top-3 -left-4 h-4 w-4 sm:h-5 sm:w-5" />
@@ -93,11 +63,7 @@ export function Hero() {
             از نخ تا تن‌پوش، با عشق
           </h1>
           <p
-            className={cn(
-              "mx-auto mt-6 max-w-xl sm:mt-7 lg:mx-0",
-              "text-navy/70 text-[15px] leading-7 sm:text-lg sm:leading-8",
-              "dark:text-khaki",
-            )}
+            className="mx-auto mt-6 max-w-xl sm:mt-7 lg:mx-0 text-navy/70 text-[15px] leading-7 sm:text-lg sm:leading-8 dark:text-khaki"
           >
             ملی‌کیدز؛ بوتیک تخصصی پوشاک کودک با پارچه‌های ارگانیک، دوخت‌های دستی
             و تجربه پرو مجازی با هوش مصنوعی — برای لحظه‌هایی که قرار است در
@@ -108,23 +74,14 @@ export function Hero() {
               <Link
                 href="/#styles"
                 prefetch={false}
-                className={cn(
-                  "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-8 py-3.5 text-sm font-black transition-[box-shadow,color,background-color] duration-500 sm:px-9 sm:py-4 sm:text-base",
-                  "from-navy via-navy-mid to-navy text-cream ring-gold/40 hover:ring-gold bg-linear-to-l shadow-[0_12px_28px_-8px_rgba(14,42,71,.45)] ring-2 hover:shadow-[0_18px_40px_-10px_rgba(193,147,87,.6)]",
-                )}
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-8 py-3.5 text-sm font-black transition-[box-shadow,color,background-color] duration-500 sm:px-9 sm:py-4 sm:text-base from-navy via-navy-mid to-navy text-cream ring-gold/40 hover:ring-gold bg-linear-to-l shadow-[0_12px_28px_-8px_rgba(14,42,71,.45)] ring-2 hover:shadow-[0_18px_40px_-10px_rgba(193,147,87,.6)]"
               >
                 <span
-                  className={cn(
-                    "pointer-events-none absolute -inset-2 animate-pulse rounded-full opacity-70 blur-md",
-                    "bg-gold/25",
-                  )}
+                  className="pointer-events-none absolute -inset-2 animate-pulse rounded-full opacity-70 blur-md bg-gold/25"
                   aria-hidden
                 />
                 <span
-                  className={cn(
-                    "animate-shimmer pointer-events-none absolute inset-0",
-                    "bg-[linear-gradient(110deg,transparent_20%,rgba(232,197,122,.55)_48%,transparent_76%)]",
-                  )}
+                  className="animate-shimmer pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_20%,rgba(232,197,122,.55)_48%,transparent_76%)]"
                   aria-hidden
                 />
                 <Sparkles className="animate-twinkle text-gold-light relative h-4 w-4" />
@@ -144,10 +101,7 @@ export function Hero() {
             </div>
             <div className="min-w-0 text-center lg:text-right">
               <div
-                className={cn(
-                  "flex items-center justify-center gap-1 lg:justify-start",
-                  STAT_VALUE,
-                )}
+                className="flex items-center justify-center gap-1 lg:justify-start text-base font-black min-[380px]:text-xl sm:text-3xl text-navy dark:text-ivory"
               >
                 ۴٫۹
                 <Star className="fill-gold text-gold h-3.5 w-3.5 shrink-0 sm:h-5 sm:w-5" />
@@ -165,11 +119,7 @@ export function Hero() {
             it now is a static gradient, so nothing can flash across it. */}
         <div className="group/hero xs:max-w-80 xs:px-4 relative mx-auto w-full max-w-72 px-2 sm:max-w-110 sm:px-0">
           <div
-            className={cn(
-              "relative aspect-3/4 overflow-hidden rounded-t-[999px] rounded-b-4xl border-8 sm:rounded-b-[40px] sm:border-10",
-              "bg-sand shadow-navy/20 border-white shadow-2xl",
-              "dark:border-linen",
-            )}
+            className="relative aspect-3/4 overflow-hidden rounded-t-[999px] rounded-b-4xl border-8 sm:rounded-b-[40px] sm:border-10 bg-sand shadow-navy/20 border-white shadow-2xl dark:border-linen"
           >
             <Image
               src={heroDress}
@@ -185,22 +135,13 @@ export function Hero() {
             <div className="from-navy/25 absolute inset-0 bg-linear-to-t via-transparent to-transparent" />
           </div>
           <div
-            className={cn(
-              "animate-orn-sway absolute -inset-3 -z-10 rounded-t-[999px] rounded-b-[40px] border-2 border-dashed sm:-inset-5 sm:rounded-b-[48px]",
-              "border-gold/50",
-            )}
+            className="animate-orn-sway absolute -inset-3 -z-10 rounded-t-[999px] rounded-b-[40px] border-2 border-dashed sm:-inset-5 sm:rounded-b-[48px] border-gold/50"
           />
           <div
-            className={cn(
-              "animate-floaty absolute top-14 -right-1 flex max-w-50 items-center gap-2 rounded-xl p-2.5 shadow-xl min-[420px]:-right-4 sm:top-16 sm:-right-10 sm:max-w-57.5 sm:gap-3 sm:rounded-2xl sm:p-3.5",
-              "shadow-navy/15 bg-white",
-            )}
+            className="animate-floaty absolute top-14 -right-1 flex max-w-50 items-center gap-2 rounded-xl p-2.5 shadow-xl min-[420px]:-right-4 sm:top-16 sm:-right-10 sm:max-w-57.5 sm:gap-3 sm:rounded-2xl sm:p-3.5 shadow-navy/15 bg-white"
           >
             <span
-              className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-12 sm:w-12",
-                "bg-gold/15 text-gold",
-              )}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-12 sm:w-12 bg-gold/15 text-gold"
             >
               <ShieldCheck className="h-5 w-5" />
             </span>
@@ -214,10 +155,7 @@ export function Hero() {
             </div>
           </div>
           <div
-            className={cn(
-              "animate-floaty-slow absolute bottom-20 -left-1 rounded-xl px-3.5 py-2.5 shadow-xl min-[420px]:-left-3 sm:bottom-24 sm:-left-8 sm:rounded-2xl sm:px-5 sm:py-4",
-              "bg-navy text-cream shadow-navy/30",
-            )}
+            className="animate-floaty-slow absolute bottom-20 -left-1 rounded-xl px-3.5 py-2.5 shadow-xl min-[420px]:-left-3 sm:bottom-24 sm:-left-8 sm:rounded-2xl sm:px-5 sm:py-4 bg-navy text-cream shadow-navy/30"
           >
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Scissors className="text-gold-light h-4 w-4 sm:h-5 sm:w-5" />

@@ -7,16 +7,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { cn } from "@/lib/utils";
-import { shopHeading, type ShopState } from "@/lib/shop/shop-state";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";import { shopHeading, type ShopState } from "@/lib/shop/shop-state";
 import { ShopSortOptions } from "./shop-sort-options";
-
-const SORT_TRIGGER_BASE = cn(
-  "h-auto justify-between rounded-full text-xs font-black",
-  "border-navy/12 bg-sand text-navy",
-  "dark:border-gold/40 dark:bg-dusk-mid dark:text-linen",
-);
 
 /** 🧭 Heading + result count + filter/sort/view controls above the grid. */
 export function ShopToolbar({
@@ -42,11 +34,7 @@ export function ShopToolbar({
 }) {
   return (
     <div
-      className={cn(
-        "mb-4 flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center",
-        "border-navy/6",
-        "dark:border-gold/15",
-      )}
+      className="mb-4 flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center border-navy/6 dark:border-gold/15"
     >
       <div>
         <h1 className="text-navy dark:text-ivory text-lg font-black sm:text-xl">
@@ -66,10 +54,7 @@ export function ShopToolbar({
           <SlidersHorizontal className="size-4" /> فیلتر
           {activeN ? (
             <Badge
-              className={cn(
-                "size-5 justify-center rounded-full border-0 p-0 text-[10px] font-black",
-                "bg-gold text-navy-deep",
-              )}
+              className="size-5 justify-center rounded-full border-0 p-0 text-[10px] font-black bg-gold text-navy-deep"
             >
               {toFaDigits(activeN)}
             </Badge>
@@ -83,10 +68,7 @@ export function ShopToolbar({
               <Button
                 type="button"
                 variant="outline"
-                className={cn(
-                  SORT_TRIGGER_BASE,
-                  "hover:border-gold/50 aria-expanded:border-gold min-w-44 px-4 py-2.5",
-                )}
+                className="h-auto justify-between rounded-full text-xs font-black border-navy/12 bg-sand text-navy dark:border-gold/40 dark:bg-dusk-mid dark:text-linen hover:border-gold/50 aria-expanded:border-gold min-w-44 px-4 py-2.5"
               >
                 <span className="flex items-center gap-1.5">
                   <ArrowUpDown className="text-gold-soft size-4" /> {sortLabel}
@@ -96,11 +78,7 @@ export function ShopToolbar({
             <PopoverContent
               align="end"
               sideOffset={10}
-              className={cn(
-                "w-72",
-                "border-navy/12 bg-linen",
-                "dark:border-gold/40 dark:bg-sort-sheet",
-              )}
+              className="w-72 border-navy/12 bg-linen dark:border-gold/40 dark:bg-sort-sheet"
             >
               <p className="text-gold px-2 pt-1 pb-2 text-[11px] font-black tracking-[0.14em] uppercase">
                 مرتب‌سازی
@@ -120,10 +98,7 @@ export function ShopToolbar({
         <Button
           type="button"
           variant="outline"
-          className={cn(
-            SORT_TRIGGER_BASE,
-            "xs:min-w-36 xs:flex-none min-w-0 flex-1 px-3 py-2.5 lg:hidden",
-          )}
+          className="h-auto justify-between rounded-full text-xs font-black border-navy/12 bg-sand text-navy dark:border-gold/40 dark:bg-dusk-mid dark:text-linen xs:min-w-36 xs:flex-none min-w-0 flex-1 px-3 py-2.5 lg:hidden"
           onClick={onOpenMobileSort}
         >
           <span className="flex items-center gap-1.5 truncate">
@@ -137,11 +112,7 @@ export function ShopToolbar({
           value={state.view}
           onValueChange={(v) => v && push({ view: v as "grid" | "list" })}
           aria-label="نحوه نمایش"
-          className={cn(
-            "inline-flex rounded-full border p-0.5",
-            "border-navy/10 bg-sand",
-            "dark:border-gold/30 dark:bg-dusk-mid",
-          )}
+          className="inline-flex rounded-full border p-0.5 border-navy/10 bg-sand dark:border-gold/30 dark:bg-dusk-mid"
         >
           {(
             [
@@ -153,11 +124,7 @@ export function ShopToolbar({
               key={v}
               value={v}
               aria-label={label}
-              className={cn(
-                "text-navy/70 dark:text-wheat size-9 rounded-full border-0",
-                "data-[state=on]:bg-navy data-[state=on]:text-ivory",
-                "dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep",
-              )}
+              className="text-navy/70 dark:text-wheat size-9 rounded-full border-0 data-[state=on]:bg-navy data-[state=on]:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep"
             >
               <Icon className="size-4" />
             </ToggleGroupItem>

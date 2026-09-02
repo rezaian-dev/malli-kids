@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Stagger, StaggerItem } from "@/components/motion/static";
-import { cn } from "@/lib/utils";
 
 export type CatalogItem = { tag: string; t: string; d: string; p: string };
 
@@ -18,19 +17,11 @@ export function ProductCatalog({
       {items.map((it) => (
         <StaggerItem key={it.t} className="h-full">
           <article
-            className={cn(
-              "flex h-full flex-col rounded-[26px] border p-5 transition-all duration-500 hover:-translate-y-1",
-              "border-navy/8 hover:border-gold/50 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]",
-              "dark:border-gold/30 dark:bg-slate/60",
-            )}
+            className="flex h-full flex-col rounded-[26px] border p-5 transition-all duration-500 hover:-translate-y-1 border-navy/8 hover:border-gold/50 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60"
           >
             <Badge
               variant="secondary"
-              className={cn(
-                "w-max",
-                "border-gold/30 bg-gold-pale text-navy",
-                "dark:bg-navy-mid dark:text-gold-soft",
-              )}
+              className="w-max border-gold/30 bg-gold-pale text-navy dark:bg-navy-mid dark:text-gold-soft"
             >
               {it.tag}
             </Badge>

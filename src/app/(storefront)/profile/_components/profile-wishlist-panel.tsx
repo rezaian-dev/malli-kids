@@ -32,11 +32,7 @@ export function ProfileWishlistPanel() {
     <section className={PROFILE_CARD}>
       <div>
         <h2
-          className={cn(
-            "flex items-center gap-2 text-lg font-black",
-            "text-navy",
-            "dark:text-linen",
-          )}
+          className="flex items-center gap-2 text-lg font-black text-navy dark:text-linen"
         >
           <Heart className="fill-rose text-rose size-5" /> علاقه‌مندی‌های من
         </h2>
@@ -48,22 +44,14 @@ export function ProfileWishlistPanel() {
 
       {products.length === 0 ? (
         <div
-          className={cn(
-            "rounded-2xl border border-dashed px-6 py-10 text-center",
-            "border-navy/15",
-            "dark:border-gold/25",
-          )}
+          className="rounded-2xl border border-dashed px-6 py-10 text-center border-navy/15 dark:border-gold/25"
         >
           <Heart className="text-rose/70 mx-auto size-9" />
           <p className="text-navy dark:text-ivory mt-3 font-black">
             هنوز قلبی نزده‌اید
           </p>
           <p
-            className={cn(
-              "mx-auto mt-1 max-w-xs text-xs leading-6",
-              "text-navy/70",
-              "dark:text-wheat",
-            )}
+            className="mx-auto mt-1 max-w-xs text-xs leading-6 text-navy/70 dark:text-wheat"
           >
             روی قلب هر محصول بزنید تا این‌جا برایتان نگه داشته شود.
           </p>

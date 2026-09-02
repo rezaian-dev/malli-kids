@@ -87,10 +87,7 @@ export function AdminSidebarScroller({
         <span className="bg-gold/55 absolute inset-s-1/2 -top-2 size-1 -translate-x-1/2 rounded-full shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
         <span className="bg-gold/55 absolute inset-s-1/2 -bottom-2 size-1 -translate-x-1/2 rounded-full shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
         <span
-          className={cn(
-            "absolute inset-x-0 rounded-full transition-[top,height,filter] duration-180",
-            "from-gold-light to-gold-deep bg-linear-to-b shadow-[0_0_0_1px_rgba(255,248,236,0.24),0_0_14px_rgba(193,147,87,0.38)] group-hover:brightness-112",
-          )}
+          className="absolute inset-x-0 rounded-full transition-[top,height,filter] duration-180 from-gold-light to-gold-deep bg-linear-to-b shadow-[0_0_0_1px_rgba(255,248,236,0.24),0_0_14px_rgba(193,147,87,0.38)] group-hover:brightness-112"
           style={
             {
               "--admin-scroll-top": `${scroll.top}px`,

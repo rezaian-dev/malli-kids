@@ -296,11 +296,7 @@ export function AdminMessagesLanding({
       <div
         role="tablist"
         aria-label="بخش‌های پشتیبانی"
-        className={cn(
-          "mb-4 flex gap-2 rounded-2xl border p-1.5",
-          "border-navy/10 bg-white/70",
-          "dark:border-gold/25 dark:bg-white/4",
-        )}
+        className="mb-4 flex gap-2 rounded-2xl border p-1.5 border-navy/10 bg-white/70 dark:border-gold/25 dark:bg-white/4"
       >
         <button
           type="button"

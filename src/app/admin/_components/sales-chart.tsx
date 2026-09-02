@@ -128,11 +128,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <h2
-            className={cn(
-              "flex items-center gap-2 font-black",
-              "text-navy",
-              "dark:text-ivory",
-            )}
+            className="flex items-center gap-2 font-black text-navy dark:text-ivory"
           >
             <TrendingUp className="text-gold size-4" /> روند فروش
           </h2>
@@ -170,11 +166,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
             dir="rtl"
           >
             <SelectTrigger
-              className={cn(
-                "h-9 w-28 rounded-xl text-[10px] shadow-none",
-                "bg-white",
-                "dark:bg-navy-deep/45",
-              )}
+              className="h-9 w-28 rounded-xl text-[10px] shadow-none bg-white dark:bg-navy-deep/45"
               aria-label="بازه نمودار فروش"
             >
               <SelectValue />
@@ -189,11 +181,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
 
       {n === 0 ? (
         <div
-          className={cn(
-            "grid h-44 place-items-center rounded-2xl text-sm font-bold",
-            "bg-navy/4 text-navy/70",
-            "dark:bg-navy-deep/50 dark:text-wheat",
-          )}
+          className="grid h-44 place-items-center rounded-2xl text-sm font-bold bg-navy/4 text-navy/70 dark:bg-navy-deep/50 dark:text-wheat"
         >
           هنوز فروش پرداخت‌شده‌ای برای نمایش ثبت نشده است.
         </div>
@@ -300,10 +288,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
                   cx={activeCoord.x}
                   cy={activeCoord.y}
                   r="4"
-                  className={cn(
-                    "stroke-gold-deep fill-white",
-                    "dark:fill-navy-deep dark:stroke-gold",
-                  )}
+                  className="stroke-gold-deep fill-white dark:fill-navy-deep dark:stroke-gold"
                   strokeWidth="2.5"
                 />
               </>
@@ -331,11 +316,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
           {/* tooltip */}
           {activePoint && activeCoord ? (
             <div
-              className={cn(
-                "pointer-events-none absolute z-10 -translate-x-1/2 rounded-2xl border px-3 py-2 shadow-lg backdrop-blur-sm",
-                "border-gold/30 bg-white/95",
-                "dark:bg-navy-deep/95",
-              )}
+              className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-2xl border px-3 py-2 shadow-lg backdrop-blur-sm border-gold/30 bg-white/95 dark:bg-navy-deep/95"
               style={{
                 left: `${tooltipLeft}%`,
                 top: `${(activeCoord.y / H) * 100}%`,

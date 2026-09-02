@@ -49,11 +49,7 @@ export async function RecentlyViewed() {
             دیدید ولی هنوز نخریدید؟
           </span>
           <h2
-            className={cn(
-              "mt-2",
-              "text-navy text-[clamp(1.35rem,4.5vw,2rem)] leading-snug font-black",
-              "dark:text-ivory",
-            )}
+            className="mt-2 text-navy text-[clamp(1.35rem,4.5vw,2rem)] leading-snug font-black dark:text-ivory"
           >
             بازدیدهای اخیر شما
           </h2>

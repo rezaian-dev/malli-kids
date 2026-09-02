@@ -87,11 +87,7 @@ export function NoticesBell() {
           {unread > 0 ? (
             <Badge
               aria-hidden
-              className={cn(
-                "pointer-events-none absolute -inset-e-1 -top-1 grid size-5 place-items-center p-0",
-                "border-cream bg-rose rounded-full border-2 text-[10px] font-black text-white",
-                "dark:border-navy-deep",
-              )}
+              className="pointer-events-none absolute -inset-e-1 -top-1 grid size-5 place-items-center p-0 border-cream bg-rose rounded-full border-2 text-[10px] font-black text-white dark:border-navy-deep"
             >
               {unread > 9 ? "+۹" : toFaDigits(unread)}
             </Badge>
@@ -102,18 +98,10 @@ export function NoticesBell() {
       <DropdownMenuContent
         align="end"
         sideOffset={12}
-        className={cn(
-          "z-80 w-[min(21rem,calc(100vw-2rem))] overflow-hidden p-0",
-          "border-gold bg-paper rounded-[22px] border",
-          "dark:border-gold/50 dark:bg-dusk",
-        )}
+        className="z-80 w-[min(21rem,calc(100vw-2rem))] overflow-hidden p-0 border-gold bg-paper rounded-[22px] border dark:border-gold/50 dark:bg-dusk"
       >
         <div
-          className={cn(
-            "flex items-center justify-between gap-2 px-4 py-3",
-            "border-gold from-navy to-navy-mid border-b bg-linear-to-br",
-            "dark:border-gold/40",
-          )}
+          className="flex items-center justify-between gap-2 px-4 py-3 border-gold from-navy to-navy-mid border-b bg-linear-to-br dark:border-gold/40"
         >
           <p className="m-0 flex items-center gap-2 text-sm font-black text-white">
             <Bell className="text-gold-soft size-4" /> اعلان‌ها
@@ -122,10 +110,7 @@ export function NoticesBell() {
             <Button
               type="button"
               variant="ghost"
-              className={cn(
-                "h-8 px-3",
-                "text-gold-soft hover:text-gold rounded-full text-[10px] font-black hover:bg-white/10",
-              )}
+              className="h-8 px-3 text-gold-soft hover:text-gold rounded-full text-[10px] font-black hover:bg-white/10"
               onClick={markAllRead}
             >
               <CheckCheck className="size-3.5" /> خواندنِ همه
@@ -162,10 +147,7 @@ export function NoticesBell() {
                     title="علامت به‌عنوان خوانده‌شده"
                   >
                     <span
-                      className={cn(
-                        "grid size-9 shrink-0 place-items-center",
-                        "bg-gold/15 text-gold rounded-xl",
-                      )}
+                      className="grid size-9 shrink-0 place-items-center bg-gold/15 text-gold rounded-xl"
                     >
                       <Icon className="size-4" />
                     </span>

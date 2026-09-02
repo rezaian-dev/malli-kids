@@ -87,19 +87,11 @@ export function AdminLoginLanding() {
 
   return (
     <div
-      className={cn(
-        "grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(20rem,42%)]",
-        "text-navy bg-fog bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-size-[auto,auto,36px_36px,36px_36px]",
-        "dark:text-ivory dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-size-[auto,auto,42px_42px,42px_42px]",
-      )}
+      className="grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(20rem,42%)] text-navy bg-fog bg-[radial-gradient(52%_38%_at_100%_0%,rgba(193,147,87,0.15),transparent_68%),radial-gradient(42%_34%_at_0%_100%,rgba(14,42,71,0.08),transparent_72%),linear-gradient(rgba(14,42,71,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(14,42,71,0.022)_1px,transparent_1px)] bg-size-[auto,auto,36px_36px,36px_36px] dark:text-ivory dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-size-[auto,auto,42px_42px,42px_42px]"
     >
       <span
         aria-hidden="true"
-        className={cn(
-          "pointer-events-none fixed inset-0 z-0",
-          "mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-22 max-[639px]:bg-size-[20rem] max-[639px]:opacity-14",
-          "dark:opacity-52 dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]",
-        )}
+        className="pointer-events-none fixed inset-0 z-0 mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-22 max-[639px]:bg-size-[20rem] max-[639px]:opacity-14 dark:opacity-52 dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c19357' stroke-opacity='.28'%3E%3Ccircle cx='90' cy='90' r='42'/%3E%3Ccircle cx='90' cy='90' r='28' stroke-dasharray='3 7'/%3E%3Cpath d='M90 34v112M34 90h112M50 50l80 80M130 50l-80 80' stroke-opacity='.15'/%3E%3C/g%3E%3C/svg%3E\")",
@@ -122,11 +114,7 @@ export function AdminLoginLanding() {
             />
             <div className="leading-none">
               <p
-                className={cn(
-                  "font-display text-sm font-bold tracking-[0.2em]",
-                  "text-navy",
-                  "dark:text-ivory",
-                )}
+                className="font-display text-sm font-bold tracking-[0.2em] text-navy dark:text-ivory"
               >
                 MALLI
               </p>
@@ -137,19 +125,11 @@ export function AdminLoginLanding() {
           </div>
           <div className="flex items-center gap-3">
             <ModeToggle
-              className={cn(
-                "size-10 rounded-full border bg-white",
-                "border-navy/12 text-navy hover:border-gold/50",
-                "dark:border-gold/25 dark:bg-navy-mid dark:text-gold-soft",
-              )}
+              className="size-10 rounded-full border bg-white border-navy/12 text-navy hover:border-gold/50 dark:border-gold/25 dark:bg-navy-mid dark:text-gold-soft"
             />
             <Link
               href="/"
-              className={cn(
-                "inline-flex min-h-11 items-center text-xs font-black",
-                "text-navy/70 hover:text-gold",
-                "dark:text-ivory/70",
-              )}
+              className="inline-flex min-h-11 items-center text-xs font-black text-navy/70 hover:text-gold dark:text-ivory/70"
             >
               بازگشت به فروشگاه
             </Link>
@@ -229,20 +209,11 @@ export function AdminLoginLanding() {
             <button
               type="submit"
               disabled={pending}
-              className={cn(
-                "group flex h-14 w-full items-center justify-between rounded-full px-6 text-sm font-black transition",
-                "bg-navy text-ivory hover:bg-navy-mid shadow-[0_16px_32px_-16px_rgba(14,42,71,.55)]",
-                "dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light",
-                "disabled:pointer-events-none disabled:opacity-60",
-              )}
+              className="group flex h-14 w-full items-center justify-between rounded-full px-6 text-sm font-black transition bg-navy text-ivory hover:bg-navy-mid shadow-[0_16px_32px_-16px_rgba(14,42,71,.55)] dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light disabled:pointer-events-none disabled:opacity-60"
             >
               {pending ? "در حال ورود…" : "ورود به کنسول"}
               <span
-                className={cn(
-                  "grid size-9 place-items-center rounded-full transition-transform group-hover:-translate-x-1",
-                  "bg-navy-deep text-gold-soft",
-                  "dark:bg-navy-deep dark:text-gold-soft",
-                )}
+                className="grid size-9 place-items-center rounded-full transition-transform group-hover:-translate-x-1 bg-navy-deep text-gold-soft dark:bg-navy-deep dark:text-gold-soft"
               >
                 <ArrowLeft className="size-4" />
               </span>

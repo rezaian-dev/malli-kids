@@ -28,11 +28,7 @@ export function SizeGuideLanding() {
             a skipped level. */}
         <h2 className="sr-only">جدول سایزبندی</h2>
         <div
-          className={cn(
-            "overflow-x-auto rounded-3xl border shadow-sm",
-            "border-navy/10 bg-white",
-            "dark:border-gold/35 dark:bg-dusk",
-          )}
+          className="overflow-x-auto rounded-3xl border shadow-sm border-navy/10 bg-white dark:border-gold/35 dark:bg-dusk"
         >
           <Table className="min-w-130 text-sm">
             <TableHeader>
@@ -91,11 +87,7 @@ export function SizeGuideLanding() {
           ].map((x) => (
             <div
               key={x.t}
-              className={cn(
-                "rounded-2xl border p-4 transition-all hover:-translate-y-0.5",
-                "border-navy/8 hover:border-gold/40 bg-white",
-                "dark:border-gold/30 dark:bg-dusk",
-              )}
+              className="rounded-2xl border p-4 transition-all hover:-translate-y-0.5 border-navy/8 hover:border-gold/40 bg-white dark:border-gold/30 dark:bg-dusk"
             >
               <p className="text-navy dark:text-linen text-sm font-black">
                 {x.t}
@@ -110,10 +102,7 @@ export function SizeGuideLanding() {
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             href="/shop"
-            className={cn(
-              "inline-flex rounded-full border-2 px-6 py-3 font-black transition-colors",
-              "border-gold text-gold hover:bg-gold hover:text-navy-deep",
-            )}
+            className="inline-flex rounded-full border-2 px-6 py-3 font-black transition-colors border-gold text-gold hover:bg-gold hover:text-navy-deep"
           >
             فروشگاه
           </Link>

@@ -80,10 +80,7 @@ export function DashboardLanding({
           className="absolute inset-0 size-full object-cover opacity-20"
         />
         <div
-          className={cn(
-            "absolute inset-0",
-            "from-navy-deep via-navy-deep/90 to-navy/75 bg-linear-to-l",
-          )}
+          className="absolute inset-0 from-navy-deep via-navy-deep/90 to-navy/75 bg-linear-to-l"
         />
         <div className="relative grid gap-4 p-5 sm:grid-cols-2 sm:p-7 xl:grid-cols-4">
           <Stat
@@ -157,11 +154,7 @@ export function DashboardLanding({
             <Button
               asChild
               variant="ghost"
-              className={cn(
-                "h-8 rounded-xl text-[10px] font-black",
-                "text-gold hover:bg-gold/10 hover:text-gold-deep",
-                "dark:hover:text-gold-soft",
-              )}
+              className="h-8 rounded-xl text-[10px] font-black text-gold hover:bg-gold/10 hover:text-gold-deep dark:hover:text-gold-soft"
             >
               <Link href="/admin/orders">
                 همه سفارش‌ها <ArrowLeft className="size-3.5" />
@@ -248,10 +241,7 @@ function Stat({
 }) {
   return (
     <article
-      className={cn(
-        "rounded-[22px] border p-4 backdrop-blur-sm max-[639px]:rounded-[19px]",
-        "border-gold/20 bg-navy-deep/55",
-      )}
+      className="rounded-[22px] border p-4 backdrop-blur-sm max-[639px]:rounded-[19px] border-gold/20 bg-navy-deep/55"
     >
       <div className="flex items-start justify-between">
         <p className="text-wheat text-[11px] font-black">{t}</p>

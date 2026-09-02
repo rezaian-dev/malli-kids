@@ -36,7 +36,7 @@ const NO_GENDER = "__none__";
 const FIELD_LABEL = "text-navy/70 dark:text-wheat block text-xs font-black";
 const FIELD_INPUT =
   "border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm";
-const SELECT_TRIGGER = cn(FIELD_INPUT, "shadow-none");
+const SELECT_TRIGGER = "border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm shadow-none";
 const FIELD_ERROR = "text-rose text-xs font-bold";
 const FORM_SECTION = cn(adminGlassCard, "space-y-4 p-5 sm:p-6");
 const SECTION_TITLE = "text-gold text-sm font-black";
@@ -578,7 +578,7 @@ export function ProductForm({
           </div>
 
           <details className="group">
-            <summary className={cn(SECTION_TITLE, "cursor-pointer select-none")}>
+            <summary className="text-gold text-sm font-black cursor-pointer select-none">
               سئو (اختیاری)
             </summary>
             <div className="mt-4 space-y-4">
@@ -617,11 +617,7 @@ export function ProductForm({
             <h2 className={SECTION_TITLE}>تصاویر محصول</h2>
 
             <div
-              className={cn(
-                "overflow-hidden rounded-[22px] border bg-white/55",
-                "border-navy/10",
-                "dark:border-gold/14 dark:bg-white/4",
-              )}
+              className="overflow-hidden rounded-[22px] border bg-white/55 border-navy/10 dark:border-gold/14 dark:bg-white/4"
             >
               {values.images[0] ? (
                 /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use local files and data URLs. */
@@ -672,11 +668,7 @@ export function ProductForm({
                     disabled={imageBusy}
                   />
                   <span
-                    className={cn(
-                      "inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-2xl border bg-white/70 px-4 text-sm font-black transition",
-                      "border-navy/12 text-navy hover:border-gold/45",
-                      "dark:border-gold/20 dark:text-ivory dark:bg-white/5",
-                    )}
+                    className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-2xl border bg-white/70 px-4 text-sm font-black transition border-navy/12 text-navy hover:border-gold/45 dark:border-gold/20 dark:text-ivory dark:bg-white/5"
                   >
                     <ImagePlus className="size-4" />
                     {imageBusy
@@ -691,10 +683,7 @@ export function ProductForm({
                 <button
                   type="button"
                   onClick={() => removeImage(0)}
-                  className={cn(
-                    "inline-flex min-h-11 items-center gap-2 rounded-2xl px-4 text-sm font-black transition",
-                    "bg-rose/10 text-rose hover:bg-rose/15",
-                  )}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-2xl px-4 text-sm font-black transition bg-rose/10 text-rose hover:bg-rose/15"
                 >
                   <Trash2 className="size-4" /> حذف تصویر اصلی
                 </button>
@@ -781,11 +770,7 @@ export function ProductForm({
               </>
             ) : (
               <label
-                className={cn(
-                  "flex items-center justify-between rounded-2xl border px-4 py-3",
-                  "border-navy/8",
-                  "dark:border-gold/20",
-                )}
+                className="flex items-center justify-between rounded-2xl border px-4 py-3 border-navy/8 dark:border-gold/20"
               >
                 <span className="space-y-1">
                   <span className="block text-sm font-black">موجود در انبار</span>
@@ -817,11 +802,7 @@ export function ProductForm({
                   return (
                     <li
                       key={id}
-                      className={cn(
-                        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold",
-                        "border-navy/12 text-navy",
-                        "dark:border-gold/25 dark:text-ivory",
-                      )}
+                      className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold border-navy/12 text-navy dark:border-gold/25 dark:text-ivory"
                     >
                       {paired?.name ?? `#${id}`}
                       <button
@@ -879,11 +860,7 @@ export function ProductForm({
       </div>
 
       <div
-        className={cn(
-          "fixed inset-x-0 bottom-0 z-30 border-t px-4 py-3 backdrop-blur-xl lg:inset-s-68",
-          "border-navy/8 bg-fog/90",
-          "dark:border-gold/20 dark:bg-navy-deep/90",
-        )}
+        className="fixed inset-x-0 bottom-0 z-30 border-t px-4 py-3 backdrop-blur-xl lg:inset-s-68 border-navy/8 bg-fog/90 dark:border-gold/20 dark:bg-navy-deep/90"
       >
         <div className="flex items-center justify-end gap-2">
           <Button

@@ -89,11 +89,7 @@ export function FestiveBannerBody() {
       <BannerFrame className={cn("text-ivory", TONE[banner.theme])}>
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <span
-            className={cn(
-              "relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[11px] font-black sm:px-4 sm:text-xs",
-              "from-gold-glow via-gold to-gold-deep text-navy-deep bg-linear-to-b",
-              "shadow-[0_6px_16px_-6px_rgba(130,88,31,.7),inset_0_1px_0_rgb(255_255_255/.6),inset_0_-2px_3px_rgb(4_20_39/.25)]",
-            )}
+            className="relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[11px] font-black sm:px-4 sm:text-xs from-gold-glow via-gold to-gold-deep text-navy-deep bg-linear-to-b shadow-[0_6px_16px_-6px_rgba(130,88,31,.7),inset_0_1px_0_rgb(255_255_255/.6),inset_0_-2px_3px_rgb(4_20_39/.25)]"
           >
             <Gift className="size-4" />
             {banner.occasion}
@@ -107,10 +103,7 @@ export function FestiveBannerBody() {
               {banner.title}
             </p>
             <p
-              className={cn(
-                "mt-0.5 hidden truncate text-xs font-bold min-[560px]:block sm:text-[13px]",
-                "text-ivory/70",
-              )}
+              className="mt-0.5 hidden truncate text-xs font-bold min-[560px]:block sm:text-[13px] text-ivory/70"
             >
               {banner.subtitle}
             </p>
@@ -120,11 +113,7 @@ export function FestiveBannerBody() {
         <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
           {banner.coupon ? (
             <span
-              className={cn(
-                "hidden items-center gap-1.5 rounded-lg border border-dashed px-3.5 py-2 text-xs font-black tracking-[0.14em] md:inline-flex",
-                "border-gold/60 bg-gold/10 text-gold-light",
-                "shadow-[0_2px_10px_-4px_rgb(0_0_0/.6),inset_0_1px_0_rgb(255_255_255/.12)]",
-              )}
+              className="hidden items-center gap-1.5 rounded-lg border border-dashed px-3.5 py-2 text-xs font-black tracking-[0.14em] md:inline-flex border-gold/60 bg-gold/10 text-gold-light shadow-[0_2px_10px_-4px_rgb(0_0_0/.6),inset_0_1px_0_rgb(255_255_255/.12)]"
               title="کد تخفیف را در صفحهٔ پرداخت وارد کنید"
             >
               <Ticket className="size-4" />
@@ -134,12 +123,7 @@ export function FestiveBannerBody() {
           <Link
             href={banner.href}
             prefetch={false}
-            className={cn(
-              "inline-flex shrink-0 items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-black transition-[filter,box-shadow] duration-200 sm:px-6 sm:text-[13px]",
-              "from-gold-light via-gold to-gold-deep text-navy-deep bg-linear-to-b",
-              "shadow-[0_10px_22px_-8px_rgba(130,88,31,.8),inset_0_1px_0_rgb(255_255_255/.65),inset_0_-2px_4px_rgb(4_20_39/.3)]",
-              "hover:shadow-[0_12px_26px_-8px_rgba(130,88,31,.9),inset_0_1px_0_rgb(255_255_255/.65),inset_0_-2px_4px_rgb(4_20_39/.3)] hover:brightness-110 active:brightness-95",
-            )}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-black transition-[filter,box-shadow] duration-200 sm:px-6 sm:text-[13px] from-gold-light via-gold to-gold-deep text-navy-deep bg-linear-to-b shadow-[0_10px_22px_-8px_rgba(130,88,31,.8),inset_0_1px_0_rgb(255_255_255/.65),inset_0_-2px_4px_rgb(4_20_39/.3)] hover:shadow-[0_12px_26px_-8px_rgba(130,88,31,.9),inset_0_1px_0_rgb(255_255_255/.65),inset_0_-2px_4px_rgb(4_20_39/.3)] hover:brightness-110 active:brightness-95"
           >
             {banner.cta}
             <ArrowLeft className="size-4" />

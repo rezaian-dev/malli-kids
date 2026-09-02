@@ -45,20 +45,14 @@ export function Atelier() {
       className={cn(wash.gold, "cv-auto py-12 sm:py-16 lg:py-20")}
     >
       <span
-        className={cn(
-          "pointer-events-none absolute top-10 left-8 hidden -rotate-6 select-none xl:block",
-          "font-display text-[120px] leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(193,147,87,.55)]",
-        )}
+        className="pointer-events-none absolute top-10 left-8 hidden -rotate-6 select-none xl:block font-display text-[120px] leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(193,147,87,.55)]"
       >
         atelier
       </span>
       <div className="container mx-auto grid w-full items-center gap-16 px-4 sm:gap-14 sm:px-5 lg:grid-cols-2 lg:gap-10 lg:px-7">
         <div className="relative order-2 h-90 transition-all duration-700 ease-out min-[420px]:h-105 sm:h-135 lg:order-1">
           <div
-            className={cn(
-              "absolute top-0 right-0 w-[78%] rotate-2 overflow-hidden rounded-2xl shadow-2xl sm:rounded-[28px]",
-              "shadow-navy/20",
-            )}
+            className="absolute top-0 right-0 w-[78%] rotate-2 overflow-hidden rounded-2xl shadow-2xl sm:rounded-[28px] shadow-navy/20"
           >
             <Image
               src="/brand/look-knit-portrait.jpg"
@@ -70,10 +64,7 @@ export function Atelier() {
             />
           </div>
           <div
-            className={cn(
-              "absolute bottom-0 left-0 z-10 w-[52%] -rotate-3 overflow-hidden rounded-xl border-4 sm:rounded-3xl sm:border-8",
-              "shadow-navy/25 border-white shadow-2xl",
-            )}
+            className="absolute bottom-0 left-0 z-10 w-[52%] -rotate-3 overflow-hidden rounded-xl border-4 sm:rounded-3xl sm:border-8 shadow-navy/25 border-white shadow-2xl"
           >
             <Image
               src="/brand/cat-girl-portrait.jpg"
@@ -85,10 +76,7 @@ export function Atelier() {
             />
           </div>
           <div
-            className={cn(
-              "animate-floaty absolute top-4 left-1 z-20 h-20 w-20 rotate-6 overflow-hidden rounded-xl border-4 shadow-xl min-[420px]:h-24 min-[420px]:w-24 sm:top-6 sm:left-8 sm:h-28 sm:w-28 sm:rounded-2xl",
-              "border-white",
-            )}
+            className="animate-floaty absolute top-4 left-1 z-20 h-20 w-20 rotate-6 overflow-hidden rounded-xl border-4 shadow-xl min-[420px]:h-24 min-[420px]:w-24 sm:top-6 sm:left-8 sm:h-28 sm:w-28 sm:rounded-2xl border-white"
           >
             <Image
               src="/brand/look-knit-portrait.jpg"
@@ -100,10 +88,7 @@ export function Atelier() {
             />
           </div>
           <div
-            className={cn(
-              "absolute right-4 -bottom-1 z-20 flex items-center gap-2 rounded-xl px-4 py-2.5 shadow-xl sm:right-12 sm:-bottom-2 sm:rounded-2xl sm:px-5 sm:py-3",
-              "bg-navy text-cream",
-            )}
+            className="absolute right-4 -bottom-1 z-20 flex items-center gap-2 rounded-xl px-4 py-2.5 shadow-xl sm:right-12 sm:-bottom-2 sm:rounded-2xl sm:px-5 sm:py-3 bg-navy text-cream"
           >
             <Scissors className="text-gold-light h-4 w-4 shrink-0" />
             <span className="text-xs font-bold whitespace-nowrap sm:text-sm">
@@ -116,11 +101,7 @@ export function Atelier() {
             آتلیه ملی‌کیدز
           </span>
           <h2
-            className={cn(
-              "mt-2",
-              "text-navy text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black",
-              "dark:text-ivory",
-            )}
+            className="mt-2 text-navy text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black dark:text-ivory"
           >
             الگوی آماده و{" "}
             <span className="text-gold relative inline-block">
@@ -146,25 +127,15 @@ export function Atelier() {
                 )}
               >
                 <span
-                  className={cn(
-                    "absolute top-4 left-4 rounded-full px-2.5 py-1 text-[10px] font-black sm:top-5 sm:left-5",
-                    "bg-gold/15 text-gold",
-                  )}
+                  className="absolute top-4 left-4 rounded-full px-2.5 py-1 text-[10px] font-black sm:top-5 sm:left-5 bg-gold/15 text-gold"
                 >
                   {card.tag}
                 </span>
                 <span
-                  className={cn(
-                    "flex h-11 w-11 items-center justify-center rounded-xl transition-colors sm:h-12 sm:w-12 sm:rounded-2xl",
-                    "bg-navy/5 group-hover:bg-gold/15",
-                  )}
+                  className="flex h-11 w-11 items-center justify-center rounded-xl transition-colors sm:h-12 sm:w-12 sm:rounded-2xl bg-navy/5 group-hover:bg-gold/15"
                 >
                   <card.Icon
-                    className={cn(
-                      "h-5 w-5 transition-colors sm:h-6 sm:w-6",
-                      "text-navy group-hover:text-gold",
-                      "dark:text-ivory",
-                    )}
+                    className="h-5 w-5 transition-colors sm:h-6 sm:w-6 text-navy group-hover:text-gold dark:text-ivory"
                   />
                 </span>
                 <h3 className="text-navy dark:text-ivory mt-3.5 text-base font-black sm:mt-4 sm:text-lg">
@@ -179,11 +150,7 @@ export function Atelier() {
           <Link
             href="/about"
             prefetch={false}
-            className={cn(
-              "mt-10 inline-flex min-h-11 items-center gap-2 border-b-2 pb-1 text-sm font-black transition-colors min-[480px]:mt-14 sm:text-base",
-              "border-gold text-navy hover:text-gold",
-              "dark:text-ivory",
-            )}
+            className="mt-10 inline-flex min-h-11 items-center gap-2 border-b-2 pb-1 text-sm font-black transition-colors min-[480px]:mt-14 sm:text-base border-gold text-navy hover:text-gold dark:text-ivory"
           >
             ورود به آتلیه
             <ArrowLeft className="h-5 w-5" />

@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 
 const TAB_PILL = "h-10 w-24 rounded-xl";
 
@@ -17,10 +16,7 @@ export default function ProfileLoading() {
     >
       <section
         aria-hidden
-        className={cn(
-          "overflow-hidden rounded-[28px]",
-          "from-navy via-navy-mid to-navy-light bg-linear-to-br",
-        )}
+        className="overflow-hidden rounded-[28px] from-navy via-navy-mid to-navy-light bg-linear-to-br"
       >
         <div className="flex flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:px-8 sm:py-9">
           <Skeleton className="size-19 shrink-0 rounded-full opacity-60 sm:size-24" />
@@ -35,11 +31,7 @@ export default function ProfileLoading() {
 
       <div
         aria-hidden
-        className={cn(
-          "mt-6 flex flex-wrap gap-1.5 rounded-[18px] p-1.5",
-          "bg-sand",
-          "dark:bg-dusk-mid",
-        )}
+        className="mt-6 flex flex-wrap gap-1.5 rounded-[18px] p-1.5 bg-sand dark:bg-dusk-mid"
       >
         {[0, 1, 2, 3].map((i) => (
           <Skeleton key={i} className={TAB_PILL} />
@@ -48,11 +40,7 @@ export default function ProfileLoading() {
 
       <section
         aria-hidden
-        className={cn(
-          "mt-5 space-y-5 rounded-3xl p-5 sm:p-7",
-          "border border-navy/10 bg-white",
-          "dark:border-gold/35 dark:bg-dusk",
-        )}
+        className="mt-5 space-y-5 rounded-3xl p-5 sm:p-7 border border-navy/10 bg-white dark:border-gold/35 dark:bg-dusk"
       >
         <Skeleton className="h-12 rounded-2xl" />
         <Skeleton className="h-24 rounded-2xl" />

@@ -25,7 +25,6 @@ import {
 } from "lucide-react";
 
 import { toast } from "@/lib/toast";
-import { cn } from "@/lib/utils";
 import { RichEditorTool as Tool } from "./rich-editor-tool";
 
 const DIVIDER = "bg-navy/10 dark:bg-gold/20 mx-1 h-6 w-px";
@@ -126,18 +125,10 @@ export function RichEditor({
 
   return (
     <div
-      className={cn(
-        "overflow-hidden rounded-3xl border",
-        "border-navy/10 bg-sand/40",
-        "dark:border-gold/25 dark:bg-navy-deep/40",
-      )}
+      className="overflow-hidden rounded-3xl border border-navy/10 bg-sand/40 dark:border-gold/25 dark:bg-navy-deep/40"
     >
       <div
-        className={cn(
-          "flex flex-wrap items-center gap-1.5 border-b p-2",
-          "border-navy/8",
-          "dark:border-gold/15",
-        )}
+        className="flex flex-wrap items-center gap-1.5 border-b p-2 border-navy/8 dark:border-gold/15"
       >
         <Tool
           label="واگرد"

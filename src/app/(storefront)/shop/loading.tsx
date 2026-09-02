@@ -3,7 +3,6 @@ import { PER_PAGE } from "@/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProductCardGridSkeleton } from "@/components/product";
 import { PRODUCT_GRID } from "@/components/product/card-styles";
-import { cn } from "@/lib/utils";
 
 const FILTER_ICON_BADGE =
   "bg-navy text-gold-soft dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl";
@@ -33,18 +32,10 @@ export default function ShopLoading() {
         {/* Desktop sidebar filter */}
         <aside
           aria-hidden
-          className={cn(
-            "sticky top-30 hidden overflow-hidden rounded-[28px] lg:flex lg:flex-col",
-            "border-navy/10 bg-sand-deep/60 border",
-            "dark:border-gold/40 dark:bg-filter-night",
-          )}
+          className="sticky top-30 hidden overflow-hidden rounded-[28px] lg:flex lg:flex-col border-navy/10 bg-sand-deep/60 border dark:border-gold/40 dark:bg-filter-night"
         >
           <div
-            className={cn(
-              "flex items-center gap-2.5 border-b px-4 py-4",
-              "border-navy/8 bg-white/70",
-              "dark:border-gold/20 dark:bg-navy-dark/60",
-            )}
+            className="flex items-center gap-2.5 border-b px-4 py-4 border-navy/8 bg-white/70 dark:border-gold/20 dark:bg-navy-dark/60"
           >
             <span className={FILTER_ICON_BADGE}>
               <SlidersHorizontal className="size-4" />
@@ -72,18 +63,10 @@ export default function ShopLoading() {
 
         {/* Main results */}
         <section
-          className={cn(
-            "min-w-0 rounded-[28px] p-3 sm:p-5",
-            "border-navy/10 border bg-white/85",
-            "dark:border-gold/35 dark:bg-slate/45",
-          )}
+          className="min-w-0 rounded-[28px] p-3 sm:p-5 border-navy/10 border bg-white/85 dark:border-gold/35 dark:bg-slate/45"
         >
           <div
-            className={cn(
-              "mb-4 flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center",
-              "border-navy/6",
-              "dark:border-gold/15",
-            )}
+            className="mb-4 flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center border-navy/6 dark:border-gold/15"
             aria-hidden
           >
             <div className="space-y-2">

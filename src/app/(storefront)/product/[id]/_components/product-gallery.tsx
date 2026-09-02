@@ -16,9 +16,6 @@ const slideVariants = {
   exit: (dir: number) => ({ x: dir >= 0 ? "-100%" : "100%", opacity: 0 }),
 };
 
-const CORNER_MARK =
-  "border-gold/70 pointer-events-none absolute z-10 hidden h-6 w-6 min-[400px]:block sm:h-8 sm:w-8";
-
 /** 🖼️ The swipeable product image carousel + thumbnail strip. */
 export function ProductGallery({
   images,
@@ -43,11 +40,7 @@ export function ProductGallery({
   return (
     <div className="min-w-0 lg:sticky lg:top-24">
       <div
-        className={cn(
-          "relative aspect-4/5 overflow-hidden rounded-[22px] shadow-[0_28px_60px_-32px_rgba(14,42,71,.42)] select-none sm:rounded-[36px]",
-          "border-navy/10 bg-sand/55 ring-gold/35 border ring-1",
-          "dark:border-gold/30 dark:bg-dusk",
-        )}
+        className="relative aspect-4/5 overflow-hidden rounded-[22px] shadow-[0_28px_60px_-32px_rgba(14,42,71,.42)] select-none sm:rounded-[36px] border-navy/10 bg-sand/55 ring-gold/35 border ring-1 dark:border-gold/30 dark:bg-dusk"
         onTouchStart={
           multi
             ? (e) => {
@@ -69,28 +62,16 @@ export function ProductGallery({
         }
       >
         <span
-          className={cn(
-            CORNER_MARK,
-            "top-3 right-3 rounded-tr-lg border-t-2 border-r-2 sm:top-5 sm:right-5",
-          )}
+          className="border-gold/70 pointer-events-none absolute z-10 hidden h-6 w-6 min-[400px]:block sm:h-8 sm:w-8 top-3 right-3 rounded-tr-lg border-t-2 border-r-2 sm:top-5 sm:right-5"
         />
         <span
-          className={cn(
-            CORNER_MARK,
-            "top-3 left-3 rounded-tl-lg border-t-2 border-l-2 sm:top-5 sm:left-5",
-          )}
+          className="border-gold/70 pointer-events-none absolute z-10 hidden h-6 w-6 min-[400px]:block sm:h-8 sm:w-8 top-3 left-3 rounded-tl-lg border-t-2 border-l-2 sm:top-5 sm:left-5"
         />
         <span
-          className={cn(
-            CORNER_MARK,
-            "right-3 bottom-3 rounded-br-lg border-r-2 border-b-2 sm:right-5 sm:bottom-5",
-          )}
+          className="border-gold/70 pointer-events-none absolute z-10 hidden h-6 w-6 min-[400px]:block sm:h-8 sm:w-8 right-3 bottom-3 rounded-br-lg border-r-2 border-b-2 sm:right-5 sm:bottom-5"
         />
         <span
-          className={cn(
-            CORNER_MARK,
-            "bottom-3 left-3 rounded-bl-lg border-b-2 border-l-2 sm:bottom-5 sm:left-5",
-          )}
+          className="border-gold/70 pointer-events-none absolute z-10 hidden h-6 w-6 min-[400px]:block sm:h-8 sm:w-8 bottom-3 left-3 rounded-bl-lg border-b-2 border-l-2 sm:bottom-5 sm:left-5"
         />
         <div className="absolute inset-0 h-full overflow-hidden">
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
@@ -121,10 +102,7 @@ export function ProductGallery({
         <div className="pointer-events-none absolute inset-x-3 top-3 z-10 flex justify-between min-[400px]:inset-x-12 min-[400px]:top-5 sm:inset-x-14">
           {disc ? (
             <span
-              className={cn(
-                "rounded-full px-3 py-1.5 text-[11px] font-black",
-                "bg-rose text-white",
-              )}
+              className="rounded-full px-3 py-1.5 text-[11px] font-black bg-rose text-white"
             >
               {disc} تخفیف
             </span>

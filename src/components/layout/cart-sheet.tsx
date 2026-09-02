@@ -53,10 +53,7 @@ export function CartSheet() {
           )}
         >
           <ShoppingBag
-            className={cn(
-              "size-5",
-              "transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6",
-            )}
+            className="size-5 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
           />
 
           {}

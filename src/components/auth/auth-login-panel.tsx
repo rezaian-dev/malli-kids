@@ -17,14 +17,8 @@ import {
 } from "@/lib/auth/schemas";
 import { SUBMIT_NAVY } from "./auth-shared";
 
-const METHOD_BTN = cn(
-  "inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-[12px] font-extrabold transition-colors",
-  "text-navy/70 hover:text-navy dark:text-linen/70 dark:hover:text-ivory",
-);
-const METHOD_BTN_ON = cn(
-  "bg-navy text-ivory shadow-sm",
-  "dark:bg-gold dark:text-navy-deep dark:shadow-gold/40",
-);
+const METHOD_BTN = "inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-[12px] font-extrabold transition-colors text-navy/70 hover:text-navy dark:text-linen/70 dark:hover:text-ivory";
+const METHOD_BTN_ON = "bg-navy text-ivory shadow-sm dark:bg-gold dark:text-navy-deep dark:shadow-gold/40";
 
 /** 🔑 Email + password *or* phone OTP — a small segmented switch on top of
  *  the login tab decides which; both end at the same `login()` call. */
@@ -34,11 +28,7 @@ export function LoginPanel({ onForgot }: { onForgot: () => void }) {
   return (
     <div className="space-y-4">
       <div
-        className={cn(
-          "grid grid-cols-2 gap-1 rounded-2xl p-1",
-          "bg-sand ring-navy/5 ring-1",
-          "dark:bg-navy-deep/70 dark:ring-white/10",
-        )}
+        className="grid grid-cols-2 gap-1 rounded-2xl p-1 bg-sand ring-navy/5 ring-1 dark:bg-navy-deep/70 dark:ring-white/10"
         role="tablist"
         aria-label="روش ورود"
       >
@@ -122,10 +112,7 @@ function PasswordLoginPanel({ onForgot }: { onForgot: () => void }) {
             type="button"
             variant="ghost"
             size="icon"
-            className={cn(
-              "size-8 shrink-0",
-              "text-gold hover:bg-gold/10 hover:text-gold",
-            )}
+            className="size-8 shrink-0 text-gold hover:bg-gold/10 hover:text-gold"
             onClick={() => setShow((s) => !s)}
             aria-label={show ? "پنهان کردنِ رمز" : "نمایشِ رمز"}
           >

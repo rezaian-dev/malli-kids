@@ -70,10 +70,7 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
             )}
           >
             <span
-              className={cn(
-                "flex size-11 shrink-0 items-center justify-center rounded-2xl ring-1",
-                "from-gold/25 to-gold/10 text-gold-deep ring-gold/30 bg-linear-to-br",
-              )}
+              className="flex size-11 shrink-0 items-center justify-center rounded-2xl ring-1 from-gold/25 to-gold/10 text-gold-deep ring-gold/30 bg-linear-to-br"
             >
               <SearchIcon className="size-5" />
             </span>
@@ -94,17 +91,11 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
               }}
               onFocus={() => setOpen(true)}
               onBlur={() => window.setTimeout(() => setOpen(false), 180)}
-              className={cn(
-                "min-w-0 flex-1 px-3 py-3 text-sm outline-none sm:text-base",
-                "text-navy placeholder:text-navy/70 bg-transparent",
-              )}
+              className="min-w-0 flex-1 px-3 py-3 text-sm outline-none sm:text-base text-navy placeholder:text-navy/70 bg-transparent"
             />
             <button
               type="submit"
-              className={cn(
-                "shrink-0 rounded-2xl px-4 py-3 text-xs font-black transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md motion-safe:active:translate-y-0 motion-safe:active:scale-95 sm:px-6 sm:text-sm",
-                "bg-navy text-ivory hover:bg-navy-mid",
-              )}
+              className="shrink-0 rounded-2xl px-4 py-3 text-xs font-black transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md motion-safe:active:translate-y-0 motion-safe:active:scale-95 sm:px-6 sm:text-sm bg-navy text-ivory hover:bg-navy-mid"
             >
               جستجو
             </button>
@@ -140,11 +131,7 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
                   <button
                     key={term}
                     type="button"
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95",
-                      "bg-sand text-navy hover:bg-gold/25",
-                      "dark:bg-dusk-mid dark:text-linen dark:hover:bg-dusk",
-                    )}
+                    className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-extrabold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95 bg-sand text-navy hover:bg-gold/25 dark:bg-dusk-mid dark:text-linen dark:hover:bg-dusk"
                     onPointerDown={(event) => event.preventDefault()}
                     onClick={() => runSearch(term)}
                   >
@@ -166,10 +153,7 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
                     type="button"
                     onPointerDown={(event) => event.preventDefault()}
                     onClick={() => runSearch(p.name)}
-                    className={cn(
-                      "flex w-full items-center gap-3 px-3.5 py-2.5 text-start transition-colors duration-150",
-                      "hover:bg-gold/10 focus-visible:bg-gold/10",
-                    )}
+                    className="flex w-full items-center gap-3 px-3.5 py-2.5 text-start transition-colors duration-150 hover:bg-gold/10 focus-visible:bg-gold/10"
                   >
                     <Image
                       src={p.img}
@@ -205,10 +189,7 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
             <button
               key={term}
               type="button"
-              className={cn(
-                "inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold",
-                "text-ivory hover:bg-gold hover:text-navy-deep bg-white/20",
-              )}
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold text-ivory hover:bg-gold hover:text-navy-deep bg-white/20"
               onClick={() => runSearch(term)}
             >
               <Flame className="size-3.5" />

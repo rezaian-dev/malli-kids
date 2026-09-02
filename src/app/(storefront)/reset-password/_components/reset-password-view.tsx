@@ -22,12 +22,7 @@ import { resetPasswordAction } from "@/lib/auth/actions";
 import { resetPasswordSchema, type ResetPasswordValues } from "@/lib/auth/schemas";
 
 const PAGE = "flex min-h-[70dvh] items-center justify-center px-4 py-14";
-const CARD = cn(
-  "bg-paper dark:bg-dusk mx-auto w-full max-w-md rounded-[28px] border p-7 sm:p-9",
-  "border-gold/35 shadow-[0_28px_80px_-20px_rgba(4,20,39,.35)]",
-  "dark:border-gold/40",
-);
-const BADGE = "mx-auto flex size-14 items-center justify-center rounded-full";
+const CARD = "bg-paper dark:bg-dusk mx-auto w-full max-w-md rounded-[28px] border p-7 sm:p-9 border-gold/35 shadow-[0_28px_80px_-20px_rgba(4,20,39,.35)] dark:border-gold/40";
 
 function Brand() {
   return (
@@ -84,7 +79,7 @@ function InvalidCard() {
     <div className={CARD}>
       <Brand />
       <div className="space-y-3 text-center">
-        <span className={cn(BADGE, "bg-rose/10 text-rose")}>
+        <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-rose/10 text-rose">
           <ShieldAlert className="size-6" />
         </span>
         <h1 className="text-navy dark:text-ivory text-lg font-black">
@@ -110,7 +105,7 @@ function SuccessCard() {
     <div className={CARD}>
       <Brand />
       <div className="space-y-3 text-center">
-        <span className={cn(BADGE, "bg-gold/12 text-gold")}>
+        <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-gold/12 text-gold">
           <PartyPopper className="size-6" />
         </span>
         <h1 className="text-navy dark:text-ivory text-lg font-black">
@@ -179,7 +174,7 @@ export function ResetPasswordView({
       <div className={CARD}>
         <Brand />
         <div className="mb-5 text-center">
-          <span className={cn(BADGE, "bg-gold/12 text-gold mb-3")}>
+          <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-gold/12 text-gold mb-3">
             <KeyRound className="size-6" />
           </span>
           <h1 className="text-navy dark:text-ivory text-lg font-black">
@@ -211,10 +206,7 @@ export function ResetPasswordView({
                 type="button"
                 variant="ghost"
                 size="icon"
-                className={cn(
-                  "size-8 shrink-0",
-                  "text-gold hover:bg-gold/10 hover:text-gold",
-                )}
+                className="size-8 shrink-0 text-gold hover:bg-gold/10 hover:text-gold"
                 onClick={() => setShow((s) => !s)}
                 aria-label={show ? "پنهان کردنِ رمز" : "نمایشِ رمز"}
               >

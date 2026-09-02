@@ -6,7 +6,6 @@ import { useAuth } from "@/providers/auth-provider";
 import { toast } from "@/lib/toast";
 import { AppForm, InsetField, SubmitButton, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { TrustNote } from "./trust-note";
 import { signUpAction } from "@/lib/auth/actions";
 import {
@@ -75,10 +74,7 @@ export function RegisterPanel() {
             type="button"
             variant="ghost"
             size="icon"
-            className={cn(
-              "size-8 shrink-0",
-              "text-gold hover:bg-gold/10 hover:text-gold",
-            )}
+            className="size-8 shrink-0 text-gold hover:bg-gold/10 hover:text-gold"
             onClick={() => setShow((s) => !s)}
             aria-label={show ? "پنهان کردنِ رمز" : "نمایشِ رمز"}
           >

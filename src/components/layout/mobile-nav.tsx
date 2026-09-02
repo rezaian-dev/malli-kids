@@ -43,18 +43,10 @@ export function MobileNav() {
           )}
         >
           <Menu
-            className={cn(
-              "size-5",
-              "transition-all duration-300 ease-out",
-              "group-aria-expanded/menu:scale-0 group-aria-expanded/menu:-rotate-90 group-aria-expanded/menu:opacity-0",
-            )}
+            className="size-5 transition-all duration-300 ease-out group-aria-expanded/menu:scale-0 group-aria-expanded/menu:-rotate-90 group-aria-expanded/menu:opacity-0"
           />
           <X
-            className={cn(
-              "absolute inset-0 m-auto size-5",
-              "scale-0 rotate-90 opacity-0 transition-all duration-300 ease-out",
-              "group-aria-expanded/menu:scale-100 group-aria-expanded/menu:rotate-0 group-aria-expanded/menu:opacity-100",
-            )}
+            className="absolute inset-0 m-auto size-5 scale-0 rotate-90 opacity-0 transition-all duration-300 ease-out group-aria-expanded/menu:scale-100 group-aria-expanded/menu:rotate-0 group-aria-expanded/menu:opacity-100"
           />
         </Button>
       </SheetTrigger>
@@ -74,10 +66,7 @@ export function MobileNav() {
               size="icon-sm"
               variant="ghost"
               aria-label="بستن منو"
-              className={cn(
-                "rounded-full transition-transform duration-300 ease-out",
-                "text-cream hover:text-gold-light hover:scale-105 hover:bg-white/15",
-              )}
+              className="rounded-full transition-transform duration-300 ease-out text-cream hover:text-gold-light hover:scale-105 hover:bg-white/15"
             >
               <X className="size-5 text-current" />
             </Button>
@@ -94,11 +83,7 @@ export function MobileNav() {
           <SheetClose asChild>
             <Link
               href="/shop"
-              className={cn(
-                "flex items-center gap-2 px-2 py-3",
-                "border-navy/5 text-navy border-b text-sm font-bold",
-                "dark:border-gold/10 dark:text-ivory",
-              )}
+              className="flex items-center gap-2 px-2 py-3 border-navy/5 text-navy border-b text-sm font-bold dark:border-gold/10 dark:text-ivory"
             >
               <LayoutGrid className="text-gold size-4" /> دسته‌بندی محصولات
             </Link>
@@ -111,11 +96,7 @@ export function MobileNav() {
           >
             <AccordionItem value="cats" className="border-0">
               <AccordionTrigger
-                className={cn(
-                  "px-2 py-3",
-                  "text-navy text-sm font-bold hover:no-underline",
-                  "dark:text-ivory",
-                )}
+                className="px-2 py-3 text-navy text-sm font-bold hover:no-underline dark:text-ivory"
               >
                 <span className="flex items-center gap-2">
                   <LayoutGrid className="text-gold size-4" /> زیردسته‌ها

@@ -63,11 +63,7 @@ export function AdminFilterSelect({
                 <span>{option.label}</span>
                 {typeof option.count === "number" ? (
                   <span
-                    className={cn(
-                      "rounded-md px-1.5 py-0.5 text-[10px]",
-                      "bg-navy/6 text-navy/70",
-                      "dark:text-wheat dark:bg-white/8",
-                    )}
+                    className="rounded-md px-1.5 py-0.5 text-[10px] bg-navy/6 text-navy/70 dark:text-wheat dark:bg-white/8"
                   >
                     {toFaDigits(option.count)}
                   </span>

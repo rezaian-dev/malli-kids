@@ -34,10 +34,7 @@ export function Looks() {
             <Link
               key={card.t}
               href={card.href}
-              className={cn(
-                "group relative min-h-50 overflow-hidden rounded-[28px] border border-white/0 transition-all duration-500 hover:-translate-y-2 sm:min-h-65",
-                "bg-navy hover:border-gold/50 shadow-[0_18px_40px_-22px_rgba(14,42,71,.45)] hover:shadow-[0_24px_50px_-18px_rgba(193,147,87,.35)]",
-              )}
+              className="group relative min-h-50 overflow-hidden rounded-[28px] border border-white/0 transition-all duration-500 hover:-translate-y-2 sm:min-h-65 bg-navy hover:border-gold/50 shadow-[0_18px_40px_-22px_rgba(14,42,71,.45)] hover:shadow-[0_24px_50px_-18px_rgba(193,147,87,.35)]"
             >
               <Image
                 src={card.img}

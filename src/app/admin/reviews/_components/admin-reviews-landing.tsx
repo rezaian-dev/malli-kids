@@ -190,10 +190,7 @@ export function AdminReviewsLanding({
 
       {selected.size > 0 ? (
         <div
-          className={cn(
-            "mb-4 flex flex-wrap items-center gap-2 rounded-2xl border px-4 py-3",
-            "border-gold/25 bg-gold/8",
-          )}
+          className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border px-4 py-3 border-gold/25 bg-gold/8"
         >
           <p className="text-navy dark:text-ivory text-xs font-black">
             {toFaDigits(selected.size)} نظر انتخاب‌شده

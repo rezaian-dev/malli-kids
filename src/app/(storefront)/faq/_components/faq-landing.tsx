@@ -5,7 +5,6 @@ import { Intro } from "@/components/shared/intro";
 import { JsonLd } from "@/components/shared/json-ld";
 import { FAQ } from "@/lib/data/pages";
 import { faqSchema } from "@/lib/seo";
-import { cn } from "@/lib/utils";
 
 export function FaqLanding() {
   return (
@@ -27,11 +26,7 @@ export function FaqLanding() {
         <h2 className="sr-only">سوالات متداول</h2>
         <Faq />
         <div
-          className={cn(
-            "mt-10 rounded-[26px] border p-6 text-center",
-            "border-navy/8 hover:border-gold/50 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]",
-            "dark:border-gold/30 dark:bg-slate/60",
-          )}
+          className="mt-10 rounded-[26px] border p-6 text-center border-navy/8 hover:border-gold/50 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/60"
         >
           <p className="text-navy dark:text-ivory leading-snug font-black">
             جوابتان را پیدا نکردید؟
@@ -41,11 +36,7 @@ export function FaqLanding() {
           </p>
           <Link
             href="/contact"
-            className={cn(
-              "mt-4 inline-flex rounded-full px-6 py-3 font-black transition-transform hover:-translate-y-0.5",
-              "bg-navy text-ivory",
-              "dark:bg-gold dark:text-navy-deep",
-            )}
+            className="mt-4 inline-flex rounded-full px-6 py-3 font-black transition-transform hover:-translate-y-0.5 bg-navy text-ivory dark:bg-gold dark:text-navy-deep"
           >
             تماس با گالری
           </Link>

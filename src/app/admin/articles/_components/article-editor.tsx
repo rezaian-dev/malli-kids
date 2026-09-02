@@ -25,11 +25,7 @@ const RichEditor = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className={cn(
-          "grid min-h-88 place-items-center rounded-3xl border border-dashed text-sm font-bold",
-          "border-navy/15 text-navy/70",
-          "dark:border-gold/25 dark:text-wheat",
-        )}
+        className="grid min-h-88 place-items-center rounded-3xl border border-dashed text-sm font-bold border-navy/15 text-navy/70 dark:border-gold/25 dark:text-wheat"
       >
         در حال آماده‌سازی ویرایشگر…
       </div>
@@ -73,10 +69,7 @@ export const EMPTY_ARTICLE_DRAFT: ArticleDraft = {
   tags: [],
 };
 
-const TAG_CHIP = cn(
-  "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold transition",
-  "border-navy/12 text-navy/70 hover:border-gold/50 dark:border-gold/25 dark:text-wheat",
-);
+const TAG_CHIP = "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold transition border-navy/12 text-navy/70 hover:border-gold/50 dark:border-gold/25 dark:text-wheat";
 const TAG_CHIP_SELECTED =
   "bg-navy text-ivory border-navy dark:bg-gold dark:text-navy-deep dark:border-gold";
 
@@ -198,11 +191,7 @@ export function ArticleEditor({
           />
         </div>
         <aside
-          className={cn(
-            "space-y-4 rounded-[22px] border p-4 backdrop-blur-[18px] transition-all duration-500 max-[639px]:rounded-[19px] sm:p-5",
-            "border-navy/9 bg-paper/94 hover:border-gold/50 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]",
-            "dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)]",
-          )}
+          className="space-y-4 rounded-[22px] border p-4 backdrop-blur-[18px] transition-all duration-500 max-[639px]:rounded-[19px] sm:p-5 border-navy/9 bg-paper/94 hover:border-gold/50 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] hover:-translate-y-1 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)] dark:border-gold-soft/16 dark:bg-[rgba(16,43,70,0.72)]"
         >
           <div className="flex flex-col gap-2">
             <label className={FIELD_LABEL} htmlFor="art-title">

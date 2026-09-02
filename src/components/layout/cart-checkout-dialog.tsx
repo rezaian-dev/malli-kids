@@ -105,11 +105,7 @@ export function CartCheckoutDialog({
       <DialogContent
         dir="rtl"
         showCloseButton
-        className={cn(
-          "flex max-h-[85vh] max-w-md flex-col rounded-3xl",
-          "border-gold/40 bg-paper text-navy border",
-          "dark:border-gold/50 dark:bg-dusk dark:text-ivory",
-        )}
+        className="flex max-h-[85vh] max-w-md flex-col rounded-3xl border-gold/40 bg-paper text-navy border dark:border-gold/50 dark:bg-dusk dark:text-ivory"
       >
         <DialogTitle className="flex items-center gap-2 text-base font-black">
           <BadgeCheck className="text-gold size-5" /> تکمیل خرید
@@ -120,11 +116,7 @@ export function CartCheckoutDialog({
             {rows.map(({ item, product, unitPrice }) => (
               <div
                 key={`${item.id}-${item.size}`}
-                className={cn(
-                  "flex items-center gap-3 rounded-2xl p-2.5",
-                  "border-navy/10 border bg-white",
-                  "dark:border-gold/25 dark:bg-navy-deep/50",
-                )}
+                className="flex items-center gap-3 rounded-2xl p-2.5 border-navy/10 border bg-white dark:border-gold/25 dark:bg-navy-deep/50"
               >
                 <Image
                   src={product.img}
@@ -217,11 +209,7 @@ export function CartCheckoutDialog({
               <Button
                 type="button"
                 variant="outline"
-                className={cn(
-                  "h-11 shrink-0 rounded-xl",
-                  "border-gold/50 text-gold-deep",
-                  "dark:text-gold-soft",
-                )}
+                className="h-11 shrink-0 rounded-xl border-gold/50 text-gold-deep dark:text-gold-soft"
                 onClick={applyCoupon}
                 disabled={pending}
               >
@@ -248,11 +236,7 @@ export function CartCheckoutDialog({
         </div>
 
         <p
-          className={cn(
-            "text-center text-[10px] leading-5 font-bold",
-            "text-navy/70",
-            "dark:text-wheat",
-          )}
+          className="text-center text-[10px] leading-5 font-bold text-navy/70 dark:text-wheat"
         >
           پرداخت در این نسخه هنگامِ تحویل، دربِ خانه انجام می‌شود.
           <br />

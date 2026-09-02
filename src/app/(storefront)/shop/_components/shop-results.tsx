@@ -53,11 +53,7 @@ export function ShopResults({
       {items.length === 0 ? (
         <div className="grid place-items-center py-16 text-center">
           <span
-            className={cn(
-              "mb-4 grid size-16 place-items-center rounded-full",
-              "bg-sand text-gold",
-              "dark:bg-navy-mid",
-            )}
+            className="mb-4 grid size-16 place-items-center rounded-full bg-sand text-gold dark:bg-navy-mid"
           >
             <Search className="size-7" />
           </span>

@@ -3,7 +3,6 @@ import { ArrowLeft, Heart } from "lucide-react";
 import { ProductCard } from "@/components/product";
 import { OrnBow } from "../home-ornaments";
 import { getAllProducts } from "@/lib/shop/products";
-import { cn } from "@/lib/utils";
 
 export async function Handmade() {
   // 🧊 Live, cached catalog (see `page.tsx`'s own comment) — not the static
@@ -13,16 +12,10 @@ export async function Handmade() {
   return (
     <section
       id="handmade"
-      className={cn(
-        "relative cv-auto overflow-hidden py-12 sm:py-16 lg:py-20",
-        "bg-navy bg-[radial-gradient(rgba(255,255,255,.09)_1px,transparent_1px)] bg-size-[22px_22px]",
-      )}
+      className="relative cv-auto overflow-hidden py-12 sm:py-16 lg:py-20 bg-navy bg-[radial-gradient(rgba(255,255,255,.09)_1px,transparent_1px)] bg-size-[22px_22px]"
     >
       <div
-        className={cn(
-          "pointer-events-none absolute -top-32 right-1/4 h-100 w-100 rounded-full blur-3xl",
-          "bg-gold/10",
-        )}
+        className="pointer-events-none absolute -top-32 right-1/4 h-100 w-100 rounded-full blur-3xl bg-gold/10"
       />
       <div className="relative container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="mb-10 flex flex-col justify-between gap-5 transition-all duration-700 ease-out sm:mb-12 sm:flex-row sm:items-end">
@@ -45,10 +38,7 @@ export async function Handmade() {
           </div>
           <Link
             href="/shop?category=دستدوز"
-            className={cn(
-              "inline-flex w-max shrink-0 items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold transition-all sm:px-6 sm:py-3",
-              "border-gold/40 text-gold-light hover:bg-gold hover:text-navy-deep",
-            )}
+            className="inline-flex w-max shrink-0 items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold transition-all sm:px-6 sm:py-3 border-gold/40 text-gold-light hover:bg-gold hover:text-navy-deep"
           >
             مشاهده همه
             <ArrowLeft className="h-4 w-4" />

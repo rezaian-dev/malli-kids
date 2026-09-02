@@ -1,5 +1,4 @@
 import { Intro } from "@/components/shared/intro";
-import { cn } from "@/lib/utils";
 
 const SECTIONS = [
   [
@@ -30,11 +29,7 @@ export function TermsLanding() {
         {SECTIONS.map(([t, d]) => (
           <article
             key={t}
-            className={cn(
-              "rounded-3xl border p-5",
-              "border-navy/10 bg-white",
-              "dark:border-gold/30 dark:bg-slate",
-            )}
+            className="rounded-3xl border p-5 border-navy/10 bg-white dark:border-gold/30 dark:bg-slate"
           >
             <h2 className="text-navy dark:text-ivory font-black">{t}</h2>
             <p className="text-muted-foreground mt-2 text-sm leading-7">{d}</p>

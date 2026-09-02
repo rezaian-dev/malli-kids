@@ -640,11 +640,7 @@ function AdminChatThread({
                     current ? `${current}\n${item.body}` : item.body,
                   )
                 }
-                className={cn(
-                  "shrink-0 rounded-xl border bg-white/70 px-3 py-1.5 text-[10px] font-bold transition",
-                  "border-navy/8 text-navy/70 hover:border-gold/40",
-                  "dark:border-gold/14 dark:bg-navy-deep/35 dark:text-wheat",
-                )}
+                className="shrink-0 rounded-xl border bg-white/70 px-3 py-1.5 text-[10px] font-bold transition border-navy/8 text-navy/70 hover:border-gold/40 dark:border-gold/14 dark:bg-navy-deep/35 dark:text-wheat"
               >
                 {item.title}
               </button>
@@ -664,11 +660,7 @@ function AdminChatThread({
             maxLength={REPLY_MAX_LEN}
             placeholder="پاسخ خود را بنویسید…"
             aria-label="پاسخ خود را بنویسید"
-            className={cn(
-              "h-11 min-w-0 flex-1 rounded-xl border bg-white px-4 text-sm outline-none disabled:opacity-60",
-              "border-navy/12 text-navy focus:border-gold",
-              "dark:border-gold/25 dark:bg-navy-mid dark:text-ivory",
-            )}
+            className="h-11 min-w-0 flex-1 rounded-xl border bg-white px-4 text-sm outline-none disabled:opacity-60 border-navy/12 text-navy focus:border-gold dark:border-gold/25 dark:bg-navy-mid dark:text-ivory"
           />
           <Button
             type="button"

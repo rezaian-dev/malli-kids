@@ -3,17 +3,12 @@ import { Newspaper } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { JournalArticle } from "@/lib/articles";
-import { cn } from "@/lib/utils";
 
 export function ArticlesList({ initial: articles }: { initial: JournalArticle[] }) {
   if (articles.length === 0) {
     return (
       <p
-        className={cn(
-          "rounded-3xl border border-dashed px-5 py-4 text-sm",
-          "border-navy/15 bg-sand text-navy/70",
-          "dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat",
-        )}
+        className="rounded-3xl border border-dashed px-5 py-4 text-sm border-navy/15 bg-sand text-navy/70 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat"
       >
         هنوز مقاله‌ای منتشر نشده است.
       </p>
@@ -26,11 +21,7 @@ export function ArticlesList({ initial: articles }: { initial: JournalArticle[] 
         <Card
           key={a.slug}
           asChild
-          className={cn(
-            "flex-row gap-4 rounded-3xl p-4 py-4 transition sm:p-6 sm:py-6",
-            "border-navy/10 hover:border-gold/50 bg-white",
-            "dark:border-gold/30 dark:bg-dusk",
-          )}
+          className="flex-row gap-4 rounded-3xl p-4 py-4 transition sm:p-6 sm:py-6 border-navy/10 hover:border-gold/50 bg-white dark:border-gold/30 dark:bg-dusk"
         >
           <Link href={`/articles/${a.slug}`}>
             {a.cover ? (
@@ -44,11 +35,7 @@ export function ArticlesList({ initial: articles }: { initial: JournalArticle[] 
               />
             ) : (
               <span
-                className={cn(
-                  "grid h-24 w-24 shrink-0 place-items-center rounded-2xl bg-linear-to-br sm:h-32 sm:w-40",
-                  "from-sand to-gold/25 text-gold-deep",
-                  "dark:from-navy-mid dark:to-gold/15",
-                )}
+                className="grid h-24 w-24 shrink-0 place-items-center rounded-2xl bg-linear-to-br sm:h-32 sm:w-40 from-sand to-gold/25 text-gold-deep dark:from-navy-mid dark:to-gold/15"
               >
                 <Newspaper className="size-7" />
               </span>

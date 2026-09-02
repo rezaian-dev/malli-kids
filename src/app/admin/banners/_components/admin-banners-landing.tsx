@@ -115,11 +115,7 @@ export function AdminBannersLanding({
         <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div className="flex min-w-0 items-center gap-3">
             <span
-              className={cn(
-                "grid size-11 shrink-0 place-items-center rounded-2xl",
-                "bg-gold/14 text-gold-deep",
-                "dark:text-gold-soft",
-              )}
+              className="grid size-11 shrink-0 place-items-center rounded-2xl bg-gold/14 text-gold-deep dark:text-gold-soft"
             >
               <CalendarDays className="size-5" />
             </span>

@@ -27,11 +27,7 @@ export function CollabCard({
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <span
-            className={cn(
-              "grid size-10 shrink-0 place-items-center rounded-xl font-black",
-              "bg-navy text-gold-soft",
-              "dark:bg-gold/15 dark:text-gold-soft",
-            )}
+            className="grid size-10 shrink-0 place-items-center rounded-xl font-black bg-navy text-gold-soft dark:bg-gold/15 dark:text-gold-soft"
           >
             {request.name.charAt(0)}
           </span>
@@ -41,11 +37,7 @@ export function CollabCard({
             </p>
             <a
               href={`tel:${request.phone}`}
-              className={cn(
-                "mt-0.5 inline-flex items-center gap-1 text-[10px] font-bold",
-                "text-navy/70 hover:text-gold",
-                "dark:text-wheat",
-              )}
+              className="mt-0.5 inline-flex items-center gap-1 text-[10px] font-bold text-navy/70 hover:text-gold dark:text-wheat"
               dir="ltr"
             >
               <Phone className="size-3" /> {request.phone}
@@ -65,20 +57,12 @@ export function CollabCard({
       </div>
 
       <span
-        className={cn(
-          "mt-4 inline-flex rounded-lg px-2.5 py-1 text-[9px] font-black",
-          "bg-sky-500/9 text-sky-700",
-          "dark:text-sky-300",
-        )}
+        className="mt-4 inline-flex rounded-lg px-2.5 py-1 text-[9px] font-black bg-sky-500/9 text-sky-700 dark:text-sky-300"
       >
         {request.kind}
       </span>
       <p
-        className={cn(
-          "mt-2 min-h-20 rounded-2xl px-3.5 py-3 text-xs leading-7",
-          "bg-navy/[0.032] text-navy/78",
-          "dark:text-ivory/78 dark:bg-white/[0.032]",
-        )}
+        className="mt-2 min-h-20 rounded-2xl px-3.5 py-3 text-xs leading-7 bg-navy/[0.032] text-navy/78 dark:text-ivory/78 dark:bg-white/[0.032]"
       >
         {request.text}
       </p>

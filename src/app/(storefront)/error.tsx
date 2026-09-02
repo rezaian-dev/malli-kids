@@ -5,7 +5,6 @@ import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useErrorRetry } from "@/hooks/use-error-retry";
-import { cn } from "@/lib/utils";
 
 // 🧯 Segment error boundary — layout (header/footer) stays mounted.
 export default function StorefrontError({
@@ -24,10 +23,7 @@ export default function StorefrontError({
   return (
     <div className="container mx-auto flex w-full flex-col items-center gap-5 px-4 py-20 text-center sm:px-5 sm:py-28 lg:px-7">
       <span
-        className={cn(
-          "grid size-16 place-items-center rounded-3xl",
-          "bg-rose/10 text-rose",
-        )}
+        className="grid size-16 place-items-center rounded-3xl bg-rose/10 text-rose"
       >
         <TriangleAlert className="size-8" />
       </span>

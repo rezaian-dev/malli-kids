@@ -33,12 +33,7 @@ const PRICE_STEP = 50_000;
 const SECTION_LABEL =
   "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-brown-mid dark:text-gold uppercase";
 
-const FILTER_CHIP = cn(
-  "h-auto rounded-full border px-3.5 py-1.5 text-xs font-black",
-  "border-navy/12 bg-white text-navy/70 hover:border-gold/50 hover:bg-sand hover:text-navy",
-  "data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] data-[state=on]:hover:bg-navy data-[state=on]:hover:text-ivory",
-  "dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50 dark:hover:bg-navy-light dark:hover:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep dark:data-[state=on]:hover:bg-gold dark:data-[state=on]:hover:text-navy-deep",
-);
+const FILTER_CHIP = "h-auto rounded-full border px-3.5 py-1.5 text-xs font-black border-navy/12 bg-white text-navy/70 hover:border-gold/50 hover:bg-sand hover:text-navy data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] data-[state=on]:hover:bg-navy data-[state=on]:hover:text-ivory dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50 dark:hover:bg-navy-light dark:hover:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep dark:data-[state=on]:hover:bg-gold dark:data-[state=on]:hover:text-navy-deep";
 
 /** 🎚️ Search, category, season, status, and price filters — shared by
  *  the desktop sidebar and the mobile filter sheet. */
@@ -86,11 +81,7 @@ export function ShopFilters({
               event.preventDefault();
               onCommitQuery();
             }}
-            className={cn(
-              "h-12 rounded-2xl bg-transparent ps-4 pe-11 text-sm font-bold",
-              "border-navy/12 text-navy placeholder:text-navy/70",
-              "dark:border-gold/30 dark:text-ivory dark:placeholder:text-wheat",
-            )}
+            className="h-12 rounded-2xl bg-transparent ps-4 pe-11 text-sm font-bold border-navy/12 text-navy placeholder:text-navy/70 dark:border-gold/30 dark:text-ivory dark:placeholder:text-wheat"
           />
         </span>
       </div>
@@ -178,18 +169,10 @@ export function ShopFilters({
       <div className="space-y-3">
         <p className={SECTION_LABEL}>بازه قیمت</p>
         <div
-          className={cn(
-            "rounded-2xl border p-4",
-            "border-navy/8 bg-white",
-            "dark:border-gold/20 dark:bg-navy-mid/60",
-          )}
+          className="rounded-2xl border p-4 border-navy/8 bg-white dark:border-gold/20 dark:bg-navy-mid/60"
         >
           <div
-            className={cn(
-              "mb-4 flex items-center justify-between text-xs font-black",
-              "text-navy",
-              "dark:text-ivory",
-            )}
+            className="mb-4 flex items-center justify-between text-xs font-black text-navy dark:text-ivory"
           >
             <span className="bg-sand dark:bg-dusk-soft rounded-lg px-2.5 py-1">
               {formatToman(range[0])}
@@ -244,11 +227,7 @@ export function ShopFilters({
             >
               <span className="block text-xs font-black">{p.label}</span>
               <span
-                className={cn(
-                  "mt-0.5 block text-[10px] font-bold",
-                  "text-navy/70 group-data-[state=on]:text-gold-soft",
-                  "dark:text-wheat dark:group-data-[state=on]:text-navy/70",
-                )}
+                className="mt-0.5 block text-[10px] font-bold text-navy/70 group-data-[state=on]:text-gold-soft dark:text-wheat dark:group-data-[state=on]:text-navy/70"
               >
                 {p.hint}
               </span>

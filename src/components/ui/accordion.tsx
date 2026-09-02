@@ -71,11 +71,7 @@ function AccordionContent({
   return (
     <AccordionPrimitive.Content
       data-slot="accordion-content"
-      className={cn(
-        "overflow-hidden text-sm",
-        "data-open:animate-[accordionDown_0.42s_cubic-bezier(0.22,1,0.32,1)]",
-        "data-closed:animate-[accordionUp_0.3s_cubic-bezier(0.4,0,0.2,1)]",
-      )}
+      className="overflow-hidden text-sm data-open:animate-[accordionDown_0.42s_cubic-bezier(0.22,1,0.32,1)] data-closed:animate-[accordionUp_0.3s_cubic-bezier(0.4,0,0.2,1)]"
       {...props}
     >
       <div

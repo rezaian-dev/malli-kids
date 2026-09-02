@@ -156,11 +156,7 @@ export function CouponList({
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <p
-                          className={cn(
-                            "font-display truncate text-lg font-bold tracking-widest",
-                            "text-navy",
-                            "dark:text-gold-soft",
-                          )}
+                          className="font-display truncate text-lg font-bold tracking-widest text-navy dark:text-gold-soft"
                           dir="ltr"
                         >
                           {coupon.code}
@@ -240,11 +236,7 @@ export function CouponList({
                   </div>
                 </div>
                 <div
-                  className={cn(
-                    "flex items-center justify-between border-t px-4 py-2.5 text-[10px]",
-                    "border-navy/6 bg-navy/1.5",
-                    "dark:border-gold/12 dark:bg-white/1.5",
-                  )}
+                  className="flex items-center justify-between border-t px-4 py-2.5 text-[10px] border-navy/6 bg-navy/1.5 dark:border-gold/12 dark:bg-white/1.5"
                 >
                   <span className="text-navy/70 dark:text-wheat font-bold">
                     تاریخ انقضا

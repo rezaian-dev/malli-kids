@@ -6,10 +6,7 @@ import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
 import { cn } from "@/lib/utils";
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
 
-const DROPDOWN_MENU_CHOICE_ITEM = cn(
-  "relative flex cursor-default items-center gap-1.5 rounded-md py-1 ps-1.5 pe-8 data-inset:ps-7 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-  "text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
-);
+const DROPDOWN_MENU_CHOICE_ITEM = "relative flex cursor-default items-center gap-1.5 rounded-md py-1 ps-1.5 pe-8 data-inset:ps-7 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50";
 
 const DROPDOWN_MENU_ITEM_INDICATOR =
   "pointer-events-none absolute inset-e-2 flex items-center justify-center";

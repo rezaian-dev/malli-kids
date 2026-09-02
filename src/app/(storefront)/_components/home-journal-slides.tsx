@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Newspaper } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { loadPublishedArticles } from "@/lib/articles";
 
 // 📰 Real, published articles — the latest few, same source
@@ -19,11 +18,7 @@ export async function HomeJournalSlides() {
           <Link
             href={`/articles/${a.slug}`}
             prefetch={false}
-            className={cn(
-              "group block h-full overflow-hidden rounded-3xl border no-underline transition-all duration-500 hover:-translate-y-1",
-              "border-navy/10 hover:border-gold/45 bg-white/92 shadow-[0_14px_32px_-22px_rgba(14,42,71,.25)] hover:shadow-[0_20px_40px_-20px_rgba(193,147,87,.28)]",
-              "dark:border-gold/30 dark:bg-slate/55",
-            )}
+            className="group block h-full overflow-hidden rounded-3xl border no-underline transition-all duration-500 hover:-translate-y-1 border-navy/10 hover:border-gold/45 bg-white/92 shadow-[0_14px_32px_-22px_rgba(14,42,71,.25)] hover:shadow-[0_20px_40px_-20px_rgba(193,147,87,.28)] dark:border-gold/30 dark:bg-slate/55"
           >
             <div className="bg-sand aspect-16/10 overflow-hidden">
               {a.cover ? (
@@ -35,11 +30,7 @@ export async function HomeJournalSlides() {
                 />
               ) : (
                 <span
-                  className={cn(
-                    "grid size-full place-items-center bg-linear-to-br",
-                    "from-sand to-gold/25 text-gold-deep",
-                    "dark:from-navy-mid dark:to-gold/15",
-                  )}
+                  className="grid size-full place-items-center bg-linear-to-br from-sand to-gold/25 text-gold-deep dark:from-navy-mid dark:to-gold/15"
                 >
                   <Newspaper className="size-8" />
                 </span>

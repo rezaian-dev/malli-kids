@@ -3,21 +3,8 @@ import Link from "next/link";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import type { JournalArticle } from "@/lib/articles";
-import { cn } from "@/lib/utils";
 
-const BODY_HTML = cn(
-  "mt-6 text-[0.95rem] leading-[2.1]",
-  "[&_a]:font-extrabold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-3",
-  "[&_blockquote]:my-4 [&_blockquote]:border-s-3 [&_blockquote]:border-gold [&_blockquote]:ps-[0.9rem] [&_blockquote]:font-semibold [&_blockquote]:opacity-80",
-  "[&_h2]:my-[1.4rem_0.6rem] [&_h2]:text-[1.25rem] [&_h2]:font-black",
-  "[&_h3]:my-[1.2rem_0.5rem] [&_h3]:text-[1.05rem] [&_h3]:font-black",
-  "[&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-[1.25rem]",
-  "[&_li]:my-[0.3rem]",
-  "[&_ol]:my-[0.7rem] [&_ol]:list-decimal [&_ol]:ps-[1.4rem]",
-  "[&_p]:my-[0.7rem]",
-  "[&_strong]:font-black",
-  "[&_ul]:my-[0.7rem] [&_ul]:list-disc [&_ul]:ps-[1.4rem]",
-);
+const BODY_HTML = "mt-6 text-[0.95rem] leading-[2.1] [&_a]:font-extrabold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-3 [&_blockquote]:my-4 [&_blockquote]:border-s-3 [&_blockquote]:border-gold [&_blockquote]:ps-[0.9rem] [&_blockquote]:font-semibold [&_blockquote]:opacity-80 [&_h2]:my-[1.4rem_0.6rem] [&_h2]:text-[1.25rem] [&_h2]:font-black [&_h3]:my-[1.2rem_0.5rem] [&_h3]:text-[1.05rem] [&_h3]:font-black [&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-[1.25rem] [&_li]:my-[0.3rem] [&_ol]:my-[0.7rem] [&_ol]:list-decimal [&_ol]:ps-[1.4rem] [&_p]:my-[0.7rem] [&_strong]:font-black [&_ul]:my-[0.7rem] [&_ul]:list-disc [&_ul]:ps-[1.4rem]";
 
 export function ArticleView({
   article,

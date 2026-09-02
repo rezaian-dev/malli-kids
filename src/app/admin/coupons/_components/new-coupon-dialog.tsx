@@ -8,7 +8,6 @@ import { JalaliDateField } from "@/components/ui/jalali-date-field";
 import { parseFaNumber } from "@/lib/digits";
 import { toEnDigits } from "@/lib/locale/fa";
 import { isJalaliFuture, jalaliParts } from "@/lib/locale/jalali";
-import { cn } from "@/lib/utils";
 import type { AdminCoupon } from "@/types";
 import { CouponField } from "./coupon-field";
 
@@ -142,11 +141,7 @@ export function NewCouponDialog({
     <Dialog open={open} onOpenChange={(next) => (next ? null : close())}>
       <DialogContent
         showCloseButton
-        className={cn(
-          "max-w-md rounded-3xl p-5 pt-12 sm:p-6 sm:pt-12",
-          "border-gold/18 bg-paper border",
-          "dark:bg-navy-mid dark:border-gold/18",
-        )}
+        className="max-w-md rounded-3xl p-5 pt-12 sm:p-6 sm:pt-12 border-gold/18 bg-paper border dark:bg-navy-mid dark:border-gold/18"
       >
         <div>
           <p className="text-gold text-[9px] font-black tracking-[.2em]">

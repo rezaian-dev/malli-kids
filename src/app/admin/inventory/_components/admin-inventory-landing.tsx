@@ -20,7 +20,6 @@ import { CATS } from "@/lib/constants";
 import { variantStockStatus, type VariantStockStatus } from "@/lib/shop/inventory";
 import { toFaDigits } from "@/lib/locale/fa";
 import { toast } from "@/lib/toast";
-import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 import {
   bulkSetVariantStockAction,
@@ -181,10 +180,7 @@ export function AdminInventoryLanding({
 
       {outOfStock + lowStock > 0 ? (
         <div
-          className={cn(
-            "mb-4 flex items-start gap-3 rounded-2xl border px-4 py-3",
-            "border-rose/18 bg-rose/7 text-rose",
-          )}
+          className="mb-4 flex items-start gap-3 rounded-2xl border px-4 py-3 border-rose/18 bg-rose/7 text-rose"
         >
           <PackageX className="mt-0.5 size-4 shrink-0" />
           <div>
@@ -200,10 +196,7 @@ export function AdminInventoryLanding({
 
       {selected.size > 0 ? (
         <div
-          className={cn(
-            "mb-4 flex flex-wrap items-center gap-3 rounded-2xl border px-4 py-3",
-            "border-gold/25 bg-gold/8",
-          )}
+          className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border px-4 py-3 border-gold/25 bg-gold/8"
         >
           <p className="text-navy dark:text-ivory text-xs font-black">
             {toFaDigits(selected.size)} ردیف انتخاب‌شده

@@ -25,11 +25,7 @@ export async function ProductCompleteLook({
       <p className={pdpKicker}>COMPLETE THE LOOK</p>
       <h2
         id="complete-look-heading"
-        className={cn(
-          "mt-1 mb-4 text-lg font-black sm:mb-6 sm:text-xl",
-          "text-navy",
-          "dark:text-ivory",
-        )}
+        className="mt-1 mb-4 text-lg font-black sm:mb-6 sm:text-xl text-navy dark:text-ivory"
       >
         ست را کامل کنید
       </h2>

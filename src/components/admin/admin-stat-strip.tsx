@@ -33,11 +33,7 @@ export function AdminStatStrip({
       {items.map((item) => (
         <article
           key={item.label}
-          className={cn(
-            "flex min-h-19 min-w-0 items-center gap-[0.65rem] rounded-[18px] border p-3",
-            "border-navy/8 bg-paper/88 hover:border-gold/34 shadow-[0_16px_35px_-30px_rgba(14,42,71,0.45)] backdrop-blur-[14px] transition-[transform,border-color] duration-260 ease-[cubic-bezier(.25,.1,.25,1)] hover:-translate-y-0.5",
-            "dark:border-gold-soft/13 dark:bg-[rgba(16,43,70,0.62)] dark:shadow-[0_18px_40px_-30px_rgba(0,0,0,0.8)]",
-          )}
+          className="flex min-h-19 min-w-0 items-center gap-[0.65rem] rounded-[18px] border p-3 border-navy/8 bg-paper/88 hover:border-gold/34 shadow-[0_16px_35px_-30px_rgba(14,42,71,0.45)] backdrop-blur-[14px] transition-[transform,border-color] duration-260 ease-[cubic-bezier(.25,.1,.25,1)] hover:-translate-y-0.5 dark:border-gold-soft/13 dark:bg-[rgba(16,43,70,0.62)] dark:shadow-[0_18px_40px_-30px_rgba(0,0,0,0.8)]"
         >
           <span
             className={cn(

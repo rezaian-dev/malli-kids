@@ -21,11 +21,7 @@ export function ProfileTabs({
 }) {
   return (
     <nav
-      className={cn(
-        "mt-6 flex flex-wrap gap-1.5 rounded-[18px] p-1.5",
-        "bg-sand",
-        "dark:bg-dusk-mid",
-      )}
+      className="mt-6 flex flex-wrap gap-1.5 rounded-[18px] p-1.5 bg-sand dark:bg-dusk-mid"
       aria-label="بخش‌های پنل کاربری"
     >
       {TABS.map(({ id, label, Icon }) => (

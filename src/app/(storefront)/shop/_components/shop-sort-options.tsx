@@ -6,7 +6,6 @@ import {
   Star,
 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { cn } from "@/lib/utils";
 
 const SORT_META = [
   { k: "new", label: "جدیدترین", hint: "تازه‌ترین دوخت‌ها", Icon: Sparkles },
@@ -45,13 +44,7 @@ export function ShopSortOptions({
         <ToggleGroupItem
           key={s.k}
           value={s.k}
-          className={cn(
-            "bg-cream text-navy hover:border-gold/40 hover:bg-sand h-auto w-full justify-start gap-3 rounded-2xl border border-transparent px-3 py-2.5 text-right",
-            "dark:bg-navy-mid dark:text-ivory dark:hover:bg-slate",
-            "data-[state=on]:border-gold data-[state=on]:bg-navy data-[state=on]:text-ivory",
-            "dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep",
-            "group",
-          )}
+          className="bg-cream text-navy hover:border-gold/40 hover:bg-sand h-auto w-full justify-start gap-3 rounded-2xl border border-transparent px-3 py-2.5 text-right dark:bg-navy-mid dark:text-ivory dark:hover:bg-slate data-[state=on]:border-gold data-[state=on]:bg-navy data-[state=on]:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep group"
         >
           <span className="bg-sand text-navy group-data-[state=on]:bg-gold-light dark:bg-dusk-soft dark:text-gold-light dark:group-data-[state=on]:bg-navy dark:group-data-[state=on]:text-gold-light grid size-9 shrink-0 place-items-center rounded-xl">
             <s.Icon className="size-4" />

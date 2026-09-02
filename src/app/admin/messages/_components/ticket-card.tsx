@@ -117,11 +117,7 @@ export function TicketCard({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 items-start gap-3">
             <span
-              className={cn(
-                "relative grid size-10 shrink-0 place-items-center rounded-xl font-black",
-                "bg-navy text-gold-soft",
-                "dark:bg-gold/15 dark:text-gold-soft",
-              )}
+              className="relative grid size-10 shrink-0 place-items-center rounded-xl font-black bg-navy text-gold-soft dark:bg-gold/15 dark:text-gold-soft"
             >
               {ticket.name.charAt(0)}
               <span
@@ -355,11 +351,7 @@ export function TicketCard({
                   )
                 }
                 title={item.body}
-                className={cn(
-                  "shrink-0 rounded-xl border bg-white/70 px-3 py-1.5 text-[10px] font-bold transition",
-                  "border-navy/8 text-navy/70 hover:border-gold/40",
-                  "dark:border-gold/14 dark:bg-navy-deep/35 dark:text-wheat",
-                )}
+                className="shrink-0 rounded-xl border bg-white/70 px-3 py-1.5 text-[10px] font-bold transition border-navy/8 text-navy/70 hover:border-gold/40 dark:border-gold/14 dark:bg-navy-deep/35 dark:text-wheat"
               >
                 {item.title}
               </button>

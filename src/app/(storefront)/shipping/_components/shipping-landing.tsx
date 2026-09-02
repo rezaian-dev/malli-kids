@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Intro } from "@/components/shared/intro";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 const CARDS = [
   {
@@ -32,11 +31,7 @@ export function ShippingLanding() {
         {CARDS.map((c) => (
           <Card
             key={c.t}
-            className={cn(
-              "rounded-3xl p-5 py-5",
-              "border-navy/10 bg-white",
-              "dark:border-gold/30 dark:bg-dusk",
-            )}
+            className="rounded-3xl p-5 py-5 border-navy/10 bg-white dark:border-gold/30 dark:bg-dusk"
           >
             <h2 className="text-navy dark:text-ivory text-lg font-black">
               {c.t}

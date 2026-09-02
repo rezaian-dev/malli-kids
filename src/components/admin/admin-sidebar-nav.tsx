@@ -39,11 +39,7 @@ export function AdminSidebarNav({
                 {group.label}
               </p>
               <span
-                className={cn(
-                  "h-px flex-1",
-                  "from-navy/10 bg-linear-to-l to-transparent",
-                  "dark:from-gold/14",
-                )}
+                className="h-px flex-1 from-navy/10 bg-linear-to-l to-transparent dark:from-gold/14"
                 aria-hidden="true"
               />
             </div>
@@ -73,18 +69,11 @@ export function AdminSidebarNav({
                     {}
                     <span
                       aria-hidden="true"
-                      className={cn(
-                        "pointer-events-none absolute inset-0 translate-x-[105%] transition-transform duration-520 ease-[cubic-bezier(.25,.1,.25,1)] group-hover:translate-x-[-105%] motion-reduce:hidden",
-                        "bg-[linear-gradient(105deg,transparent_30%,rgba(255,255,255,.1),transparent_70%)]",
-                      )}
+                      className="pointer-events-none absolute inset-0 translate-x-[105%] transition-transform duration-520 ease-[cubic-bezier(.25,.1,.25,1)] group-hover:translate-x-[-105%] motion-reduce:hidden bg-[linear-gradient(105deg,transparent_30%,rgba(255,255,255,.1),transparent_70%)]"
                     />
                     {active ? (
                       <span
-                        className={cn(
-                          "absolute inset-y-2 inset-s-0 w-0.5 rounded-full",
-                          "bg-gold",
-                          "dark:bg-navy-deep/45",
-                        )}
+                        className="absolute inset-y-2 inset-s-0 w-0.5 rounded-full bg-gold dark:bg-navy-deep/45"
                       />
                     ) : null}
                     <span
@@ -115,10 +104,7 @@ export function AdminSidebarNav({
                     <span className="grid size-7 shrink-0 place-items-center">
                       {badge > 0 ? (
                         <span
-                          className={cn(
-                            "grid min-w-5 place-items-center rounded-lg px-1.5 py-1 text-[9px] leading-none font-black",
-                            "bg-rose text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]",
-                          )}
+                          className="grid min-w-5 place-items-center rounded-lg px-1.5 py-1 text-[9px] leading-none font-black bg-rose text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]"
                         >
                           {toFaDigits(badge)}
                         </span>

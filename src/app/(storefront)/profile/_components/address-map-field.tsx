@@ -373,11 +373,7 @@ export function AddressMapField() {
       >
         <div className="min-h-0 overflow-hidden">
           <div
-            className={cn(
-              "space-y-3 rounded-2xl border p-3 sm:p-4",
-              "border-navy/10 bg-sand/40",
-              "dark:border-gold/20 dark:bg-navy-deep/30",
-            )}
+            className="space-y-3 rounded-2xl border p-3 sm:p-4 border-navy/10 bg-sand/40 dark:border-gold/20 dark:bg-navy-deep/30"
           >
             <p className="text-navy/70 dark:text-wheat text-xs leading-6">
               نقشه را جابه‌جا کنید تا نشانگرِ وسط، روی نقطهٔ موردنظر بیفتد —
@@ -410,14 +406,7 @@ export function AddressMapField() {
                   ref={mapElRef}
                   role="group"
                   aria-label="نقشه‌ی انتخاب موقعیت — نقشه را با ماوس یا لمس جابه‌جا کنید تا نشانگرِ ثابتِ وسطِ نقشه روی نقطهٔ موردنظر بیفتد؛ روی نقطه‌ای هم بزنید تا نقشه به همان‌جا برسد. با کلیدهای جهت‌دار هم می‌توانید نقشه را جابه‌جا کنید. برای واردکردن آدرس با صفحه‌کلید می‌توانید از فیلد «آدرس یافت‌شده» زیر نقشه هم استفاده کنید"
-                  className={cn(
-                    "absolute inset-0 outline-none",
-                    // 👁️ Visible, on-brand focus ring on the Leaflet
-                    // container itself (it — not this wrapper — is what
-                    // actually receives keyboard focus, since Leaflet sets
-                    // its own `tabindex="0"` for arrow-key panning).
-                    "focus-visible:ring-gold/50 focus-visible:ring-4 focus-visible:ring-inset",
-                  )}
+                  className="absolute inset-0 outline-none focus-visible:ring-gold/50 focus-visible:ring-4 focus-visible:ring-inset"
                 />
               </div>
 

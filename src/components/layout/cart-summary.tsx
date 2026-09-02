@@ -1,6 +1,5 @@
 import { Separator } from "@/components/ui/separator";
 import { formatToman } from "@/lib/locale/fa";
-import { cn } from "@/lib/utils";
 
 /** 🧾 Subtotal / shipping / total breakdown. */
 export function CartSummary({
@@ -14,11 +13,7 @@ export function CartSummary({
 }) {
   return (
     <div
-      className={cn(
-        "space-y-1.5 px-4 py-3",
-        "border-navy/10 text-navy/70 border-t text-xs font-bold",
-        "dark:border-gold/20 dark:text-wheat/80",
-      )}
+      className="space-y-1.5 px-4 py-3 border-navy/10 text-navy/70 border-t text-xs font-bold dark:border-gold/20 dark:text-wheat/80"
     >
       <p className="flex justify-between">
         <span>جمعِ کالاها</span>

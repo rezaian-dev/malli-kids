@@ -32,20 +32,10 @@ function Diamond() {
   return (
     <span
       aria-hidden="true"
-      className={cn(
-        "mx-1 block size-1.5 rotate-45 rounded-xs",
-        "from-gold-soft to-gold-deep bg-gradient-to-br",
-        "transition-transform duration-500 group-hover:rotate-[225deg]",
-      )}
+      className="from-gold-soft to-gold-deep mx-1 block size-1.5 rotate-45 rounded-xs bg-linear-to-br transition-transform duration-500 group-hover:rotate-225"
     />
   );
 }
-
-const SWEEP = cn(
-  "bg-gradient-to-l from-gold-deep to-gold bg-no-repeat",
-  "bg-size-[0%_2px] bg-position-[0_100%]",
-  "transition-[background-size] duration-300 hover:bg-size-[100%_2px]",
-);
 
 export function Breadcrumb({
   items,
@@ -67,13 +57,7 @@ export function Breadcrumb({
       ) : null}
       <nav aria-label="مسیر صفحه" className={cn("mb-5", className)}>
         {/* gradient hairline frame */}
-        <div
-          className={cn(
-            "inline-block max-w-full rounded-full p-px",
-            "from-gold/60 via-gold/20 to-gold/60 bg-gradient-to-l",
-            "shadow-[0_12px_28px_-16px_rgba(14,42,71,.4)]",
-          )}
-        >
+        <div className="from-gold/60 via-gold/20 to-gold/60 inline-block max-w-full rounded-full bg-linear-to-l p-px shadow-[0_12px_28px_-16px_rgba(14,42,71,.4)]">
           <ol className="group dark:bg-navy-deep/85 flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full bg-white/85 px-1.5 py-1 backdrop-blur">
             {items.map((item, i) => {
               const last = i === items.length - 1;
@@ -92,11 +76,7 @@ export function Breadcrumb({
                     {last ? (
                       <span
                         aria-current="page"
-                        className={cn(
-                          "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black whitespace-nowrap",
-                          "from-gold-soft via-gold to-gold-deep text-navy-deep bg-gradient-to-l",
-                          "shadow-[0_4px_12px_-4px_rgba(193,147,87,.8)]",
-                        )}
+                        className="from-gold-soft via-gold to-gold-deep text-navy-deep flex items-center gap-1.5 rounded-full bg-linear-to-l px-3 py-1 text-xs font-black whitespace-nowrap shadow-[0_4px_12px_-4px_rgba(193,147,87,.8)]"
                       >
                         <span
                           aria-hidden="true"
@@ -108,25 +88,14 @@ export function Breadcrumb({
                       <Link
                         href={item.path as string}
                         prefetch={false}
-                        className={cn(
-                          "flex items-center gap-1.5 rounded-full py-1 ps-1 pe-2.5 text-xs font-bold whitespace-nowrap",
-                          "text-navy/70 hover:text-gold-ink transition-all hover:-translate-y-px",
-                          "dark:text-wheat/80 dark:hover:text-gold-soft",
-                          "focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none",
-                        )}
+                        className="text-navy/70 hover:text-gold-ink dark:text-wheat/80 dark:hover:text-gold-soft focus-visible:ring-gold flex items-center gap-1.5 rounded-full py-1 ps-1 pe-2.5 text-xs font-bold whitespace-nowrap transition-all hover:-translate-y-px focus-visible:ring-2 focus-visible:outline-none"
                       >
                         {i === 0 ? (
-                          <span
-                            className={cn(
-                              "flex size-6 items-center justify-center rounded-full",
-                              "from-gold-soft to-gold-deep text-navy-deep bg-gradient-to-br",
-                              "shadow-[0_4px_10px_-4px_rgba(193,147,87,.9)]",
-                            )}
-                          >
+                          <span className="from-gold-soft to-gold-deep text-navy-deep flex size-6 items-center justify-center rounded-full bg-linear-to-br shadow-[0_4px_10px_-4px_rgba(193,147,87,.9)]">
                             <HomeIcon />
                           </span>
                         ) : null}
-                        <span className={cn("truncate pb-0.5", SWEEP)}>
+                        <span className="from-gold-deep to-gold truncate bg-linear-to-l bg-size-[0%_2px] bg-position-[0_100%] bg-no-repeat pb-0.5 transition-[background-size] duration-300 hover:bg-size-[100%_2px]">
                           {item.name}
                         </span>
                       </Link>

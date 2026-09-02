@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { AdminNotifCounts } from "@/lib/admin/notif-counts";
 import { toFaDigits } from "@/lib/locale/fa";
-import { cn } from "@/lib/utils";
 
 /** 🔔 The header bell — pending orders, open tickets, waiting chats, hidden reviews. */
 export function AdminHeaderNotifications({
@@ -57,20 +56,13 @@ export function AdminHeaderNotifications({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className={cn(
-            "relative hidden size-10 shrink-0 place-items-center rounded-xl border transition md:grid",
-            "border-navy/8 text-navy/70 hover:border-gold/35 hover:text-gold bg-white/60",
-            "dark:border-gold/14 dark:text-wheat/70 dark:bg-white/[0.035]",
-          )}
+          className="relative hidden size-10 shrink-0 place-items-center rounded-xl border transition md:grid border-navy/8 text-navy/70 hover:border-gold/35 hover:text-gold bg-white/60 dark:border-gold/14 dark:text-wheat/70 dark:bg-white/[0.035]"
           aria-label={`${toFaDigits(total)} اعلان مدیریتی`}
         >
           <Bell className="size-4" />
           {total > 0 ? (
             <span
-              className={cn(
-                "absolute -inset-e-1 -top-1 grid min-w-4 place-items-center rounded-full px-1 text-[8px] leading-4 font-black",
-                "bg-rose text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]",
-              )}
+              className="absolute -inset-e-1 -top-1 grid min-w-4 place-items-center rounded-full px-1 text-[8px] leading-4 font-black bg-rose text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]"
             >
               {toFaDigits(total)}
             </span>
@@ -80,11 +72,7 @@ export function AdminHeaderNotifications({
       <DropdownMenuContent
         align="end"
         sideOffset={10}
-        className={cn(
-          "w-[min(20rem,calc(100vw-1.5rem))] rounded-2xl p-2 shadow-[0_24px_70px_-26px_rgba(4,20,39,.72)]",
-          "border-navy/9 bg-fog/98",
-          "dark:border-gold/18 dark:bg-navy-deep/98",
-        )}
+        className="w-[min(20rem,calc(100vw-1.5rem))] rounded-2xl p-2 shadow-[0_24px_70px_-26px_rgba(4,20,39,.72)] border-navy/9 bg-fog/98 dark:border-gold/18 dark:bg-navy-deep/98"
       >
         <DropdownMenuLabel className="flex items-center justify-between px-2.5 py-2">
           <span className="text-navy dark:text-ivory text-xs font-black">
@@ -106,11 +94,7 @@ export function AdminHeaderNotifications({
               className="flex w-full items-center gap-3 px-2.5 py-2.5 outline-none"
             >
               <span
-                className={cn(
-                  "grid size-9 shrink-0 place-items-center rounded-xl",
-                  "bg-navy/6 text-gold",
-                  "dark:bg-white/6",
-                )}
+                className="grid size-9 shrink-0 place-items-center rounded-xl bg-navy/6 text-gold dark:bg-white/6"
               >
                 <notice.Icon className="size-4" />
               </span>
@@ -119,21 +103,13 @@ export function AdminHeaderNotifications({
                   {notice.label}
                 </span>
                 <span
-                  className={cn(
-                    "mt-0.5 block truncate text-[9px] font-bold",
-                    "text-navy/70",
-                    "dark:text-wheat/70",
-                  )}
+                  className="mt-0.5 block truncate text-[9px] font-bold text-navy/70 dark:text-wheat/70"
                 >
                   {notice.hint}
                 </span>
               </span>
               <span
-                className={cn(
-                  "grid size-7 shrink-0 place-items-center rounded-lg text-[10px] font-black",
-                  "bg-navy text-gold-soft",
-                  "dark:bg-gold dark:text-navy-deep",
-                )}
+                className="grid size-7 shrink-0 place-items-center rounded-lg text-[10px] font-black bg-navy text-gold-soft dark:bg-gold dark:text-navy-deep"
               >
                 {toFaDigits(notice.count)}
               </span>

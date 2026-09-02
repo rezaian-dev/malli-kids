@@ -1,17 +1,12 @@
 import { ShoppingBag, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 /** 🛒 Shown inside the cart sheet when there's nothing in it yet. */
 export function CartEmptyState() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
       <span
-        className={cn(
-          "grid size-24 place-items-center rounded-full",
-          "from-gold-pale to-sand text-navy bg-linear-to-br",
-          "dark:from-dusk-alt dark:to-dusk-mid dark:text-gold",
-        )}
+        className="grid size-24 place-items-center rounded-full from-gold-pale to-sand text-navy bg-linear-to-br dark:from-dusk-alt dark:to-dusk-mid dark:text-gold"
       >
         <ShoppingBag className="size-10" />
       </span>

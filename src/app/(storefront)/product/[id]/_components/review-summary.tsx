@@ -35,11 +35,7 @@ export function ReviewSummary({
       <div className="mt-3 grid min-w-0 items-center gap-5 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-6">
         <div className="text-center sm:text-right">
           <p
-            className={cn(
-              "text-[2.75rem] leading-none font-black",
-              "text-navy",
-              "dark:text-ivory",
-            )}
+            className="text-[2.75rem] leading-none font-black text-navy dark:text-ivory"
           >
             {toFaDigits(avg.toFixed(1))}
           </p>
@@ -60,11 +56,7 @@ export function ReviewSummary({
                   {toFaDigits(star)}
                 </span>
                 <span
-                  className={cn(
-                    "h-1.5 min-w-0 flex-1 overflow-hidden rounded-full",
-                    "bg-navy/10",
-                    "dark:bg-ivory/10",
-                  )}
+                  className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-navy/10 dark:bg-ivory/10"
                 >
                   <span
                     className="bg-gold block h-full rounded-full"
@@ -72,11 +64,7 @@ export function ReviewSummary({
                   />
                 </span>
                 <span
-                  className={cn(
-                    "w-8 text-end text-[10px] font-bold",
-                    "text-navy/70",
-                    "dark:text-wheat/80",
-                  )}
+                  className="w-8 text-end text-[10px] font-bold text-navy/70 dark:text-wheat/80"
                 >
                   {toFaDigits(pct)}٪
                 </span>
@@ -94,21 +82,13 @@ export function ReviewSummary({
             aria-hidden
           >
             <span
-              className={cn(
-                "grid size-14 place-items-center rounded-full text-sm font-black",
-                "text-navy bg-white",
-                "dark:bg-dusk dark:text-ivory",
-              )}
+              className="grid size-14 place-items-center rounded-full text-sm font-black text-navy bg-white dark:bg-dusk dark:text-ivory"
             >
               {toFaDigits(recommend)}٪
             </span>
           </div>
           <p
-            className={cn(
-              "max-w-28 text-center text-[11px] leading-5 font-black sm:max-w-none",
-              "text-navy",
-              "dark:text-ivory",
-            )}
+            className="max-w-28 text-center text-[11px] leading-5 font-black sm:max-w-none text-navy dark:text-ivory"
           >
             پیشنهاد می‌کنند
           </p>

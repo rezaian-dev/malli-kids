@@ -22,22 +22,13 @@ export async function Reviews() {
       className={cn(wash.navy, "cv-auto py-12 sm:py-16 lg:py-20")}
     >
       <div
-        className={cn(
-          "pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl dark:hidden",
-          "bg-gold/15",
-        )}
+        className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl dark:hidden bg-gold/15"
       />
       <div
-        className={cn(
-          "pointer-events-none absolute -bottom-28 -left-20 h-80 w-80 rounded-full blur-3xl dark:hidden",
-          "bg-navy/10",
-        )}
+        className="pointer-events-none absolute -bottom-28 -left-20 h-80 w-80 rounded-full blur-3xl dark:hidden bg-navy/10"
       />
       <span
-        className={cn(
-          "pointer-events-none absolute bottom-8 left-8 hidden -rotate-6 select-none xl:block",
-          "font-display text-[110px] leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(193,147,87,.55)]",
-        )}
+        className="pointer-events-none absolute bottom-8 left-8 hidden -rotate-6 select-none xl:block font-display text-[110px] leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(193,147,87,.55)]"
       >
         loved
       </span>
@@ -49,11 +40,7 @@ export async function Reviews() {
               خریدهای تأییدشده
             </span>
             <h2
-              className={cn(
-                "mt-2",
-                "text-navy text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black",
-                "dark:text-ivory",
-              )}
+              className="mt-2 text-navy text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black dark:text-ivory"
             >
               نظر{" "}
               <span className="text-gold relative inline-block">
@@ -67,11 +54,7 @@ export async function Reviews() {
             </p>
           </div>
           <div
-            className={cn(
-              "flex shrink-0 items-center gap-4 rounded-3xl border px-5 py-4",
-              "border-navy/5 bg-white/92 shadow-[0_16px_36px_-22px_rgba(14,42,71,.3)]",
-              "dark:border-gold/30 dark:bg-slate/55",
-            )}
+            className="flex shrink-0 items-center gap-4 rounded-3xl border px-5 py-4 border-navy/5 bg-white/92 shadow-[0_16px_36px_-22px_rgba(14,42,71,.3)] dark:border-gold/30 dark:bg-slate/55"
           >
             <div>
               <p className="text-navy dark:text-ivory text-4xl leading-none font-black">

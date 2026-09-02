@@ -121,11 +121,7 @@ export function ProductCardGrid({
     >
       <TiltCard className="h-full rounded-3xl">
         <article
-          className={cn(
-            "group @container flex h-full min-w-0 flex-col overflow-hidden rounded-3xl border transition-all duration-500 ease-out",
-            "border-navy/10 hover:border-gold/55 bg-white/94 shadow-[0_10px_28px_-18px_rgba(14,42,71,.22)] hover:-translate-y-2 hover:shadow-[0_26px_48px_-18px_rgba(14,42,71,.32)]",
-            "dark:border-gold-soft/35 dark:bg-slate/60 dark:shadow-none",
-          )}
+          className="group @container flex h-full min-w-0 flex-col overflow-hidden rounded-3xl border transition-all duration-500 ease-out border-navy/10 hover:border-gold/55 bg-white/94 shadow-[0_10px_28px_-18px_rgba(14,42,71,.22)] hover:-translate-y-2 hover:shadow-[0_26px_48px_-18px_rgba(14,42,71,.32)] dark:border-gold-soft/35 dark:bg-slate/60 dark:shadow-none"
         >
           <div className="bg-sand relative w-full shrink-0 overflow-hidden pt-[125%]">
             <Image
@@ -158,10 +154,7 @@ export function ProductCardGrid({
             {out ? (
               <div className="bg-navy/35 absolute inset-0 z-1 flex items-center justify-center">
                 <span
-                  className={cn(
-                    "inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-black",
-                    "text-navy bg-white",
-                  )}
+                  className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-black text-navy bg-white"
                 >
                   <PackageX width={14} height={14} /> ناموجود
                 </span>
@@ -200,11 +193,7 @@ export function ProductCardGrid({
           </div>
           <div className="flex flex-1 flex-col px-3 pt-3 pb-3.5">
             <div
-              className={cn(
-                "flex min-w-0 items-center gap-1 text-[11px]",
-                "text-navy/70",
-                "dark:text-khaki",
-              )}
+              className="flex min-w-0 items-center gap-1 text-[11px] text-navy/70 dark:text-khaki"
             >
               <Star className="fill-gold text-gold size-3.5" />
               <b className="text-navy dark:text-ivory">{toFaDigits(p.rate)}</b>
@@ -212,11 +201,7 @@ export function ProductCardGrid({
               <span className="truncate">{p.cat}</span>
             </div>
             <h3
-              className={cn(
-                "mt-1.5 mb-0 truncate text-sm leading-snug font-black",
-                "text-navy",
-                "dark:text-ivory",
-              )}
+              className="mt-1.5 mb-0 truncate text-sm leading-snug font-black text-navy dark:text-ivory"
             >
               {p.name}
             </h3>

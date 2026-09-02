@@ -73,11 +73,7 @@ export function ReviewCard({
 
             <div className="mt-3 flex items-center gap-3">
               <span
-                className={cn(
-                  "grid size-9 shrink-0 place-items-center rounded-xl text-xs font-black",
-                  "bg-navy text-gold-soft",
-                  "dark:bg-gold/15 dark:text-gold-soft",
-                )}
+                className="grid size-9 shrink-0 place-items-center rounded-xl text-xs font-black bg-navy text-gold-soft dark:bg-gold/15 dark:text-gold-soft"
               >
                 {review.author.charAt(0)}
               </span>
@@ -108,11 +104,7 @@ export function ReviewCard({
             </div>
 
             <blockquote
-              className={cn(
-                "mt-3 rounded-2xl px-4 py-3 text-xs leading-7",
-                "bg-navy/[0.035] text-navy/78",
-                "dark:text-ivory/78 dark:bg-white/[0.035]",
-              )}
+              className="mt-3 rounded-2xl px-4 py-3 text-xs leading-7 bg-navy/[0.035] text-navy/78 dark:text-ivory/78 dark:bg-white/[0.035]"
             >
               “{review.text}”
             </blockquote>
@@ -150,10 +142,7 @@ export function ReviewCard({
               trigger={
                 <button
                   type="button"
-                  className={cn(
-                    ACTION_BUTTON_BASE,
-                    "bg-rose/9 text-rose hover:bg-rose/14",
-                  )}
+                  className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl px-3 text-[10px] font-black transition hover:-translate-y-0.5 bg-rose/9 text-rose hover:bg-rose/14"
                 >
                   <Trash2 className="size-3.5" /> حذف نظر
                 </button>

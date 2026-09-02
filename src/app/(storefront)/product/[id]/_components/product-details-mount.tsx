@@ -20,11 +20,7 @@ function ProductDetailsFallback() {
           {["معرفی", "راهنمای سایز", "نظر خریداران"].map((label) => (
             <span
               key={label}
-              className={cn(
-                "inline-flex min-h-9 items-center justify-center rounded-full px-1.5 py-2 text-center sm:min-h-11 sm:px-5",
-                "border-navy/8 text-navy/70 border bg-white text-[10px] font-bold min-[360px]:text-[11px] sm:text-sm",
-                "dark:border-gold/25 dark:bg-slate dark:text-wheat",
-              )}
+              className="inline-flex min-h-9 items-center justify-center rounded-full px-1.5 py-2 text-center sm:min-h-11 sm:px-5 border-navy/8 text-navy/70 border bg-white text-[10px] font-bold min-[360px]:text-[11px] sm:text-sm dark:border-gold/25 dark:bg-slate dark:text-wheat"
             >
               {label}
             </span>

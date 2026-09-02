@@ -42,11 +42,7 @@ import { cn } from "@/lib/utils";
 
 const SIZES = ["۸۰", "۸۶", "۹۲", "۹۸", "۱۰۴", "۱۱۰", "۱۱۶", "۱۲۲"];
 
-const TAG_PILL = cn(
-  "rounded-full border px-3 py-1 text-[11px] font-bold",
-  "border-navy/10 bg-sand/80 text-navy",
-  "dark:border-gold/25 dark:bg-night dark:text-ivory",
-);
+const TAG_PILL = "rounded-full border px-3 py-1 text-[11px] font-bold border-navy/10 bg-sand/80 text-navy dark:border-gold/25 dark:bg-night dark:text-ivory";
 const AVAILABILITY_PILL = {
   in: "rounded-full border-0 px-3 py-1 text-[11px] font-bold bg-emerald-500/12 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-300",
   out: "rounded-full border-0 px-3 py-1 text-[11px] font-bold bg-rose/10 text-rose",
@@ -178,11 +174,7 @@ export function ProductBuyPanel({
       <div className={cn(pdpCard, "p-4 sm:p-7")}>
         <p className={pdpKicker}>{product.cat}</p>
         <h1
-          className={cn(
-            "mt-2 text-[clamp(1.25rem,6.4vw,2.25rem)] leading-snug font-black",
-            "text-navy",
-            "dark:text-ivory",
-          )}
+          className="mt-2 text-[clamp(1.25rem,6.4vw,2.25rem)] leading-snug font-black text-navy dark:text-ivory"
         >
           {product.name}
         </h1>
@@ -221,11 +213,7 @@ export function ProductBuyPanel({
         <ProductReadMore
           text={product.desc}
           lines={3}
-          className={cn(
-            "mt-5 text-sm leading-8 sm:text-[15px]",
-            "text-navy/70",
-            "dark:text-wheat",
-          )}
+          className="mt-5 text-sm leading-8 sm:text-[15px] text-navy/70 dark:text-wheat"
         />
 
         <div className={cn(pdpWell, "mt-6 p-4 sm:p-5")}>
@@ -234,11 +222,7 @@ export function ProductBuyPanel({
           </p>
           <div className="flex flex-wrap items-end gap-2">
             <span
-              className={cn(
-                "text-[1.75rem] leading-none font-black",
-                "text-navy",
-                "dark:text-ivory",
-              )}
+              className="text-[1.75rem] leading-none font-black text-navy dark:text-ivory"
             >
               {formatToman(unit)}{" "}
               <span className="text-navy/70 dark:text-gold-soft text-sm font-medium">
@@ -258,33 +242,21 @@ export function ProductBuyPanel({
           </div>
           <div className="mt-6 mb-2.5 flex items-center justify-between gap-2">
             <p
-              className={cn(
-                "flex items-center gap-1.5 text-xs font-black",
-                "text-navy",
-                "dark:text-ivory",
-              )}
+              className="flex items-center gap-1.5 text-xs font-black text-navy dark:text-ivory"
             >
               <Ruler className="text-gold size-4" /> انتخاب سایز
             </p>
             <button
               type="button"
               onClick={() => setSizeGuideOpen(true)}
-              className={cn(
-                "flex items-center gap-1 text-[11px] font-bold underline underline-offset-2",
-                "text-navy/70 hover:text-gold",
-                "dark:text-wheat dark:hover:text-gold-light",
-              )}
+              className="flex items-center gap-1 text-[11px] font-bold underline underline-offset-2 text-navy/70 hover:text-gold dark:text-wheat dark:hover:text-gold-light"
             >
               <Info className="size-3.5" /> راهنمای سایز
             </button>
           </div>
           {recommendedSize ? (
             <p
-              className={cn(
-                "mb-2.5 rounded-xl px-3 py-2 text-[11px] font-bold",
-                "bg-gold/10 text-gold-deep",
-                "dark:bg-gold/15 dark:text-gold-soft",
-              )}
+              className="mb-2.5 rounded-xl px-3 py-2 text-[11px] font-bold bg-gold/10 text-gold-deep dark:bg-gold/15 dark:text-gold-soft"
             >
               📏 پیشنهاد سایز برای {user?.childName || "کوچولوی شما"}: سایز{" "}
               {recommendedSize}
@@ -373,11 +345,7 @@ export function ProductBuyPanel({
           <DialogContent
             dir="rtl"
             showCloseButton
-            className={cn(
-              "max-w-2xl rounded-3xl",
-              "border-gold/40 bg-paper text-navy border",
-              "dark:border-gold/50 dark:bg-dusk dark:text-ivory",
-            )}
+            className="max-w-2xl rounded-3xl border-gold/40 bg-paper text-navy border dark:border-gold/50 dark:bg-dusk dark:text-ivory"
           >
             <DialogTitle className="flex items-center gap-2 text-base font-black">
               <Ruler className="text-gold size-5" /> راهنمای سایز

@@ -32,11 +32,7 @@ export function TicketThread({
 
   return (
     <div
-      className={cn(
-        "space-y-3 border-t px-4 py-4",
-        "border-navy/8 bg-navy/2",
-        "dark:border-gold/15 dark:bg-white/2",
-      )}
+      className="space-y-3 border-t px-4 py-4 border-navy/8 bg-navy/2 dark:border-gold/15 dark:bg-white/2"
     >
       {ticket.status === "pending" ? (
         <p className="rounded-2xl bg-amber-500/10 px-4 py-2.5 text-center text-[11px] font-black text-amber-700 dark:bg-amber-400/10 dark:text-amber-300">
@@ -82,11 +78,7 @@ export function TicketThread({
           disabled={sending}
           placeholder="پیام پیگیری…"
           aria-label="پیام پیگیری"
-          className={cn(
-            "h-10 flex-1 rounded-xl border bg-white px-4 text-sm outline-none disabled:opacity-60",
-            "border-navy/12 text-navy",
-            "dark:border-gold/25 dark:bg-navy-mid dark:text-ivory",
-          )}
+          className="h-10 flex-1 rounded-xl border bg-white px-4 text-sm outline-none disabled:opacity-60 border-navy/12 text-navy dark:border-gold/25 dark:bg-navy-mid dark:text-ivory"
         />
         <Button
           type="button"

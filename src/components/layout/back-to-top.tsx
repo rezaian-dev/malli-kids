@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EASE_OUT } from "@/components/motion";
-import { cn } from "@/lib/utils";
 
 export function BackToTop() {
   const [show, setShow] = useState(false);
@@ -34,10 +33,7 @@ export function BackToTop() {
             size="icon-lg"
             aria-label="بازگشت به ابتدای صفحه"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className={cn(
-              "shadow-gold/40 size-12 rounded-full shadow-lg",
-              "focus-visible:opacity-100",
-            )}
+            className="shadow-gold/40 size-12 rounded-full shadow-lg focus-visible:opacity-100"
           >
             <ArrowUp className="size-5" />
           </Button>

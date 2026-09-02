@@ -25,10 +25,7 @@ export function FooterPerks() {
         {PERKS.map(({ Icon, t, d }) => (
           <div key={t} className="flex min-w-0 items-center gap-3.5">
             <span
-              className={cn(
-                "inline-flex size-11 shrink-0 items-center justify-center",
-                "text-gold rounded-full bg-white/10",
-              )}
+              className="inline-flex size-11 shrink-0 items-center justify-center text-gold rounded-full bg-white/10"
             >
               <Icon className="size-5" />
             </span>

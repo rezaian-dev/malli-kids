@@ -1,6 +1,5 @@
 import { BadgeCheck, Quote } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import type { AdminReview } from "@/types";
 import { ReviewStars } from "./review-stars";
 
@@ -8,11 +7,7 @@ import { ReviewStars } from "./review-stars";
 export function FeaturedReview({ review }: { review: AdminReview }) {
   return (
     <article
-      className={cn(
-        "relative min-w-0 overflow-hidden rounded-[22px] p-4 shadow-[0_22px_44px_-28px_rgba(14,42,71,.45)] sm:rounded-[28px] sm:p-6",
-        "bg-navy text-ivory",
-        "dark:bg-dusk-deep dark:ring-gold/30 dark:ring-1",
-      )}
+      className="relative min-w-0 overflow-hidden rounded-[22px] p-4 shadow-[0_22px_44px_-28px_rgba(14,42,71,.45)] sm:rounded-[28px] sm:p-6 bg-navy text-ivory dark:bg-dusk-deep dark:ring-gold/30 dark:ring-1"
     >
       <Quote
         className="text-gold/20 pointer-events-none absolute top-3 left-3 size-12 sm:size-16"
@@ -23,10 +18,7 @@ export function FeaturedReview({ review }: { review: AdminReview }) {
           نظر منتخب
         </Badge>
         <Badge
-          className={cn(
-            "rounded-full border px-2 py-0.5 text-[10px] font-bold",
-            "text-gold-light border-white/15 bg-white/10",
-          )}
+          className="rounded-full border px-2 py-0.5 text-[10px] font-bold text-gold-light border-white/15 bg-white/10"
         >
           <BadgeCheck className="size-3.5" /> خرید تأییدشده
         </Badge>
@@ -37,10 +29,7 @@ export function FeaturedReview({ review }: { review: AdminReview }) {
       </p>
       <div className="mt-5 flex min-w-0 items-center gap-2.5 border-t border-white/10 pt-4">
         <span
-          className={cn(
-            "grid size-10 shrink-0 place-items-center rounded-xl text-sm font-black",
-            "bg-gold text-navy-deep",
-          )}
+          className="grid size-10 shrink-0 place-items-center rounded-xl text-sm font-black bg-gold text-navy-deep"
         >
           {review.author.trim().charAt(0)}
         </span>

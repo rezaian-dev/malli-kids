@@ -1,17 +1,13 @@
 import Link from "next/link";
 import { PackageSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 // 🧭 404 within the storefront — header/footer stay visible via the layout.
 export default function StorefrontNotFound() {
   return (
     <div className="container mx-auto flex w-full flex-col items-center gap-5 px-4 py-20 text-center sm:px-5 sm:py-28 lg:px-7">
       <span
-        className={cn(
-          "grid size-16 place-items-center rounded-3xl",
-          "bg-gold/15 text-gold",
-        )}
+        className="grid size-16 place-items-center rounded-3xl bg-gold/15 text-gold"
       >
         <PackageSearch className="size-8" />
       </span>

@@ -121,10 +121,7 @@ export function CartSheetBody({
             size="icon-sm"
             variant="ghost"
             aria-label="بستن سبد خرید"
-            className={cn(
-              "rounded-full transition-transform duration-300 ease-out",
-              "text-cream hover:text-gold-light hover:scale-105 hover:bg-white/15",
-            )}
+            className="rounded-full transition-transform duration-300 ease-out text-cream hover:text-gold-light hover:scale-105 hover:bg-white/15"
           >
             <XIcon className="size-5 text-current" />
           </Button>
@@ -193,10 +190,7 @@ export function CartSheetBody({
         {!empty ? (
           <Button
             type="button"
-            className={cn(
-              "h-12 w-full rounded-2xl text-sm font-black",
-              "bg-gold text-navy-deep hover:bg-gold-light motion-safe:hover:shadow-gold/30 motion-safe:hover:shadow-lg",
-            )}
+            className="h-12 w-full rounded-2xl text-sm font-black bg-gold text-navy-deep hover:bg-gold-light motion-safe:hover:shadow-gold/30 motion-safe:hover:shadow-lg"
             onClick={() => onCheckoutOpenChange(true)}
           >
             <BadgeCheck className="size-4.5" /> تکمیل خرید —{" "}
@@ -226,10 +220,7 @@ export function CartSheetBody({
             type="button"
             variant="ghost"
             onClick={onClear}
-            className={cn(
-              "h-9 w-full",
-              "text-rose hover:bg-rose/10 hover:text-rose rounded-2xl text-[11px] font-bold",
-            )}
+            className="h-9 w-full text-rose hover:bg-rose/10 hover:text-rose rounded-2xl text-[11px] font-bold"
           >
             <Trash2 className="size-3.5" /> خالی کردن سبد
           </Button>

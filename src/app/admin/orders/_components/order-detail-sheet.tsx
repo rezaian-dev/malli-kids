@@ -13,7 +13,6 @@ import {
 import { AdminFilterSelect } from "@/components/admin";
 import { ORDER_TRANSITIONS } from "@/lib/shop/order-status";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
-import { cn } from "@/lib/utils";
 import type { AdminOrder, OrderStatus } from "@/types";
 
 function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }) {
@@ -48,11 +47,7 @@ export function OrderDetailSheet({
     <Sheet open={!!order} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className={cn(
-          "w-full max-w-full gap-3 overflow-y-auto sm:w-104 sm:max-w-104",
-          "border-navy/10 bg-fog text-navy",
-          "dark:border-gold/20 dark:bg-navy-deep dark:text-ivory",
-        )}
+        className="w-full max-w-full gap-3 overflow-y-auto sm:w-104 sm:max-w-104 border-navy/10 bg-fog text-navy dark:border-gold/20 dark:bg-navy-deep dark:text-ivory"
       >
         {order ? (
           <>
@@ -71,11 +66,7 @@ export function OrderDetailSheet({
                   href={`/api/orders/${order.id}/invoice`}
                   target="_blank"
                   rel="noreferrer"
-                  className={cn(
-                    "inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-black transition",
-                    "border-navy/10 text-navy hover:border-gold hover:bg-gold/10",
-                    "dark:border-gold/20 dark:text-ivory",
-                  )}
+                  className="inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-black transition border-navy/10 text-navy hover:border-gold hover:bg-gold/10 dark:border-gold/20 dark:text-ivory"
                 >
                   <FileDown className="size-3.5" /> دانلود فاکتور
                 </a>
@@ -83,11 +74,7 @@ export function OrderDetailSheet({
             ) : null}
 
             <div
-              className={cn(
-                "mx-4 rounded-2xl border bg-white/70 p-3",
-                "border-navy/8",
-                "dark:border-gold/14 dark:bg-white/[0.035]",
-              )}
+              className="mx-4 rounded-2xl border bg-white/70 p-3 border-navy/8 dark:border-gold/14 dark:bg-white/[0.035]"
             >
               <p className="font-black">{order.customer}</p>
               <p className="text-navy/70 dark:text-wheat mt-1 text-xs" dir="ltr">
@@ -109,11 +96,7 @@ export function OrderDetailSheet({
               {order.items.map((item) => (
                 <li
                   key={`${item.id}-${item.size}`}
-                  className={cn(
-                    "flex items-center gap-3 rounded-2xl border bg-white/70 p-2",
-                    "border-navy/7",
-                    "dark:border-gold/12 dark:bg-white/[0.035]",
-                  )}
+                  className="flex items-center gap-3 rounded-2xl border bg-white/70 p-2 border-navy/7 dark:border-gold/12 dark:bg-white/[0.035]"
                 >
                   <Image
                     src={item.img}
@@ -136,11 +119,7 @@ export function OrderDetailSheet({
             </ul>
 
             <div
-              className={cn(
-                "mx-4 space-y-2 rounded-2xl p-4 text-xs",
-                "bg-navy/[0.035]",
-                "dark:bg-white/[0.035]",
-              )}
+              className="mx-4 space-y-2 rounded-2xl p-4 text-xs bg-navy/[0.035] dark:bg-white/[0.035]"
             >
               <Row k="جمع کالا" v={formatToman(order.subtotal)} />
               <Row

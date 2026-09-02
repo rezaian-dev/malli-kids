@@ -15,12 +15,7 @@ const SPEC_ITEM = cn(pdpWell, "p-4");
 const SPEC_LABEL = "text-gold text-[11px] font-bold";
 const SPEC_VALUE = "text-navy dark:text-ivory mt-1 text-sm font-black";
 
-const TRIGGER = cn(
-  "h-auto min-h-9 w-full rounded-full px-1 py-2 text-center text-[10px] leading-4 font-bold whitespace-normal transition-colors min-[360px]:px-2 min-[360px]:text-[11px] sm:min-h-10 sm:w-auto sm:px-5 sm:py-2.5 sm:text-sm sm:whitespace-nowrap",
-  "text-navy/70 dark:text-wheat",
-  "data-[state=active]:bg-navy data-[state=active]:font-black data-[state=active]:text-cream",
-  "dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep",
-);
+const TRIGGER = "h-auto min-h-9 w-full rounded-full px-1 py-2 text-center text-[10px] leading-4 font-bold whitespace-normal transition-colors min-[360px]:px-2 min-[360px]:text-[11px] sm:min-h-10 sm:w-auto sm:px-5 sm:py-2.5 sm:text-sm sm:whitespace-nowrap text-navy/70 dark:text-wheat data-[state=active]:bg-navy data-[state=active]:font-black data-[state=active]:text-cream dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep";
 
 // 📚 Deferred, client-only product tabs (mounted via `dynamic(ssr:false)` in
 // `product-details-mount.tsx` for bundle-splitting) — `reviews`/`canReview`
@@ -38,30 +33,18 @@ export function ProductDetailsTabs({
     <section className={cn(pdpCard, "mt-10 overflow-hidden sm:mt-12")}>
       <Tabs defaultValue="info" dir="rtl" className="gap-0">
         <div
-          className={cn(
-            "flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-7 sm:py-5",
-            "border-navy/8",
-            "dark:border-gold/20",
-          )}
+          className="flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-7 sm:py-5 border-navy/8 dark:border-gold/20"
         >
           <div className="min-w-0">
             <p className={pdpKicker}>ATELIER FILE</p>
             <h2
-              className={cn(
-                "mt-1 text-base font-black sm:text-lg lg:text-xl",
-                "text-navy",
-                "dark:text-ivory",
-              )}
+              className="mt-1 text-base font-black sm:text-lg lg:text-xl text-navy dark:text-ivory"
             >
               جزئیات، سایز و نظرها
             </h2>
           </div>
           <TabsList
-            className={cn(
-              "grid h-auto w-full max-w-full grid-cols-3 gap-1 rounded-full p-1 sm:inline-flex sm:w-max sm:p-1.5",
-              "border-navy/8 border bg-white",
-              "dark:border-gold/30 dark:bg-slate",
-            )}
+            className="grid h-auto w-full max-w-full grid-cols-3 gap-1 rounded-full p-1 sm:inline-flex sm:w-max sm:p-1.5 border-navy/8 border bg-white dark:border-gold/30 dark:bg-slate"
           >
             <TabsTrigger value="info" className={TRIGGER}>
               معرفی

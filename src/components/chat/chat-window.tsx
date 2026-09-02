@@ -282,23 +282,12 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
       id="support-chat-window"
       role="dialog"
       aria-label="گفتگو با پشتیبانی"
-      className={cn(
-        "fixed z-75 flex overflow-hidden rounded-3xl border shadow-2xl",
-        "max-sm:inset-x-3 max-sm:bottom-3 max-sm:h-[calc(100dvh-5.5rem)]",
-        "sm:inset-s-6 sm:bottom-24 sm:h-[min(36rem,calc(100dvh-8rem))] sm:w-96",
-        "border-gold/40 bg-paper text-navy",
-        "dark:border-gold/50 dark:bg-dusk dark:text-ivory",
-        "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-300",
-      )}
+      className="fixed z-75 flex overflow-hidden rounded-3xl border shadow-2xl max-sm:inset-x-3 max-sm:bottom-3 max-sm:h-[calc(100dvh-5.5rem)] sm:inset-s-6 sm:bottom-24 sm:h-[min(36rem,calc(100dvh-8rem))] sm:w-96 border-gold/40 bg-paper text-navy dark:border-gold/50 dark:bg-dusk dark:text-ivory motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-300"
     >
       <div className="flex min-h-0 w-full flex-col">
         {/* Header */}
         <div
-          className={cn(
-            "flex shrink-0 items-center gap-3 px-4 py-3",
-            "from-navy to-navy-mid border-gold/30 border-b bg-linear-to-br",
-            "dark:border-gold/40",
-          )}
+          className="flex shrink-0 items-center gap-3 px-4 py-3 from-navy to-navy-mid border-gold/30 border-b bg-linear-to-br dark:border-gold/40"
         >
           <span
             aria-hidden
@@ -504,11 +493,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
                 maxLength={500}
                 placeholder="نظر (اختیاری)…"
                 aria-label="نظر درباره گفتگو"
-                className={cn(
-                  "h-9 min-w-0 flex-1 rounded-full border bg-white px-4 text-xs outline-none",
-                  "border-navy/12 text-navy focus:border-gold",
-                  "dark:border-gold/25 dark:bg-navy-mid dark:text-ivory",
-                )}
+                className="h-9 min-w-0 flex-1 rounded-full border bg-white px-4 text-xs outline-none border-navy/12 text-navy focus:border-gold dark:border-gold/25 dark:bg-navy-mid dark:text-ivory"
               />
               <Button
                 type="button"
@@ -565,11 +550,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
               maxLength={MESSAGE_MAX_LEN}
               placeholder="پیام خود را بنویسید…"
               aria-label="پیام خود را بنویسید"
-              className={cn(
-                "h-11 min-w-0 flex-1 rounded-full border bg-white px-4 text-sm outline-none disabled:opacity-60",
-                "border-navy/12 text-navy focus:border-gold",
-                "dark:border-gold/25 dark:bg-navy-mid dark:text-ivory",
-              )}
+              className="h-11 min-w-0 flex-1 rounded-full border bg-white px-4 text-sm outline-none disabled:opacity-60 border-navy/12 text-navy focus:border-gold dark:border-gold/25 dark:bg-navy-mid dark:text-ivory"
             />
             <Button
               type="button"

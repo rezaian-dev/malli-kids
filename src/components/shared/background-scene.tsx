@@ -305,11 +305,7 @@ export function BackgroundScene() {
   return (
     <div
       aria-hidden="true"
-      className={cn(
-        "pointer-events-none fixed inset-0 -z-10 overflow-hidden",
-        "bg-atelier",
-        "dark:bg-ink",
-      )}
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-atelier dark:bg-ink"
     >
       <LightAtelier />
 

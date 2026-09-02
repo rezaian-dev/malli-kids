@@ -36,12 +36,7 @@ export function CategoryMenu() {
           "dark:text-ivory dark:hover:bg-gold/15 dark:hover:text-gold-light",
           "dark:data-open:bg-gold/15 dark:data-open:text-gold-light",
           catOn &&
-            cn(
-              "bg-gold text-navy-deep hover:bg-gold hover:text-navy-deep focus:bg-gold focus:text-navy-deep",
-              "data-open:bg-gold data-open:text-navy-deep",
-              "dark:bg-gold dark:text-navy-deep dark:hover:bg-gold dark:hover:text-navy-deep",
-              "dark:data-open:bg-gold dark:data-open:text-navy-deep",
-            ),
+            "bg-gold text-navy-deep hover:bg-gold hover:text-navy-deep focus:bg-gold focus:text-navy-deep data-open:bg-gold data-open:text-navy-deep dark:bg-gold dark:text-navy-deep dark:hover:bg-gold dark:hover:text-navy-deep dark:data-open:bg-gold dark:data-open:text-navy-deep",
         )}
       >
         <LayoutGrid className="size-4 text-current" />
@@ -49,19 +44,11 @@ export function CategoryMenu() {
       </NavigationMenuTrigger>
 
       <NavigationMenuContent
-        className={cn(
-          "inset-s-0 inset-e-auto z-80 p-0",
-          "border-navy/10 bg-paper overflow-hidden rounded-2xl border shadow-xl",
-          "dark:border-gold/25 dark:bg-dusk",
-          "[&_a]:text-current [&_button]:text-current [&_svg]:text-current",
-        )}
+        className="inset-s-0 inset-e-auto z-80 p-0 border-navy/10 bg-paper overflow-hidden rounded-2xl border shadow-xl dark:border-gold/25 dark:bg-dusk [&_a]:text-current [&_button]:text-current [&_svg]:text-current"
       >
         <div className="w-[min(34rem,calc(100vw-1.5rem))]">
           <div
-            className={cn(
-              "flex items-center justify-between px-4 py-3",
-              "from-navy to-navy-mid bg-linear-to-l",
-            )}
+            className="flex items-center justify-between px-4 py-3 from-navy to-navy-mid bg-linear-to-l"
           >
             <p className="text-cream m-0 text-sm font-black">
               دسته‌بندی کالکشن
@@ -79,11 +66,7 @@ export function CategoryMenu() {
                   <NavigationMenuLink asChild>
                     <Link
                       href={c.href}
-                      className={cn(
-                        "group flex flex-row items-center gap-3 p-3",
-                        "border-navy/8 bg-sand hover:border-gold/50 hover:bg-gold-pale focus:border-gold/50 focus:bg-gold-pale rounded-2xl border transition-colors",
-                        "dark:border-gold/20 dark:bg-dusk-alt dark:hover:border-gold/60 dark:hover:bg-dusk-mid dark:focus:bg-dusk-mid",
-                      )}
+                      className="group flex flex-row items-center gap-3 p-3 border-navy/8 bg-sand hover:border-gold/50 hover:bg-gold-pale focus:border-gold/50 focus:bg-gold-pale rounded-2xl border transition-colors dark:border-gold/20 dark:bg-dusk-alt dark:hover:border-gold/60 dark:hover:bg-dusk-mid dark:focus:bg-dusk-mid"
                     >
                       <span
                         className={cn(
@@ -113,11 +96,7 @@ export function CategoryMenu() {
           <div className="px-3 pb-3">
             <Link
               href="/shop"
-              className={cn(
-                "flex flex-row items-center justify-center gap-2 py-3.5",
-                "rounded-2xl border-0 text-sm font-black no-underline transition-all",
-                "bg-gold text-navy-deep hover:bg-gold-light shadow-[0_4px_14px_-4px_rgba(193,147,87,.5)] hover:shadow-[0_6px_20px_-4px_rgba(193,147,87,.7)]",
-              )}
+              className="flex flex-row items-center justify-center gap-2 py-3.5 rounded-2xl border-0 text-sm font-black no-underline transition-all bg-gold text-navy-deep hover:bg-gold-light shadow-[0_4px_14px_-4px_rgba(193,147,87,.5)] hover:shadow-[0_6px_20px_-4px_rgba(193,147,87,.7)]"
               onClick={() => {
                 startTopProgress();
               }}

@@ -5,17 +5,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { ProductCard } from "@/components/product";
 import { OrnStar } from "../home-ornaments";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
 const TABS = ["همه", "دخترانه", "پسرانه", "سیسمونی"] as const;
 type FilterTab = (typeof TABS)[number];
 
-const TRIGGER = cn(
-  "inline-flex min-h-9 items-center justify-center whitespace-nowrap rounded-full px-2.5 text-[11px] font-extrabold text-navy/70 transition-colors min-[360px]:px-4 min-[360px]:text-xs sm:min-h-10 sm:px-5 sm:text-sm dark:text-khaki",
-  "data-[state=active]:bg-navy data-[state=active]:text-ivory data-[state=active]:shadow-md",
-  "dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep",
-);
+const TRIGGER = "inline-flex min-h-9 items-center justify-center whitespace-nowrap rounded-full px-2.5 text-[11px] font-extrabold text-navy/70 transition-colors min-[360px]:px-4 min-[360px]:text-xs sm:min-h-10 sm:px-5 sm:text-sm dark:text-khaki data-[state=active]:bg-navy data-[state=active]:text-ivory data-[state=active]:shadow-md dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep";
 
 /** 🃏 فیلترِ «استایل‌های منتخب». برخلافِ نسخهٔ قبلی (یک TabsContent جدا به‌ازای
  *  هر تب)، اینجا فقط یک TabsContent وجود دارد که مقدارش همیشه برابرِ تبِ فعال
@@ -36,11 +31,7 @@ export function StylesFilter({ catalog }: { catalog: Product[] }) {
             انتخاب سردبیر
           </span>
           <h2
-            className={cn(
-              "mt-2",
-              "text-navy text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black",
-              "dark:text-ivory",
-            )}
+            className="mt-2 text-navy text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black dark:text-ivory"
           >
             استایل‌های{" "}
             <span className="text-gold relative inline-block">
@@ -52,11 +43,7 @@ export function StylesFilter({ catalog }: { catalog: Product[] }) {
 
         <div className="flex w-full justify-center lg:w-auto">
           <TabsList
-            className={cn(
-              "h-auto max-w-full flex-nowrap justify-center gap-0.5 rounded-full border p-2 shadow-sm min-[360px]:gap-1 sm:gap-1.5 sm:p-2.5",
-              "border-navy/5 bg-white",
-              "dark:border-gold/20 dark:bg-dusk-alt",
-            )}
+            className="h-auto max-w-full flex-nowrap justify-center gap-0.5 rounded-full border p-2 shadow-sm min-[360px]:gap-1 sm:gap-1.5 sm:p-2.5 border-navy/5 bg-white dark:border-gold/20 dark:bg-dusk-alt"
           >
             {TABS.map((name) => (
               <TabsTrigger key={name} value={name} className={TRIGGER}>

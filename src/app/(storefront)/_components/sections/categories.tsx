@@ -49,10 +49,7 @@ const SMALL = [
   },
 ];
 
-const SEASON_BADGE = cn(
-  "rounded-full border px-2.5 py-1 text-[10px] font-black whitespace-nowrap sm:px-3 sm:py-1.5 sm:text-xs",
-  "border-navy/15 bg-paper-warm text-navy",
-);
+const SEASON_BADGE = "rounded-full border px-2.5 py-1 text-[10px] font-black whitespace-nowrap sm:px-3 sm:py-1.5 sm:text-xs border-navy/15 bg-paper-warm text-navy";
 
 export function Categories() {
   return (
@@ -67,11 +64,7 @@ export function Categories() {
               دسته‌بندی‌ها
             </span>
             <h2
-              className={cn(
-                "mt-2",
-                "text-navy text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black",
-                "dark:text-ivory",
-              )}
+              className="mt-2 text-navy text-[clamp(1.5rem,5.5vw,2.625rem)] leading-snug font-black dark:text-ivory"
             >
               برای هر لحظه،{" "}
               <span className="text-gold relative inline-block">
@@ -90,10 +83,7 @@ export function Categories() {
             <StaggerItem key={card.t} className="col-span-2">
               <Link
                 href={card.href}
-                className={cn(
-                  "group relative block h-64 overflow-hidden rounded-2xl shadow-lg min-[420px]:h-80 sm:h-105 sm:rounded-[28px]",
-                  "shadow-navy/10",
-                )}
+                className="group relative block h-64 overflow-hidden rounded-2xl shadow-lg min-[420px]:h-80 sm:h-105 sm:rounded-[28px] shadow-navy/10"
               >
                 <Image
                   src={card.img}
@@ -119,10 +109,7 @@ export function Categories() {
                       </p>
                     </div>
                     <span
-                      className={cn(
-                        "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform duration-500 group-hover:rotate-45 sm:h-12 sm:w-12",
-                        "bg-gold text-navy-deep",
-                      )}
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform duration-500 group-hover:rotate-45 sm:h-12 sm:w-12 bg-gold text-navy-deep"
                     >
                       <ArrowDownLeft className="h-4 w-4 sm:h-5 sm:w-5" />
                     </span>
@@ -135,10 +122,7 @@ export function Categories() {
             <StaggerItem key={card.t}>
               <Link
                 href={card.href}
-                className={cn(
-                  "group relative block h-52 overflow-hidden rounded-xl shadow-lg min-[420px]:h-64 sm:h-80 sm:rounded-3xl lg:h-105",
-                  "shadow-navy/10",
-                )}
+                className="group relative block h-52 overflow-hidden rounded-xl shadow-lg min-[420px]:h-64 sm:h-80 sm:rounded-3xl lg:h-105 shadow-navy/10"
               >
                 <Image
                   src={card.img}
@@ -162,11 +146,7 @@ export function Categories() {
                     </p>
                   </div>
                   <span
-                    className={cn(
-                      "hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all min-[420px]:flex sm:h-9 sm:w-9",
-                      "bg-navy/40 border-white/30 text-white",
-                      "group-hover:border-gold group-hover:bg-gold group-hover:text-navy-deep",
-                    )}
+                    className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all min-[420px]:flex sm:h-9 sm:w-9 bg-navy/40 border-white/30 text-white group-hover:border-gold group-hover:bg-gold group-hover:text-navy-deep"
                   >
                     <ArrowDownLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </span>

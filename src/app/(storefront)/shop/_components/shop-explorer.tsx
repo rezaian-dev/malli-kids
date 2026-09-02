@@ -11,9 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-} from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
-import { toFaDigits } from "@/lib/locale/fa";
+} from "@/components/ui/sheet";import { toFaDigits } from "@/lib/locale/fa";
 import type { ShopState } from "@/lib/shop/shop-state";
 import { defaultShopState, toShopHref } from "@/lib/shop/shop-state";
 import type { Product } from "@/types";
@@ -73,25 +71,14 @@ export function ShopExplorer({
         {/* Desktop sidebar filter */}
         <aside
           aria-label="فیلتر محصولات"
-          className={cn(
-            "sticky top-30 hidden overflow-hidden rounded-[28px] shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col",
-            "border-navy/10 bg-sand-deep/60 border",
-            "dark:border-gold/40 dark:bg-filter-night",
-          )}
+          className="sticky top-30 hidden overflow-hidden rounded-[28px] shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col border-navy/10 bg-sand-deep/60 border dark:border-gold/40 dark:bg-filter-night"
         >
           <div
-            className={cn(
-              "flex items-center justify-between gap-3 border-b px-4 py-4",
-              "border-navy/8 bg-white/70",
-              "dark:border-gold/20 dark:bg-navy-dark/60",
-            )}
+            className="flex items-center justify-between gap-3 border-b px-4 py-4 border-navy/8 bg-white/70 dark:border-gold/20 dark:bg-navy-dark/60"
           >
             <div className="flex items-center gap-2.5">
               <span
-                className={cn(
-                  FILTER_ICON_BADGE,
-                  "shadow-[0_10px_22px_-12px_rgba(14,42,71,.7)]",
-                )}
+                className="bg-navy text-gold-soft dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl shadow-[0_10px_22px_-12px_rgba(14,42,71,.7)]"
               >
                 <SlidersHorizontal className="size-4" />
               </span>
@@ -131,11 +118,7 @@ export function ShopExplorer({
 
         {/* Main results */}
         <section
-          className={cn(
-            "min-w-0 rounded-[28px] p-3 shadow-[0_22px_54px_-30px_rgba(14,42,71,.32)] backdrop-blur-sm sm:p-5",
-            "border-navy/10 border bg-white/85",
-            "dark:border-gold/35 dark:bg-slate/45 dark:text-ivory",
-          )}
+          className="min-w-0 rounded-[28px] p-3 shadow-[0_22px_54px_-30px_rgba(14,42,71,.32)] backdrop-blur-sm sm:p-5 border-navy/10 border bg-white/85 dark:border-gold/35 dark:bg-slate/45 dark:text-ivory"
         >
           <ShopToolbar
             state={state}
@@ -165,11 +148,7 @@ export function ShopExplorer({
         <SheetContent
           side="right"
           showCloseButton={false}
-          className={cn(
-            "inset-y-0 right-0 flex h-dvh w-[min(88vw,360px)] max-w-90 flex-col gap-0 border-s p-0 sm:max-w-90",
-            "border-navy/10 bg-sand-deep",
-            "dark:border-gold/40 dark:bg-filter-night",
-          )}
+          className="inset-y-0 right-0 flex h-dvh w-[min(88vw,360px)] max-w-90 flex-col gap-0 border-s p-0 sm:max-w-90 border-navy/10 bg-sand-deep dark:border-gold/40 dark:bg-filter-night"
         >
           <SheetHeader className="gap-0 p-0">
             <div className="flex items-center justify-between px-4 py-4">
@@ -204,11 +183,7 @@ export function ShopExplorer({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className={cn(
-                    "size-9 rounded-full",
-                    "bg-navy/5 text-navy",
-                    "dark:bg-dusk-mid dark:text-ivory",
-                  )}
+                  className="size-9 rounded-full bg-navy/5 text-navy dark:bg-dusk-mid dark:text-ivory"
                   onClick={() => shop.setFilterOpen(false)}
                   aria-label="بستن"
                 >
@@ -246,11 +221,7 @@ export function ShopExplorer({
         <SheetContent
           side="bottom"
           showCloseButton={false}
-          className={cn(
-            "mx-auto max-w-130 gap-0 rounded-t-[28px] border-t p-0",
-            "border-gold/30 bg-linen",
-            "dark:border-gold/40 dark:bg-sort-sheet",
-          )}
+          className="mx-auto max-w-130 gap-0 rounded-t-[28px] border-t p-0 border-gold/30 bg-linen dark:border-gold/40 dark:bg-sort-sheet"
         >
           <div
             className="bg-gold-light mx-auto mt-3 mb-1 h-1.25 w-11 rounded-full"

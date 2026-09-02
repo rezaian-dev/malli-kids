@@ -35,10 +35,7 @@ export function FooterTrustBadges() {
             target="_blank"
             rel="noreferrer"
             aria-label="نماد اعتماد الکترونیکی"
-            className={cn(
-              "grid size-20 place-items-center p-2 sm:size-24 sm:p-2.5",
-              "hover:ring-gold/50 rounded-2xl bg-white shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5",
-            )}
+            className="grid size-20 place-items-center p-2 sm:size-24 sm:p-2.5 hover:ring-gold/50 rounded-2xl bg-white shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5"
           >
             <Image
               src="/brand/enamad.png"
@@ -54,10 +51,7 @@ export function FooterTrustBadges() {
             target="_blank"
             rel="noreferrer"
             aria-label="نشان ملی ثبت رسانه‌های دیجیتال (ساماندهی)"
-            className={cn(
-              "grid h-20 w-32 place-items-center p-2 sm:h-24 sm:w-40 sm:p-2.5",
-              "hover:ring-gold/50 rounded-2xl bg-white shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5",
-            )}
+            className="grid h-20 w-32 place-items-center p-2 sm:h-24 sm:w-40 sm:p-2.5 hover:ring-gold/50 rounded-2xl bg-white shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5"
           >
             <Image
               src="/brand/samandehi.png"

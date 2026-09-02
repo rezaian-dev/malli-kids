@@ -50,11 +50,7 @@ export function ProductCardList({
     >
       <TiltCard className="h-full rounded-[20px]" strength={4}>
         <article
-          className={cn(
-            "group flex min-w-0 flex-row overflow-hidden rounded-[20px] border transition-all duration-500 ease-out",
-            "border-navy/10 hover:border-gold/55 bg-white/94 hover:-translate-y-1 hover:shadow-[0_18px_36px_-16px_rgba(14,42,71,.28)]",
-            "dark:border-gold-soft/35 dark:bg-slate/60",
-          )}
+          className="group flex min-w-0 flex-row overflow-hidden rounded-[20px] border transition-all duration-500 ease-out border-navy/10 hover:border-gold/55 bg-white/94 hover:-translate-y-1 hover:shadow-[0_18px_36px_-16px_rgba(14,42,71,.28)] dark:border-gold-soft/35 dark:bg-slate/60"
         >
           <Link
             href={href}

@@ -52,17 +52,10 @@ export default function UserAccountMenu({
       <DropdownMenuContent
         align="start"
         sideOffset={12}
-        className={cn(
-          "account-menu-panel border-gold bg-paper z-80 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border p-0",
-          "dark:border-gold/50 dark:bg-dusk",
-        )}
+        className="account-menu-panel border-gold bg-paper z-80 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border p-0 dark:border-gold/50 dark:bg-dusk"
       >
         <div
-          className={cn(
-            "flex items-center gap-3 px-4 py-3.5",
-            "border-gold from-navy to-navy-mid border-b bg-linear-to-br",
-            "dark:border-gold/40",
-          )}
+          className="flex items-center gap-3 px-4 py-3.5 border-gold from-navy to-navy-mid border-b bg-linear-to-br dark:border-gold/40"
         >
           <Face
             src={user.avatar}
@@ -74,10 +67,7 @@ export default function UserAccountMenu({
               {name}
             </p>
             <p
-              className={cn(
-                "mt-1 inline-flex items-center gap-1.5",
-                "text-gold-soft text-[11px] font-bold",
-              )}
+              className="mt-1 inline-flex items-center gap-1.5 text-gold-soft text-[11px] font-bold"
             >
               <Phone className="size-3.5" />
               <span dir="ltr">{user.phone?.trim() || "شماره ثبت نشده"}</span>

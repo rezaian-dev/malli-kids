@@ -77,19 +77,11 @@ export function ProfileOrdersPanel() {
         {stats.map(({ Icon, label, value }) => (
           <div
             key={label}
-            className={cn(
-              "rounded-2xl border px-4 py-3.5 text-center",
-              "border-navy/10 bg-navy/2",
-              "dark:border-gold/25 dark:bg-white/3",
-            )}
+            className="rounded-2xl border px-4 py-3.5 text-center border-navy/10 bg-navy/2 dark:border-gold/25 dark:bg-white/3"
           >
             <Icon className="text-gold mx-auto size-4" />
             <p
-              className={cn(
-                "mt-2 truncate text-sm font-black",
-                "text-navy",
-                "dark:text-ivory",
-              )}
+              className="mt-2 truncate text-sm font-black text-navy dark:text-ivory"
               dir="ltr"
             >
               {value}
@@ -125,22 +117,14 @@ export function ProfileOrdersPanel() {
 
       {orders.length === 0 ? (
         <div
-          className={cn(
-            "rounded-2xl border border-dashed px-6 py-10 text-center",
-            "border-navy/15",
-            "dark:border-gold/25",
-          )}
+          className="rounded-2xl border border-dashed px-6 py-10 text-center border-navy/15 dark:border-gold/25"
         >
           <ShoppingBag className="text-gold mx-auto size-9" />
           <p className="text-navy dark:text-ivory mt-3 font-black">
             هنوز سفارشی ندارید
           </p>
           <p
-            className={cn(
-              "mx-auto mt-1 max-w-xs text-xs leading-6",
-              "text-navy/70",
-              "dark:text-wheat",
-            )}
+            className="mx-auto mt-1 max-w-xs text-xs leading-6 text-navy/70 dark:text-wheat"
           >
             اولین خریدتان را ثبت کنید؛ اینجا مرحله‌به‌مرحله تا دم در خانه
             پیگیری‌اش می‌کنید.
@@ -153,11 +137,7 @@ export function ProfileOrdersPanel() {
         </div>
       ) : list.length === 0 ? (
         <p
-          className={cn(
-            "rounded-2xl px-4 py-6 text-center text-xs font-bold",
-            "bg-navy/3 text-navy/70",
-            "dark:text-wheat dark:bg-white/4",
-          )}
+          className="rounded-2xl px-4 py-6 text-center text-xs font-bold bg-navy/3 text-navy/70 dark:text-wheat dark:bg-white/4"
         >
           سفارشی با این وضعیت ندارید.
         </p>

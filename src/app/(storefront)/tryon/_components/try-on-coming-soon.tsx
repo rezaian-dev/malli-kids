@@ -3,7 +3,6 @@ import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Stagger, StaggerItem } from "@/components/motion/static";
 import { pageSchema } from "@/lib/seo";
-import { cn } from "@/lib/utils";
 
 // Coming-soon placeholder for /tryon. Pure Server Component, CSS-only
 // motion. No studio, API, or client JS — just the teaser.
@@ -82,11 +81,7 @@ export function ComingSoon() {
           <StaggerItem>
             <section
               aria-labelledby="tryon-soon-title"
-              className={cn(
-                "relative overflow-hidden rounded-[28px] border",
-                "border-gold/40 bg-navy-deep",
-                "shadow-[0_30px_70px_-30px_rgba(4,20,39,.65)]",
-              )}
+              className="relative overflow-hidden rounded-[28px] border border-gold/40 bg-navy-deep shadow-[0_30px_70px_-30px_rgba(4,20,39,.65)]"
             >
               {/* ambient gold glow */}
               <div
@@ -134,13 +129,7 @@ export function ComingSoon() {
                   <div className="mt-7 flex flex-wrap items-center gap-3">
                     <Link
                       href="/shop"
-                      className={cn(
-                        "group inline-flex items-center gap-2 rounded-2xl px-6 py-3",
-                        "bg-gold text-navy-deep text-sm font-black",
-                        "shadow-[0_14px_30px_-12px_rgba(193,147,87,.7)]",
-                        "hover:bg-gold-soft transition-all hover:shadow-[0_18px_36px_-12px_rgba(193,147,87,.8)]",
-                        "focus-visible:ring-gold-glow focus-visible:ring-offset-navy-deep focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
-                      )}
+                      className="group inline-flex items-center gap-2 rounded-2xl px-6 py-3 bg-gold text-navy-deep text-sm font-black shadow-[0_14px_30px_-12px_rgba(193,147,87,.7)] hover:bg-gold-soft transition-all hover:shadow-[0_18px_36px_-12px_rgba(193,147,87,.8)] focus-visible:ring-gold-glow focus-visible:ring-offset-navy-deep focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
                       دیدن کالکشن
                       <svg
@@ -158,12 +147,7 @@ export function ComingSoon() {
                     </Link>
                     <Link
                       href="/"
-                      className={cn(
-                        "inline-flex items-center rounded-2xl px-6 py-3 text-sm font-bold",
-                        "border-ivory/25 text-ivory border",
-                        "hover:border-gold/60 hover:text-gold-soft transition-colors",
-                        "focus-visible:ring-gold-glow focus-visible:ring-offset-navy-deep focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
-                      )}
+                      className="inline-flex items-center rounded-2xl px-6 py-3 text-sm font-bold border-ivory/25 text-ivory border hover:border-gold/60 hover:text-gold-soft transition-colors focus-visible:ring-gold-glow focus-visible:ring-offset-navy-deep focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
                       بازگشت به خانه
                     </Link>
@@ -226,10 +210,7 @@ export function ComingSoon() {
                 {STEPS.map((step) => (
                   <li
                     key={step.n}
-                    className={cn(
-                      "relative rounded-3xl border p-5 pt-6",
-                      "border-gold/25 bg-ivory/60 dark:border-gold/20 dark:bg-navy-deep/40",
-                    )}
+                    className="relative rounded-3xl border p-5 pt-6 border-gold/25 bg-ivory/60 dark:border-gold/20 dark:bg-navy-deep/40"
                   >
                     <span
                       aria-hidden="true"

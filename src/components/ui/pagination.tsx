@@ -68,11 +68,7 @@ export function Pagination({
             </li>
             <li>
               <span
-                className={cn(
-                  "flex h-9 min-w-28 items-center justify-center rounded-xl border px-3",
-                  "border-navy/10 text-navy bg-white text-[10px] font-black",
-                  "dark:border-gold/18 dark:bg-navy-mid/70 dark:text-ivory",
-                )}
+                className="flex h-9 min-w-28 items-center justify-center rounded-xl border px-3 border-navy/10 text-navy bg-white text-[10px] font-black dark:border-gold/18 dark:bg-navy-mid/70 dark:text-ivory"
               >
                 صفحه {toFaDigits(page)} از {toFaDigits(pageCount)}
               </span>

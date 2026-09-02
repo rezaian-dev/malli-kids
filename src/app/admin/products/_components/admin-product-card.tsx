@@ -24,18 +24,11 @@ export function AdminProductCard({
   return (
     <article className={cn(adminGlassCard, "group")}>
       <div
-        className={cn(
-          "absolute inset-x-0 top-0 z-10 h-px opacity-0 transition-opacity group-hover:opacity-100",
-          "via-gold/55 bg-linear-to-r from-transparent to-transparent",
-        )}
+        className="absolute inset-x-0 top-0 z-10 h-px opacity-0 transition-opacity group-hover:opacity-100 via-gold/55 bg-linear-to-r from-transparent to-transparent"
       />
       <div className="flex min-w-0 gap-3 p-3.5">
         <div
-          className={cn(
-            "relative size-21 shrink-0 overflow-hidden rounded-2xl",
-            "bg-sand",
-            "dark:bg-navy-deep",
-          )}
+          className="relative size-21 shrink-0 overflow-hidden rounded-2xl bg-sand dark:bg-navy-deep"
         >
           {onToggleSelect ? (
             <input
@@ -69,22 +62,14 @@ export function AdminProductCard({
               {product.featured ? " · ویژه" : ""}
             </p>
             <span
-              className={cn(
-                "inline-flex shrink-0 items-center gap-0.5 text-[9px] font-black",
-                "text-navy/70",
-                "dark:text-wheat",
-              )}
+              className="inline-flex shrink-0 items-center gap-0.5 text-[9px] font-black text-navy/70 dark:text-wheat"
             >
               <Star className="fill-gold text-gold size-3" />{" "}
               {toFaDigits(product.rate)}
             </span>
           </div>
           <h2
-            className={cn(
-              "mt-1 line-clamp-2 min-h-10 text-sm leading-5 font-black",
-              "text-navy",
-              "dark:text-ivory",
-            )}
+            className="mt-1 line-clamp-2 min-h-10 text-sm leading-5 font-black text-navy dark:text-ivory"
           >
             {product.name}
           </h2>
@@ -117,11 +102,7 @@ export function AdminProductCard({
       </div>
 
       <div
-        className={cn(
-          "flex gap-2 border-t px-3.5 py-2.5",
-          "border-navy/6 bg-navy/1.5",
-          "dark:border-gold/12 dark:bg-white/1.5",
-        )}
+        className="flex gap-2 border-t px-3.5 py-2.5 border-navy/6 bg-navy/1.5 dark:border-gold/12 dark:bg-white/1.5"
       >
         <Button asChild variant="navy" className="h-9 flex-1 rounded-xl text-[10px]">
           <Link href={`/admin/products/${product.id}/edit`}>
@@ -136,10 +117,7 @@ export function AdminProductCard({
           trigger={
             <button
               type="button"
-              className={cn(
-                "grid size-9 shrink-0 place-items-center rounded-xl transition hover:scale-105",
-                "bg-rose/10 text-rose hover:bg-rose/15",
-              )}
+              className="grid size-9 shrink-0 place-items-center rounded-xl transition hover:scale-105 bg-rose/10 text-rose hover:bg-rose/15"
               aria-label={`حذف ${product.name}`}
               title="حذف محصول"
             >
