@@ -19,9 +19,10 @@ import {
   type ThemePreference,
 } from "@/lib/storefront-state";
 
-type ThemeContextValue = {
-  theme: ThemePreference;
-  resolvedTheme: ResolvedTheme;
+const DARK_QUERY = "(prefers-color-scheme: dark)";
+
+type ThemeState = { theme: ThemePreference; resolvedTheme: ResolvedTheme };
+type ThemeContextValue = ThemeState & {
   setTheme: (theme: ThemePreference) => void;
 };
 
@@ -31,20 +32,25 @@ const ThemeContext = createContext<ThemeContextValue>({
   setTheme: () => {},
 });
 
+// localStorage throws in private mode — the caller's value stands.
 function readStoredTheme(fallback: ThemePreference): ThemePreference {
   try {
     return readThemePreference(localStorage.getItem(THEME_KEY) ?? undefined);
   } catch {
-    return fallback; // localStorage blocked (private mode, etc.)
+    return fallback;
   }
 }
 
-// Swapping `.dark` re-triggers every `transition-colors` on the page.
-// Freezing transitions for one paint makes the swap instant instead of a
-// page-wide colour wipe.
-function applyDarkClass(dark: boolean) {
+// Paint it. Toggling `.dark` re-runs every `transition-colors` on the page,
+// so transitions are frozen for one paint: the swap lands instantly instead
+// of wiping colour across the whole page.
+function applyTheme(resolved: ResolvedTheme) {
   const root = document.documentElement;
+  const dark = resolved === "dark";
+
+  root.style.colorScheme = resolved;
   if (root.classList.contains("dark") === dark) return;
+
   root.classList.add("theme-transitioning");
   root.classList.toggle("dark", dark);
   requestAnimationFrame(() =>
@@ -52,12 +58,9 @@ function applyDarkClass(dark: boolean) {
   );
 }
 
-// Applies + persists a theme in one place: DOM class, `color-scheme`,
-// localStorage (read by the anti-flash script on the next page load) and
-// cookies (read by the server on the next SSR render).
-function persistTheme(theme: ThemePreference, resolved: ResolvedTheme) {
-  applyDarkClass(resolved === "dark");
-  document.documentElement.style.colorScheme = resolved;
+// Remember it: localStorage for the anti-flash script on the next load,
+// cookies for the server on the next SSR render.
+function saveTheme(theme: ThemePreference, resolved: ResolvedTheme) {
   try {
     localStorage.setItem(THEME_KEY, theme);
   } catch {}
@@ -74,29 +77,30 @@ export function ThemeProvider({
   initialTheme?: ThemePreference;
   initialResolved?: ResolvedTheme;
 }) {
-  const [theme, setThemeState] = useState(initialTheme);
-  const [resolvedTheme, setResolvedTheme] = useState(initialResolved);
+  const [state, setState] = useState<ThemeState>({
+    theme: initialTheme,
+    resolvedTheme: initialResolved,
+  });
 
-  const setTheme = useCallback((next: ThemePreference) => {
-    const systemDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-    const resolved = resolveThemePreference(next, systemDark);
-    persistTheme(next, resolved);
-    setThemeState(next);
-    setResolvedTheme(resolved);
+  const setTheme = useCallback((theme: ThemePreference) => {
+    const resolvedTheme = resolveThemePreference(
+      theme,
+      window.matchMedia(DARK_QUERY).matches,
+    );
+
+    applyTheme(resolvedTheme);
+    saveTheme(theme, resolvedTheme);
+    setState({ theme, resolvedTheme });
   }, []);
 
   useEffect(() => {
-    // Reconcile with localStorage once on mount — it's the freshest source
-    // (e.g. changed in another tab while this one was closed) and may
-    // differ from the cookie the server rendered `initialTheme` from. The
-    // same resync also answers a live OS theme change and a theme change
-    // made in another tab, so both listeners below just call it.
+    // localStorage is the freshest source: another tab may have changed it
+    // since the server rendered `initialTheme` off the cookie. The same
+    // resync answers an OS theme change and a change from another tab.
     const resync = () => setTheme(readStoredTheme(initialTheme));
     resync();
 
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const media = window.matchMedia(DARK_QUERY);
     const onStorage = (event: StorageEvent) => {
       if (event.key === THEME_KEY) resync();
     };
@@ -109,10 +113,7 @@ export function ThemeProvider({
     };
   }, [initialTheme, setTheme]);
 
-  const value = useMemo(
-    () => ({ theme, resolvedTheme, setTheme }),
-    [theme, resolvedTheme, setTheme],
-  );
+  const value = useMemo(() => ({ ...state, setTheme }), [state, setTheme]);
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

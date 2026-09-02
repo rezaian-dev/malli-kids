@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { faNow } from "./format";
+import { createLocalList } from "./local-store";
 import { notify } from "./notifications";
 
 export type TicketStatus = "open" | "answered" | "closed";
@@ -24,25 +24,9 @@ export type Ticket = {
   replies: TicketReply[];
 };
 
-const KEY = "malli_tickets";
-const EVENT = "tickets:change";
+const tickets = createLocalList<Ticket>("malli_tickets", "tickets:change");
 
-export function loadTickets(): Ticket[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Ticket[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function persist(list: Ticket[]) {
-  window.localStorage.setItem(KEY, JSON.stringify(list));
-  window.dispatchEvent(new Event(EVENT));
-}
-
-export { faNow };
+export const loadTickets = tickets.load;
 
 export function createTicket(input: {
   owner: string;
@@ -60,7 +44,7 @@ export function createTicket(input: {
     createdAt: at,
     replies: [{ from: "user", text: input.message.trim(), at }],
   };
-  persist([ticket, ...loadTickets()]);
+  tickets.persist([ticket, ...tickets.load()]);
   return ticket;
 }
 
@@ -71,7 +55,7 @@ export function replyTicket(
 ) {
   const at = faNow();
   if (from === "support") {
-    const t = loadTickets().find((x) => x.id === id);
+    const t = tickets.load().find((x) => x.id === id);
     if (t)
       notify(
         t.owner,
@@ -79,8 +63,8 @@ export function replyTicket(
         `به تیکت «${t.subject}» پاسخ داده شد؛ پاسخ را در پنل خودتان ببینید.`,
       );
   }
-  persist(
-    loadTickets().map((t) =>
+  tickets.persist(
+    tickets.load().map((t) =>
       t.id === id
         ? {
             ...t,
@@ -94,23 +78,13 @@ export function replyTicket(
 }
 
 export function setTicketStatus(id: string, status: TicketStatus) {
-  persist(loadTickets().map((t) => (t.id === id ? { ...t, status } : t)));
+  tickets.persist(
+    tickets.load().map((t) => (t.id === id ? { ...t, status } : t)),
+  );
 }
 
 export function useTickets(owner?: string): Ticket[] {
-  const [all, setAll] = useState<Ticket[]>([]);
-
-  useEffect(() => {
-    const sync = () => setAll(loadTickets());
-    sync();
-    window.addEventListener(EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
-
+  const all = tickets.useList();
   if (!owner) return all;
   return all.filter((t) => t.owner === owner);
 }

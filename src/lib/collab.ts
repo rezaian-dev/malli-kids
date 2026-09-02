@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { faNow } from "./format";
+import { createLocalList } from "./local-store";
 
 export type CollabStatus = "در انتظار بررسی" | "تماس گرفته شد";
 
@@ -15,9 +15,6 @@ export type CollabRequest = {
   status: CollabStatus;
 };
 
-const KEY = "malli_collab";
-const EVENT = "collab:change";
-
 export const COLLAB_KINDS = [
   "خرید عمده و نمایندگی",
   "همکاری در دوخت و تولید",
@@ -25,20 +22,10 @@ export const COLLAB_KINDS = [
   "عکاسی و مدلینگ",
 ] as const;
 
-export function loadCollabs(): CollabRequest[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as CollabRequest[]) : [];
-  } catch {
-    return [];
-  }
-}
+const collabs = createLocalList<CollabRequest>("malli_collab", "collab:change");
 
-function persist(list: CollabRequest[]) {
-  window.localStorage.setItem(KEY, JSON.stringify(list));
-  window.dispatchEvent(new Event(EVENT));
-}
+export const loadCollabs = collabs.load;
+export const useCollabs = collabs.useList;
 
 export function submitCollab(input: {
   name: string;
@@ -52,27 +39,12 @@ export function submitCollab(input: {
     at: faNow(),
     status: "در انتظار بررسی",
   };
-  persist([r, ...loadCollabs()]);
+  collabs.persist([r, ...collabs.load()]);
   return r;
 }
 
 export function setCollabStatus(id: string, status: CollabStatus) {
-  persist(loadCollabs().map((r) => (r.id === id ? { ...r, status } : r)));
-}
-
-export function useCollabs(): CollabRequest[] {
-  const [all, setAll] = useState<CollabRequest[]>([]);
-
-  useEffect(() => {
-    const sync = () => setAll(loadCollabs());
-    sync();
-    window.addEventListener(EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
-
-  return all;
+  collabs.persist(
+    collabs.load().map((r) => (r.id === id ? { ...r, status } : r)),
+  );
 }

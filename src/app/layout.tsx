@@ -20,6 +20,8 @@ import {
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
+// ⚠️ `next/font` is a build-time transform — these lists have to stay
+// literal, they can't be generated from a weights array.
 const vazir = localFont({
   src: [
     { path: "../fonts/Vazirmatn-Regular.woff2", weight: "400" },
@@ -42,18 +44,48 @@ const playfair = localFont({
   display: "swap",
 });
 
+// 🎨 Mirrors the `--background`/`--foreground` tokens in globals.css, inlined
+// in <head> so the shell paints on-theme before the stylesheet lands.
+const CRITICAL_CSS =
+  "html{background:#ece6dc;color:#0e2a47;color-scheme:light}" +
+  "html.dark{background:#041427;color:#fff8ec;color-scheme:dark}" +
+  "body{background:inherit;color:inherit}";
+
+// 🔄 Gold route-change bar (RTL-anchored in globals.css).
+const TOP_LOADER = {
+  color: "#d9b77f",
+  height: 3,
+  showSpinner: false,
+  speed: 240,
+  crawlSpeed: 110,
+  easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+  shadow: "0 0 14px rgba(217,183,127,.85), 0 0 6px rgba(193,147,87,.9)",
+  zIndex: 9999,
+} as const;
+
 export const metadata = getRootMetadata();
 
-export async function generateViewport(): Promise<Viewport> {
-  const cookieStore = await cookies();
-  const theme = readThemePreference(cookieStore.get(THEME_KEY)?.value);
+// 🍪 The single place the shell resolves its theme. Both `generateViewport`
+// and the layout need it, and `cookies()` is request-cached, so reading it
+// from each costs nothing. Returns the jar too — the layout also boots the
+// store from the same cookies.
+async function readShellCookies() {
+  const jar = await cookies();
+  const theme = readThemePreference(jar.get(THEME_KEY)?.value);
   const resolved = resolveInitialTheme(
     theme,
-    readResolvedTheme(cookieStore.get(THEME_RESOLVED_KEY)?.value),
+    readResolvedTheme(jar.get(THEME_RESOLVED_KEY)?.value),
   );
+
+  return { jar, theme, resolved };
+}
+
+export async function generateViewport(): Promise<Viewport> {
+  const { resolved } = await readShellCookies();
 
   return {
     colorScheme: resolved,
+    // Browser chrome sits a shade deeper than the page itself in dark mode.
     themeColor: resolved === "dark" ? "#061728" : "#ece6dc",
   };
 }
@@ -64,15 +96,8 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const initialTheme = readThemePreference(cookieStore.get(THEME_KEY)?.value);
-  const initialResolved = resolveInitialTheme(
-    initialTheme,
-    readResolvedTheme(cookieStore.get(THEME_RESOLVED_KEY)?.value),
-  );
-  const initialState = readStoreBootstrap(
-    (name) => cookieStore.get(name)?.value,
-  );
+  const { jar, theme, resolved } = await readShellCookies();
+  const initialState = readStoreBootstrap((name) => jar.get(name)?.value);
 
   return (
     <html
@@ -83,40 +108,27 @@ export default async function RootLayout({
         vazir.variable,
         playfair.variable,
         "scrollbar-gutter-stable",
-        initialResolved === "dark" && "dark",
+        resolved === "dark" && "dark",
       )}
-      style={{ colorScheme: initialResolved }}
+      style={{ colorScheme: resolved }}
       suppressHydrationWarning
     >
       <head>
-        <style>{`html{background:#ece6dc;color:#0e2a47;color-scheme:light}html.dark{background:#041427;color:#fff8ec;color-scheme:dark}body{background:inherit;color:inherit}`}</style>
+        <style>{CRITICAL_CSS}</style>
         <script dangerouslySetInnerHTML={{ __html: buildThemeScript() }} />
       </head>
       <body
         className={cn(
           vazir.className,
-          "min-h-dvh antialiased data-scroll-locked:mr-0!",
-          "text-navy",
-          "dark:text-ivory",
+          "text-navy dark:text-ivory min-h-dvh antialiased data-scroll-locked:mr-0!",
         )}
         suppressHydrationWarning
       >
         <JsonLd data={organizationSchema()} />
         <JsonLd data={websiteSchema()} />
-        <NextTopLoader
-          color="#d9b77f"
-          height={3}
-          showSpinner={false}
-          speed={240}
-          crawlSpeed={110}
-          easing="cubic-bezier(0.4, 0, 0.2, 1)"
-          shadow="0 0 14px rgba(217,183,127,.85), 0 0 6px rgba(193,147,87,.9)"
-          zIndex={9999}
-        />
-        <ThemeProvider
-          initialTheme={initialTheme}
-          initialResolved={initialResolved}
-        >
+        <NextTopLoader {...TOP_LOADER} />
+
+        <ThemeProvider initialTheme={theme} initialResolved={resolved}>
           <StoreProvider initialState={initialState}>
             {children}
             <Toaster />

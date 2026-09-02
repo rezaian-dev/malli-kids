@@ -1,42 +1,13 @@
 import { z } from "zod";
+import { parseFaNumber, phoneDigits, toLatinDigits } from "./digits";
 import { toFaDigits } from "./format";
+import { jalaliParts } from "./jalali";
 
-const faDigits = Array.from({ length: 10 }, (_, i) =>
-  String.fromCodePoint(0x06f0 + i),
-);
-const arDigits = Array.from({ length: 10 }, (_, i) =>
-  String.fromCodePoint(0x0660 + i),
-);
-const FA = faDigits.join("");
-const AR = arDigits.join("");
-
-export function parseFaNumber(raw: unknown): number {
-  if (typeof raw === "number") return raw;
-  if (typeof raw !== "string") return Number.NaN;
-  const s = toLatinDigits(raw).replace(/[\s,_٬]/g, "");
-  if (!s || !/^\d+$/.test(s)) return Number.NaN;
-  return Number(s);
-}
-
-export function toLatinDigits(v: string): string {
-  return v
-    .replace(/[\u06f0-\u06f9]/g, (d) => String(FA.indexOf(d)))
-    .replace(/[\u0660-\u0669]/g, (d) => String(AR.indexOf(d)));
-}
+export { parseFaNumber, phoneDigits, toLatinDigits };
 
 export function formatFaMoney(n: number): string {
   if (!Number.isFinite(n)) return "";
   return toFaDigits(n.toLocaleString("en-US")).replace(/,/g, "٬");
-}
-
-export function phoneDigits(v: string): string {
-  const raw = toLatinDigits(v).replace(
-    /[\s\u200c\u200e\u200f().٫،\u2010-\u2015_-]/g,
-    "",
-  );
-  if (raw.startsWith("+98")) return `0${raw.slice(3)}`;
-  if (raw.startsWith("0098")) return `0${raw.slice(4)}`;
-  return raw;
 }
 
 export const RE = {
@@ -55,23 +26,6 @@ export function isIranianNationalId(input: string): boolean {
   for (let i = 0; i < 9; i++) sum += Number(code[i]) * (10 - i);
   const r = sum % 11;
   return r < 2 ? d === r : d === 11 - r;
-}
-
-export function jalaliParts(
-  input: string,
-): { y: number; m: number; d: number } | null {
-  const s = toLatinDigits(input)
-    .trim()
-    .replace(/[.\u200c\-]/g, "/");
-  const m = /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.exec(s);
-  if (!m) return null;
-  const y = Number(m[1]);
-  const mo = Number(m[2]);
-  const d = Number(m[3]);
-  if (y < 1300 || y > 1500) return null;
-  if (mo < 1 || mo > 12) return null;
-  if (d < 1 || d > (mo <= 6 ? 31 : mo <= 11 ? 30 : 29)) return null;
-  return { y, m: mo, d };
 }
 
 export const fa = {
@@ -268,29 +222,6 @@ export const list = (label: string, min = 1, max = 20) =>
     .array(z.string().trim().min(1))
     .min(min, `${label} را حداقل یک مورد انتخاب کنید`)
     .max(max, `حداکثر ${toFaDigits(max)} مورد`);
-
-export function jalaliToday(): { y: number; m: number; d: number } {
-  try {
-    const parts = new Intl.DateTimeFormat("en-u-ca-persian", {
-      numberingSystem: "latn",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).formatToParts(new Date());
-    const pick = (t: string) =>
-      Number(parts.find((p) => p.type === t)?.value ?? 0);
-    return { y: pick("year"), m: pick("month"), d: pick("day") };
-  } catch {
-    return { y: 1404, m: 1, d: 1 };
-  }
-}
-
-export function isJalaliFuture(input: string): boolean {
-  const p = jalaliParts(input);
-  if (!p) return false;
-  const t = jalaliToday();
-  return p.y * 10000 + p.m * 100 + p.d > t.y * 10000 + t.m * 100 + t.d;
-}
 
 export function orderedRange<T extends z.ZodType>(
   schema: T,

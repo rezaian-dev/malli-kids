@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { faNow } from "./format";
+import { createLocalList } from "./local-store";
 
 export type NoticeKind = "ticket" | "order" | "system";
 
@@ -14,23 +14,9 @@ export type Notice = {
   read: boolean;
 };
 
-const KEY = "malli_notices";
-const EVENT = "notices:change";
+const notices = createLocalList<Notice>("malli_notices", "notices:change");
 
-export function loadNotices(): Notice[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Notice[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function persist(list: Notice[]) {
-  window.localStorage.setItem(KEY, JSON.stringify(list));
-  window.dispatchEvent(new Event(EVENT));
-}
+export const loadNotices = notices.load;
 
 export function notify(owner: string, kind: NoticeKind, text: string) {
   if (!owner) return;
@@ -42,33 +28,23 @@ export function notify(owner: string, kind: NoticeKind, text: string) {
     at: faNow(),
     read: false,
   };
-  persist([n, ...loadNotices()].slice(0, 60));
+  notices.persist([n, ...notices.load()].slice(0, 60));
 }
 
 export function markRead(id: string) {
-  persist(loadNotices().map((n) => (n.id === id ? { ...n, read: true } : n)));
+  notices.persist(
+    notices.load().map((n) => (n.id === id ? { ...n, read: true } : n)),
+  );
 }
 
 export function markAllRead(owner: string) {
-  persist(
-    loadNotices().map((n) => (n.owner === owner ? { ...n, read: true } : n)),
+  notices.persist(
+    notices.load().map((n) => (n.owner === owner ? { ...n, read: true } : n)),
   );
 }
 
 export function useNotices(owner?: string): Notice[] {
-  const [all, setAll] = useState<Notice[]>([]);
-
-  useEffect(() => {
-    const sync = () => setAll(loadNotices());
-    sync();
-    window.addEventListener(EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
-
+  const all = notices.useList();
   if (!owner) return [];
   return all.filter((n) => n.owner === owner);
 }

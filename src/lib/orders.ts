@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { OrderStatus } from "@/types";
 import { BRAND, STORAGE } from "./constants";
 import { faNow } from "./format";
+import { createLocalList } from "./local-store";
 import { notify } from "./notifications";
 
 export const ORDER_FLOW: OrderStatus[] = [
@@ -64,23 +64,9 @@ export type Order = {
   status: OrderStatus;
 };
 
-const KEY = STORAGE.purchases;
-const EVENT = "orders:change";
+const orders = createLocalList<Order>(STORAGE.purchases, "orders:change");
 
-export function loadOrders(): Order[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Order[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function persist(list: Order[]) {
-  window.localStorage.setItem(KEY, JSON.stringify(list));
-  window.dispatchEvent(new Event(EVENT));
-}
+export const loadOrders = orders.load;
 
 export function createOrder(input: {
   owner: string;
@@ -109,7 +95,7 @@ export function createOrder(input: {
     total: subtotal - discount + shipping,
     status: "جدید",
   };
-  persist([order, ...loadOrders()]);
+  orders.persist([order, ...orders.load()]);
   notify(
     order.owner,
     "order",
@@ -119,8 +105,10 @@ export function createOrder(input: {
 }
 
 export function setOrderStatus(id: string, status: OrderStatus) {
-  const target = loadOrders().find((o) => o.id === id);
-  persist(loadOrders().map((o) => (o.id === id ? { ...o, status } : o)));
+  const target = orders.load().find((o) => o.id === id);
+  orders.persist(
+    orders.load().map((o) => (o.id === id ? { ...o, status } : o)),
+  );
   if (target && target.owner) {
     notify(
       target.owner,
@@ -131,19 +119,7 @@ export function setOrderStatus(id: string, status: OrderStatus) {
 }
 
 export function useOrders(owner?: string): Order[] {
-  const [all, setAll] = useState<Order[]>([]);
-
-  useEffect(() => {
-    const sync = () => setAll(loadOrders());
-    sync();
-    window.addEventListener(EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
-
+  const all = orders.useList();
   if (!owner) return all;
   return all.filter((o) => o.owner === owner);
 }

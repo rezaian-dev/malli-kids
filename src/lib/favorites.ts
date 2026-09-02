@@ -1,43 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { createLocalList } from "./local-store";
 
-const KEY = "malli_favs";
-const EVENT = "favs:change";
+const favs = createLocalList<number>("malli_favs", "favs:change");
 
-export function loadFavs(): number[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as number[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function persist(list: number[]) {
-  window.localStorage.setItem(KEY, JSON.stringify(list));
-  window.dispatchEvent(new Event(EVENT));
-}
+export const loadFavs = favs.load;
+export const useFavorites = favs.useList;
 
 export function toggleFav(id: number) {
-  const list = loadFavs();
-  persist(list.includes(id) ? list.filter((x) => x !== id) : [id, ...list]);
-}
-
-export function useFavorites(): number[] {
-  const [favs, setFavs] = useState<number[]>([]);
-
-  useEffect(() => {
-    const sync = () => setFavs(loadFavs());
-    sync();
-    window.addEventListener(EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
-
-  return favs;
+  const list = favs.load();
+  favs.persist(
+    list.includes(id) ? list.filter((x) => x !== id) : [id, ...list],
+  );
 }
