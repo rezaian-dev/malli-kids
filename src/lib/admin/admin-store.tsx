@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { isRetiredCategory, STORAGE } from "@/lib/constants";
 import type {
   AdminArticle,
@@ -202,7 +202,7 @@ export function AdminStore({ children }: { children: ReactNode }) {
           ...d,
           products: list.filter((product) => !isRetiredCategory(product.cat)),
         }));
-        toast("محصولات ذخیره شد");
+        toast.success("محصولات ذخیره شد");
       },
       upsertProduct: (p) => {
         if (isRetiredCategory(p.cat)) {
@@ -215,26 +215,28 @@ export function AdminStore({ children }: { children: ReactNode }) {
             ? d.products.map((x) => (x.id === p.id ? p : x))
             : [p, ...d.products],
         }));
-        toast("محصول ذخیره شد", { description: p.name });
+        toast.success("محصول ذخیره شد", { description: p.name });
       },
       removeProduct: (id) => {
         setDb((d) => ({
           ...d,
           products: d.products.filter((x) => x.id !== id),
         }));
-        toast("محصول حذف شد");
+        toast.success("محصول حذف شد");
       },
       setOrderStatus: (id, status) => {
         setDb((d) => ({
           ...d,
           orders: d.orders.map((o) => (o.id === id ? { ...o, status } : o)),
         }));
-        toast("وضعیت سفارش تغییر کرد", { description: status });
+        toast.success("وضعیت سفارش تغییر کرد", { description: status });
       },
       saveCustomers: (list) => {
         setDb((d) => ({ ...d, customers: list }));
-        toast("مشتری‌ها ذخیره شد");
+        toast.success("مشتری‌ها ذخیره شد");
       },
+      // 🔕 No generic toast here — its one caller (customers/page.tsx
+      // toggleStatus) already shows a more specific confirmation.
       saveCustomer: (c) => {
         setDb((d) => ({
           ...d,
@@ -242,20 +244,17 @@ export function AdminStore({ children }: { children: ReactNode }) {
             ? d.customers.map((x) => (x.id === c.id ? c : x))
             : [c, ...d.customers],
         }));
-        toast("مشتری ذخیره شد", {
-          description: `${c.firstName} ${c.lastName}`,
-        });
       },
       removeCustomer: (id) => {
         setDb((d) => ({
           ...d,
           customers: d.customers.filter((x) => x.id !== id),
         }));
-        toast("مشتری حذف شد");
+        toast.success("مشتری حذف شد");
       },
       saveCoupons: (list) => {
         setDb((d) => ({ ...d, coupons: list }));
-        toast("کدهای تخفیف ذخیره شد");
+        toast.success("کدهای تخفیف ذخیره شد");
       },
       saveCoupon: (c) => {
         setDb((d) => ({
@@ -264,18 +263,18 @@ export function AdminStore({ children }: { children: ReactNode }) {
             ? d.coupons.map((x) => (x.code === c.code ? c : x))
             : [c, ...d.coupons],
         }));
-        toast("کد تخفیف ذخیره شد", { description: c.code });
+        toast.success("کد تخفیف ذخیره شد", { description: c.code });
       },
       removeCoupon: (code) => {
         setDb((d) => ({
           ...d,
           coupons: d.coupons.filter((x) => x.code !== code),
         }));
-        toast("کد تخفیف حذف شد", { description: code });
+        toast.success("کد تخفیف حذف شد", { description: code });
       },
       saveReviews: (list) => {
         setDb((d) => ({ ...d, reviews: list }));
-        toast("دیدگاه‌ها ذخیره شد");
+        toast.success("دیدگاه‌ها ذخیره شد");
       },
       saveReview: (r) => {
         setDb((d) => ({
@@ -284,15 +283,15 @@ export function AdminStore({ children }: { children: ReactNode }) {
             ? d.reviews.map((x) => (x.id === r.id ? r : x))
             : [r, ...d.reviews],
         }));
-        toast("دیدگاه ذخیره شد");
+        toast.success("دیدگاه ذخیره شد");
       },
       removeReview: (id) => {
         setDb((d) => ({ ...d, reviews: d.reviews.filter((x) => x.id !== id) }));
-        toast("دیدگاه حذف شد");
+        toast.success("دیدگاه حذف شد");
       },
       saveArticles: (list) => {
         setDb((d) => ({ ...d, articles: list }));
-        toast("مقاله‌ها ذخیره شد");
+        toast.success("مقاله‌ها ذخیره شد");
       },
       upsertArticle: (a) => {
         setDb((d) => ({
@@ -301,7 +300,7 @@ export function AdminStore({ children }: { children: ReactNode }) {
             ? d.articles.map((x) => (x.slug === a.slug ? a : x))
             : [a, ...d.articles],
         }));
-        toast("مقاله ذخیره شد", {
+        toast.success("مقاله ذخیره شد", {
           description: a.published
             ? "منتشر شد و در مجله دیده می‌شود."
             : "به‌صورت پیش‌نویس ماند.",
@@ -312,19 +311,19 @@ export function AdminStore({ children }: { children: ReactNode }) {
           ...d,
           articles: d.articles.filter((x) => x.slug !== slug),
         }));
-        toast("مقاله حذف شد");
+        toast.success("مقاله حذف شد");
       },
       saveMessages: (list) => {
         setDb((d) => ({ ...d, messages: list }));
-        toast("پیام‌ها ذخیره شد");
+        toast.success("پیام‌ها ذخیره شد");
       },
       saveSettings: (s) => {
         setDb((d) => ({ ...d, settings: s }));
-        toast("تنظیمات ذخیره شد");
+        toast.success("تنظیمات ذخیره شد");
       },
       saveBanners: (list) => {
         setDb((d) => ({ ...d, banners: list }));
-        toast("بنرها ذخیره شد");
+        toast.success("بنرها ذخیره شد");
       },
       saveBanner: (b) => {
         setDb((d) => ({
@@ -333,11 +332,11 @@ export function AdminStore({ children }: { children: ReactNode }) {
             ? d.banners.map((x) => (x.id === b.id ? b : x))
             : [b, ...d.banners],
         }));
-        toast("بنر ذخیره شد");
+        toast.success("بنر ذخیره شد");
       },
       removeBanner: (id) => {
         setDb((d) => ({ ...d, banners: d.banners.filter((x) => x.id !== id) }));
-        toast("بنر حذف شد");
+        toast.success("بنر حذف شد");
       },
       resetDb: () => {
         try {
@@ -346,7 +345,7 @@ export function AdminStore({ children }: { children: ReactNode }) {
           /* 🪶 No-op. */
         }
         setDb(seedAdminDb());
-        toast("داده‌ها بازنشانی شد", {
+        toast.success("داده‌ها بازنشانی شد", {
           description: "همه‌چیز به حالت اولیه برگشت.",
         });
       },

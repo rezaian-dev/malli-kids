@@ -8,7 +8,7 @@ export function Reviews() {
   return (
     <section
       id="testimonials"
-      className={`${wash.navy} py-12 sm:py-16 lg:py-20`}
+      className={`${wash.navy} cv-auto py-12 sm:py-16 lg:py-20`}
     >
       <div
         className={cn(

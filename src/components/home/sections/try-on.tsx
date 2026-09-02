@@ -26,7 +26,10 @@ const STEPS = [
 
 export function TryOn() {
   return (
-    <section id="tryon" className={`${wash.cream} py-12 sm:py-16 lg:py-20`}>
+    <section
+      id="tryon"
+      className={`${wash.cream} cv-auto py-12 sm:py-16 lg:py-20`}
+    >
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div
           className={cn(

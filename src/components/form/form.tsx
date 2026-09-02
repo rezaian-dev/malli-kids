@@ -8,7 +8,7 @@ import {
   type SubmitHandler,
   type UseFormReturn,
 } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { toFaDigits } from "@/lib/format";
 import { countErrors } from "@/lib/forms";
 import { cn } from "@/lib/utils";

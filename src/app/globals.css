@@ -468,6 +468,19 @@
   }
 }
 
+/* 🐢 `cv-auto` — for sections that are always below the first viewport: the
+   browser skips their style/layout/paint work entirely until they scroll
+   near-visible. `auto <length>` primes a placeholder box so the page's
+   scrollable height doesn't collapse, then remembers the real height once
+   measured. Fragment links (`#styles` etc.) and find-in-page still force a
+   real render — `auto` doesn't hide content the way `hidden` would, so this
+   never changes what's on screen or where anchors land, only when the
+   browser bothers to compute it. */
+@utility cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
 /* ─────────────────────────── 🧱 Base layer ────────────────────────────── */
 @layer base {
   /* 📜 Page scaffold */

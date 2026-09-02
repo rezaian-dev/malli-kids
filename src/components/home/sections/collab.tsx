@@ -10,7 +10,7 @@ const WAYS = [
 
 export function Collab() {
   return (
-    <section className={`${wash.cream} py-12 sm:py-16`}>
+    <section className={`${wash.cream} cv-auto py-12 sm:py-16`}>
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div
           className={cn(

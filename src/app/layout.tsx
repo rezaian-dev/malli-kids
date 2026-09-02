@@ -20,26 +20,20 @@ import {
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
-// ⚠️ `next/font` is a build-time transform — these lists have to stay
-// literal, they can't be generated from a weights array.
+// 🪶 Single variable-font files replace the old per-weight woff2 sets: one
+// download (~108KB) covers the whole 100–900 axis instead of up to six
+// ~50KB static files stacking up on pages that use several weights (the
+// homepage alone was shipping all six — ~300KB of fonts before this).
 const vazir = localFont({
-  src: [
-    { path: "../fonts/Vazirmatn-Regular.woff2", weight: "400" },
-    { path: "../fonts/Vazirmatn-Medium.woff2", weight: "500" },
-    { path: "../fonts/Vazirmatn-SemiBold.woff2", weight: "600" },
-    { path: "../fonts/Vazirmatn-Bold.woff2", weight: "700" },
-    { path: "../fonts/Vazirmatn-ExtraBold.woff2", weight: "800" },
-    { path: "../fonts/Vazirmatn-Black.woff2", weight: "900" },
-  ],
+  src: "../fonts/Vazirmatn-Variable.woff2",
+  weight: "100 900",
   variable: "--font-vazir",
   display: "swap",
 });
 
 const playfair = localFont({
-  src: [
-    { path: "../fonts/PlayfairDisplay-Regular.woff2", weight: "400" },
-    { path: "../fonts/PlayfairDisplay-Bold.woff2", weight: "700" },
-  ],
+  src: "../fonts/PlayfairDisplay-Variable.woff2",
+  weight: "400 900",
   variable: "--font-display",
   display: "swap",
 });

@@ -10,7 +10,7 @@ export function Handmade() {
     <section
       id="handmade"
       className={cn(
-        "relative overflow-hidden py-12 sm:py-16 lg:py-20",
+        "relative cv-auto overflow-hidden py-12 sm:py-16 lg:py-20",
         "bg-navy bg-[radial-gradient(rgba(255,255,255,.09)_1px,transparent_1px)] bg-size-[22px_22px]",
       )}
     >

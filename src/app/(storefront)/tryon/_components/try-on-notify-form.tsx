@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { AppForm, Field, useAppForm } from "@/components/form";
 import { notifyDefaults, notifySchema, type NotifyValues } from "@/lib/forms";
 import { FIELD_FOCUS_WITHIN } from "@/lib/field";

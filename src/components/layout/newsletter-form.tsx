@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { ArrowLeft } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { FIELD_FOCUS_WITHIN } from "@/lib/field";
 import { cn } from "@/lib/utils";
 

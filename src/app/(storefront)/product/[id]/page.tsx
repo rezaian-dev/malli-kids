@@ -133,7 +133,7 @@ export default async function ProductPage({
 
             {related.length ? (
               <section
-                className={`${pdpCard} mt-8 p-4 sm:mt-12 sm:p-7`}
+                className={`${pdpCard} cv-auto mt-8 p-4 sm:mt-12 sm:p-7`}
                 aria-labelledby="related-products-heading"
               >
                 <p className={pdpKicker}>COMPLETE THE LOOK</p>

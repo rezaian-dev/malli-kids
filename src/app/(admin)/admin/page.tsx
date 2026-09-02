@@ -4,14 +4,16 @@ import Image from "next/image";
 
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, Shirt, Truck, Users } from "lucide-react";
-import { useAdmin } from "@/components/admin";
+import {
+  AdminPageHeader,
+  AdminTable,
+  SalesChart,
+  useAdmin,
+} from "@/components/admin";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { statusTone } from "@/lib/admin/admin-data";
-import { AdminPageHeader } from "@/components/admin";
-import { SalesChart } from "@/components/admin";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AdminTable } from "@/components/admin/admin-table";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import type { AdminOrder } from "@/types";

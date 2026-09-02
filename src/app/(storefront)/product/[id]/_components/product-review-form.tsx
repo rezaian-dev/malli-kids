@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { useStore } from "@/providers/store-provider";
 import { STORAGE } from "@/lib/constants";
 import { faNow } from "@/lib/format";

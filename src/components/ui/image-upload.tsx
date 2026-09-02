@@ -5,7 +5,7 @@ import { useDropzone } from "react-dropzone";
 import imageCompression from "browser-image-compression";
 import { ImagePlus, Loader2, Trash2, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 type Props = {
   value?: string;
@@ -52,7 +52,8 @@ export function ImageUpload({
 
   const onDrop = useCallback(
     async (accepted: File[], rejected: unknown[]) => {
-      if (rejected.length) return toast("فقط فایل تصویری (JPG/PNG/WebP)");
+      if (rejected.length)
+        return toast.warning("فقط فایل تصویری (JPG/PNG/WebP)");
       const file = accepted[0];
       if (!file) return;
       setBusy(true);
@@ -61,7 +62,7 @@ export function ImageUpload({
           await compressToDataUrl(file, { maxSizeMB, maxWidthOrHeight }),
         );
       } catch {
-        toast("پردازش عکس ناموفق بود؛ دوباره تلاش کنید.");
+        toast.error("پردازش عکس ناموفق بود؛ دوباره تلاش کنید.");
       } finally {
         setBusy(false);
       }

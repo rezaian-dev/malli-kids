@@ -1,10 +1,11 @@
-export { AdminShell, AdminPageHeader } from "./admin-shell";
+export { AdminShell } from "./admin-shell";
+export { AdminPageHeader } from "./admin-page-header";
+export { AdminFilterBar } from "./admin-filter-bar";
 export {
-  AdminFilterBar,
   AdminFilterSelect,
-  AdminStatStrip,
-} from "./admin-filters";
-export type { AdminFilterOption, AdminStatItem } from "./admin-filters";
+  type AdminFilterOption,
+} from "./admin-filter-select";
+export { AdminStatStrip, type AdminStatItem } from "./admin-stat-strip";
 export { AdminTable } from "./admin-table";
 export type { AdminCol } from "./admin-table";
 export { SalesChart } from "./sales-chart";

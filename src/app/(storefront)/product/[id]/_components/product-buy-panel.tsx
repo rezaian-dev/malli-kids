@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
@@ -16,7 +14,6 @@ import {
   Star,
   Truck,
 } from "lucide-react";
-import { SliderArrow } from "@/components/ui/slider-arrow";
 import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/format";
 import { useStore } from "@/providers/store-provider";
@@ -26,12 +23,11 @@ import { useLiveProduct } from "./product-live-context";
 import { pdpCard, pdpKicker, pdpWell } from "./product-chrome";
 import { ProductReadMore } from "./product-read-more";
 import { ProductCheckoutMount } from "./product-checkout-mount";
+import { ProductGallery } from "./product-gallery";
 import { cn } from "@/lib/utils";
 
 const SIZES = ["۸۰", "۸۶", "۹۲", "۹۸", "۱۰۴", "۱۱۰", "۱۱۶", "۱۲۲"];
 
-const CORNER_MARK =
-  "border-gold/70 pointer-events-none absolute z-10 hidden h-6 w-6 min-[400px]:block sm:h-8 sm:w-8";
 const TAG_PILL = cn(
   "rounded-full border px-3 py-1 text-[11px] font-bold",
   "border-navy/10 bg-sand/80 text-navy",
@@ -51,7 +47,6 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
     useStore();
   const [size, setSize] = useState("۹۸");
   const [qty, setQty] = useState(1);
-  const [slide, setSlide] = useState(0);
   const [checkout, setCheckout] = useState(false);
 
   const unit = priceOf(product.price);
@@ -74,155 +69,14 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
     return imgs;
   }, [product.img]);
 
-  const go = (n: number) => setSlide((n + gallery.length) % gallery.length);
-
   return (
     <div className="grid min-w-0 items-start gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,.92fr)] lg:gap-8">
-      <div className="min-w-0 lg:sticky lg:top-24">
-        <div
-          className={cn(
-            "relative aspect-4/5 overflow-hidden rounded-[22px] shadow-[0_28px_60px_-32px_rgba(14,42,71,.42)] select-none sm:rounded-[36px]",
-            "border-navy/10 bg-sand/55 ring-gold/35 border ring-1",
-            "dark:border-gold/30 dark:bg-dusk",
-          )}
-          onTouchStart={(e) => {
-            e.currentTarget.dataset.x = String(e.changedTouches[0].clientX);
-          }}
-          onTouchEnd={(e) => {
-            const start = Number(e.currentTarget.dataset.x || 0);
-            const dx = e.changedTouches[0].clientX - start;
-            if (Math.abs(dx) > 40) go(slide + (dx > 0 ? -1 : 1));
-          }}
-        >
-          <span
-            className={cn(
-              CORNER_MARK,
-              "top-3 right-3 rounded-tr-lg border-t-2 border-r-2 sm:top-5 sm:right-5",
-            )}
-          />
-          <span
-            className={cn(
-              CORNER_MARK,
-              "top-3 left-3 rounded-tl-lg border-t-2 border-l-2 sm:top-5 sm:left-5",
-            )}
-          />
-          <span
-            className={cn(
-              CORNER_MARK,
-              "right-3 bottom-3 rounded-br-lg border-r-2 border-b-2 sm:right-5 sm:bottom-5",
-            )}
-          />
-          <span
-            className={cn(
-              CORNER_MARK,
-              "bottom-3 left-3 rounded-bl-lg border-b-2 border-l-2 sm:bottom-5 sm:left-5",
-            )}
-          />
-          <div
-            className="absolute inset-0 flex h-full transition-transform duration-500"
-            style={{ transform: `translateX(${-slide * 100}%)` }}
-          >
-            {gallery.map((src, index) => (
-              <Image
-                key={src}
-                src={src}
-                alt={product.name}
-                width={900}
-                height={1200}
-                priority={index === 0}
-                loading={index === 0 ? "eager" : "lazy"}
-                sizes="(max-width: 1023px) 100vw, 44vw"
-                className="h-full w-full shrink-0 object-cover"
-              />
-            ))}
-          </div>
-          <div className="pointer-events-none absolute inset-x-3 top-3 z-10 flex justify-between min-[400px]:inset-x-12 min-[400px]:top-5 sm:inset-x-14">
-            {product.disc ? (
-              <span
-                className={cn(
-                  "rounded-full px-3 py-1.5 text-[11px] font-black",
-                  "bg-rose text-white",
-                )}
-              >
-                {product.disc} تخفیف
-              </span>
-            ) : (
-              <span />
-            )}
-            {product.badge ? (
-              <span
-                className={cn(
-                  "ms-auto rounded-full px-3 py-1.5 text-[11px] font-black",
-                  product.badge === "جدید"
-                    ? "bg-gold text-navy-deep"
-                    : "bg-navy text-gold-light",
-                )}
-              >
-                {product.badge}
-              </span>
-            ) : null}
-          </div>
-          <SliderArrow
-            chevron
-            direction="prev"
-            label="قبلی"
-            onClick={() => go(slide - 1)}
-            className="absolute inset-s-3 top-1/2 z-10 -translate-y-1/2"
-          />
-          <SliderArrow
-            chevron
-            direction="next"
-            label="بعدی"
-            onClick={() => go(slide + 1)}
-            className="absolute inset-e-3 top-1/2 z-10 -translate-y-1/2"
-          />
-          <div className="absolute inset-x-0 bottom-7 z-10 flex justify-center gap-1.5">
-            {gallery.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                aria-label={`اسلاید ${i + 1}`}
-                onClick={() => go(i)}
-                className="flex h-6 min-w-6 items-center justify-center rounded-full transition-transform duration-150 motion-safe:hover:scale-125 motion-safe:active:scale-90"
-              >
-                <span
-                  className={cn(
-                    "h-2 rounded-full transition-[width,background-color] duration-300",
-                    i === slide ? "bg-gold w-6" : "w-2 bg-white/70",
-                  )}
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className={`${pdpCard} mt-3 p-2`}>
-          <div className="flex gap-2 overflow-x-auto pb-0.5">
-            {gallery.map((src, i) => (
-              <button
-                key={src}
-                type="button"
-                onClick={() => go(i)}
-                aria-label={`تصویر ${i + 1} ${product.name}`}
-                aria-current={i === slide || undefined}
-                className={cn(
-                  "size-14 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 motion-safe:hover:-translate-y-0.5 sm:size-18 sm:rounded-2xl",
-                  i === slide
-                    ? "border-gold ring-gold/30 ring-2"
-                    : "border-navy/10 dark:border-gold/20 opacity-70 hover:opacity-100",
-                )}
-              >
-                <Image
-                  src={src}
-                  alt=""
-                  width={96}
-                  height={96}
-                  className="size-full object-cover"
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      <ProductGallery
+        images={gallery}
+        name={product.name}
+        disc={product.disc}
+        badge={product.badge}
+      />
 
       <div className={`${pdpCard} p-4 sm:p-7`}>
         <p className={pdpKicker}>{product.cat}</p>

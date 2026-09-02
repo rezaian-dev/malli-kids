@@ -6,7 +6,10 @@ import { wash } from "@/components/home/section-wash";
 
 export function Stories() {
   return (
-    <section id="articles" className={`${wash.silk} py-12 sm:py-16 lg:py-20`}>
+    <section
+      id="articles"
+      className={`${wash.silk} cv-auto py-12 sm:py-16 lg:py-20`}
+    >
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>

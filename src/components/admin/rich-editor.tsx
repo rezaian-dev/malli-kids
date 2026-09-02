@@ -24,8 +24,9 @@ import {
   Undo2,
 } from "lucide-react";
 
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
+import { RichEditorTool as Tool } from "./rich-editor-tool";
 
 const DIVIDER = "bg-navy/10 dark:bg-gold/20 mx-1 h-6 w-px";
 
@@ -50,35 +51,6 @@ export async function fileToDataUrl(file: File): Promise<string> {
       reader.readAsDataURL(file);
     });
   }
-}
-
-function Tool({
-  active,
-  label,
-  onClick,
-  children,
-}: {
-  active?: boolean;
-  label: string;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      title={label}
-      aria-label={label}
-      className={cn(
-        "grid size-9 place-items-center rounded-xl border transition",
-        active
-          ? "border-gold/60 bg-gold/15 text-gold-deep dark:text-gold-soft"
-          : "border-navy/10 text-navy/70 hover:border-gold/50 dark:border-gold/20 dark:bg-navy-mid dark:text-wheat bg-white",
-      )}
-    >
-      {children}
-    </button>
-  );
 }
 
 export function RichEditor({
@@ -108,7 +80,7 @@ export function RichEditor({
       attributes: {
         dir: "rtl",
         class:
-          "min-h-[22rem] rounded-2xl border border-navy/10 bg-white px-4 py-3 outline-none focus:border-gold/60 leading-[2.1] text-[0.95rem] [&_h2]:my-[1.4rem_0.6rem] [&_h2]:text-[1.25rem] [&_h2]:font-black [&_h3]:my-[1.2rem_0.5rem] [&_h3]:text-[1.05rem] [&_h3]:font-black [&_p]:my-[0.7rem] [&_p:first-child.is-editor-empty:before]:content-[attr(data-placeholder)] [&_p:first-child.is-editor-empty:before]:float-inline-start [&_p:first-child.is-editor-empty:before]:h-0 [&_p:first-child.is-editor-empty:before]:pointer-events-none [&_p:first-child.is-editor-empty:before]:text-current [&_p:first-child.is-editor-empty:before]:opacity-[0.35] [&_ul]:my-[0.7rem] [&_ul]:list-disc [&_ul]:ps-[1.4rem] [&_ol]:my-[0.7rem] [&_ol]:list-decimal [&_ol]:ps-[1.4rem] [&_li]:my-[0.3rem] [&_blockquote]:my-4 [&_blockquote]:border-s-[3px] [&_blockquote]:border-gold [&_blockquote]:ps-[0.9rem] [&_blockquote]:opacity-80 [&_blockquote]:font-semibold [&_a]:font-extrabold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-[3px] [&_img]:my-4 [&_img]:max-w-full [&_img]:rounded-[1.25rem] [&_img]:h-auto [&_strong]:font-black dark:border-gold/25 dark:bg-navy-mid/60",
+          "min-h-88 rounded-2xl border border-navy/10 bg-white px-4 py-3 outline-none focus:border-gold/60 leading-[2.1] text-[0.95rem] [&_h2]:my-[1.4rem_0.6rem] [&_h2]:text-[1.25rem] [&_h2]:font-black [&_h3]:my-[1.2rem_0.5rem] [&_h3]:text-[1.05rem] [&_h3]:font-black [&_p]:my-[0.7rem] [&_p:first-child.is-editor-empty:before]:content-[attr(data-placeholder)] [&_p:first-child.is-editor-empty:before]:float-inline-start [&_p:first-child.is-editor-empty:before]:h-0 [&_p:first-child.is-editor-empty:before]:pointer-events-none [&_p:first-child.is-editor-empty:before]:text-current [&_p:first-child.is-editor-empty:before]:opacity-35 [&_ul]:my-[0.7rem] [&_ul]:list-disc [&_ul]:ps-[1.4rem] [&_ol]:my-[0.7rem] [&_ol]:list-decimal [&_ol]:ps-[1.4rem] [&_li]:my-[0.3rem] [&_blockquote]:my-4 [&_blockquote]:border-s-[3px] [&_blockquote]:border-gold [&_blockquote]:ps-[0.9rem] [&_blockquote]:opacity-80 [&_blockquote]:font-semibold [&_a]:font-extrabold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-[3px] [&_img]:my-4 [&_img]:max-w-full [&_img]:rounded-[1.25rem] [&_img]:h-auto [&_strong]:font-black dark:border-gold/25 dark:bg-navy-mid/60",
       },
     },
     onUpdate: ({ editor: ed }) => onChange(ed.getHTML()),
@@ -128,7 +100,7 @@ export function RichEditor({
     }
     try {
       insertImage(await fileToDataUrl(file));
-      toast("تصویر اضافه شد");
+      toast.success("تصویر اضافه شد");
     } catch {
       toast.error("آپلود ناموفق بود", {
         description: "یک فایل تصویری دیگر امتحان کنید.",

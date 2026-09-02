@@ -15,7 +15,10 @@ const TRIGGER = cn(
 
 export function Styles() {
   return (
-    <section id="styles" className={`${wash.silk} py-12 sm:py-16 lg:py-20`}>
+    <section
+      id="styles"
+      className={`${wash.silk} cv-auto py-12 sm:py-16 lg:py-20`}
+    >
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
         <Tabs defaultValue="همه" dir="rtl">
           <div className="mb-10 flex flex-col justify-between gap-5 sm:mb-12 sm:gap-6 lg:flex-row lg:items-end">

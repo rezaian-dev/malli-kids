@@ -40,7 +40,10 @@ const CARDS = [
 
 export function Atelier() {
   return (
-    <section id="atelier" className={`${wash.gold} py-12 sm:py-16 lg:py-20`}>
+    <section
+      id="atelier"
+      className={`${wash.gold} cv-auto py-12 sm:py-16 lg:py-20`}
+    >
       <span
         className={cn(
           "pointer-events-none absolute top-10 left-8 hidden -rotate-6 select-none xl:block",

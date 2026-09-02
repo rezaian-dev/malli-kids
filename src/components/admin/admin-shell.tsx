@@ -1,40 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-} from "react";
-import {
-  Activity,
-  Bell,
-  ChevronLeft,
-  LayoutGrid,
-  LogOut,
-  Menu,
-  ShieldCheck,
-  ShoppingBag,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { Menu, X } from "lucide-react";
 
 import { ModeToggle } from "@/components/shared/mode-toggle";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -43,10 +15,13 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useAdmin, type AdminIdentity } from "@/lib/admin/admin-store";
-import { ADMIN_NAV, ADMIN_NAV_GROUPS } from "@/lib/admin/nav";
-import { toFaDigits } from "@/lib/format";
-import { useTickets } from "@/lib/tickets";
+import { ADMIN_NAV } from "@/lib/admin/nav";
 import { cn } from "@/lib/utils";
+import { AdminAccountFooter } from "./admin-account-footer";
+import { AdminHeaderIdentity } from "./admin-header-identity";
+import { AdminHeaderNotifications } from "./admin-header-notifications";
+import { AdminSidebarNav, routeIsActive } from "./admin-sidebar-nav";
+import { AdminSidebarScroller } from "./admin-sidebar-scroller";
 
 const SCROLL_EDGE_TOP = cn(
   "pointer-events-none absolute inset-x-0 top-0 z-3 h-4",
@@ -63,7 +38,7 @@ const SCROLL_EDGE_BOTTOM = cn(
 const ORBIT_DOT_A =
   "bg-gold absolute inset-s-[15%] top-[12%] size-1.25 rounded-full shadow-[0_0_16px_rgba(193,147,87,0.55)]";
 const ORBIT_DOT_B =
-  "bg-gold absolute inset-e-[8%] bottom-[25%] size-0.75 rounded-full shadow-[0_0_16px_rgba(193,147,87,0.55)]";
+  "bg-gold absolute inset-e-[8%] bottom-1/4 size-0.75 rounded-full shadow-[0_0_16px_rgba(193,147,87,0.55)]";
 
 const BRAND = (
   <div className="flex min-w-0 items-center gap-3">
@@ -110,399 +85,6 @@ const FALLBACK_ADMIN_PROFILE: AdminIdentity = {
   name: "مدیر گالری",
 };
 
-function routeIsActive(path: string, href: string) {
-  return href === "/admin" ? path === "/admin" : path.startsWith(href);
-}
-
-function SidebarScroller({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const [scroll, setScroll] = useState({ top: 0, thumb: 100, visible: false });
-
-  const updateScroll = useCallback(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-    const max = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
-
-    const railHeight = Math.max(1, viewport.clientHeight - 35.2);
-    const ratio = viewport.clientHeight / Math.max(1, viewport.scrollHeight);
-    const thumb = Math.max(44, Math.min(railHeight, railHeight * ratio));
-    const progress = max > 0 ? viewport.scrollTop / max : 0;
-    const top = progress * Math.max(0, railHeight - thumb);
-    setScroll((current) => {
-      const next = { top, thumb, visible: max > 2 };
-      return Math.abs(current.top - next.top) < 0.5 &&
-        Math.abs(current.thumb - next.thumb) < 0.5 &&
-        current.visible === next.visible
-        ? current
-        : next;
-    });
-  }, []);
-
-  useEffect(() => {
-    const frame = requestAnimationFrame(updateScroll);
-    const viewport = viewportRef.current;
-    const observer =
-      typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(updateScroll)
-        : null;
-    if (viewport) observer?.observe(viewport);
-    if (viewport?.firstElementChild)
-      observer?.observe(viewport.firstElementChild);
-    window.addEventListener("resize", updateScroll);
-    return () => {
-      cancelAnimationFrame(frame);
-      observer?.disconnect();
-      window.removeEventListener("resize", updateScroll);
-    };
-  }, [updateScroll]);
-
-  return (
-    <div className="group relative h-full min-h-0">
-      <div
-        ref={viewportRef}
-        onScroll={updateScroll}
-        className={cn(
-          "h-full scrollbar-none overflow-y-auto overscroll-contain pe-2 [&::-webkit-scrollbar]:size-0",
-          className,
-        )}
-      >
-        {children}
-      </div>
-      <span
-        aria-hidden="true"
-        className={cn(
-          "pointer-events-none absolute inset-y-[1.1rem] inset-e-0.75 z-5 w-1 rounded-full transition-[opacity,transform,width] duration-220",
-          "bg-navy/[0.07] shadow-[inset_0_0_0_1px_rgba(14,42,71,0.04)]",
-          "dark:bg-gold-soft/5.5 dark:shadow-[inset_0_0_0_1px_rgba(232,197,122,0.06)]",
-          scroll.visible
-            ? "scale-y-100 opacity-[0.64] group-hover:w-1.25 group-hover:opacity-100"
-            : "scale-y-[0.88] opacity-0",
-        )}
-      >
-        <span className="bg-gold/55 absolute inset-s-1/2 -top-2 size-1 -translate-x-1/2 rounded-full shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
-        <span className="bg-gold/55 absolute inset-s-1/2 -bottom-2 size-1 -translate-x-1/2 rounded-full shadow-[0_0_7px_rgba(193,147,87,0.35)]" />
-        <span
-          className={cn(
-            "absolute inset-x-0 rounded-full transition-[top,height,filter] duration-180",
-            "from-gold-light to-gold-deep bg-linear-to-b shadow-[0_0_0_1px_rgba(255,248,236,0.24),0_0_14px_rgba(193,147,87,0.38)] group-hover:brightness-[1.12]",
-          )}
-          style={
-            {
-              "--admin-scroll-top": `${scroll.top}px`,
-              "--admin-scroll-size": `${scroll.thumb}px`,
-              top: "var(--admin-scroll-top, 0%)",
-              height: "var(--admin-scroll-size, 2.75rem)",
-            } as CSSProperties
-          }
-        />
-      </span>
-    </div>
-  );
-}
-
-function NavList({ onNavigate }: { onNavigate?: () => void }) {
-  const path = usePathname();
-  const { db } = useAdmin();
-  const tickets = useTickets();
-  const unanswered = tickets.filter(
-    (ticket) => ticket.status === "open",
-  ).length;
-  const freshOrders = db.orders.filter(
-    (order) => order.status === "جدید",
-  ).length;
-
-  return (
-    <nav className="flex flex-col gap-2 px-3 pb-4" aria-label="منوی مدیریت">
-      {ADMIN_NAV_GROUPS.map((group) => {
-        const items = ADMIN_NAV.filter((item) => item.group === group.id);
-        return (
-          <section key={group.id} aria-labelledby={`admin-nav-${group.id}`}>
-            <div className="mb-1 flex items-center gap-2 px-3 pt-2">
-              <p
-                id={`admin-nav-${group.id}`}
-                className="text-navy/45 dark:text-wheat/58 text-[9px] font-black"
-              >
-                {group.label}
-              </p>
-              <span
-                className={cn(
-                  "h-px flex-1",
-                  "from-navy/10 bg-linear-to-l to-transparent",
-                  "dark:from-gold/14",
-                )}
-                aria-hidden="true"
-              />
-            </div>
-            <div className="space-y-1">
-              {items.map((item) => {
-                const active = routeIsActive(path, item.href);
-                const badge =
-                  item.href === "/admin/orders"
-                    ? freshOrders
-                    : item.href === "/admin/messages"
-                      ? unanswered
-                      : 0;
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={onNavigate}
-                    aria-current={active ? "page" : undefined}
-                    className={cn(
-                      "group relative flex items-center gap-3 overflow-hidden rounded-2xl px-2.5 py-2 transition-all duration-300",
-                      active
-                        ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep shadow-[0_14px_30px_-18px_rgba(4,20,39,.85)]"
-                        : "text-navy/68 hover:bg-navy/5 hover:text-navy dark:text-ivory/68 dark:hover:text-ivory dark:hover:bg-white/6",
-                    )}
-                  >
-                    {}
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        "pointer-events-none absolute inset-0 translate-x-[105%] transition-transform duration-520 ease-[cubic-bezier(.25,.1,.25,1)] group-hover:translate-x-[-105%] motion-reduce:hidden",
-                        "bg-[linear-gradient(105deg,transparent_30%,rgba(255,255,255,.1),transparent_70%)]",
-                      )}
-                    />
-                    {active ? (
-                      <span
-                        className={cn(
-                          "absolute inset-y-2 inset-s-0 w-0.5 rounded-full",
-                          "bg-gold",
-                          "dark:bg-navy-deep/45",
-                        )}
-                      />
-                    ) : null}
-                    <span
-                      className={cn(
-                        "grid size-9 shrink-0 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-105",
-                        active
-                          ? "bg-gold text-navy-deep dark:bg-navy-deep dark:text-gold"
-                          : "bg-navy/6 text-navy/55 dark:text-gold-soft dark:bg-white/6",
-                      )}
-                    >
-                      <item.Icon className="size-4" />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-[12px] font-black">
-                        {item.label}
-                      </span>
-                      <span
-                        className={cn(
-                          "block truncate text-[9px] font-bold",
-                          active
-                            ? "text-ivory/55 dark:text-navy/55"
-                            : "text-navy/36 dark:text-ivory/34",
-                        )}
-                      >
-                        {item.hint}
-                      </span>
-                    </span>
-                    <span className="grid size-7 shrink-0 place-items-center">
-                      {badge > 0 ? (
-                        <span
-                          className={cn(
-                            "grid min-w-5 place-items-center rounded-lg px-1.5 py-1 text-[9px] leading-none font-black",
-                            "bg-rose text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]",
-                          )}
-                        >
-                          {toFaDigits(badge)}
-                        </span>
-                      ) : active ? (
-                        <ChevronLeft className="size-3.5 opacity-45" />
-                      ) : (
-                        <span className="size-3.5" aria-hidden />
-                      )}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-        );
-      })}
-    </nav>
-  );
-}
-
-function AccountFooter({ onLogout }: { onLogout: () => void }) {
-  return (
-    <div className="border-navy/8 dark:border-gold/14 border-t p-3">
-      <button
-        type="button"
-        onClick={onLogout}
-        className={cn(
-          "flex min-h-10 w-full items-center justify-center gap-2 rounded-xl px-3 text-[11px] font-black transition",
-          "text-rose hover:bg-rose/9 focus-visible:bg-rose/9",
-        )}
-      >
-        <LogOut className="size-4" /> خروج از پنل
-      </button>
-    </div>
-  );
-}
-
-const SidebarFooter = AccountFooter;
-
-function HeaderNotifications() {
-  const { db } = useAdmin();
-  const tickets = useTickets();
-  const notices = [
-    {
-      label: "سفارش جدید",
-      hint: "نیازمند شروع پردازش",
-      count: db.orders.filter((order) => order.status === "جدید").length,
-      href: "/admin/orders",
-      Icon: ShoppingBag,
-    },
-    {
-      label: "تیکت باز",
-      hint: "در انتظار پاسخ پشتیبانی",
-      count: tickets.filter((ticket) => ticket.status === "open").length,
-      href: "/admin/messages",
-      Icon: Bell,
-    },
-    {
-      label: "نظر پنهان",
-      hint: "نیازمند بررسی محتوا",
-      count: db.reviews.filter((review) => !review.visible).length,
-      href: "/admin/reviews",
-      Icon: Sparkles,
-    },
-  ];
-  const total = notices.reduce((sum, notice) => sum + notice.count, 0);
-
-  return (
-    <DropdownMenu dir="rtl">
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className={cn(
-            "relative hidden size-10 shrink-0 place-items-center rounded-xl border transition md:grid",
-            "border-navy/8 text-navy/65 hover:border-gold/35 hover:text-gold bg-white/60",
-            "dark:border-gold/14 dark:text-wheat/70 dark:bg-white/[0.035]",
-          )}
-          aria-label={`${toFaDigits(total)} اعلان مدیریتی`}
-        >
-          <Bell className="size-4" />
-          {total > 0 ? (
-            <span
-              className={cn(
-                "absolute -inset-e-1 -top-1 grid min-w-4 place-items-center rounded-full px-1 text-[8px] leading-4 font-black",
-                "bg-rose text-white shadow-[0_0_0_3px_rgba(225,29,72,.1)]",
-              )}
-            >
-              {toFaDigits(total)}
-            </span>
-          ) : null}
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        sideOffset={10}
-        className={cn(
-          "w-[min(20rem,calc(100vw-1.5rem))] rounded-2xl p-2 shadow-[0_24px_70px_-26px_rgba(4,20,39,.72)]",
-          "border-navy/9 bg-fog/98",
-          "dark:border-gold/18 dark:bg-navy-deep/98",
-        )}
-      >
-        <DropdownMenuLabel className="flex items-center justify-between px-2.5 py-2">
-          <span className="text-navy dark:text-ivory text-xs font-black">
-            مرکز پیگیری
-          </span>
-          <span className="bg-rose/9 text-rose rounded-lg px-2 py-1 text-[9px] font-black">
-            {toFaDigits(total)} مورد
-          </span>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-navy/7 dark:bg-gold/12" />
-        {notices.map((notice) => (
-          <DropdownMenuItem
-            key={notice.href}
-            asChild
-            className="focus:bg-gold/8 rounded-xl p-0 dark:focus:bg-white/5"
-          >
-            <Link
-              href={notice.href}
-              className="flex w-full items-center gap-3 px-2.5 py-2.5 outline-none"
-            >
-              <span
-                className={cn(
-                  "grid size-9 shrink-0 place-items-center rounded-xl",
-                  "bg-navy/6 text-gold",
-                  "dark:bg-white/6",
-                )}
-              >
-                <notice.Icon className="size-4" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="text-navy dark:text-ivory block text-[11px] font-black">
-                  {notice.label}
-                </span>
-                <span
-                  className={cn(
-                    "mt-0.5 block truncate text-[9px] font-bold",
-                    "text-navy/38",
-                    "dark:text-wheat/48",
-                  )}
-                >
-                  {notice.hint}
-                </span>
-              </span>
-              <span
-                className={cn(
-                  "grid size-7 shrink-0 place-items-center rounded-lg text-[10px] font-black",
-                  "bg-navy text-gold",
-                  "dark:bg-gold dark:text-navy-deep",
-                )}
-              >
-                {toFaDigits(notice.count)}
-              </span>
-            </Link>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-function HeaderIdentity({ profile }: { profile: AdminIdentity }) {
-  const letter = profile.name.trim().charAt(0) || "م";
-  return (
-    <div
-      className={cn(
-        "flex h-10 min-w-0 items-center gap-2 rounded-xl border px-2.5 sm:px-3",
-        "border-navy/8 bg-white/62 shadow-[0_10px_24px_-22px_rgba(14,42,71,0.55)]",
-        "dark:border-gold/15 dark:bg-white/4 dark:shadow-[0_12px_28px_-22px_rgba(0,0,0,0.85)]",
-      )}
-      aria-label={`ادمین واردشده: ${profile.name}`}
-    >
-      <Avatar size="sm" className="ring-gold/25 shrink-0 ring-1">
-        {profile.avatar ? (
-          <AvatarImage src={profile.avatar} alt={`تصویر ${profile.name}`} />
-        ) : null}
-        <AvatarFallback className="bg-navy text-gold-soft text-[10px] font-black">
-          {letter}
-        </AvatarFallback>
-      </Avatar>
-      <span
-        className={cn(
-          "max-w-22 truncate text-[10px] font-black sm:max-w-40 sm:text-[11px]",
-          "text-navy",
-          "dark:text-ivory",
-        )}
-      >
-        {profile.name}
-      </span>
-    </div>
-  );
-}
-
 export function AdminShell({ children }: { children: ReactNode }) {
   const path = usePathname();
   const admin = useAdmin();
@@ -527,9 +109,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <span
         aria-hidden="true"
         className={cn(
-          "pointer-events-none fixed inset-0 z-0 mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-[0.22]",
-          "max-[639px]:bg-size-[20rem] max-[639px]:opacity-[0.14]",
-          "dark:opacity-[0.52] dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]",
+          "pointer-events-none fixed inset-0 z-0 mask-[linear-gradient(to_bottom_left,#000,transparent_64%)] bg-size-[min(44vw,38rem)] bg-position-[calc(100%+45px)_-45px] bg-no-repeat opacity-22",
+          "max-[639px]:bg-size-[20rem] max-[639px]:opacity-14",
+          "dark:opacity-52 dark:filter-[drop-shadow(0_0_22px_rgba(193,147,87,0.08))]",
         )}
         style={{
           backgroundImage:
@@ -551,7 +133,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </span>
         <span
           className={cn(
-            "animate-admin-orbit absolute -inset-s-40 -bottom-36 block aspect-square w-[min(32vw,24rem)] rounded-full border [animation-direction:reverse] motion-reduce:animate-none max-[639px]:hidden",
+            "animate-admin-orbit absolute -inset-s-40 -bottom-36 block aspect-square w-[min(32vw,24rem)] rounded-full border direction-[reverse] motion-reduce:animate-none max-[639px]:hidden",
             "border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)]",
           )}
         >
@@ -573,12 +155,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <div className="relative min-h-0 flex-1 overflow-hidden">
           <span aria-hidden="true" className={SCROLL_EDGE_TOP} />
           <span aria-hidden="true" className={SCROLL_EDGE_BOTTOM} />
-          <SidebarScroller className="pb-2">
-            <NavList />
-          </SidebarScroller>
+          <AdminSidebarScroller className="pb-2">
+            <AdminSidebarNav />
+          </AdminSidebarScroller>
         </div>
         <div className="relative">
-          <SidebarFooter onLogout={logout} />
+          <AdminAccountFooter onLogout={logout} />
         </div>
       </aside>
 
@@ -613,11 +195,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <div className="relative min-h-0 flex-1 overflow-hidden">
             <span aria-hidden="true" className={SCROLL_EDGE_TOP} />
             <span aria-hidden="true" className={SCROLL_EDGE_BOTTOM} />
-            <SidebarScroller className="pt-3 pb-2">
-              <NavList onNavigate={() => setOpen(false)} />
-            </SidebarScroller>
+            <AdminSidebarScroller className="pt-3 pb-2">
+              <AdminSidebarNav onNavigate={() => setOpen(false)} />
+            </AdminSidebarScroller>
           </div>
-          <SidebarFooter
+          <AdminAccountFooter
             onLogout={() => {
               setOpen(false);
               logout();
@@ -629,7 +211,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <div className="relative z-10 min-w-0 lg:ps-69">
         <header
           className={cn(
-            "relative sticky top-0 z-30 border-b backdrop-blur-2xl",
+            "sticky top-0 z-30 border-b backdrop-blur-2xl",
             "border-navy/7 bg-fog/76 shadow-[0_18px_55px_-40px_rgba(4,20,39,0.62)]",
             "dark:border-gold/14 dark:bg-navy-deep/64 dark:shadow-[0_20px_60px_-38px_rgba(0,0,0,0.82)]",
           )}
@@ -642,7 +224,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               "bg-[linear-gradient(to_left,transparent,rgba(193,147,87,0.58)_28%,rgba(193,147,87,0.12)_72%,transparent)]",
             )}
           />
-          <div className="mx-auto flex h-18 max-w-[100rem] items-center gap-2 px-3 sm:gap-2.5 sm:px-5 lg:px-8">
+          <div className="mx-auto flex h-18 max-w-400 items-center gap-2 px-3 sm:gap-2.5 sm:px-5 lg:px-8">
             <Button
               type="button"
               variant="gold"
@@ -690,7 +272,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </div>
 
             <div className="ms-auto flex min-w-0 items-center gap-1.5 sm:gap-2">
-              <HeaderNotifications />
+              <AdminHeaderNotifications />
               <ModeToggle
                 className={cn(
                   "size-10 shrink-0 rounded-xl border shadow-sm",
@@ -698,78 +280,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
                   "dark:border-gold/16 dark:text-gold-soft dark:bg-white/4",
                 )}
               />
-              <HeaderIdentity profile={profile} />
+              <AdminHeaderIdentity profile={profile} />
             </div>
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[100rem] px-3 py-5 sm:px-5 sm:py-7 lg:px-8 lg:py-8">
+        <main className="mx-auto w-full max-w-400 px-3 py-5 sm:px-5 sm:py-7 lg:px-8 lg:py-8">
           {children}
         </main>
       </div>
     </div>
-  );
-}
-
-export function AdminPageHeader({
-  kicker,
-  title,
-  description,
-  action,
-}: {
-  kicker: string;
-  title: string;
-  description?: string;
-  action?: ReactNode;
-}) {
-  return (
-    <header className="admin-page-head border-navy/9 dark:border-gold-soft/17 relative mb-6 overflow-hidden rounded-[26px] border bg-[linear-gradient(115deg,rgba(193,147,87,0.075),transparent_38%),rgba(255,254,251,0.78)] shadow-[0_24px_58px_-42px_rgba(14,42,71,0.5),inset_0_1px_0_rgba(255,255,255,0.84)] backdrop-blur-[20px] sm:mb-7 dark:bg-[linear-gradient(115deg,rgba(193,147,87,0.09),transparent_42%),rgba(10,31,53,0.72)] dark:shadow-[0_28px_70px_-44px_rgba(0,0,0,0.92),inset_0_1px_0_rgba(255,255,255,0.045),0_0_40px_rgba(193,147,87,0.025)]">
-      <span
-        className="bg-gold/13 dark:bg-gold/10.5 pointer-events-none absolute -inset-e-16 -top-36 size-60 rounded-full blur-[44px]"
-        aria-hidden="true"
-      />
-      <div className="relative flex flex-col justify-between gap-5 px-4 pt-4 pb-5 sm:flex-row sm:items-end sm:px-6 sm:pt-5 sm:pb-6">
-        <div className="min-w-0">
-          <div className="text-navy/38 dark:text-wheat/50 mb-3 flex min-w-0 items-center gap-1.5 text-[9px] font-black">
-            <LayoutGrid className="text-gold size-3" />
-            <span>کنسول مدیریت</span>
-            <ChevronLeft className="size-3 opacity-45" />
-            <span className="text-navy/58 dark:text-ivory/66 truncate">
-              {title}
-            </span>
-          </div>
-          <div className="relative min-w-0 ps-4">
-            <span className="from-gold-light via-gold to-gold-deep absolute inset-y-1 inset-s-0 w-1 rounded-full bg-linear-to-b shadow-[0_0_18px_rgba(193,147,87,.28)]" />
-            <p className="text-gold text-[9px] font-black tracking-[0.24em]">
-              {kicker}
-            </p>
-            {}
-            <h1 className="text-navy dark:text-ivory mt-1 text-[clamp(1.6rem,3vw,2.35rem)] leading-tight font-black">
-              {title}
-            </h1>
-            {description ? (
-              <p className="text-navy/50 dark:text-wheat/68 mt-2 max-w-2xl text-[11px] leading-6 font-bold sm:text-xs">
-                {description}
-              </p>
-            ) : null}
-          </div>
-        </div>
-        {action ? (
-          <div className="flex w-full shrink-0 *:w-full sm:w-auto sm:*:w-auto">
-            {action}
-          </div>
-        ) : null}
-      </div>
-      <div className="border-navy/7 bg-navy/[0.018] text-navy/42 dark:border-gold/12 dark:text-wheat/52 relative flex flex-wrap items-center justify-between gap-2 border-t px-4 py-2.5 text-[9px] font-bold sm:px-6 dark:bg-white/[0.018]">
-        <span className="flex items-center gap-1.5">
-          <Activity className="size-3.5 text-emerald-600 dark:text-emerald-300" />
-          <span className="size-1.5 rounded-full bg-emerald-500" /> وضعیت
-          داده‌ها: به‌روز
-        </span>
-        <span className="hidden items-center gap-1.5 sm:flex">
-          <ShieldCheck className="text-gold size-3.5" /> سطح دسترسی: مدیریت
-        </span>
-      </div>
-    </header>
   );
 }
