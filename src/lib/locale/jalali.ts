@@ -20,24 +20,29 @@ export function jalaliParts(
   return { y, m, d };
 }
 
-function jalaliToday(): { y: number; m: number; d: number } {
+/** 📆 Convert a Gregorian `Date` (default: right now) to its Jalali calendar
+ *  parts, via `Intl`'s built-in Persian calendar — the one place this app
+ *  does a Gregorian→Jalali conversion; never hand-roll the arithmetic
+ *  elsewhere (`@/lib/admin/sales`, `@/lib/festive/occasions` both build on
+ *  this instead of keeping their own copies). */
+export function toJalali(d: Date = new Date()): { jy: number; jm: number; jd: number } {
   try {
     const parts = new Intl.DateTimeFormat("en-u-ca-persian", {
       numberingSystem: "latn",
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
-    }).formatToParts(new Date());
+    }).formatToParts(d);
     const pick = (type: string) =>
       Number(parts.find((part) => part.type === type)?.value ?? 0);
 
     return {
-      y: pick("year"),
-      m: pick("month"),
-      d: pick("day"),
+      jy: pick("year"),
+      jm: pick("month"),
+      jd: pick("day"),
     };
   } catch {
-    return { y: 1404, m: 1, d: 1 };
+    return { jy: 1404, jm: 1, jd: 1 };
   }
 }
 
@@ -45,8 +50,8 @@ export function isJalaliFuture(input: string): boolean {
   const value = jalaliParts(input);
   if (!value) return false;
 
-  const today = jalaliToday();
-  const current = today.y * 10000 + today.m * 100 + today.d;
+  const today = toJalali();
+  const current = today.jy * 10000 + today.jm * 100 + today.jd;
   const target = value.y * 10000 + value.m * 100 + value.d;
 
   return target > current;
@@ -60,8 +65,8 @@ export function isJalaliPast(input: string): boolean {
   const value = jalaliParts(input);
   if (!value) return true;
 
-  const today = jalaliToday();
-  const current = today.y * 10000 + today.m * 100 + today.d;
+  const today = toJalali();
+  const current = today.jy * 10000 + today.jm * 100 + today.jd;
   const target = value.y * 10000 + value.m * 100 + value.d;
 
   return target < current;

@@ -1,5 +1,6 @@
 import type { AdminOrder } from "@/types";
-import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
+import { toFaDigits } from "@/lib/locale/fa";
+import { jalaliParts } from "@/lib/locale/jalali";
 
 const FA_MONTHS = [
   "فروردین",
@@ -18,16 +19,14 @@ const FA_MONTHS = [
 
 type Parsed = { y: number; m: number; d: number; key: string };
 
+// 🗓️ Reuses the app's one Jalali-string parser/validator (`@/lib/locale/jalali`)
+// instead of re-parsing "YYYY/MM/DD" here — only the grouping `key` is local.
 function parseJalali(date: string): Parsed | null {
-  const parts = date.split("/");
-  if (parts.length !== 3) return null;
-  const [y, m, d] = parts.map((s) => Number(toEnDigits(s)));
-  if ([y, m, d].some((n) => Number.isNaN(n)) || m < 1 || m > 12) return null;
+  const parts = jalaliParts(date);
+  if (!parts) return null;
   return {
-    y,
-    m,
-    d,
-    key: `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`,
+    ...parts,
+    key: `${parts.y}-${String(parts.m).padStart(2, "0")}-${String(parts.d).padStart(2, "0")}`,
   };
 }
 

@@ -1,7 +1,46 @@
 import { Intro } from "@/components/shared/intro";
 import { ProductCatalog } from "@/components/product";
-import { KITS } from "@/lib/data/pages";
 import { buildMetadata } from "@/lib/seo";
+
+// 📦 Used only on this page — no other route reads this catalog.
+const KITS = [
+  {
+    tag: "تک‌نسخه",
+    t: "کیت پیراهن بابونه",
+    d: "الگو + پارچه + نخ طلایی + دکمه صدف.",
+    p: "۱٬۴۹۰٬۰۰۰ تومان",
+  },
+  {
+    tag: "محبوب",
+    t: "کیت سیسمونی سه‌تکه",
+    d: "سرهمی، کلاه، دستکش؛ پنبه ارگانیک.",
+    p: "۱٬۲۸۰٬۰۰۰ تومان",
+  },
+  {
+    tag: "مجلسی",
+    t: "کیت پیراهن جشن",
+    d: "ساتن، تور، زیپ مخفی و نوار اریب.",
+    p: "۱٬۷۶۰٬۰۰۰ تومان",
+  },
+  {
+    tag: "کلاسیک",
+    t: "کیت پیراهن پسرانه",
+    d: "کتان راه‌راه، دکمه چوبی، الگو.",
+    p: "۹۹۰٬۰۰۰ تومان",
+  },
+  {
+    tag: "فصلی",
+    t: "کیت پالتوی پاییز",
+    d: "پشم سبک، آستر، دکمه شاخی.",
+    p: "۲٬۱۰۰٬۰۰۰ تومان",
+  },
+  {
+    tag: "بافتنی",
+    t: "کیت ژاکت بافت",
+    d: "نخ مرینوس و میل شماره پیشنهادی.",
+    p: "۸۷۰٬۰۰۰ تومان",
+  },
+];
 
 export const dynamic = "force-static";
 

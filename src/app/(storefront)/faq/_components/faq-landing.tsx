@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Faq } from "./faq";
 import { Intro } from "@/components/shared/intro";
 import { JsonLd } from "@/components/shared/json-ld";
-import { FAQ } from "@/lib/data/pages";
+import { FAQ } from "../_lib/content";
 import { faqSchema } from "@/lib/seo";
 
 export function FaqLanding() {

@@ -1,6 +1,6 @@
 import { AboutLanding } from "./_components/about-landing";
 import { Intro } from "@/components/shared/intro";
-import { ABOUT } from "@/lib/data/pages";
+import { ABOUT } from "./_lib/content";
 import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-static";

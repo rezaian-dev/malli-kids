@@ -9,7 +9,7 @@ import {
   Scissors,
   Sparkles,
 } from "lucide-react";
-import { ABOUT } from "@/lib/data/pages";
+import { ABOUT } from "../../_lib/content";
 
 const ROLE_ICONS = [PenTool, Scissors, Boxes, BadgeCheck, Camera, Headset];
 

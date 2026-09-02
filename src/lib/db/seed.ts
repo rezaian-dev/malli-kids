@@ -5,7 +5,6 @@ import { ArticleModel } from "./models/article";
 import { FestiveBannerModel } from "./models/festive-banner";
 import { CouponModel } from "./models/coupon";
 import { CORE_PRODUCTS } from "@/lib/data/products";
-import { ARTICLES } from "@/lib/data/pages";
 import { seedBanners } from "@/lib/festive/occasions";
 
 // 🌱 One-time content seed: the catalog copy, magazine articles and occasion
@@ -19,6 +18,33 @@ import { seedBanners } from "@/lib/festive/occasions";
 // NOWRUZ20"…) are seeded as real coupons too — otherwise the site would be
 // advertising codes that don't work, which is a correctness bug, not fake
 // data.
+// 📰 Magazine seed content — only ever read here, so it's inlined rather
+// than living in a shared `lib/data` file (see `SEED_COUPONS` below for
+// the same reasoning).
+const ARTICLES = [
+  {
+    slug: "size",
+    tag: "اندازه",
+    title: "راهنمای سایز بدون اشتباه",
+    excerpt: "قد بدون کفش، دور سینه و انتخاب بین دو سایز.",
+    body: "این راهنما را کنار جدول سایز و صفحه محصول بخوانید تا سفارش اول برنگردد. اگر بین دو سایز هستید معمولاً سایز بزرگ‌تر راحت‌تر است؛ به‌خصوص برای پالتو و لباس رویی.",
+  },
+  {
+    slug: "fabric",
+    tag: "مراقبت",
+    title: "پارچه مناسب پوست حساس",
+    excerpt: "پنبه ارگانیک، شست‌وشوی ۳۰ درجه و اتوی ملایم.",
+    body: "پنبه ارگانیک، شست‌وشوی ۳۰ درجه و اتوی ملایم. این راهنما را کنار جدول سایز و صفحه محصول بخوانید تا سفارش اول برنگردد.",
+  },
+  {
+    slug: "party",
+    tag: "استایل",
+    title: "استایل جشن تولد دخترانه",
+    excerpt: "پیراهن، تل، کفش و جوراب را چطور هماهنگ کنید.",
+    body: "پیراهن، تل، کفش و جوراب را چطور هماهنگ کنید. برای دیدن مدل‌ها به فروشگاه بروید یا از پرو مجازی سایز پیشنهادی بگیرید.",
+  },
+];
+
 const SEED_COUPONS = [
   { code: "NOWRUZ20", title: "تخفیف نوروز", rate: 0.2 },
   { code: "SUMMER15", title: "تخفیف تابستانه", rate: 0.15 },

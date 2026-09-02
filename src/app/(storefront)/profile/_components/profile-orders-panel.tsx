@@ -6,7 +6,7 @@ import { Heart, ShoppingBag, Truck, Wallet } from "lucide-react";
 import type { AdminOrder, OrderStatus } from "@/types";
 import { useAuth } from "@/providers/auth-provider";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
-import { useFavorites } from "@/lib/favorites";
+import { useFavorites } from "@/hooks/use-favorites";
 import { ORDER_FLOW, stageIndex } from "@/lib/shop/order-status";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

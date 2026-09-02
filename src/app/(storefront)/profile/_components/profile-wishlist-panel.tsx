@@ -6,7 +6,7 @@ import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product";
 import { PRODUCT_GRID } from "@/components/product/card-styles";
-import { useFavorites } from "@/lib/favorites";
+import { useFavorites } from "@/hooks/use-favorites";
 import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";

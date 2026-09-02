@@ -2,7 +2,7 @@
 
 import { Heart } from "lucide-react";
 import { motion } from "motion/react";
-import { useFavorites } from "@/lib/favorites";
+import { useFavorites } from "@/hooks/use-favorites";
 import { cn } from "@/lib/utils";
 
 export function FavButton({

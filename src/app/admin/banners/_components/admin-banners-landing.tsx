@@ -10,7 +10,8 @@ import {
   AdminPageHeader,
 } from "@/components/admin";
 import { Pagination } from "@/components/ui/pagination";
-import { pickBanner, toJalali } from "@/lib/festive/occasions";
+import { pickBanner } from "@/lib/festive/occasions";
+import { toJalali } from "@/lib/locale/jalali";
 import { usePagination } from "@/hooks/use-pagination";
 import { usePolling } from "@/hooks/use-polling";
 import { notifyAdminMutation } from "@/lib/admin/live";

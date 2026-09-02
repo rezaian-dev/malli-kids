@@ -1,4 +1,4 @@
-import { FAQ } from "@/lib/data/pages";
+import { FAQ } from "../_lib/content";
 import { toFaDigits } from "@/lib/locale/fa";
 import {
   Accordion,

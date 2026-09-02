@@ -1,5 +1,5 @@
 import { Heart, Sparkles } from "lucide-react";
-import { ABOUT } from "@/lib/data/pages";
+import { ABOUT } from "../../_lib/content";
 
 export function ClosingQuote() {
   const { studio } = ABOUT;
