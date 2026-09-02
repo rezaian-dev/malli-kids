@@ -1,5 +1,3 @@
-"use client";
-
 import { ClickProgress } from "./click-progress";
 import { BackToTop } from "./back-to-top";
 import { AuthModalMount } from "@/components/auth";

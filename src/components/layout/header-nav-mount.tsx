@@ -1,5 +1,3 @@
-"use client";
-
 import { DesktopNav } from "./desktop-nav";
 
 // 🧭 Keep the desktop nav stable after hydration. ✨
