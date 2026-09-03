@@ -10,12 +10,13 @@ import {
 } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
 import {
-  markAllRead,
-  markRead,
-  useNotices,
-  type NoticeKind,
-} from "@/lib/notifications";
+  getMyNotificationsAction,
+  markAllNotificationsReadAction,
+  markNotificationReadAction,
+} from "@/lib/shop/notifications-actions";
+import type { Notice, NotificationKind } from "@/lib/shop/notifications";
 import { toFaDigits } from "@/lib/locale/fa";
+import { usePolling } from "@/hooks/use-polling";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,23 +27,45 @@ import {
 import { cn } from "@/lib/utils";
 import { ICON_BTN } from "./header-styles";
 
-const KIND_ICON: Record<NoticeKind, typeof Bell> = {
+const KIND_ICON: Record<NotificationKind, typeof Bell> = {
   ticket: Headphones,
   order: PackageCheck,
   system: Sparkles,
 };
 
+const POLL_MS = 8_000;
+
 export function NoticesBell() {
   const { user } = useStore();
-  const owner = user?.email || user?.phone || "";
-  const notices = useNotices(owner);
+  const [notices, setNotices] = usePolling<Notice[]>(
+    getMyNotificationsAction,
+    POLL_MS,
+    [],
+    Boolean(user),
+  );
 
   if (!user) return null;
 
   const unread = notices.filter((n) => !n.read).length;
 
+  function markRead(id: string) {
+    setNotices((list) => list.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    markNotificationReadAction(id);
+  }
+
+  function markAllRead() {
+    setNotices((list) => list.map((n) => ({ ...n, read: true })));
+    markAllNotificationsReadAction();
+  }
+
   return (
-    <DropdownMenu dir="rtl" modal={false}>
+    <DropdownMenu
+      dir="rtl"
+      modal={false}
+      onOpenChange={(open) => {
+        if (open) getMyNotificationsAction().then(setNotices);
+      }}
+    >
       <DropdownMenuTrigger asChild>
         <Button
           size="icon"
@@ -99,7 +122,7 @@ export function NoticesBell() {
                 "h-8 px-3",
                 "text-gold-soft hover:text-gold rounded-full text-[10px] font-black hover:bg-white/10",
               )}
-              onClick={() => markAllRead(owner)}
+              onClick={markAllRead}
             >
               <CheckCheck className="size-3.5" /> خواندنِ همه
             </Button>

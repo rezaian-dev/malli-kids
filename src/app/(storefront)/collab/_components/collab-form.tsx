@@ -9,7 +9,8 @@ import {
   useAppForm,
 } from "@/components/form";
 import { Button } from "@/components/ui/button";
-import { COLLAB_KINDS, submitCollab } from "@/lib/collab";
+import { COLLAB_KINDS } from "@/lib/constants";
+import { submitCollabAction } from "../_lib/actions";
 import {
   collabDefaults,
   collabSchema,
@@ -22,13 +23,12 @@ export function CollabForm() {
     defaultValues: collabDefaults,
   });
 
-  function onValid(v: CollabValues) {
-    submitCollab({
-      name: v.name.trim(),
-      phone: v.phone.trim(),
-      kind: v.kind,
-      text: v.text.trim(),
-    });
+  async function onValid(v: CollabValues) {
+    const result = await submitCollabAction(v);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
     toast.success("درخواست همکاری ثبت شد؛ تیم ما با شما تماس می‌گیرد 🤝");
     form.reset(collabDefaults);
   }

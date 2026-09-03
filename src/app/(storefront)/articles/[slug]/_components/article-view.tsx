@@ -1,9 +1,7 @@
-"use client";
-
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { findPublishedArticle, type JournalArticle } from "@/lib/articles";
+import type { JournalArticle } from "@/lib/articles";
 import { cn } from "@/lib/utils";
 
 const CRUMB_LINK = "hover:text-gold inline-block py-1.5";
@@ -23,7 +21,6 @@ const BODY_HTML = cn(
 );
 
 export function ArticleView({
-  slug,
   initial,
   missing,
   actions,
@@ -33,15 +30,7 @@ export function ArticleView({
   missing: ReactNode;
   actions: ReactNode;
 }) {
-  const [article, setArticle] = useState<JournalArticle | null>(initial);
-  const [ready, setReady] = useState(initial !== null);
-
-  useEffect(() => {
-    setArticle(findPublishedArticle(slug) ?? null);
-    setReady(true);
-  }, [slug]);
-
-  if (!ready) return <div className="min-h-[40vh]" />;
+  const article = initial;
   if (!article) return <>{missing}</>;
 
   const isHtml = article.body.trimStart().startsWith("<");

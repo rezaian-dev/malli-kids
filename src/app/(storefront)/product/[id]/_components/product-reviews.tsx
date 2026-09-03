@@ -1,57 +1,53 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { loadReviews } from "@/lib/admin/sync";
+import { getProductReviewsAction } from "../_lib/actions";
 import type { AdminReview, Product } from "@/types";
 import { useLiveProduct } from "./product-live-context";
 import { ReviewSummary } from "./review-summary";
 import { FeaturedReview } from "./featured-review";
 import { BuyerReviewCard } from "./buyer-review-card";
-
-function featuredFor(product: Product): AdminReview {
-  return {
-    id: `atelier-featured-${product.id}`,
-    product: product.name,
-    author: "سارا محمدی",
-    rate: 5,
-    text: "پارچه نرم و دوخت تمیز بود؛ سایز راهنما دقیقاً همانی شد که پرو مجازی گفته بود. برای مهمانی عالی است.",
-    date: "۲۸ مرداد ۱۴۰۵",
-    visible: true,
-  };
-}
+import { cn } from "@/lib/utils";
 
 export function ProductReviews({ product: seed }: { product: Product }) {
   const product = useLiveProduct(seed);
-  const [live, setLive] = useState<AdminReview[]>([]);
+  const [reviews, setReviews] = useState<AdminReview[]>([]);
 
   useEffect(() => {
-    setLive(loadReviews(true).filter((r) => r.product === product.name));
+    let active = true;
+    getProductReviewsAction(product.name).then((list) => {
+      if (active) setReviews(list);
+    });
+    return () => {
+      active = false;
+    };
   }, [product.name]);
 
-  const featured = featuredFor(product);
-  const others = live.filter(
-    (r) => r.author !== featured.author && r.id !== featured.id,
-  );
-  const avg = product.rate || 4.9;
-  const recommend = Math.min(
-    99,
-    others.length
-      ? Math.round(
-          ((others.filter((r) => r.rate >= 4).length + 1) /
-            (others.length + 1)) *
-            100,
-        )
-      : Math.round((avg / 5) * 98),
-  );
-  const count = Math.max(1, others.length + 1);
+  const [featured, ...others] = reviews;
+  const avg = reviews.length
+    ? reviews.reduce((sum, r) => sum + r.rate, 0) / reviews.length
+    : product.rate;
+  const recommend = reviews.length
+    ? Math.round((reviews.filter((r) => r.rate >= 4).length / reviews.length) * 100)
+    : 0;
 
   return (
     <div className="min-w-0 space-y-4">
-      <ReviewSummary avg={avg} count={count} recommend={recommend} />
-      <FeaturedReview review={featured} />
-      {others.map((r) => (
-        <BuyerReviewCard key={r.id} review={r} />
-      ))}
+      <ReviewSummary avg={avg} count={reviews.length} recommend={recommend} ratings={reviews.map((r) => r.rate)} />
+      {featured ? <FeaturedReview review={featured} /> : null}
+      {others.length ? (
+        others.map((r) => <BuyerReviewCard key={r.id} review={r} />)
+      ) : !featured ? (
+        <p
+          className={cn(
+            "rounded-3xl border border-dashed px-5 py-6 text-center text-sm leading-7",
+            "border-navy/15 bg-sand text-navy/70",
+            "dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat",
+          )}
+        >
+          هنوز نظری برای این محصول ثبت نشده است.
+        </p>
+      ) : null}
     </div>
   );
 }

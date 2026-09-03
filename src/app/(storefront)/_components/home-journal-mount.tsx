@@ -1,8 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { HomeJournalSlides } from "./home-journal-slides";
 
 const HomeJournal = dynamic(
   () => import("./home-journal").then((mod) => mod.HomeJournal),
@@ -19,12 +19,9 @@ const HomeJournal = dynamic(
 );
 
 // 📚 Defers the embla carousel (below the fold, autoplay) out of the
-// homepage's initial client bundle — the slides themselves stay static/
-// server-rendered content passed in as children.
-export function HomeJournalMount() {
-  return (
-    <HomeJournal>
-      <HomeJournalSlides />
-    </HomeJournal>
-  );
+// homepage's initial client bundle — the slides themselves stay real,
+// server-rendered content (`HomeJournalSlides`, a DB-backed Server
+// Component) passed in as children by `sections/stories.tsx`.
+export function HomeJournalMount({ children }: { children: ReactNode }) {
+  return <HomeJournal>{children}</HomeJournal>;
 }

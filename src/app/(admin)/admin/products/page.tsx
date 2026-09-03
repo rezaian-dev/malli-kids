@@ -1,10 +1,11 @@
-import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth/admin";
+import { requireAdminPage } from "@/lib/auth/admin";
+import { getAllProducts } from "@/lib/shop/products";
 import { AdminProductsLanding } from "./_components/admin-products-landing";
 
 export default async function AdminProducts() {
-  const admin = await requireAdmin();
-  if (!admin) redirect("/admin/login");
+  const admin = await requireAdminPage();
 
-  return <AdminProductsLanding />;
+  const products = await getAllProducts();
+
+  return <AdminProductsLanding products={products} />;
 }

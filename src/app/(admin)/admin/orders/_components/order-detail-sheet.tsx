@@ -11,11 +11,10 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { AdminFilterSelect } from "@/components/admin";
-import { ORDER_FLOW } from "@/lib/admin/admin-data";
+import { ORDER_FLOW } from "@/lib/shop/order-status";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
-import type { Order } from "@/lib/orders";
-import type { OrderStatus } from "@/types";
+import type { AdminOrder, OrderStatus } from "@/types";
 
 function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }) {
   return (
@@ -41,7 +40,7 @@ export function OrderDetailSheet({
   onOpenChange,
   onStatusChange,
 }: {
-  order: Order | null;
+  order: AdminOrder | null;
   onOpenChange: (open: boolean) => void;
   onStatusChange: (status: OrderStatus) => void;
 }) {

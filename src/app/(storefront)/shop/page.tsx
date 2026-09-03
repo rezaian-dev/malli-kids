@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 
 import { JsonLd } from "@/components/shared/json-ld";
-import { CATALOG, pdpHref } from "@/lib/data/products";
+import { pdpHref } from "@/lib/data/products";
+import { getAllProducts } from "@/lib/shop/products";
 import {
   breadcrumbSchema,
   buildMetadata,
@@ -74,7 +75,8 @@ export default async function ShopPage({
     });
   }
 
-  const items = CATALOG.filter((product) => {
+  const catalog = await getAllProducts();
+  const items = catalog.filter((product) => {
     if (state.cat !== "همه" && product.cat !== state.cat) return false;
     if (state.season !== "همه" && product.season !== state.season) return false;
     if (state.stock && !product.stock) return false;
@@ -112,7 +114,7 @@ export default async function ShopPage({
         })}
       />
       {items.length ? <JsonLd data={itemListSchema(items, heading)} /> : null}
-      <ShopExplorer state={state} />
+      <ShopExplorer state={state} products={catalog} />
     </>
   );
 }

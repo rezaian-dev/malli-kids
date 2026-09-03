@@ -22,7 +22,11 @@ function draftFromArticle(article: AdminArticle): ArticleDraft {
   };
 }
 
-export function AdminArticlesLanding() {
+export function AdminArticlesLanding({
+  articles,
+}: {
+  articles: AdminArticle[];
+}) {
   const [draft, setDraft] = useState<ArticleDraft | null>(null);
 
   if (draft) {
@@ -31,6 +35,7 @@ export function AdminArticlesLanding() {
 
   return (
     <ArticleList
+      articles={articles}
       onNew={() => setDraft(EMPTY_ARTICLE_DRAFT)}
       onEdit={(article) => setDraft(draftFromArticle(article))}
     />

@@ -1,4 +1,4 @@
-export { AdminShell } from "./admin-shell";
+export { AdminShell, type AdminIdentity } from "./admin-shell";
 export { AdminPageHeader } from "./admin-page-header";
 export { AdminFilterBar } from "./admin-filter-bar";
 export {
@@ -8,5 +8,3 @@ export {
 export { AdminStatStrip, type AdminStatItem } from "./admin-stat-strip";
 export { AdminTable } from "./admin-table";
 export type { AdminCol } from "./admin-table";
-export { AdminStore, useAdmin } from "@/providers/admin-store";
-export type { AdminIdentity } from "@/providers/admin-store";

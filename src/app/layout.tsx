@@ -10,6 +10,9 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { getRootMetadata, organizationSchema, websiteSchema } from "@/lib/seo";
 import { readStoreBootstrap } from "@/lib/storefront-state";
 import { getSessionUser } from "@/lib/auth/session";
+import { ensureSeeded } from "@/lib/db/seed";
+import { getCampaign } from "@/lib/shop/settings";
+import { getActiveBanner } from "@/lib/shop/banners";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -69,8 +72,19 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  const [jar, user] = await Promise.all([cookies(), getSessionUser()]);
-  const initialState = readStoreBootstrap((name) => jar.get(name)?.value, user);
+  await ensureSeeded();
+  const [jar, user, campaign, banner] = await Promise.all([
+    cookies(),
+    getSessionUser(),
+    getCampaign(),
+    getActiveBanner(),
+  ]);
+  const initialState = readStoreBootstrap(
+    (name) => jar.get(name)?.value,
+    user,
+    campaign,
+    banner,
+  );
 
   return (
     <html

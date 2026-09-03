@@ -3,22 +3,30 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Heart, ShoppingBag, Truck, Wallet } from "lucide-react";
-import type { OrderStatus } from "@/types";
+import type { AdminOrder, OrderStatus } from "@/types";
 import { useStore } from "@/providers/store-provider";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { useFavorites } from "@/lib/favorites";
-import { ORDER_FLOW, stageIndex, useOrders } from "@/lib/orders";
+import { ORDER_FLOW, stageIndex } from "@/lib/shop/order-status";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { usePolling } from "@/hooks/use-polling";
+import { getMyOrdersAction } from "../_lib/actions";
 import { PROFILE_CARD } from "./profile-shared";
 import { OrderCard } from "./order-card";
+
+const POLL_MS = 20_000;
 
 // 📦 Orders panel stays isolated from the default profile bundle.
 export function ProfileOrdersPanel() {
   const { user } = useStore();
-  const owner = user?.email || user?.phone || "";
-  const orders = useOrders(owner);
-  const favs = useFavorites();
+  const [orders] = usePolling<AdminOrder[]>(
+    getMyOrdersAction,
+    POLL_MS,
+    [],
+    Boolean(user),
+  );
+  const { ids: favIds } = useFavorites();
   const [filter, setFilter] = useState<"همه" | OrderStatus>("همه");
 
   if (!user) return null;
@@ -39,7 +47,7 @@ export function ProfileOrdersPanel() {
     { Icon: ShoppingBag, label: "سفارش‌ها", value: toFaDigits(orders.length) },
     { Icon: Wallet, label: "جمع پرداختی", value: `${formatToman(paid)} ت` },
     { Icon: Truck, label: "در جریان", value: toFaDigits(active) },
-    { Icon: Heart, label: "علاقه‌مندی‌ها", value: toFaDigits(favs.length) },
+    { Icon: Heart, label: "علاقه‌مندی‌ها", value: toFaDigits(favIds.length) },
   ];
 
   return (

@@ -124,24 +124,27 @@ export function sanitizeBanner(value: unknown): BannerItem | null {
 
 // 👤 `user` isn't read from a cookie here — the real session lives in
 // Better Auth's httpOnly cookie, only readable server-side via
-// `getSessionUser()` — so the caller (`app/layout.tsx`) passes it in
-// straight from that.
+// `getSessionUser()`. Likewise `campaign`/`banner` are real, freshly-read
+// DB values (`@/lib/shop/settings`, `@/lib/shop/banners`) computed on every
+// request — the caller (`app/layout.tsx`) passes all three in directly
+// instead of this module trying to resync them from a client-side source.
+// `cart` is the one genuinely client-only piece (no backend), so it's still
+// bootstrapped from its cookie.
 export function readStoreBootstrap(
   getCookie: (name: string) => string | undefined,
   user: User | null,
+  campaign: StoredCampaign,
+  banner: BannerItem | null,
 ) {
   const cartCookie = getCookie(STORAGE.cart);
-  const campaignCookie = getCookie(STORAGE.campaign);
-  const bannerCookie = getCookie(STORAGE.banner);
   const bootCookie = getCookie(STORAGE.boot);
 
   return {
     user,
     cart: sanitizeCart(parseJson(cartCookie, [])),
-    campaign: sanitizeCampaign(parseJson(campaignCookie, NO_CAMPAIGN)),
-    banner: sanitizeBanner(parseJson(bannerCookie, null)),
-    ready:
-      bootCookie === "1" || Boolean(cartCookie || campaignCookie || bannerCookie),
+    campaign: sanitizeCampaign(campaign),
+    banner: sanitizeBanner(banner),
+    ready: bootCookie === "1" || Boolean(cartCookie),
   } satisfies StoreBootstrap;
 }
 

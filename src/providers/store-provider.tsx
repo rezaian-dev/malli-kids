@@ -11,12 +11,10 @@ import {
 } from "react";
 import { toast } from "@/lib/toast";
 import { STORAGE } from "@/lib/constants";
-import { pickBanner } from "@/lib/festive/occasions";
+import { campaignPrice } from "@/lib/shop/pricing";
 import { signOutAction } from "@/lib/auth/actions";
 import {
   NO_CAMPAIGN,
-  clearCookie,
-  sanitizeCampaign,
   sanitizeCart,
   writeCookie,
   writeJsonCookie,
@@ -76,32 +74,6 @@ function readLocalCart(current: CartItem[]) {
   return readLocalJson(STORAGE.cart, sanitizeCart, current);
 }
 
-// 🎉 Campaign + festive banner both live inside the admin panel's own
-// localStorage blob, so they share one parse of it.
-function readAdminDb(): {
-  settings?: { campaign?: unknown };
-  banners?: unknown;
-} | null {
-  try {
-    const raw = window.localStorage.getItem(STORAGE.adminDb);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function readCampaignFromAdminDb(current: Campaign) {
-  const db = readAdminDb();
-  return db ? sanitizeCampaign(db.settings?.campaign) : current;
-}
-
-function readBannerFromAdminDb(current: BannerItem | null) {
-  const db = readAdminDb();
-  return db && Array.isArray(db.banners)
-    ? (pickBanner(db.banners) ?? null)
-    : current;
-}
-
 // 🛒 A cart line is identified by product + size together, never id alone.
 function sameLine(item: CartItem, id: number, size: string) {
   return item.id === id && item.size === size;
@@ -127,13 +99,14 @@ export function StoreProvider({
   const [user, setUser] = useState<User | null>(boot.user);
   const [authOpen, setAuthOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>(boot.cart);
-  const [campaign, setCampaign] = useState<Campaign>(boot.campaign);
-  const [banner, setBanner] = useState<BannerItem | null>(boot.banner);
+  // 🎉 Real, server-computed values (see `app/layout.tsx`) — fresh on every
+  // navigation, never mutated client-side, so plain variables instead of
+  // state that nothing ever sets again.
+  const campaign: Campaign = boot.campaign;
+  const banner: BannerItem | null = boot.banner;
 
   useEffect(() => {
     setCart((current) => readLocalCart(current));
-    setCampaign((current) => readCampaignFromAdminDb(current));
-    setBanner((current) => readBannerFromAdminDb(current));
     setReady(true);
   }, []);
 
@@ -145,33 +118,8 @@ export function StoreProvider({
     } catch {}
 
     writeJsonCookie(STORAGE.cart, cart);
-    writeJsonCookie(STORAGE.campaign, campaign);
-    if (banner) writeJsonCookie(STORAGE.banner, banner);
-    else clearCookie(STORAGE.banner);
     writeCookie(STORAGE.boot, "1");
-  }, [ready, cart, campaign, banner]);
-
-  useEffect(() => {
-    const syncFestive = () => {
-      const currentCampaign = readCampaignFromAdminDb(campaign);
-      const currentBanner = readBannerFromAdminDb(banner);
-      setCampaign((prev) =>
-        JSON.stringify(prev) === JSON.stringify(currentCampaign)
-          ? prev
-          : currentCampaign,
-      );
-      setBanner((prev) =>
-        prev?.id === currentBanner?.id ? prev : currentBanner,
-      );
-    };
-
-    window.addEventListener("storage", syncFestive);
-    window.addEventListener("focus", syncFestive);
-    return () => {
-      window.removeEventListener("storage", syncFestive);
-      window.removeEventListener("focus", syncFestive);
-    };
-  }, [banner, campaign]);
+  }, [ready, cart]);
 
   // 🔐 Called after a server action (sign in/up) already created the real,
   // httpOnly-cookie-backed session — this only mirrors it into UI state.
@@ -229,13 +177,7 @@ export function StoreProvider({
   const showToast = useCallback((text: string) => toast(text), []);
 
   const priceOf = useCallback(
-    (price: number) =>
-      campaign.active
-        ? Math.max(
-            0,
-            Math.round((price * (1 - campaign.percent / 100)) / 1000) * 1000,
-          )
-        : price,
+    (price: number) => campaignPrice(price, campaign),
     [campaign],
   );
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart } from "lucide-react";
-import { toggleFav, useFavorites } from "@/lib/favorites";
+import { useFavorites } from "@/lib/favorites";
 import { useStore } from "@/providers/store-provider";
 import { cn } from "@/lib/utils";
 
@@ -14,9 +14,9 @@ export function FavButton({
   name: string;
   className?: string;
 }) {
-  const favs = useFavorites();
+  const { ids, toggle } = useFavorites();
   const { showToast } = useStore();
-  const on = favs.includes(id);
+  const on = ids.includes(id);
 
   return (
     <button
@@ -30,7 +30,7 @@ export function FavButton({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        toggleFav(id);
+        toggle(id);
         showToast(
           on ? "از علاقه‌مندی‌ها حذف شد" : "به علاقه‌مندی‌ها اضافه شد ❤️",
         );

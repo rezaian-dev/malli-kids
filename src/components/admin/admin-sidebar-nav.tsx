@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
-import { useAdmin } from "@/providers/admin-store";
+import type { AdminNotifCounts } from "@/lib/admin/notif-counts";
 import { ADMIN_NAV, ADMIN_NAV_GROUPS } from "@/lib/admin/nav";
 import { toFaDigits } from "@/lib/locale/fa";
-import { useTickets } from "@/lib/tickets";
 import { cn } from "@/lib/utils";
 
 export function routeIsActive(path: string, href: string) {
@@ -15,16 +14,14 @@ export function routeIsActive(path: string, href: string) {
 
 /** 🧭 The grouped admin nav list, shared by the desktop sidebar and the
  *  mobile drawer. */
-export function AdminSidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+export function AdminSidebarNav({
+  onNavigate,
+  counts,
+}: {
+  onNavigate?: () => void;
+  counts: AdminNotifCounts;
+}) {
   const path = usePathname();
-  const { db } = useAdmin();
-  const tickets = useTickets();
-  const unanswered = tickets.filter(
-    (ticket) => ticket.status === "open",
-  ).length;
-  const freshOrders = db.orders.filter(
-    (order) => order.status === "جدید",
-  ).length;
 
   return (
     <nav className="flex flex-col gap-2 px-3 pb-4" aria-label="منوی مدیریت">
@@ -53,9 +50,9 @@ export function AdminSidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                 const active = routeIsActive(path, item.href);
                 const badge =
                   item.href === "/admin/orders"
-                    ? freshOrders
+                    ? counts.freshOrders
                     : item.href === "/admin/messages"
-                      ? unanswered
+                      ? counts.openTickets
                       : 0;
 
                 return (

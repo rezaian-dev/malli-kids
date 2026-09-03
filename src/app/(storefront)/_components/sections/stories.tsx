@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { HomeJournalMount } from "../home-journal-mount";
+import { HomeJournalSlides } from "../home-journal-slides";
 import { OrnStitch } from "../home-ornaments";
 import { wash } from "@/components/shared/section-wash";
 
@@ -33,7 +34,9 @@ export function Stories() {
             همه مقالات
           </Link>
         </div>
-        <HomeJournalMount />
+        <HomeJournalMount>
+          <HomeJournalSlides />
+        </HomeJournalMount>
       </div>
     </section>
   );

@@ -1,37 +1,24 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, type ReactNode } from "react";
 import type { Product } from "@/types";
-import { findCatalogProduct } from "@/lib/admin/sync";
 import { ProductReadMore } from "./product-read-more";
 
-// 🧩 Tiny client bridge for admin-updated product data.
+// 🧩 Tiny context so deeply-nested product components (review/checkout
+// dialogs mounted lazily, etc.) don't need `product` threaded through every
+// prop list. `product` itself is already the real, server-fetched truth
+// (see `page.tsx`'s `getProductById()`) — no client-side resync needed.
 const LiveCtx = createContext<Product | null>(null);
 
 export function ProductLiveProvider({
   product,
-  requestedId,
   children,
 }: {
   product: Product;
   requestedId?: number;
   children: ReactNode;
 }) {
-  const [p, setP] = useState(product);
-
-  useEffect(() => {
-    const id = requestedId ?? product.id;
-    const live = findCatalogProduct(id);
-    if (live) setP(live);
-  }, [requestedId, product.id]);
-
-  return <LiveCtx.Provider value={p}>{children}</LiveCtx.Provider>;
+  return <LiveCtx.Provider value={product}>{children}</LiveCtx.Provider>;
 }
 
 export function useLiveProduct(fallback: Product): Product;

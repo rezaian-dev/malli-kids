@@ -1,20 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { BadgeCheck, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
-import { fullName } from "@/lib/text/name";
 import { useStore } from "@/providers/store-provider";
 import { phoneDigits } from "@/lib/digits";
 import { toEnDigits } from "@/lib/locale/fa";
-import { loadCoupons } from "@/lib/admin/sync";
-import { BRAND } from "@/lib/constants";
-import { createOrder, SHIPPING_FEE } from "@/lib/orders";
+import { BRAND, SHIPPING_FEE } from "@/lib/constants";
+import { checkCouponAction, createOrderAction } from "../_lib/actions";
 import { cn } from "@/lib/utils";
 
 // 🧾 Extracted from product-buy-panel.tsx so the checkout form's JS only
@@ -44,6 +42,7 @@ export function ProductCheckoutDialog({
   );
   const [couponMsg, setCouponMsg] = useState("");
   const [couponBad, setCouponBad] = useState(false);
+  const [pending, startTransition] = useTransition();
 
   // 🔄 Re-sync from the profile every time the dialog opens (same as the old openCheckout()).
   useEffect(() => {
@@ -61,27 +60,22 @@ export function ProductCheckoutDialog({
   function applyCoupon() {
     const code = toEnDigits(couponIn).trim().toUpperCase();
     if (!code) return;
-    const hit = loadCoupons().find((c) => c.code.toUpperCase() === code);
-    if (hit && hit.rate > 0 && hit.active !== false) {
-      if (hit.min && subtotal < hit.min) {
+
+    startTransition(async () => {
+      const hit = await checkCouponAction(code, subtotal);
+      if (hit) {
+        setApplied(hit);
+        setCouponBad(false);
+        setCouponMsg("");
+        showToast(
+          `کد ${hit.code} اعمال شد — ${toFaDigits(Math.round(hit.rate * 100))}٪ تخفیف 🎉`,
+        );
+      } else {
         setApplied(null);
         setCouponBad(true);
-        setCouponMsg(
-          `این کد برای خریدهای بالای ${formatToman(hit.min)} تومان است.`,
-        );
-        return;
+        setCouponMsg("");
       }
-      setApplied({ code: hit.code, rate: hit.rate });
-      setCouponBad(false);
-      setCouponMsg("");
-      showToast(
-        `کد ${hit.code} اعمال شد — ${toFaDigits(Math.round(hit.rate * 100))}٪ تخفیف 🎉`,
-      );
-    } else {
-      setApplied(null);
-      setCouponBad(true);
-      setCouponMsg("");
-    }
+    });
   }
 
   function submitOrder() {
@@ -90,26 +84,28 @@ export function ProductCheckoutDialog({
     if (address.trim().length < 10) return showToast("آدرس کامل را بنویسید");
     if (phoneDigits(phone).length !== 11)
       return showToast("شمارهٔ موبایل ۱۱ رقمی بنویسید");
-    const order = createOrder({
-      owner: user.email || user.phone || "",
-      customer: fullName(user.firstName, user.lastName),
-      phone: phoneDigits(phone),
-      city: city.trim(),
-      address: address.trim(),
-      items: [
-        {
-          id: product.id,
-          name: product.name,
-          img: product.img,
-          size,
-          qty,
-          price: unit,
-        },
-      ],
-      discount,
+
+    startTransition(async () => {
+      const result = await createOrderAction({
+        productId: product.id,
+        size,
+        qty,
+        city: city.trim(),
+        address: address.trim(),
+        phone: phoneDigits(phone),
+        couponCode: applied?.code,
+      });
+
+      if (!result.ok) {
+        showToast(result.error);
+        return;
+      }
+
+      onOpenChange(false);
+      showToast(
+        `سفارش ${result.data.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`,
+      );
     });
-    onOpenChange(false);
-    showToast(`سفارش ${order.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`);
   }
 
   return (
@@ -224,6 +220,7 @@ export function ProductCheckoutDialog({
                 "dark:text-gold-soft",
               )}
               onClick={applyCoupon}
+              disabled={pending}
             >
               <Ticket className="size-4" /> اعمال کد
             </Button>
@@ -244,8 +241,9 @@ export function ProductCheckoutDialog({
           variant="navy"
           className="h-12 w-full rounded-2xl font-black"
           onClick={submitOrder}
+          disabled={pending}
         >
-          تأیید و ثبتِ سفارش
+          {pending ? "در حال ثبت…" : "تأیید و ثبتِ سفارش"}
         </Button>
         <p
           className={cn(

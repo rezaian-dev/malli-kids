@@ -4,26 +4,33 @@ import Image from "next/image";
 
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, Shirt, Truck, Users } from "lucide-react";
-import { AdminPageHeader, AdminTable, useAdmin } from "@/components/admin";
+import { AdminPageHeader, AdminTable } from "@/components/admin";
 import { SalesChart } from "./sales-chart";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
-import { statusTone } from "@/lib/admin/admin-data";
+import { statusTone } from "@/lib/shop/order-status";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
-import type { AdminOrder } from "@/types";
+import type { AdminOrder, Product } from "@/types";
 
 const META_TEXT = "text-navy/40 dark:text-wheat mt-0.5 text-[9px] font-bold";
 const HIGHLIGHT_TEXT = "text-gold-deep dark:text-gold-soft font-black";
 
-export function DashboardLanding() {
-  const { db } = useAdmin();
-  const sales = db.orders
+export function DashboardLanding({
+  orders,
+  products,
+  activeCustomers,
+}: {
+  orders: AdminOrder[];
+  products: Product[];
+  activeCustomers: number;
+}) {
+  const sales = orders
     .filter((o) => o.pay === "پرداخت‌شده" && o.status !== "مرجوعی")
     .reduce((s, o) => s + o.total, 0);
-  const avg = db.orders.length ? Math.round(sales / db.orders.length) : 0;
-  const low = db.products.filter((p) => !p.stock).length;
+  const avg = orders.length ? Math.round(sales / orders.length) : 0;
+  const low = products.filter((p) => !p.stock).length;
 
   return (
     <div>
@@ -71,13 +78,7 @@ export function DashboardLanding() {
           />
           <Stat
             t="مشتری فعال"
-            v={toFaDigits(
-              db.customers.filter(
-                (customer) =>
-                  (customer.role ?? "user") === "user" &&
-                  customer.status !== "مسدود",
-              ).length,
-            )}
+            v={toFaDigits(activeCustomers)}
             d="کاربران فروشگاه"
             Icon={Users}
           />
@@ -92,7 +93,7 @@ export function DashboardLanding() {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.35fr_.75fr]">
-        <SalesChart orders={db.orders} />
+        <SalesChart orders={orders} />
 
         {/* Category share */}
         <section className={cn(adminGlassCard, "p-5 sm:p-6")}>
@@ -100,8 +101,8 @@ export function DashboardLanding() {
             سهم دسته‌ها
           </h2>
           {["دخترانه", "پسرانه", "سیسمونی", "دستدوز"].map((c, i) => {
-            const n = db.products.filter((p) => p.cat === c).length;
-            const pct = Math.round((n / Math.max(1, db.products.length)) * 100);
+            const n = products.filter((p) => p.cat === c).length;
+            const pct = Math.round((n / Math.max(1, products.length)) * 100);
             return (
               <div key={c} className="mb-3.5">
                 <div className="mb-1.5 flex justify-between text-xs font-bold">
@@ -203,7 +204,7 @@ export function DashboardLanding() {
             ),
           },
         ]}
-        rows={db.orders.slice(0, 5)}
+        rows={orders.slice(0, 5)}
         minWidth="45rem"
       />
     </div>

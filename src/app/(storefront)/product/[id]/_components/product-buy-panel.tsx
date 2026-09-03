@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   BadgeCheck,
@@ -17,7 +17,6 @@ import {
 import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { useStore } from "@/providers/store-provider";
-import { CORE_PRODUCTS } from "@/lib/data/products";
 import { Button } from "@/components/ui/button";
 import { useLiveProduct } from "./product-live-context";
 import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
@@ -61,18 +60,10 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
     setCheckout(true);
   }
 
-  const gallery = useMemo(() => {
-    const imgs = [product.img];
-    CORE_PRODUCTS.forEach((x) => {
-      if (x.img !== product.img && imgs.length < 5) imgs.push(x.img);
-    });
-    return imgs;
-  }, [product.img]);
-
   return (
     <div className="grid min-w-0 items-start gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,.92fr)] lg:gap-8">
       <ProductGallery
-        images={gallery}
+        images={product.images}
         name={product.name}
         disc={product.disc}
         badge={product.badge}

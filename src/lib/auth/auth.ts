@@ -1,3 +1,4 @@
+import "server-only";
 import { betterAuth } from "better-auth";
 import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
@@ -30,12 +31,18 @@ export const auth = betterAuth({
     },
   },
   // 🛡️ Built-in limiter is already on by default in production (10s/100req);
-  // tighten just the sign-in endpoint against credential-stuffing/brute force
-  // — shared by the storefront and the admin login, both go through this
-  // same `/sign-in/email` call.
+  // tighten specific endpoints beyond that default:
+  // - `/sign-in/email`: credential-stuffing/brute force — shared by the
+  //   storefront and the admin login, both go through this same call.
+  // - `/request-password-reset` (called by `forgotPasswordAction`): without
+  //   this, someone could repeatedly email-bomb any address they type in.
+  // - `/reset-password` (called by `resetPasswordAction`): slows down
+  //   brute-forcing a leaked/guessed reset token.
   rateLimit: {
     customRules: {
       "/sign-in/email": { window: 60, max: 5 },
+      "/request-password-reset": { window: 600, max: 3 },
+      "/reset-password": { window: 600, max: 5 },
     },
   },
   // 👮 Adds a server-managed `role`/`banned` field to the real `user`

@@ -1,18 +1,17 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useRef, useState, type ChangeEvent } from "react";
+import { useRef, useState, useTransition, type ChangeEvent } from "react";
 import { ArrowRight, FilePenLine, ImagePlus, Trash2 } from "lucide-react";
 import { toast } from "@/lib/toast";
 
-import { AdminPageHeader, useAdmin } from "@/components/admin";
-import { toFaDigits } from "@/lib/locale/fa";
+import { AdminPageHeader } from "@/components/admin";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import type { AdminArticle } from "@/types";
+import { createArticleAction, updateArticleAction } from "../_lib/actions";
 
 const RichEditor = dynamic(
   () => import("@/components/admin/rich-editor").then((m) => m.RichEditor),
@@ -63,58 +62,8 @@ export const EMPTY_ARTICLE_DRAFT: ArticleDraft = {
   published: true,
 };
 
-/** 🪶 Build a clean Persian-friendly slug from the title. */
-function persianSlug(title: string, taken: string[]): string {
-  const base = title
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/[^\p{L}\p{N}-]/gu, "");
-  let slug = base || "مقاله";
-  let i = 2;
-  while (taken.includes(slug)) slug = `${base}-${toFaDigits(i++)}`;
-  return slug;
-}
-
-/** 🗓️ Return today's Jalali date. */
-function jalaliToday(): string {
-  const g = new Date();
-  const gy = g.getFullYear();
-  const gm = g.getMonth() + 1;
-  const gd = g.getDate();
-  const gdm = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-  const gy2 = gm > 2 ? gy + 1 : gy;
-  let days =
-    355666 +
-    365 * gy +
-    Math.floor((gy2 + 3) / 4) -
-    Math.floor((gy2 + 99) / 100) +
-    Math.floor((gy2 + 399) / 400) +
-    gd +
-    gdm[gm - 1];
-  let jy = -1595 + 33 * Math.floor(days / 12053);
-  days %= 12053;
-  jy += 4 * Math.floor(days / 1461);
-  days %= 1461;
-  if (days > 365) {
-    jy += Math.floor((days - 1) / 365);
-    days = (days - 1) % 365;
-  }
-  let jm: number;
-  let jd: number;
-  if (days < 186) {
-    jm = 1 + Math.floor(days / 31);
-    jd = 1 + (days % 31);
-  } else {
-    days -= 186;
-    jm = 7 + Math.floor(days / 30);
-    jd = 1 + (days % 30);
-  }
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return toFaDigits(`${jy}/${pad(jm)}/${pad(jd)}`);
-}
-
-/** ✍️ Create/edit view — owns its own draft state and saves through
- *  `useAdmin()` directly, then hands control back via `onDone`. */
+/** ✍️ Create/edit view — owns its own draft state and saves through the
+ *  real article actions, then hands control back via `onDone`. */
 export function ArticleEditor({
   initial,
   onDone,
@@ -122,8 +71,8 @@ export function ArticleEditor({
   initial: ArticleDraft;
   onDone: () => void;
 }) {
-  const { db, upsertArticle } = useAdmin();
   const [draft, setDraft] = useState(initial);
+  const [pending, startTransition] = useTransition();
   const coverRef = useRef<HTMLInputElement>(null);
   const set = <K extends keyof ArticleDraft>(k: K, v: ArticleDraft[K]) =>
     setDraft((d) => ({ ...d, [k]: v }));
@@ -135,23 +84,33 @@ export function ArticleEditor({
       });
       return;
     }
-    const article: AdminArticle = {
-      slug:
-        draft.slug ??
-        persianSlug(
-          draft.title,
-          db.articles.map((a) => a.slug),
-        ),
+
+    const values = {
       tag: draft.tag.trim() || "مجله",
       title: draft.title.trim(),
       excerpt: draft.excerpt.trim() || draft.title.trim(),
       body: draft.body,
       cover: draft.cover || undefined,
       published: draft.published,
-      date: draft.date ?? jalaliToday(),
     };
-    upsertArticle(article);
-    onDone();
+
+    startTransition(async () => {
+      const result = draft.slug
+        ? await updateArticleAction(draft.slug, values)
+        : await createArticleAction(values);
+
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+
+      toast.success("مقاله ذخیره شد", {
+        description: values.published
+          ? "منتشر شد و در مجله دیده می‌شود."
+          : "به‌صورت پیش‌نویس ماند.",
+      });
+      onDone();
+    });
   }
 
   async function onCover(e: ChangeEvent<HTMLInputElement>) {
@@ -296,8 +255,10 @@ export function ArticleEditor({
             variant="navy"
             className="h-11 w-full rounded-2xl"
             onClick={onSave}
+            disabled={pending}
           >
-            <FilePenLine className="size-4" /> ذخیره مقاله
+            <FilePenLine className="size-4" />{" "}
+            {pending ? "در حال ذخیره…" : "ذخیره مقاله"}
           </Button>
         </aside>
       </div>

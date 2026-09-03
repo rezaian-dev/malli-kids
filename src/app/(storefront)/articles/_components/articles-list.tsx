@@ -1,22 +1,10 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Newspaper } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { loadPublishedArticles, type JournalArticle } from "@/lib/articles";
+import type { JournalArticle } from "@/lib/articles";
 import { cn } from "@/lib/utils";
 
-export function ArticlesList({ initial }: { initial: JournalArticle[] }) {
-  const [articles, setArticles] = useState<JournalArticle[]>(initial);
-
-  useEffect(() => {
-    const live = loadPublishedArticles();
-    setArticles((prev) =>
-      JSON.stringify(prev) === JSON.stringify(live) ? prev : live,
-    );
-  }, []);
-
+export function ArticlesList({ initial: articles }: { initial: JournalArticle[] }) {
   if (articles.length === 0) {
     return (
       <p

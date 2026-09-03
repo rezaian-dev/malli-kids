@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, useTransition, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ImagePlus, Save, Trash2 } from "lucide-react";
 
-import { AdminPageHeader, useAdmin } from "@/components/admin";
+import { AdminPageHeader } from "@/components/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,11 +19,16 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { CATS, SEASONS } from "@/lib/constants";
 import { parseFaNumber } from "@/lib/digits";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
+import {
+  createProductAction,
+  updateProductAction,
+} from "@/app/(admin)/admin/products/_lib/actions";
 import type { Product } from "@/types";
 
-const DEFAULT_IMG = "/brand/look-party.jpg";
+const MAX_IMAGES = 6;
 const CAT_OPTIONS = CATS.filter((item) => item !== "همه");
 
 const FIELD_LABEL = "text-navy/55 dark:text-wheat text-xs font-black";
@@ -43,7 +48,7 @@ type ProductFormValues = {
   disc: string;
   badge: string;
   desc: string;
-  img: string;
+  images: string[];
   stock: boolean;
 };
 
@@ -61,7 +66,7 @@ function getInitialValues(product?: Product): ProductFormValues {
     disc: product?.disc ?? "",
     badge: product?.badge ?? "",
     desc: product?.desc ?? "",
-    img: product?.img ?? "",
+    images: product?.images ?? [],
     stock: product?.stock ?? true,
   };
 }
@@ -115,11 +120,14 @@ function validateProductForm(values: ProductFormValues): ProductFormErrors {
   if (desc.length < 15) errors.desc = "حداقل ۱۵ حرف بنویسید تا توضیح مفید باشد";
   else if (desc.length > 800) errors.desc = "توضیح حداکثر ۸۰۰ نویسه است";
 
+  if (values.images.length === 0) {
+    errors.images = "حداقل یک تصویر بارگذاری کنید";
+  }
+
   return errors;
 }
 
 export function ProductForm({ product }: { product?: Product }) {
-  const { upsertProduct, db } = useAdmin();
   const router = useRouter();
   const isNew = !product;
   const [values, setValues] = useState<ProductFormValues>(() =>
@@ -127,6 +135,7 @@ export function ProductForm({ product }: { product?: Product }) {
   );
   const [errors, setErrors] = useState<ProductFormErrors>({});
   const [imageBusy, setImageBusy] = useState(false);
+  const [pending, startTransition] = useTransition();
 
   function updateValue<K extends keyof ProductFormValues>(
     field: K,
@@ -140,27 +149,37 @@ export function ProductForm({ product }: { product?: Product }) {
     }));
   }
 
-  async function onImageChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+  async function onImagesChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []).slice(
+      0,
+      Math.max(0, MAX_IMAGES - values.images.length),
+    );
     event.target.value = "";
-    if (!file) return;
+    if (files.length === 0) return;
 
     setImageBusy(true);
-    setErrors((current) => ({ ...current, img: undefined, form: undefined }));
+    setErrors((current) => ({ ...current, images: undefined, form: undefined }));
 
     try {
       const { compressToDataUrl } =
         await import("@/components/ui/image-upload");
-      const dataUrl = await compressToDataUrl(file);
-      updateValue("img", dataUrl);
+      const dataUrls = await Promise.all(files.map((file) => compressToDataUrl(file)));
+      updateValue("images", [...values.images, ...dataUrls]);
     } catch {
       setErrors((current) => ({
         ...current,
-        img: "آپلود تصویر ناموفق بود. دوباره تلاش کنید",
+        images: "آپلود تصویر ناموفق بود. دوباره تلاش کنید",
       }));
     } finally {
       setImageBusy(false);
     }
+  }
+
+  function removeImage(index: number) {
+    updateValue(
+      "images",
+      values.images.filter((_, i) => i !== index),
+    );
   }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -172,27 +191,36 @@ export function ProductForm({ product }: { product?: Product }) {
       return;
     }
 
-    upsertProduct({
-      id:
-        product?.id ?? Math.max(999, ...db.products.map((item) => item.id)) + 1,
-      rate: product?.rate ?? 4.8,
-      sold: product?.sold ?? 0,
+    const payload = {
       name: values.name.trim(),
       cat: values.cat,
-      season: values.season as Product["season"],
+      season: values.season as NonNullable<Product["season"]>,
       price: parseFaNumber(values.price),
       old: values.old.trim() ? parseFaNumber(values.old) : undefined,
       disc: values.disc.trim() || undefined,
       badge: values.badge.trim() || undefined,
       desc: values.desc.trim(),
-      img: values.img || DEFAULT_IMG,
+      images: values.images,
       stock: values.stock,
+    };
+
+    startTransition(async () => {
+      const result = product
+        ? await updateProductAction(product.id, payload)
+        : await createProductAction(payload);
+
+      if (!result.ok) {
+        setErrors({ form: result.error });
+        toast.error(result.error);
+        return;
+      }
+
+      toast.success(isNew ? "محصول ساخته شد" : "محصول ذخیره شد", {
+        description: payload.name,
+      });
+      router.push("/admin/products");
     });
-
-    router.push("/admin/products");
   }
-
-  const preview = values.img || DEFAULT_IMG;
 
   return (
     <form onSubmit={onSubmit} noValidate className="pb-24">
@@ -386,7 +414,7 @@ export function ProductForm({ product }: { product?: Product }) {
 
         <section className="space-y-5">
           <div className={FORM_SECTION}>
-            <h2 className={SECTION_TITLE}>تصویر محصول</h2>
+            <h2 className={SECTION_TITLE}>تصاویر محصول</h2>
 
             <div
               className={cn(
@@ -395,54 +423,86 @@ export function ProductForm({ product }: { product?: Product }) {
                 "dark:border-gold/14 dark:bg-white/4",
               )}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use local files and data URLs. */}
-              <img
-                src={preview}
-                alt={values.name || "پیش‌نمایش محصول"}
-                className="h-64 w-full object-cover"
-              />
+              {values.images[0] ? (
+                /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use local files and data URLs. */
+                <img
+                  src={values.images[0]}
+                  alt={values.name || "پیش‌نمایش محصول"}
+                  className="h-64 w-full object-cover"
+                />
+              ) : (
+                <div className="text-navy/40 dark:text-wheat/50 flex h-64 items-center justify-center text-sm font-bold">
+                  هنوز تصویری بارگذاری نشده
+                </div>
+              )}
             </div>
 
+            {values.images.length > 1 ? (
+              <div className="flex flex-wrap gap-2">
+                {values.images.slice(1).map((src, i) => (
+                  <div key={src} className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use local files and data URLs. */}
+                    <img
+                      src={src}
+                      alt=""
+                      className="border-navy/10 dark:border-gold/20 size-16 rounded-xl border object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i + 1)}
+                      aria-label="حذف این تصویر"
+                      className="bg-rose absolute -inset-e-1.5 -top-1.5 grid size-5 place-items-center rounded-full text-white"
+                    >
+                      <Trash2 className="size-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
             <div className="flex flex-wrap gap-2">
-              <label className="inline-flex">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={onImageChange}
-                  disabled={imageBusy}
-                />
-                <span
-                  className={cn(
-                    "inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-2xl border bg-white/70 px-4 text-sm font-black transition",
-                    "border-navy/12 text-navy hover:border-gold/45",
-                    "dark:border-gold/20 dark:text-ivory dark:bg-white/5",
-                  )}
-                >
-                  <ImagePlus className="size-4" />
-                  {imageBusy
-                    ? "در حال پردازش تصویر…"
-                    : values.img
-                      ? "تغییر تصویر"
-                      : "آپلود تصویر"}
-                </span>
-              </label>
-              {values.img ? (
+              {values.images.length < MAX_IMAGES ? (
+                <label className="inline-flex">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={onImagesChange}
+                    disabled={imageBusy}
+                  />
+                  <span
+                    className={cn(
+                      "inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-2xl border bg-white/70 px-4 text-sm font-black transition",
+                      "border-navy/12 text-navy hover:border-gold/45",
+                      "dark:border-gold/20 dark:text-ivory dark:bg-white/5",
+                    )}
+                  >
+                    <ImagePlus className="size-4" />
+                    {imageBusy
+                      ? "در حال پردازش تصویر…"
+                      : values.images.length
+                        ? "افزودن تصویر"
+                        : "آپلود تصویر (یک یا چند عکس)"}
+                  </span>
+                </label>
+              ) : null}
+              {values.images[0] ? (
                 <button
                   type="button"
-                  onClick={() => updateValue("img", "")}
+                  onClick={() => removeImage(0)}
                   className={cn(
                     "inline-flex min-h-11 items-center gap-2 rounded-2xl px-4 text-sm font-black transition",
                     "bg-rose/10 text-rose hover:bg-rose/15",
                   )}
                 >
-                  <Trash2 className="size-4" /> حذف تصویر
+                  <Trash2 className="size-4" /> حذف تصویر اصلی
                 </button>
               ) : null}
             </div>
             <FieldNote
-              error={errors.img}
-              hint="در صورت خالی بودن، تصویر پیش‌فرض برند ذخیره می‌شود"
+              error={errors.images}
+              hint={`حداقل یک تصویر لازم است؛ تصویر اول، تصویر اصلی محصول است (حداکثر ${MAX_IMAGES} تصویر).`}
             />
 
             <label
@@ -487,8 +547,10 @@ export function ProductForm({ product }: { product?: Product }) {
             type="submit"
             variant="navy"
             className="h-11 rounded-2xl px-6"
+            disabled={pending}
           >
-            <Save className="size-4" /> {isNew ? "ساخت محصول" : "ذخیره تغییرات"}
+            <Save className="size-4" />{" "}
+            {pending ? "در حال ذخیره…" : isNew ? "ساخت محصول" : "ذخیره تغییرات"}
           </Button>
         </div>
       </div>

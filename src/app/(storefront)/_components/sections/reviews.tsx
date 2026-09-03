@@ -3,8 +3,19 @@ import { HomeQuotesMount } from "../home-quotes-mount";
 import { OrnLeaf } from "../home-ornaments";
 import { wash } from "@/components/shared/section-wash";
 import { cn } from "@/lib/utils";
+import { getFeaturedReviews, getReviewStats } from "@/lib/shop/reviews";
+import { toFaDigits } from "@/lib/locale/fa";
 
-export function Reviews() {
+export async function Reviews() {
+  const [reviews, stats] = await Promise.all([
+    getFeaturedReviews(),
+    getReviewStats(),
+  ]);
+
+  // 🪶 Real reviews only — too few to fill a carousel, so skip the section
+  // instead of padding it with fabricated quotes.
+  if (reviews.length < 2) return null;
+
   return (
     <section
       id="testimonials"
@@ -64,7 +75,7 @@ export function Reviews() {
           >
             <div>
               <p className="text-navy dark:text-ivory text-4xl leading-none font-black">
-                ۴٫۹
+                {toFaDigits(stats.avg.toFixed(1))}
               </p>
               <div className="mt-2 flex gap-0.5" aria-hidden>
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -74,7 +85,7 @@ export function Reviews() {
             </div>
             <div className="border-navy/10 border-s ps-4">
               <p className="text-navy dark:text-ivory text-sm font-black">
-                +۱۲٬۰۰۰ نظر
+                {toFaDigits(stats.count)} نظر
               </p>
               <p className="text-navy/70 dark:text-wheat mt-1 text-[11px]">
                 میانگین امتیاز واقعی خرید
@@ -82,7 +93,7 @@ export function Reviews() {
             </div>
           </div>
         </div>
-        <HomeQuotesMount />
+        <HomeQuotesMount reviews={reviews} />
       </div>
     </section>
   );

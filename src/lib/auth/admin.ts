@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getSession } from "./session";
 import { buildUser } from "./user";
 import type { User } from "@/types";
@@ -34,6 +35,21 @@ export function isAdminUser(user: { role?: string | null; email: string }) {
 export async function requireAdmin(): Promise<User | null> {
   const session = await getSession();
   if (!session?.user || !isAdminUser(session.user)) return null;
+
+  return buildUser(session.user);
+}
+
+/** 🚦 The real access-control boundary for every `/admin/**` page (not
+ *  Server Actions, which use `requireAdmin()` above and return an
+ *  `ActionResult` instead of redirecting). Tells the two failure cases
+ *  apart instead of bouncing both to the login screen: no session at all →
+ *  `/admin/login`; a real, signed-in customer who just isn't an admin →
+ *  `/` (a login form would only confuse them — logging in again as the
+ *  same account won't grant access). */
+export async function requireAdminPage(): Promise<User> {
+  const session = await getSession();
+  if (!session?.user) redirect("/admin/login");
+  if (!isAdminUser(session.user)) redirect("/");
 
   return buildUser(session.user);
 }

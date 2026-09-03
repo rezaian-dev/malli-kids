@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import {
   Ban,
   CircleCheckBig,
@@ -16,11 +16,11 @@ import {
   AdminStatStrip,
   AdminPageHeader,
   AdminTable,
-  useAdmin,
 } from "@/components/admin";
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/use-pagination";
 import type { AdminCustomer } from "@/types";
+import { removeCustomerAction, setCustomerStatusAction } from "../_lib/actions";
 import { buildCustomerColumns } from "./customer-columns";
 
 const PER_PAGE = 8;
@@ -28,8 +28,12 @@ const PER_PAGE = 8;
 type RoleFilter = "all" | "user" | "admin";
 type StatusFilter = "all" | "active" | "blocked";
 
-export function AdminCustomersLanding() {
-  const { db, saveCustomer, removeCustomer } = useAdmin();
+export function AdminCustomersLanding({
+  customers,
+}: {
+  customers: AdminCustomer[];
+}) {
+  const [, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [role, setRole] = useState<RoleFilter>("all");
   const [status, setStatus] = useState<StatusFilter>("all");
@@ -38,14 +42,14 @@ export function AdminCustomersLanding() {
   const cities = useMemo(
     () =>
       Array.from(
-        new Set(db.customers.map((customer) => customer.city).filter(Boolean)),
+        new Set(customers.map((customer) => customer.city).filter(Boolean)),
       ).sort((a, b) => a.localeCompare(b, "fa")),
-    [db.customers],
+    [customers],
   );
 
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
-    return db.customers.filter((customer) => {
+    return customers.filter((customer) => {
       const customerRole = customer.role ?? "user";
       const customerStatus = customer.status ?? "فعال";
       const matchesSearch =
@@ -62,7 +66,7 @@ export function AdminCustomersLanding() {
       const matchesCity = city === "all" || customer.city === city;
       return matchesSearch && matchesRole && matchesStatus && matchesCity;
     });
-  }, [city, db.customers, q, role, status]);
+  }, [city, customers, q, role, status]);
 
   const resetKey = `${q}|${role}|${status}|${city}`;
   const pg = usePagination(list, PER_PAGE, resetKey);
@@ -71,30 +75,46 @@ export function AdminCustomersLanding() {
     Number(role !== "all") +
     Number(status !== "all") +
     Number(city !== "all");
-  const userCount = db.customers.filter(
+  const userCount = customers.filter(
     (customer) => (customer.role ?? "user") === "user",
   ).length;
-  const adminCount = db.customers.filter(
+  const adminCount = customers.filter(
     (customer) => customer.role === "admin",
   ).length;
-  const blockedCount = db.customers.filter(
+  const blockedCount = customers.filter(
     (customer) => customer.status === "مسدود",
   ).length;
 
   function toggleStatus(customer: AdminCustomer) {
     if (customer.role === "admin")
       return toast.info("حساب مدیر اصلی محافظت‌شده است");
-    const next = (customer.status ?? "فعال") === "فعال" ? "مسدود" : "فعال";
-    saveCustomer({ ...customer, status: next });
-    const toKind = next === "مسدود" ? toast.warning : toast.success;
-    toKind(next === "مسدود" ? "حساب کاربر مسدود شد" : "مسدودی حساب رفع شد", {
-      description: `${customer.firstName} ${customer.lastName}`,
+
+    const blocking = (customer.status ?? "فعال") === "فعال";
+    startTransition(async () => {
+      const result = await setCustomerStatusAction(customer.id, blocking);
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+
+      const toKind = blocking ? toast.warning : toast.success;
+      toKind(blocking ? "حساب کاربر مسدود شد" : "مسدودی حساب رفع شد", {
+        description: `${customer.firstName} ${customer.lastName}`,
+      });
+    });
+  }
+
+  function remove(id: string) {
+    startTransition(async () => {
+      const result = await removeCustomerAction(id);
+      if (result.ok) toast.success("کاربر حذف شد");
+      else toast.error(result.error);
     });
   }
 
   const cols = buildCustomerColumns({
     onToggleStatus: toggleStatus,
-    onRemove: removeCustomer,
+    onRemove: remove,
   });
 
   return (
@@ -123,7 +143,7 @@ export function AdminCustomersLanding() {
           },
           {
             label: "حساب‌های فعال",
-            value: db.customers.length - blockedCount,
+            value: customers.length - blockedCount,
             Icon: CircleCheckBig,
             tone: "emerald",
           },
@@ -150,7 +170,7 @@ export function AdminCustomersLanding() {
           value={role}
           onValueChange={(value) => setRole(value as RoleFilter)}
           options={[
-            { value: "all", label: "همه حساب‌ها", count: db.customers.length },
+            { value: "all", label: "همه حساب‌ها", count: customers.length },
             { value: "user", label: "کاربران", count: userCount },
             { value: "admin", label: "ادمین‌ها", count: adminCount },
           ]}

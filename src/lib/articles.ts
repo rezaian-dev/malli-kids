@@ -1,69 +1,106 @@
-import { STORAGE } from "@/lib/constants";
-import { ARTICLES } from "@/lib/data/pages";
+import sanitizeHtmlLib from "sanitize-html";
+import { connectMongoose } from "@/lib/db/mongoose";
+import { ArticleModel, type ArticleDoc } from "@/lib/db/models/article";
+import { faDate } from "@/lib/locale/fa";
 
 export type JournalArticle = {
   slug: string;
   tag: string;
   title: string;
   excerpt: string;
-
   body: string;
-
   cover?: string;
   date?: string;
 };
 
-type StoredArticle = {
-  slug?: string;
-  tag?: string;
-  title?: string;
-  excerpt?: string;
-  body?: string;
-  cover?: string;
-  published?: boolean;
-  date?: string;
+// 🔐 Real allowlist sanitizer (was a hand-rolled `script/iframe/on*=` regex
+// strip — bypassable via `formaction`, entity-encoded `javascript:`, `<meta
+// refresh>`, etc.). Only the tags/attributes the admin rich editor
+// (`@/components/admin/rich-editor.tsx`'s TipTap `StarterKit` + `Image` +
+// `TextAlign`) can actually produce are allowed — everything else, this
+// body is rendered with `dangerouslySetInnerHTML` to every site visitor.
+const ARTICLE_SANITIZE_OPTIONS: sanitizeHtmlLib.IOptions = {
+  allowedTags: [
+    "p",
+    "br",
+    "hr",
+    "strong",
+    "b",
+    "em",
+    "i",
+    "u",
+    "s",
+    "strike",
+    "blockquote",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "ul",
+    "ol",
+    "li",
+    "a",
+    "img",
+  ],
+  allowedAttributes: {
+    a: ["href", "target", "rel"],
+    img: ["src", "alt", "title"],
+    "*": ["style"],
+  },
+  // ✍️ `TextAlign` only ever sets this one style property — nothing else
+  // gets through, so no CSS-injection surface (background/expression/...).
+  allowedStyles: {
+    "*": { "text-align": [/^(left|right|center|justify)$/] },
+  },
+  allowedSchemesByTag: {
+    a: ["http", "https"],
+    // 🖼️ Cover/inline images are stored as compressed data URLs.
+    img: ["http", "https", "data"],
+  },
+  transformTags: {
+    // 🔗 Every link forced to `noopener noreferrer` regardless of what was
+    // stored — closes reverse-tabnabbing even for old/pre-fix rows.
+    a: sanitizeHtmlLib.simpleTransform(
+      "a",
+      { rel: "noopener noreferrer", target: "_blank" },
+      true,
+    ),
+  },
 };
-
-const SEED: JournalArticle[] = ARTICLES.map((a) => ({
-  slug: a.slug,
-  tag: a.tag,
-  title: a.title,
-  excerpt: a.excerpt,
-  body: a.body,
-}));
 
 function sanitizeHtml(html: string): string {
-  return html
-    .replace(/<\s*(script|iframe|object|embed)[\s\S]*?<\s*\/\s*\1\s*>/gi, "")
-    .replace(/<\s*(script|iframe|object|embed)[^>]*\/?\s*>/gi, "")
-    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
-    .replace(/href\s*=\s*(["'])\s*javascript:[^"']*\1/gi, 'href="#"');
+  return sanitizeHtmlLib(html, ARTICLE_SANITIZE_OPTIONS);
 }
 
-export function loadPublishedArticles(): JournalArticle[] {
-  if (typeof window === "undefined") return SEED;
-  try {
-    const raw = window.localStorage.getItem(STORAGE.adminDb);
-    if (!raw) return SEED;
-    const parsed = JSON.parse(raw) as { articles?: StoredArticle[] };
-    if (!Array.isArray(parsed.articles) || parsed.articles.length === 0)
-      return SEED;
-    return parsed.articles
-      .filter((a) => a && a.published && typeof a.slug === "string")
-      .map((a) => ({
-        slug: String(a.slug),
-        tag: a.tag || "مجله",
-        title: a.title || "",
-        excerpt: a.excerpt || "",
-        body: a.body ? sanitizeHtml(a.body) : "",
-        cover: a.cover || undefined,
-        date: a.date,
-      }));
-  } catch {
-    return SEED;
-  }
+function toJournalArticle(doc: ArticleDoc): JournalArticle {
+  return {
+    slug: doc.slug,
+    tag: doc.tag,
+    title: doc.title,
+    excerpt: doc.excerpt,
+    body: sanitizeHtml(doc.body),
+    cover: doc.cover,
+    date: faDate(doc.createdAt),
+  };
 }
 
-export function findPublishedArticle(slug: string): JournalArticle | undefined {
-  return loadPublishedArticles().find((a) => a.slug === slug);
+/** 📰 Every published article, newest first — the real replacement for the
+ *  old client-only `localStorage` read (which the server side of every page
+ *  below silently ignored, always falling back to the static seed). */
+export async function loadPublishedArticles(): Promise<JournalArticle[]> {
+  await connectMongoose();
+  const docs = await ArticleModel.find({ published: true })
+    .sort({ createdAt: -1 })
+    .lean();
+  return docs.map(toJournalArticle);
+}
+
+export async function findPublishedArticle(
+  slug: string,
+): Promise<JournalArticle | undefined> {
+  await connectMongoose();
+  const doc = await ArticleModel.findOne({ slug, published: true }).lean();
+  return doc ? toJournalArticle(doc) : undefined;
 }

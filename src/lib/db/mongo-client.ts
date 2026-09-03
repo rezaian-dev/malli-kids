@@ -1,3 +1,4 @@
+import "server-only";
 import { MongoClient } from "mongodb";
 import { MONGODB_URI, cached } from "./shared";
 
@@ -5,4 +6,6 @@ import { MONGODB_URI, cached } from "./shared";
 // from `mongoose.ts`'s connection because mongoose bundles its own nested
 // `mongodb` copy, whose `Db`/`MongoClient` types don't structurally match
 // this package's (see the `mongoose-mongodb-type-conflict` note).
-export const connectMongoClient = cached("_mongoClient", () => new MongoClient(MONGODB_URI).connect());
+export const connectMongoClient = cached("_mongoClient", () =>
+  new MongoClient(MONGODB_URI).connect(),
+);

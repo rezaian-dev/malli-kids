@@ -1,10 +1,11 @@
-import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth/admin";
+import { requireAdminPage } from "@/lib/auth/admin";
+import { getAllBanners } from "./_lib/data";
 import { AdminBannersLanding } from "./_components/admin-banners-landing";
 
 export default async function AdminBanners() {
-  const admin = await requireAdmin();
-  if (!admin) redirect("/admin/login");
+  const admin = await requireAdminPage();
 
-  return <AdminBannersLanding />;
+  const banners = await getAllBanners();
+
+  return <AdminBannersLanding banners={banners} />;
 }

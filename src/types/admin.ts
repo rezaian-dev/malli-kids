@@ -1,8 +1,7 @@
-// 🛠️ Admin-panel domain model (orders, customers, coupons, reviews, articles,
-// messages, settings and the aggregate in-memory DB).
-
-import type { Product } from "./product";
-import type { FestiveBanner } from "./festive";
+// 🛠️ Admin-panel domain model (orders, customers, coupons, reviews and
+// articles) — the client-facing shapes every admin server action/data
+// function returns. Real, database-backed reads/writes live in
+// `@/lib/shop/*` and each admin route's own `_lib/`.
 
 export type OrderStatus =
   "جدید" | "در حال آماده‌سازی" | "ارسال‌شده" | "تحویل‌شده" | "مرجوعی";
@@ -19,6 +18,7 @@ export type AdminOrderItem = {
 
 export type AdminOrder = {
   id: string;
+  userId: string;
   date: string;
   customer: string;
   phone: string;
@@ -86,42 +86,4 @@ export type AdminArticle = {
   cover?: string;
   published: boolean;
   date: string;
-};
-
-export type AdminMessage = {
-  id: string;
-  name: string;
-  phone: string;
-  text: string;
-  date: string;
-  read: boolean;
-};
-
-export type AdminCampaign = {
-  active: boolean;
-
-  percent: number;
-
-  title: string;
-};
-
-export type AdminSettings = {
-  freeShipFrom: number;
-  phoneFa: string;
-  address: string;
-  otpDemo: string;
-  storeOpen: boolean;
-  campaign: AdminCampaign;
-};
-
-export type AdminDb = {
-  products: Product[];
-  orders: AdminOrder[];
-  customers: AdminCustomer[];
-  coupons: AdminCoupon[];
-  reviews: AdminReview[];
-  articles: AdminArticle[];
-  messages: AdminMessage[];
-  settings: AdminSettings;
-  banners: FestiveBanner[];
 };

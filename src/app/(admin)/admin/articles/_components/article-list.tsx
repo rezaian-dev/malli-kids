@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { Eye, EyeOff, FilePenLine, LibraryBig, PenLine, Plus, Trash2 } from "lucide-react";
 
 import {
@@ -8,15 +8,16 @@ import {
   AdminFilterSelect,
   AdminStatStrip,
   AdminPageHeader,
-  useAdmin,
 } from "@/components/admin";
 import { cn } from "@/lib/utils";
+import { toast } from "@/lib/toast";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/use-pagination";
 import { Switch } from "@/components/ui/switch";
 import type { AdminArticle } from "@/types";
+import { removeArticleAction, setArticlePublishedAction } from "../_lib/actions";
 
 const PER_PAGE = 6;
 type PublishFilter = "all" | "published" | "draft";
@@ -24,13 +25,15 @@ type ArticleSort = "newest" | "oldest" | "title";
 
 /** 📰 The filterable/paginated article list + publish toggle + delete. */
 export function ArticleList({
+  articles,
   onNew,
   onEdit,
 }: {
+  articles: AdminArticle[];
   onNew: () => void;
   onEdit: (article: AdminArticle) => void;
 }) {
-  const { db, upsertArticle, removeArticle } = useAdmin();
+  const [, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [publish, setPublish] = useState<PublishFilter>("all");
   const [tag, setTag] = useState("all");
@@ -38,14 +41,14 @@ export function ArticleList({
 
   const articleTags = useMemo(
     () =>
-      Array.from(new Set(db.articles.map((article) => article.tag))).sort(
+      Array.from(new Set(articles.map((article) => article.tag))).sort(
         (a, b) => a.localeCompare(b, "fa"),
       ),
-    [db.articles],
+    [articles],
   );
   const filteredArticles = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
-    return db.articles
+    return articles
       .filter((article) => {
         const matchesSearch =
           !term ||
@@ -63,16 +66,16 @@ export function ArticleList({
         if (sort === "title") return a.title.localeCompare(b.title, "fa");
         return b.date.localeCompare(a.date, "fa");
       });
-  }, [db.articles, publish, q, sort, tag]);
+  }, [articles, publish, q, sort, tag]);
   const pg = usePagination(
     filteredArticles,
     PER_PAGE,
     `${q}|${publish}|${tag}|${sort}`,
   );
-  const publishedCount = db.articles.filter(
+  const publishedCount = articles.filter(
     (article) => article.published,
   ).length;
-  const draftCount = db.articles.length - publishedCount;
+  const draftCount = articles.length - publishedCount;
   const activeFilters =
     Number(!!q.trim()) +
     Number(publish !== "all") +
@@ -95,7 +98,7 @@ export function ArticleList({
         items={[
           {
             label: "کل مقاله‌ها",
-            value: db.articles.length,
+            value: articles.length,
             Icon: LibraryBig,
             tone: "blue",
           },
@@ -134,7 +137,7 @@ export function ArticleList({
           value={publish}
           onValueChange={(value) => setPublish(value as PublishFilter)}
           options={[
-            { value: "all", label: "همه مقاله‌ها", count: db.articles.length },
+            { value: "all", label: "همه مقاله‌ها", count: articles.length },
             { value: "published", label: "منتشرشده", count: publishedCount },
             { value: "draft", label: "پیش‌نویس", count: draftCount },
           ]}
@@ -230,7 +233,13 @@ export function ArticleList({
                 <Switch
                   checked={article.published}
                   onCheckedChange={(value) =>
-                    upsertArticle({ ...article, published: value })
+                    startTransition(async () => {
+                      const result = await setArticlePublishedAction(
+                        article.slug,
+                        value,
+                      );
+                      if (!result.ok) toast.error(result.error);
+                    })
                   }
                 />{" "}
                 انتشار
@@ -244,7 +253,13 @@ export function ArticleList({
               </Button>
               <button
                 type="button"
-                onClick={() => removeArticle(article.slug)}
+                onClick={() =>
+                  startTransition(async () => {
+                    const result = await removeArticleAction(article.slug);
+                    if (result.ok) toast.success("مقاله حذف شد");
+                    else toast.error(result.error);
+                  })
+                }
                 className="bg-rose/10 text-rose hover:bg-rose/15 grid size-9 shrink-0 place-items-center rounded-xl transition"
                 aria-label={`حذف ${article.title}`}
               >
@@ -257,7 +272,7 @@ export function ArticleList({
           <div className={cn(adminGlassCard, "p-12 text-center")}>
             <FilePenLine className="text-gold mx-auto size-10" />
             <p className="text-navy dark:text-ivory mt-3 text-sm font-black">
-              {db.articles.length === 0
+              {articles.length === 0
                 ? "هنوز مقاله‌ای نوشته نشده"
                 : "مقاله‌ای مطابق فیلترها نیست"}
             </p>

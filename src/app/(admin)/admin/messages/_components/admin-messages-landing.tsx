@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import {
   CheckCheck,
   CircleAlert,
@@ -18,47 +18,55 @@ import {
   AdminPageHeader,
 } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  replyTicket,
-  setTicketStatus,
-  useTickets,
-  type TicketStatus,
-} from "@/lib/tickets";
+import { usePolling } from "@/hooks/use-polling";
+import type { Ticket, TicketStatus } from "@/lib/shop/tickets";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
+import {
+  getAllTicketsAction,
+  replyTicketAction,
+  setTicketStatusAction,
+} from "../_lib/actions";
 import { TicketCard } from "./ticket-card";
 
 const PER_PAGE = 6;
+const POLL_MS = 8_000;
 type StatusFilter = "all" | TicketStatus;
 type SortFilter = "newest" | "oldest" | "most-replies";
 
-export function AdminMessagesLanding() {
-  const tickets = useTickets();
+export function AdminMessagesLanding({
+  tickets: initialTickets,
+}: {
+  tickets: Ticket[];
+}) {
+  const [tickets] = usePolling(getAllTicketsAction, POLL_MS, initialTickets);
+  const [, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [sort, setSort] = useState<SortFilter>("newest");
   const [openId, setOpenId] = useState<string | null>(null);
   const [reply, setReply] = useState("");
 
+  // 🗓️ `tickets` already arrives newest-first (sorted server-side by the
+  // real `updatedAt`) — "oldest" just reverses that; "most-replies" is the
+  // one real re-sort.
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
-    return tickets
-      .filter((ticket) => {
-        const haystack =
-          `${ticket.name} ${ticket.owner} ${ticket.subject} ${ticket.replies.map((item) => item.text).join(" ")}`.toLocaleLowerCase(
-            "fa",
-          );
-        return (
-          (!term || haystack.includes(term)) &&
-          (status === "all" || ticket.status === status)
+    const filtered = tickets.filter((ticket) => {
+      const haystack =
+        `${ticket.name} ${ticket.subject} ${ticket.replies.map((item) => item.text).join(" ")}`.toLocaleLowerCase(
+          "fa",
         );
-      })
-      .sort((a, b) => {
-        if (sort === "oldest")
-          return a.createdAt.localeCompare(b.createdAt, "fa");
-        if (sort === "most-replies") return b.replies.length - a.replies.length;
-        return b.createdAt.localeCompare(a.createdAt, "fa");
-      });
+      return (
+        (!term || haystack.includes(term)) &&
+        (status === "all" || ticket.status === status)
+      );
+    });
+
+    if (sort === "most-replies") {
+      return [...filtered].sort((a, b) => b.replies.length - a.replies.length);
+    }
+    return sort === "oldest" ? [...filtered].reverse() : filtered;
   }, [q, sort, status, tickets]);
 
   const pg = usePagination(list, PER_PAGE, `${q}|${status}|${sort}`);
@@ -74,17 +82,31 @@ export function AdminMessagesLanding() {
 
   function send(id: string) {
     if (reply.trim().length < 2) return toast.warning("متن پاسخ را بنویسید");
-    replyTicket(id, "support", reply);
-    setReply("");
-    setOpenId(null);
-    toast.success("پاسخ ارسال و وضعیت تیکت به‌روزرسانی شد");
+
+    startTransition(async () => {
+      const result = await replyTicketAction(id, reply);
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+
+      setReply("");
+      setOpenId(null);
+      toast.success("پاسخ ارسال و وضعیت تیکت به‌روزرسانی شد");
+    });
   }
 
   function changeStatus(id: string, nextStatus: TicketStatus) {
-    setTicketStatus(id, nextStatus);
-    toast.success(
-      nextStatus === "closed" ? "تیکت بسته شد" : "تیکت دوباره باز شد",
-    );
+    startTransition(async () => {
+      const result = await setTicketStatusAction(id, nextStatus);
+      if (result.ok) {
+        toast.success(
+          nextStatus === "closed" ? "تیکت بسته شد" : "تیکت دوباره باز شد",
+        );
+      } else {
+        toast.error(result.error);
+      }
+    });
   }
 
   return (

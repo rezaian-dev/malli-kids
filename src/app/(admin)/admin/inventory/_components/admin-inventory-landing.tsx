@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { Boxes, PackageCheck, PackageX, ShoppingBag } from "lucide-react";
 
 import { Pagination } from "@/components/ui/pagination";
@@ -10,20 +10,22 @@ import {
   AdminStatStrip,
   AdminPageHeader,
   AdminTable,
-  useAdmin,
 } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
 import { CATS } from "@/lib/constants";
 import { toFaDigits } from "@/lib/locale/fa";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
+import type { Product } from "@/types";
+import { setProductStockAction } from "../../products/_lib/actions";
 import { buildInventoryColumns } from "./inventory-columns";
 
 const PER_PAGE = 7;
 type StockFilter = "all" | "available" | "unavailable";
 type SortFilter = "default" | "sold" | "price-desc" | "price-asc";
 
-export function AdminInventoryLanding() {
-  const { db, upsertProduct } = useAdmin();
+export function AdminInventoryLanding({ products }: { products: Product[] }) {
+  const [, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [stock, setStock] = useState<StockFilter>("all");
   const [category, setCategory] = useState("همه");
@@ -31,7 +33,7 @@ export function AdminInventoryLanding() {
 
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
-    return db.products
+    return products
       .filter((product) => {
         const matchesSearch =
           !term ||
@@ -50,10 +52,10 @@ export function AdminInventoryLanding() {
         if (sort === "price-asc") return a.price - b.price;
         return a.id - b.id;
       });
-  }, [category, db.products, q, sort, stock]);
+  }, [category, products, q, sort, stock]);
 
-  const low = db.products.filter((product) => !product.stock).length;
-  const sales = db.products.reduce((sum, product) => sum + product.sold, 0);
+  const low = products.filter((product) => !product.stock).length;
+  const sales = products.reduce((sum, product) => sum + product.sold, 0);
   const activeFilters =
     Number(!!q.trim()) +
     Number(stock !== "all") +
@@ -62,7 +64,11 @@ export function AdminInventoryLanding() {
   const pg = usePagination(list, PER_PAGE, `${q}|${stock}|${category}|${sort}`);
 
   const cols = buildInventoryColumns({
-    onToggleStock: (product, value) => upsertProduct({ ...product, stock: value }),
+    onToggleStock: (product, value) =>
+      startTransition(async () => {
+        const result = await setProductStockAction(product.id, value);
+        if (!result.ok) toast.error(result.error);
+      }),
   });
 
   return (
@@ -77,13 +83,13 @@ export function AdminInventoryLanding() {
         items={[
           {
             label: "کل مدل‌ها",
-            value: db.products.length,
+            value: products.length,
             Icon: Boxes,
             tone: "blue",
           },
           {
             label: "آماده فروش",
-            value: db.products.length - low,
+            value: products.length - low,
             Icon: PackageCheck,
             tone: "emerald",
           },
@@ -139,7 +145,7 @@ export function AdminInventoryLanding() {
             {
               value: "available",
               label: "موجود",
-              count: db.products.length - low,
+              count: products.length - low,
             },
             { value: "unavailable", label: "ناموجود", count: low },
           ]}

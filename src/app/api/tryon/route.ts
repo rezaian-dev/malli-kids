@@ -1,9 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Client, handle_file } from "@gradio/client";
 import { fal } from "@fal-ai/client";
+import { auth } from "@/lib/auth/auth";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
+
+const AUTH_ERROR = "برای این کار باید وارد حساب‌تان باشید.";
+const RATE_ERROR =
+  "تعداد درخواست‌های پرو مجازی شما زیاد بوده؛ کمی بعد دوباره تلاش کنید.";
+
+// 🔐 Every provider here costs real money or a shared free quota per call —
+// require a real session (never trust a client-claimed id) and throttle it,
+// instead of leaving the route open to anyone on the internet.
+async function requireUserId(req: NextRequest) {
+  const session = await auth.api.getSession({ headers: req.headers });
+  return session?.user.id ?? null;
+}
 
 // 🔀 Pick the engine with one env var. Default = free Hugging Face Space (no key).
 //   huggingface → free, no signup. ⚠️ shared public demo: often busy/down; NOT for production.
@@ -19,7 +33,15 @@ async function toBytes(img: string, origin: string): Promise<Img> {
     const mime = head.slice(5, head.indexOf(";")) || "image/jpeg";
     return { buf: Buffer.from(b64 ?? "", "base64"), mime };
   }
-  const url = img.startsWith("http") ? img : new URL(img, origin).toString();
+  // 🔒 SSRF guard: never fetch a client-supplied absolute URL — only this
+  // app's own static assets (e.g. a catalog product image path), resolved
+  // against *this request's* origin. Without the origin check, something
+  // like `"//internal-host/x"` would resolve away from `origin` and still
+  // get fetched.
+  const url = new URL(img, origin);
+  if (url.origin !== origin) {
+    throw new Error("فقط تصاویر آپلودی یا محصولات همین سایت مجاز است.");
+  }
   const res = await fetch(url);
   if (!res.ok) throw new Error(`دریافت تصویر ناموفق بود (${res.status}).`);
   return {
@@ -124,6 +146,23 @@ async function fashnStart(person: Img, garment: Img): Promise<string> {
 }
 
 export async function POST(req: NextRequest) {
+  const userId = await requireUserId(req);
+  if (!userId) return NextResponse.json({ error: AUTH_ERROR }, { status: 401 });
+
+  // 🚦 Real money/quota per call — 5 per hour per signed-in user.
+  const limited = rateLimit(`tryon:${userId}`, {
+    windowMs: 60 * 60 * 1000,
+    max: 5,
+  });
+  if (!limited.ok)
+    return NextResponse.json(
+      { error: RATE_ERROR },
+      {
+        status: 429,
+        headers: { "Retry-After": String(limited.retryAfterSec) },
+      },
+    );
+
   let body: { modelImage?: string; garmentImage?: string };
   try {
     body = await req.json();
@@ -183,6 +222,9 @@ export async function POST(req: NextRequest) {
 
 // 🔁 FASHN polling only.
 export async function GET(req: NextRequest) {
+  const userId = await requireUserId(req);
+  if (!userId) return NextResponse.json({ error: AUTH_ERROR }, { status: 401 });
+
   if (PROVIDER !== "fashn")
     return NextResponse.json(
       { error: "این provider نیازی به poll ندارد." },

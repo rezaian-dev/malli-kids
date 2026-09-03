@@ -6,6 +6,7 @@ export type Season = "بهاره" | "تابستانه" | "پاییزه" | "زم�
 export type Product = {
   id: number;
   img: string;
+  images: string[];
   name: string;
   cat: string;
   price: number;

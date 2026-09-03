@@ -1,10 +1,11 @@
-import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth/admin";
+import { requireAdminPage } from "@/lib/auth/admin";
+import { getAllReviews } from "./_lib/data";
 import { AdminReviewsLanding } from "./_components/admin-reviews-landing";
 
 export default async function AdminReviews() {
-  const admin = await requireAdmin();
-  if (!admin) redirect("/admin/login");
+  const admin = await requireAdminPage();
 
-  return <AdminReviewsLanding />;
+  const reviews = await getAllReviews();
+
+  return <AdminReviewsLanding reviews={reviews} />;
 }

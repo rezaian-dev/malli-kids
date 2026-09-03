@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { AdminReview } from "@/types";
 
 const HomeQuotes = dynamic(
   () => import("./home-quotes").then((mod) => mod.HomeQuotes),
@@ -18,7 +19,8 @@ const HomeQuotes = dynamic(
 );
 
 // 📚 Defers the embla carousel (below the fold, autoplay) out of the
-// homepage's initial client bundle.
-export function HomeQuotesMount() {
-  return <HomeQuotes />;
+// homepage's initial client bundle — the reviews themselves are real,
+// server-fetched data passed down from `sections/reviews.tsx`.
+export function HomeQuotesMount({ reviews }: { reviews: AdminReview[] }) {
+  return <HomeQuotes reviews={reviews} />;
 }

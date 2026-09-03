@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { toFaDigits } from "@/lib/locale/fa";
 import type { ShopState } from "@/lib/shop/shop-state";
+import type { Product } from "@/types";
 import { useShopExplorer } from "../_hooks/use-shop-explorer";
 import { ShopFilters } from "./shop-filters";
 import { ShopSortOptions } from "./shop-sort-options";
@@ -26,8 +27,14 @@ const FILTER_ICON_BADGE =
 const CLEAR_FILTERS_BTN =
   "text-gold hover:bg-gold/10 h-8 rounded-full px-3 text-[11px] font-black";
 
-export function ShopExplorer({ state }: { state: ShopState }) {
-  const shop = useShopExplorer(state, PER_PAGE);
+export function ShopExplorer({
+  state,
+  products,
+}: {
+  state: ShopState;
+  products: Product[];
+}) {
+  const shop = useShopExplorer(state, PER_PAGE, products);
 
   return (
     <div className="shop-page xs:px-4 mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-7">

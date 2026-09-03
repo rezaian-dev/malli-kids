@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { findPublishedArticle, loadPublishedArticles } from "@/lib/articles";
+import { findPublishedArticle } from "@/lib/articles";
 import { JsonLd } from "@/components/shared/json-ld";
 import { articleSchema, breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { ArticleActions } from "./_components/article-actions";
@@ -14,17 +14,13 @@ function decode(slug: string) {
   }
 }
 
-export function generateStaticParams() {
-  return loadPublishedArticles().map((article) => ({ slug: article.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = findPublishedArticle(decode(slug));
+  const article = await findPublishedArticle(decode(slug));
 
   if (!article) {
     return buildMetadata({
@@ -54,7 +50,7 @@ export default async function ArticlePage({
 }) {
   const { slug } = await params;
   const decoded = decode(slug);
-  const article = findPublishedArticle(decoded) ?? null;
+  const article = (await findPublishedArticle(decoded)) ?? null;
 
   return (
     <>

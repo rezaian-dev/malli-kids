@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ShoppingBag, Trash2, XIcon } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
 import { toFaDigits } from "@/lib/locale/fa";
-import { getProductById } from "@/lib/data/products";
-import { BRAND } from "@/lib/constants";
-import { SHIPPING_FEE } from "@/lib/orders";
+import { getProductsByIdsAction } from "@/lib/shop/products-actions";
+import { BRAND, SHIPPING_FEE } from "@/lib/constants";
+import type { Product } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,16 +38,27 @@ export function CartSheet() {
     priceOf,
   } = useStore();
   const empty = cartCount === 0;
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    getProductsByIdsAction(cart.map((item) => item.id)).then((list) => {
+      if (active) setProducts(list);
+    });
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cart.map((item) => item.id).join(",")]);
 
   const rows = cart
-    .map((item) => ({ item, product: getProductById(item.id) }))
+    .map((item) => ({
+      item,
+      product: products.find((product) => product.id === item.id),
+    }))
     .filter(
-      (
-        r,
-      ): r is {
-        item: (typeof cart)[number];
-        product: NonNullable<ReturnType<typeof getProductById>>;
-      } => Boolean(r.product),
+      (r): r is { item: (typeof cart)[number]; product: Product } =>
+        Boolean(r.product),
     );
 
   const subtotal = rows.reduce(

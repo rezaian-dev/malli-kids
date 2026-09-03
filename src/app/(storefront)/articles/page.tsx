@@ -10,8 +10,8 @@ export const metadata = buildMetadata({
   path: "/articles",
 });
 
-export default function ArticlesPage() {
-  const seed = loadPublishedArticles();
+export default async function ArticlesPage() {
+  const seed = await loadPublishedArticles();
 
   return (
     <>

@@ -131,6 +131,10 @@
   --animate-admin-orbit: adminOrbit 28s linear infinite;
   --animate-admin-glow: adminGlow 7s ease-in-out infinite alternate;
   --animate-arrow-ripple: arrow-ripple 0.5s ease-out;
+  /* 📍 The profile page's Leaflet/Neshan address picker — marker drop-in
+     when a point is placed (click/drag/GPS result). */
+  --animate-marker-drop: markerDrop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)
+    both;
 
   /* 🪄 Keyframes (referenced by the tokens above) */
   @keyframes adminOrbit {
@@ -254,6 +258,19 @@
     50% {
       transform: scale(1.12);
       opacity: 0.7;
+    }
+  }
+  @keyframes markerDrop {
+    0% {
+      transform: translateY(-14px) scale(0.6);
+      opacity: 0;
+    }
+    60% {
+      transform: translateY(2px) scale(1.08);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0) scale(1);
     }
   }
   @keyframes styleCardIn {

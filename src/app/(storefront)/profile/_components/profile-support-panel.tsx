@@ -4,10 +4,11 @@ import { useState } from "react";
 import { Headphones, Plus } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useStore } from "@/providers/store-provider";
-import { fullName } from "@/lib/text/name";
-import { createTicket, useTickets, type TicketStatus } from "@/lib/tickets";
+import type { Ticket, TicketStatus } from "@/lib/shop/tickets";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { usePolling } from "@/hooks/use-polling";
+import { createTicketAction, getMyTicketsAction } from "../_lib/actions";
 import { PROFILE_CARD } from "./profile-shared";
 import { TicketThread } from "./ticket-thread";
 
@@ -26,6 +27,8 @@ const TICKET_STATUS: Record<TicketStatus, { label: string; cls: string }> = {
   },
 };
 
+const POLL_MS = 8_000;
+
 const FIELD_LABEL = "text-navy/70 dark:text-wheat text-xs font-black";
 
 function fieldClass(error?: string) {
@@ -42,8 +45,12 @@ function fieldClass(error?: string) {
 // 🎫 Support panel keeps ticket logic out of the first profile paint.
 export function ProfileSupportPanel() {
   const { user } = useStore();
-  const owner = user?.email || user?.phone || "";
-  const tickets = useTickets(owner);
+  const [tickets, setTickets] = usePolling<Ticket[]>(
+    getMyTicketsAction,
+    POLL_MS,
+    [],
+    Boolean(user),
+  );
   const [compose, setCompose] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
   const [subject, setSubject] = useState("");
@@ -52,9 +59,13 @@ export function ProfileSupportPanel() {
     {},
   );
 
+  function refresh() {
+    getMyTicketsAction().then(setTickets);
+  }
+
   if (!user) return null;
 
-  function submit() {
+  async function submit() {
     const next: { subject?: string; message?: string } = {};
     if (subject.trim().length < 3)
       next.subject = "موضوع باید حداقل ۳ حرف باشد.";
@@ -63,12 +74,16 @@ export function ProfileSupportPanel() {
     setErrors(next);
     if (Object.keys(next).length) return;
 
-    createTicket({
-      owner,
-      name: fullName(user!.firstName, user!.lastName),
+    const result = await createTicketAction({
       subject: subject.trim(),
       message: message.trim(),
     });
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+
+    setTickets((current) => [result.data, ...current]);
     toast.success("تیکت ثبت شد — پاسخ را همین‌جا می‌بینید ✅");
     setSubject("");
     setMessage("");
@@ -239,7 +254,9 @@ export function ProfileSupportPanel() {
                     {status.label}
                   </span>
                 </button>
-                {open ? <TicketThread ticket={ticket} /> : null}
+                {open ? (
+                  <TicketThread ticket={ticket} onSent={refresh} />
+                ) : null}
               </li>
             );
           })}

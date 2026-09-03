@@ -1,10 +1,11 @@
-import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth/admin";
+import { requireAdminPage } from "@/lib/auth/admin";
+import { getAllCollabRequests } from "@/lib/shop/collab";
 import { AdminCollabLanding } from "./_components/admin-collab-landing";
 
 export default async function AdminCollab() {
-  const admin = await requireAdmin();
-  if (!admin) redirect("/admin/login");
+  const admin = await requireAdminPage();
 
-  return <AdminCollabLanding />;
+  const requests = await getAllCollabRequests();
+
+  return <AdminCollabLanding requests={requests} />;
 }

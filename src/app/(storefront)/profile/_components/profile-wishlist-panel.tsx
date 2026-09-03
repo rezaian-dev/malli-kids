@@ -1,19 +1,31 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product";
-import { CATALOG } from "@/lib/data/products";
 import { useFavorites } from "@/lib/favorites";
 import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
+import type { Product } from "@/types";
+import { getProductsByIdsAction } from "@/lib/shop/products-actions";
 import { PROFILE_CARD } from "./profile-shared";
 
 // 💛 Wishlist panel loads only when the user opens it.
 export function ProfileWishlistPanel() {
-  const favs = useFavorites();
-  const products = CATALOG.filter((product) => favs.includes(product.id));
+  const { ids } = useFavorites();
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    getProductsByIdsAction(ids).then((list) => {
+      if (active) setProducts(list);
+    });
+    return () => {
+      active = false;
+    };
+  }, [ids]);
 
   return (
     <section className={PROFILE_CARD}>

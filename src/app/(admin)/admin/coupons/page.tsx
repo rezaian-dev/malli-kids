@@ -1,10 +1,11 @@
-import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth/admin";
+import { requireAdminPage } from "@/lib/auth/admin";
+import { getAllCoupons } from "./_lib/data";
 import { AdminCouponsLanding } from "./_components/admin-coupons-landing";
 
 export default async function AdminCoupons() {
-  const admin = await requireAdmin();
-  if (!admin) redirect("/admin/login");
+  const admin = await requireAdminPage();
 
-  return <AdminCouponsLanding />;
+  const coupons = await getAllCoupons();
+
+  return <AdminCouponsLanding coupons={coupons} />;
 }

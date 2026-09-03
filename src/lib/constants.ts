@@ -10,11 +10,9 @@ export const BRAND = {
   freeShipFrom: 1_500_000,
 };
 
-export const RETIRED_CATS = ["راحتی و خانگی", "بیرونی و مجلسی"] as const;
-
-export function isRetiredCategory(category: string) {
-  return (RETIRED_CATS as readonly string[]).includes(category);
-}
+/** 🚚 Flat shipping fee below `BRAND.freeShipFrom` — shared by order
+ *  creation (server) and every checkout total preview (client). */
+export const SHIPPING_FEE = 95_000;
 
 export const CATS = [
   "همه",
@@ -38,12 +36,15 @@ export const SORTS: Record<string, string> = {
 export const STORAGE = {
   theme: "malli_theme",
   boot: "malli_boot",
-  purchases: "malli_purchases",
   cart: "malli_cart",
-  campaign: "malli_campaign",
-  banner: "malli_banner",
-  adminDb: "malli_admin_db",
 };
 
 export const PRICE_CAP = 4_000_000;
 export const PER_PAGE = 9;
+
+export const COLLAB_KINDS = [
+  "خرید عمده و نمایندگی",
+  "همکاری در دوخت و تولید",
+  "تولید محتوا و بلاگر",
+  "عکاسی و مدلینگ",
+] as const;

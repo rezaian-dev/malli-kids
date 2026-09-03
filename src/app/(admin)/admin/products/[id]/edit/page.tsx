@@ -1,10 +1,34 @@
-import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth/admin";
-import { EditProductLanding } from "./_components/edit-product-landing";
+import Link from "next/link";
+import { requireAdminPage } from "@/lib/auth/admin";
+import { getProductById } from "@/lib/shop/products";
+import { ProductForm } from "@/components/admin/product-form";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { adminGlassCard } from "@/lib/admin/admin-chrome";
 
-export default async function EditProductPage() {
-  const admin = await requireAdmin();
-  if (!admin) redirect("/admin/login");
+export default async function EditProductPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const admin = await requireAdminPage();
 
-  return <EditProductLanding />;
+  const { id } = await params;
+  const product = await getProductById(Number(id));
+
+  if (!product) {
+    return (
+      <div className={cn(adminGlassCard, "mx-auto mt-10 max-w-md p-8 text-center")}>
+        <p className="text-navy dark:text-ivory font-black">محصول پیدا نشد</p>
+        <p className="text-navy/50 dark:text-wheat mt-1 text-sm">
+          ممکن است حذف شده باشد.
+        </p>
+        <Button asChild variant="navy" className="mt-4 rounded-2xl">
+          <Link href="/admin/products">بازگشت به محصولات</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  return <ProductForm key={product.id} product={product} />;
 }

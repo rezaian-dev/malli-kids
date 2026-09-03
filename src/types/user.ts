@@ -9,6 +9,8 @@ export type User = {
   nationalId?: string;
   city?: string;
   address?: string;
+  lat?: number;
+  lng?: number;
   childName?: string;
   childAge?: string;
   childGender?: string;

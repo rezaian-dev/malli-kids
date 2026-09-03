@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { CircleAlert, Eye, MessageSquareText, Star } from "lucide-react";
 
 import { Pagination } from "@/components/ui/pagination";
@@ -9,20 +9,33 @@ import {
   AdminFilterSelect,
   AdminStatStrip,
   AdminPageHeader,
-  useAdmin,
 } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
+import { usePolling } from "@/hooks/use-polling";
 import { toFaDigits } from "@/lib/locale/fa";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
+import type { AdminReview } from "@/types";
+import {
+  getAllReviewsAction,
+  removeReviewAction,
+  setReviewVisibleAction,
+} from "../_lib/actions";
 import { ReviewCard } from "./review-card";
 
 const PER_PAGE = 6;
+const POLL_MS = 20_000;
 type VisibilityFilter = "all" | "approved" | "pending";
 type SortFilter = "newest" | "rating-desc" | "rating-asc";
 
-export function AdminReviewsLanding() {
-  const { db, saveReview, removeReview } = useAdmin();
+export function AdminReviewsLanding({
+  reviews: initialReviews,
+}: {
+  reviews: AdminReview[];
+}) {
+  const [reviews] = usePolling(getAllReviewsAction, POLL_MS, initialReviews);
+  const [, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [visibility, setVisibility] = useState<VisibilityFilter>("all");
   const [rating, setRating] = useState("all");
@@ -30,7 +43,7 @@ export function AdminReviewsLanding() {
 
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
-    return db.reviews
+    return reviews
       .filter((review) => {
         const matchesSearch =
           !term ||
@@ -49,19 +62,19 @@ export function AdminReviewsLanding() {
         if (sort === "rating-asc") return a.rate - b.rate;
         return b.date.localeCompare(a.date, "fa");
       });
-  }, [db.reviews, q, rating, sort, visibility]);
+  }, [reviews, q, rating, sort, visibility]);
 
   const pg = usePagination(
     list,
     PER_PAGE,
     `${q}|${visibility}|${rating}|${sort}`,
   );
-  const approved = db.reviews.filter((review) => review.visible).length;
-  const pending = db.reviews.length - approved;
-  const average = db.reviews.length
+  const approved = reviews.filter((review) => review.visible).length;
+  const pending = reviews.length - approved;
+  const average = reviews.length
     ? (
-        db.reviews.reduce((sum, review) => sum + review.rate, 0) /
-        db.reviews.length
+        reviews.reduce((sum, review) => sum + review.rate, 0) /
+        reviews.length
       ).toFixed(1)
     : "۰";
   const activeFilters =
@@ -82,7 +95,7 @@ export function AdminReviewsLanding() {
         items={[
           {
             label: "کل نظرات",
-            value: db.reviews.length,
+            value: reviews.length,
             Icon: MessageSquareText,
             tone: "blue",
           },
@@ -122,7 +135,7 @@ export function AdminReviewsLanding() {
           value={visibility}
           onValueChange={(value) => setVisibility(value as VisibilityFilter)}
           options={[
-            { value: "all", label: "همه نظرات", count: db.reviews.length },
+            { value: "all", label: "همه نظرات", count: reviews.length },
             { value: "pending", label: "در انتظار تأیید", count: pending },
             { value: "approved", label: "تأییدشده", count: approved },
           ]}
@@ -158,9 +171,21 @@ export function AdminReviewsLanding() {
               key={review.id}
               review={review}
               onToggleVisible={() =>
-                saveReview({ ...review, visible: !review.visible })
+                startTransition(async () => {
+                  const result = await setReviewVisibleAction(
+                    review.id,
+                    !review.visible,
+                  );
+                  if (!result.ok) toast.error(result.error);
+                })
               }
-              onRemove={() => removeReview(review.id)}
+              onRemove={() =>
+                startTransition(async () => {
+                  const result = await removeReviewAction(review.id);
+                  if (result.ok) toast.success("نظر حذف شد");
+                  else toast.error(result.error);
+                })
+              }
             />
           ))}
         </div>

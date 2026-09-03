@@ -15,6 +15,11 @@ const faDateTimeFormatter = new Intl.DateTimeFormat("fa-IR", {
   dateStyle: "medium",
   timeStyle: "short",
 });
+const faDateFormatter = new Intl.DateTimeFormat("fa-IR", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
 
 /**
  * 🔢 Convert ASCII digits (0-9) to Persian digits (۰-۹).
@@ -71,6 +76,26 @@ export function parseFaPrice(value: string | null | undefined): number {
  * 🕒 Format "now" as a medium-length fa-IR date + short time string
  * (Jalali calendar, Persian digits) — e.g. "۲ خرداد ۱۴۰۴، ۱۴:۰۵".
  */
+/**
+ * 🕒 Format any real timestamp as a medium-length fa-IR date + short time
+ * string (Jalali calendar, Persian digits) — e.g. "۲ خرداد ۱۴۰۴، ۱۴:۰۵".
+ */
+export function faDateTime(input: Date | string | number): string {
+  return faDateTimeFormatter.format(new Date(input));
+}
+
 export function faNow(): string {
-  return faDateTimeFormatter.format(new Date());
+  return faDateTime(new Date());
+}
+
+/**
+ * 📅 Format a real (Gregorian) timestamp — stored on every document via
+ * Mongoose's own `createdAt` — as a Jalali `YYYY/MM/DD` string, Persian
+ * digits (e.g. "۱۴۰۵/۰۶/۰۱"). The one place raw `Date`s become the display
+ * strings the rest of the app already expects; call this at the server
+ * boundary (data-access functions, action return values), never store its
+ * output back in the database.
+ */
+export function faDate(input: Date | string | number): string {
+  return faDateFormatter.format(new Date(input));
 }

@@ -20,6 +20,7 @@ import {
 } from "../_lib/schemas";
 import { PROFILE_CARD } from "./profile-shared";
 import { SECTION_TITLE } from "../_lib/profile-form-styles";
+import { AddressMapField } from "./address-map-dialog";
 
 function toValues(user: User): UpdateAccountValues {
   return {
@@ -28,6 +29,8 @@ function toValues(user: User): UpdateAccountValues {
     nationalId: user.nationalId || "",
     city: user.city || "",
     address: user.address || "",
+    lat: user.lat,
+    lng: user.lng,
   };
 }
 
@@ -98,6 +101,10 @@ export function AccountForm() {
           autoComplete="street-address"
           maxLength={160}
         />
+
+        <div className="-mt-2 sm:col-span-2">
+          <AddressMapField />
+        </div>
 
         <TextField
           name="phone"

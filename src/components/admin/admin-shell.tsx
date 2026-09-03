@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -14,14 +14,23 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useAdmin, type AdminIdentity } from "@/providers/admin-store";
+import { signOutAction } from "@/lib/auth/actions";
+import type { AdminNotifCounts } from "@/lib/admin/notif-counts";
+import { getAdminNotifCountsAction } from "@/lib/admin/notif-counts-actions";
 import { ADMIN_NAV } from "@/lib/admin/nav";
+import { usePolling } from "@/hooks/use-polling";
 import { cn } from "@/lib/utils";
 import { AdminAccountFooter } from "./admin-account-footer";
 import { AdminHeaderIdentity } from "./admin-header-identity";
 import { AdminHeaderNotifications } from "./admin-header-notifications";
 import { AdminSidebarNav, routeIsActive } from "./admin-sidebar-nav";
 import { AdminSidebarScroller } from "./admin-sidebar-scroller";
+
+export type AdminIdentity = {
+  username: string;
+  name: string;
+  avatar?: string;
+};
 
 const SCROLL_EDGE_TOP = cn(
   "pointer-events-none absolute inset-x-0 top-0 z-3 h-4",
@@ -85,17 +94,40 @@ const FALLBACK_ADMIN_PROFILE: AdminIdentity = {
   name: "مدیر گالری",
 };
 
-export function AdminShell({ children }: { children: ReactNode }) {
-  const path = usePathname();
-  const admin = useAdmin();
-  const { logout } = admin;
+const POLL_MS = 15_000;
 
-  const profile = admin.profile ?? FALLBACK_ADMIN_PROFILE;
+export function AdminShell({
+  children,
+  profile: identity,
+  counts: initialCounts,
+}: {
+  children: ReactNode;
+  /** 🔒 The real, server-verified admin (from `requireAdmin()` in
+   *  `admin/layout.tsx`) — `null` on `/admin/login` itself, where no admin
+   *  session exists yet. Display data only; grants no access by itself —
+   *  every protected page re-checks `requireAdmin()` server-side. */
+  profile: AdminIdentity | null;
+  counts: AdminNotifCounts;
+}) {
+  const path = usePathname();
+  const router = useRouter();
+
+  const [counts] = usePolling(
+    getAdminNotifCountsAction,
+    POLL_MS,
+    initialCounts,
+    Boolean(identity),
+  );
+  const profile = identity ?? FALLBACK_ADMIN_PROFILE;
   const [open, setOpen] = useState(false);
   const current =
     ADMIN_NAV.find((item) => routeIsActive(path, item.href)) ?? ADMIN_NAV[0];
 
   if (path === "/admin/login") return <>{children}</>;
+
+  function logout() {
+    void signOutAction().then(() => router.push("/admin/login"));
+  }
 
   return (
     <div
@@ -156,7 +188,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <span aria-hidden="true" className={SCROLL_EDGE_TOP} />
           <span aria-hidden="true" className={SCROLL_EDGE_BOTTOM} />
           <AdminSidebarScroller className="pb-2">
-            <AdminSidebarNav />
+            <AdminSidebarNav counts={counts} />
           </AdminSidebarScroller>
         </div>
         <div className="relative">
@@ -196,7 +228,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <span aria-hidden="true" className={SCROLL_EDGE_TOP} />
             <span aria-hidden="true" className={SCROLL_EDGE_BOTTOM} />
             <AdminSidebarScroller className="pt-3 pb-2">
-              <AdminSidebarNav onNavigate={() => setOpen(false)} />
+              <AdminSidebarNav onNavigate={() => setOpen(false)} counts={counts} />
             </AdminSidebarScroller>
           </div>
           <AdminAccountFooter
@@ -272,7 +304,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </div>
 
             <div className="ms-auto flex min-w-0 items-center gap-1.5 sm:gap-2">
-              <AdminHeaderNotifications />
+              <AdminHeaderNotifications counts={counts} />
               <ModeToggle
                 className={cn(
                   "size-10 shrink-0 rounded-xl border shadow-sm",

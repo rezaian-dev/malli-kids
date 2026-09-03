@@ -10,34 +10,35 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAdmin } from "@/providers/admin-store";
+import type { AdminNotifCounts } from "@/lib/admin/notif-counts";
 import { toFaDigits } from "@/lib/locale/fa";
-import { useTickets } from "@/lib/tickets";
 import { cn } from "@/lib/utils";
 
 /** 🔔 The header bell — pending orders, open tickets, hidden reviews. */
-export function AdminHeaderNotifications() {
-  const { db } = useAdmin();
-  const tickets = useTickets();
+export function AdminHeaderNotifications({
+  counts,
+}: {
+  counts: AdminNotifCounts;
+}) {
   const notices = [
     {
       label: "سفارش جدید",
       hint: "نیازمند شروع پردازش",
-      count: db.orders.filter((order) => order.status === "جدید").length,
+      count: counts.freshOrders,
       href: "/admin/orders",
       Icon: ShoppingBag,
     },
     {
       label: "تیکت باز",
       hint: "در انتظار پاسخ پشتیبانی",
-      count: tickets.filter((ticket) => ticket.status === "open").length,
+      count: counts.openTickets,
       href: "/admin/messages",
       Icon: Bell,
     },
     {
       label: "نظر پنهان",
       hint: "نیازمند بررسی محتوا",
-      count: db.reviews.filter((review) => !review.visible).length,
+      count: counts.pendingReviews,
       href: "/admin/reviews",
       Icon: Sparkles,
     },

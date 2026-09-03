@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { BadgePercent, Boxes, PackageCheck, PackageX, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -11,20 +11,22 @@ import {
   AdminFilterSelect,
   AdminStatStrip,
   AdminPageHeader,
-  useAdmin,
 } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
 import { CATS, SEASONS } from "@/lib/constants";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
+import type { Product } from "@/types";
+import { removeProductAction } from "../_lib/actions";
 import { AdminProductCard } from "./admin-product-card";
 
 const PER_PAGE = 6;
 type StockFilter = "all" | "available" | "unavailable";
 type SortFilter = "newest" | "popular" | "price-desc" | "price-asc";
 
-export function AdminProductsLanding() {
-  const { db, removeProduct } = useAdmin();
+export function AdminProductsLanding({ products }: { products: Product[] }) {
+  const [, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("همه");
   const [season, setSeason] = useState("همه");
@@ -33,7 +35,7 @@ export function AdminProductsLanding() {
 
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
-    return db.products
+    return products
       .filter((product) => {
         const matchesSearch =
           !term ||
@@ -55,7 +57,7 @@ export function AdminProductsLanding() {
         if (sort === "price-asc") return a.price - b.price;
         return b.id - a.id;
       });
-  }, [cat, db.products, q, season, sort, stock]);
+  }, [cat, products, q, season, sort, stock]);
 
   const resetKey = `${q}|${cat}|${season}|${stock}|${sort}`;
   const pg = usePagination(list, PER_PAGE, resetKey);
@@ -65,8 +67,8 @@ export function AdminProductsLanding() {
     Number(season !== "همه") +
     Number(stock !== "all") +
     Number(sort !== "newest");
-  const available = db.products.filter((product) => product.stock).length;
-  const discounted = db.products.filter(
+  const available = products.filter((product) => product.stock).length;
+  const discounted = products.filter(
     (product) => product.old || product.disc,
   ).length;
 
@@ -97,7 +99,7 @@ export function AdminProductsLanding() {
         items={[
           {
             label: "کل محصولات",
-            value: db.products.length,
+            value: products.length,
             Icon: Boxes,
             tone: "blue",
           },
@@ -109,7 +111,7 @@ export function AdminProductsLanding() {
           },
           {
             label: "ناموجود",
-            value: db.products.length - available,
+            value: products.length - available,
             Icon: PackageX,
             tone: "rose",
           },
@@ -140,8 +142,8 @@ export function AdminProductsLanding() {
             label: item === "همه" ? "همه دسته‌ها" : item,
             count:
               item === "همه"
-                ? db.products.length
-                : db.products.filter((product) => product.cat === item).length,
+                ? products.length
+                : products.filter((product) => product.cat === item).length,
           }))}
         />
         <AdminFilterSelect
@@ -163,7 +165,7 @@ export function AdminProductsLanding() {
             {
               value: "unavailable",
               label: "فقط ناموجود",
-              count: db.products.length - available,
+              count: products.length - available,
             },
           ]}
         />
@@ -186,7 +188,13 @@ export function AdminProductsLanding() {
             <AdminProductCard
               key={product.id}
               product={product}
-              onRemove={() => removeProduct(product.id)}
+              onRemove={() =>
+                startTransition(async () => {
+                  const result = await removeProductAction(product.id);
+                  if (result.ok) toast.success("محصول حذف شد");
+                  else toast.error(result.error);
+                })
+              }
             />
           ))}
         </div>

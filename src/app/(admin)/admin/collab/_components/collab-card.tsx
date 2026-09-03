@@ -2,7 +2,7 @@ import { Phone, PhoneCall, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
-import type { CollabRequest } from "@/lib/collab";
+import type { CollabRequest } from "@/lib/shop/collab";
 
 const STATUS_ACTION_BUTTON = "min-h-9 rounded-xl text-[10px]";
 

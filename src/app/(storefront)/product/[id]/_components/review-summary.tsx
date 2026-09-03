@@ -3,27 +3,31 @@ import { cn } from "@/lib/utils";
 import { pdpKicker, pdpWell } from "../_lib/product-chrome";
 import { ReviewStars } from "./review-stars";
 
-function distFromAvg(avg: number) {
-  const five = Math.round(Math.min(92, Math.max(48, (avg - 3.2) * 38)));
-  const four = Math.round((100 - five) * 0.62);
-  const three = Math.round((100 - five - four) * 0.7);
-  const two = Math.max(0, Math.round((100 - five - four - three) * 0.55));
-  const one = Math.max(0, 100 - five - four - three - two);
-  return [five, four, three, two, one];
+/** 📊 Real per-star histogram (percentage of `ratings` at each star), not a
+ *  formula guess. */
+function starDistribution(ratings: number[]) {
+  return [5, 4, 3, 2, 1].map((star) => {
+    if (!ratings.length) return 0;
+    const hits = ratings.filter((r) => Math.round(r) === star).length;
+    return Math.round((hits / ratings.length) * 100);
+  });
 }
 
-/** 📊 Average score, per-star distribution, and the "would recommend"
- *  donut + stat grid. */
+/** 📊 Average score, real per-star distribution, and the "would recommend"
+ *  donut — all computed from the actual reviews passed in, nothing
+ *  fabricated. */
 export function ReviewSummary({
   avg,
   count,
   recommend,
+  ratings,
 }: {
   avg: number;
   count: number;
   recommend: number;
+  ratings: number[];
 }) {
-  const bars = distFromAvg(avg);
+  const bars = starDistribution(ratings);
 
   return (
     <div className={`${pdpWell} overflow-hidden p-4 sm:p-6`}>
@@ -110,31 +114,6 @@ export function ReviewSummary({
           </p>
         </div>
       </div>
-
-      <ul className="mt-5 grid grid-cols-2 gap-2 min-[480px]:grid-cols-4">
-        {[
-          ["پیشنهاد خرید", `${toFaDigits(recommend)}٪`],
-          ["تطبیق سایز", `${toFaDigits(Math.max(88, recommend - 3))}٪`],
-          ["کیفیت دوخت", `${toFaDigits(Math.min(99, recommend + 1))}٪`],
-          ["خرید مجدد", `${toFaDigits(Math.max(84, recommend - 6))}٪`],
-        ].map(([label, val]) => (
-          <li
-            key={label}
-            className={cn(
-              "rounded-2xl border px-3 py-3 text-center",
-              "border-navy/8 bg-white/80",
-              "dark:border-gold/20 dark:bg-navy-deep/40",
-            )}
-          >
-            <p className="text-navy dark:text-ivory text-base font-black">
-              {val}
-            </p>
-            <p className="text-navy/70 dark:text-wheat mt-1 text-[10px] font-bold">
-              {label}
-            </p>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

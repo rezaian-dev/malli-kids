@@ -2,23 +2,23 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CATALOG } from "@/lib/data/products";
-import { loadCatalog } from "@/lib/admin/sync";
 import { PRICE_CAP, SORTS } from "@/lib/constants";
 import { formatToman } from "@/lib/locale/fa";
 import { toShopHref, type ShopState } from "@/lib/shop/shop-state";
+import type { Product } from "@/types";
 
 /** 🧠 All state, derived data, and URL-sync behind the shop page. */
-export function useShopExplorer(state: ShopState, perPage: number) {
-  const [catalog, setCatalog] = useState(CATALOG);
+export function useShopExplorer(
+  state: ShopState,
+  perPage: number,
+  catalog: Product[],
+) {
   const router = useRouter();
   const [filterOpen, setFilterOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [sortPopOpen, setSortPopOpen] = useState(false);
   const [query, setQuery] = useState(state.q);
   const [range, setRange] = useState<[number, number]>([state.min, state.max]);
-
-  useEffect(() => setCatalog(loadCatalog()), []);
 
   const push = useCallback(
     (next: Partial<ShopState>) => {

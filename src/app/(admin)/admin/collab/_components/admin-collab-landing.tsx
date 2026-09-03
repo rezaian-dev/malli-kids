@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { CheckCircle2, Clock3, Handshake, Tags } from "lucide-react";
 import { toast } from "@/lib/toast";
 
@@ -12,21 +12,18 @@ import {
   AdminPageHeader,
 } from "@/components/admin";
 import { usePagination } from "@/hooks/use-pagination";
-import {
-  COLLAB_KINDS,
-  setCollabStatus,
-  useCollabs,
-  type CollabStatus,
-} from "@/lib/collab";
+import { COLLAB_KINDS } from "@/lib/constants";
+import type { CollabRequest, CollabStatus } from "@/lib/shop/collab";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
+import { setCollabStatusAction } from "../_lib/actions";
 import { CollabCard } from "./collab-card";
 
 const PER_PAGE = 6;
 type StatusFilter = "all" | "waiting" | "contacted";
 
-export function AdminCollabLanding() {
-  const requests = useCollabs();
+export function AdminCollabLanding({ requests }: { requests: CollabRequest[] }) {
+  const [, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [kind, setKind] = useState("all");
@@ -58,12 +55,19 @@ export function AdminCollabLanding() {
     Number(!!q.trim()) + Number(status !== "all") + Number(kind !== "all");
 
   function change(id: string, next: CollabStatus) {
-    setCollabStatus(id, next);
-    toast.success(
-      next === "تماس گرفته شد"
-        ? "درخواست به‌عنوان پیگیری‌شده ثبت شد"
-        : "درخواست به صف بررسی بازگشت",
-    );
+    startTransition(async () => {
+      const result = await setCollabStatusAction(id, next);
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+
+      toast.success(
+        next === "تماس گرفته شد"
+          ? "درخواست به‌عنوان پیگیری‌شده ثبت شد"
+          : "درخواست به صف بررسی بازگشت",
+      );
+    });
   }
 
   return (

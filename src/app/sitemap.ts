@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { loadPublishedArticles } from "@/lib/articles";
 import { CATS } from "@/lib/constants";
-import { CORE_PRODUCTS, pdpHref, SEASONS } from "@/lib/data/products";
+import { pdpHref, SEASONS } from "@/lib/data/products";
+import { getAllProducts } from "@/lib/shop/products";
 import { absoluteUrl } from "@/lib/seo";
 import {
   defaultShopState,
@@ -10,7 +11,7 @@ import {
 
 const now = new Date();
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: absoluteUrl("/"),
@@ -119,21 +120,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
 
-  const productRoutes: MetadataRoute.Sitemap = CORE_PRODUCTS.map((product) => ({
+  const [products, articles] = await Promise.all([
+    getAllProducts(),
+    loadPublishedArticles(),
+  ]);
+
+  const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
     url: absoluteUrl(pdpHref(product.id)),
     lastModified: now,
     changeFrequency: "weekly",
     priority: 0.75,
   }));
 
-  const articleRoutes: MetadataRoute.Sitemap = loadPublishedArticles().map(
-    (article) => ({
-      url: absoluteUrl(`/articles/${article.slug}`),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    }),
-  );
+  const articleRoutes: MetadataRoute.Sitemap = articles.map((article) => ({
+    url: absoluteUrl(`/articles/${article.slug}`),
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
 
   return [
     ...staticRoutes,

@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { Home, Package, Truck, Wallet } from "lucide-react";
-import type { OrderStatus } from "@/types";
+import type { AdminOrder, OrderStatus } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
-import { ORDER_STAGES, stageIndex, type Order } from "@/lib/orders";
+import { ORDER_STAGES, stageIndex } from "@/lib/shop/order-status";
 import { cn } from "@/lib/utils";
 
 const ORDER_TONE: Record<OrderStatus, string> = {
@@ -19,7 +19,7 @@ const ORDER_TONE: Record<OrderStatus, string> = {
 const STAGE_ICONS = [Wallet, Package, Truck, Home] as const;
 
 /** 📦 One order — items, total, and the delivery-stage tracker. */
-export function OrderCard({ order }: { order: Order }) {
+export function OrderCard({ order }: { order: AdminOrder }) {
   const stage = stageIndex(order.status);
 
   return (

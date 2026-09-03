@@ -1,12 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import type { AdminCol } from "@/components/admin";
-import { statusTone } from "@/lib/admin/admin-data";
+import { statusTone } from "@/lib/shop/order-status";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
-import type { Order } from "@/lib/orders";
+import type { AdminOrder } from "@/types";
 
 /** 🧱 The orders table column set. */
-export const ORDER_COLUMNS: AdminCol<Order>[] = [
+export const ORDER_COLUMNS: AdminCol<AdminOrder>[] = [
   {
     key: "id",
     title: "شناسه سفارش",

@@ -3,18 +3,28 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
-import { replyTicket, type Ticket } from "@/lib/tickets";
+import type { Ticket } from "@/lib/shop/tickets";
+import { replyTicketAsUserAction } from "../_lib/actions";
 
 /** 💬 An expanded ticket's reply thread + the "reply as user" composer. */
-export function TicketThread({ ticket }: { ticket: Ticket }) {
+export function TicketThread({
+  ticket,
+  onSent,
+}: {
+  ticket: Ticket;
+  onSent: () => void;
+}) {
   const [reply, setReply] = useState("");
 
-  function send() {
+  async function send() {
     const text = reply.trim();
     if (text.length < 2) return;
-    replyTicket(ticket.id, "user", text);
+    const result = await replyTicketAsUserAction(ticket.id, text);
+    if (!result.ok) return toast.error(result.error);
     setReply("");
+    onSent();
   }
 
   return (

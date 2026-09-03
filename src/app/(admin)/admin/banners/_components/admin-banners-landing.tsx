@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { CalendarDays, Eye, EyeOff, Megaphone, Pin } from "lucide-react";
 
 import {
@@ -8,33 +8,34 @@ import {
   AdminFilterSelect,
   AdminStatStrip,
   AdminPageHeader,
-  useAdmin,
 } from "@/components/admin";
 import { Pagination } from "@/components/ui/pagination";
 import { pickBanner, toJalali } from "@/lib/festive/occasions";
 import { usePagination } from "@/hooks/use-pagination";
 import { toFaDigits } from "@/lib/locale/fa";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import type { FestiveBanner } from "@/types";
+import { updateBannerAction } from "../_lib/actions";
 import { BannerCard } from "./banner-card";
 
 const PER_PAGE = 6;
 type StatusFilter = "all" | "active" | "inactive";
 type PinFilter = "all" | "pinned" | "normal";
 
-export function AdminBannersLanding() {
-  const { db, saveBanners } = useAdmin();
+export function AdminBannersLanding({ banners }: { banners: FestiveBanner[] }) {
+  const [, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [pin, setPin] = useState<PinFilter>("all");
   const [theme, setTheme] = useState("all");
   const today = toJalali();
-  const live = pickBanner(db.banners);
+  const live = pickBanner(banners);
 
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
-    return db.banners.filter((banner) => {
+    return banners.filter((banner) => {
       const matchesSearch =
         !term ||
         `${banner.occasion} ${banner.title} ${banner.subtitle} ${banner.coupon ?? ""}`
@@ -48,31 +49,22 @@ export function AdminBannersLanding() {
       const matchesTheme = theme === "all" || banner.theme === theme;
       return matchesSearch && matchesStatus && matchesPin && matchesTheme;
     });
-  }, [db.banners, pin, q, status, theme]);
+  }, [banners, pin, q, status, theme]);
 
   const pg = usePagination(list, PER_PAGE, `${q}|${status}|${pin}|${theme}`);
-  const active = db.banners.filter((banner) => banner.active).length;
-  const pinned = db.banners.filter((banner) => banner.pinned).length;
+  const active = banners.filter((banner) => banner.active).length;
+  const pinned = banners.filter((banner) => banner.pinned).length;
   const activeFilters =
     Number(!!q.trim()) +
     Number(status !== "all") +
     Number(pin !== "all") +
     Number(theme !== "all");
 
-  // 📌 Only one banner can be pinned at a time — touching `pinned` on any
-  // card clears it on every other card, whichever way the switch flips.
   function updateBanner(id: string, patch: Partial<FestiveBanner>) {
-    if ("pinned" in patch) {
-      saveBanners(
-        db.banners.map((item) =>
-          item.id === id ? { ...item, ...patch } : { ...item, pinned: false },
-        ),
-      );
-      return;
-    }
-    saveBanners(
-      db.banners.map((item) => (item.id === id ? { ...item, ...patch } : item)),
-    );
+    startTransition(async () => {
+      const result = await updateBannerAction(id, patch);
+      if (!result.ok) toast.error(result.error);
+    });
   }
 
   return (
@@ -87,14 +79,14 @@ export function AdminBannersLanding() {
         items={[
           {
             label: "کل بنرها",
-            value: db.banners.length,
+            value: banners.length,
             Icon: Megaphone,
             tone: "blue",
           },
           { label: "فعال", value: active, Icon: Eye, tone: "emerald" },
           {
             label: "غیرفعال",
-            value: db.banners.length - active,
+            value: banners.length - active,
             Icon: EyeOff,
             tone: "rose",
           },
@@ -163,7 +155,7 @@ export function AdminBannersLanding() {
             {
               value: "inactive",
               label: "غیرفعال",
-              count: db.banners.length - active,
+              count: banners.length - active,
             },
           ]}
         />

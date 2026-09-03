@@ -1,19 +1,21 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { CircleCheck, CircleOff, Gauge, TicketPercent } from "lucide-react";
 import {
   AdminFilterBar,
   AdminFilterSelect,
   AdminStatStrip,
-  useAdmin,
 } from "@/components/admin";
 import { Pagination } from "@/components/ui/pagination";
 import { Switch } from "@/components/ui/switch";
 import { usePagination } from "@/hooks/use-pagination";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
+import type { AdminCoupon } from "@/types";
+import { setCouponActiveAction } from "../_lib/actions";
 
 const PER_PAGE = 8;
 type StatusFilter = "all" | "active" | "inactive" | "full";
@@ -23,15 +25,15 @@ const STAT_LABEL = "text-navy/40 dark:text-wheat text-[9px] font-black";
 
 /** 🎟️ Filterable/paginated coupon grid with an inline active/inactive
  *  switch per card. */
-export function CouponList() {
-  const { db, saveCoupons } = useAdmin();
+export function CouponList({ coupons }: { coupons: AdminCoupon[] }) {
+  const [, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [sort, setSort] = useState<SortFilter>("default");
 
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
-    return db.coupons
+    return coupons
       .filter((coupon) => {
         const matchesSearch =
           !term ||
@@ -53,16 +55,16 @@ export function CouponList() {
         }
         if (sort === "discount") return b.rate - a.rate;
         if (sort === "expiry") return a.until.localeCompare(b.until, "fa");
-        return db.coupons.indexOf(a) - db.coupons.indexOf(b);
+        return coupons.indexOf(a) - coupons.indexOf(b);
       });
-  }, [db.coupons, q, sort, status]);
+  }, [coupons, q, sort, status]);
 
   const pg = usePagination(list, PER_PAGE, `${q}|${status}|${sort}`);
-  const active = db.coupons.filter(
+  const active = coupons.filter(
     (coupon) => coupon.active && coupon.used < coupon.cap,
   ).length;
-  const inactive = db.coupons.filter((coupon) => !coupon.active).length;
-  const totalUsed = db.coupons.reduce((sum, coupon) => sum + coupon.used, 0);
+  const inactive = coupons.filter((coupon) => !coupon.active).length;
+  const totalUsed = coupons.reduce((sum, coupon) => sum + coupon.used, 0);
   const activeFilters =
     Number(!!q.trim()) + Number(status !== "all") + Number(sort !== "default");
 
@@ -72,7 +74,7 @@ export function CouponList() {
         items={[
           {
             label: "کل کدها",
-            value: db.coupons.length,
+            value: coupons.length,
             Icon: TicketPercent,
             tone: "blue",
           },
@@ -105,13 +107,13 @@ export function CouponList() {
           value={status}
           onValueChange={(value) => setStatus(value as StatusFilter)}
           options={[
-            { value: "all", label: "همه کدها", count: db.coupons.length },
+            { value: "all", label: "همه کدها", count: coupons.length },
             { value: "active", label: "فعال", count: active },
             { value: "inactive", label: "غیرفعال", count: inactive },
             {
               value: "full",
               label: "سقف تکمیل‌شده",
-              count: db.coupons.filter((coupon) => coupon.used >= coupon.cap)
+              count: coupons.filter((coupon) => coupon.used >= coupon.cap)
                 .length,
             },
           ]}
@@ -179,13 +181,13 @@ export function CouponList() {
                     <Switch
                       checked={coupon.active}
                       onCheckedChange={(value) =>
-                        saveCoupons(
-                          db.coupons.map((item) =>
-                            item.code === coupon.code
-                              ? { ...item, active: value }
-                              : item,
-                          ),
-                        )
+                        startTransition(async () => {
+                          const result = await setCouponActiveAction(
+                            coupon.code,
+                            value,
+                          );
+                          if (!result.ok) toast.error(result.error);
+                        })
                       }
                       aria-label={`فعال بودن ${coupon.code}`}
                     />

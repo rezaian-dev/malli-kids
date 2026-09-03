@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import type { AdminIdentity } from "@/providers/admin-store";
+import type { AdminIdentity } from "./admin-shell";
 
 /** 🪪 The signed-in admin's avatar + name chip in the header. */
 export function AdminHeaderIdentity({ profile }: { profile: AdminIdentity }) {

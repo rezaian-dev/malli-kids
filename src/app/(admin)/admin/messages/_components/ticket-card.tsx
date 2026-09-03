@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
-import type { Ticket, TicketStatus } from "@/lib/tickets";
+import type { Ticket, TicketStatus } from "@/lib/shop/tickets";
 
 const TICKET_ACTION_BUTTON =
   "min-h-9 flex-1 rounded-xl text-[10px] sm:flex-none";
@@ -111,12 +111,6 @@ export function TicketCard({
               <h2 className="text-navy/78 dark:text-ivory/78 mt-1 text-sm font-black">
                 {ticket.subject}
               </h2>
-              <p
-                className="text-navy/40 dark:text-wheat mt-1 truncate text-[10px] font-bold"
-                dir="ltr"
-              >
-                {ticket.owner}
-              </p>
             </div>
           </div>
           <div className="flex shrink-0 items-center justify-between gap-3 sm:block sm:text-end">

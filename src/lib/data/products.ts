@@ -1,7 +1,6 @@
 import type { Product } from "@/types";
-import { parseFaPrice } from "@/lib/locale/fa";
 
-const BASE: Omit<Product, "id">[] = [
+const BASE: Omit<Product, "id" | "images">[] = [
   {
     img: "/brand/look-party.jpg",
     name: "پیراهن مجلسی الماسِ طلایی",
@@ -103,49 +102,15 @@ const BASE: Omit<Product, "id">[] = [
   },
 ];
 
-const extras = ["ساده", "کلاسیک", "نخی", "مخمل", "تابستانه", "زمستانه"];
-
-function normalize(raw: Omit<Product, "id"> & { price: number }): Product {
-  return { ...raw, id: 0 };
-}
-
 export const SEASONS = ["بهاره", "تابستانه", "پاییزه", "زمستانه"] as const;
 
 export const CORE_PRODUCTS: Product[] = BASE.map((p, i) => ({
   ...p,
   id: i,
+  images: [p.img],
   price: Number(p.price),
   season: p.season ?? SEASONS[i % SEASONS.length],
 }));
-
-export const CATALOG: Product[] = (() => {
-  const out: Product[] = [];
-  for (let r = 0; r < 3; r++) {
-    CORE_PRODUCTS.forEach((src, i) => {
-      const p: Product = {
-        ...src,
-        img: CORE_PRODUCTS[(i + r) % CORE_PRODUCTS.length].img,
-        name: r ? `${src.name} — ${extras[r % extras.length]}` : src.name,
-        season:
-          SEASONS[
-            (SEASONS.indexOf(src.season ?? SEASONS[0]) + r) % SEASONS.length
-          ],
-        stock: r === 2 && i % 5 === 0 ? false : src.stock,
-        badge: r === 1 && i % 4 === 0 ? "پرفروش" : src.badge,
-        disc: r === 1 && i % 4 === 0 ? src.disc || "۱۱٪" : src.disc,
-        id: out.length,
-      };
-      out.push(p);
-    });
-  }
-  return out;
-})();
-
-export function getProductById(id: number): Product | undefined {
-  return (
-    CATALOG.find((p) => p.id === id) ?? CORE_PRODUCTS[id % CORE_PRODUCTS.length]
-  );
-}
 
 export function parseProductRouteId(value: string) {
   const match = /^(\d+)/.exec(value);
@@ -164,19 +129,18 @@ const PRODUCT_SLUGS = [
   "minimal-summer-romper",
 ] as const;
 
+/** 🪶 Cosmetic only — `parseProductRouteId` resolves the real product from
+ *  the leading number in the URL, so a wrapped/reused word here can never
+ *  cause two products to collide on the same route. */
 export function productSlug(id: number) {
-  const safeId = ((id % CORE_PRODUCTS.length) + CORE_PRODUCTS.length) % CORE_PRODUCTS.length;
-  return PRODUCT_SLUGS[safeId] ?? `product-${safeId}`;
+  const i = ((id % PRODUCT_SLUGS.length) + PRODUCT_SLUGS.length) % PRODUCT_SLUGS.length;
+  return PRODUCT_SLUGS[i];
 }
 
 export function productRouteParam(id: number) {
-  const safeId = ((id % CORE_PRODUCTS.length) + CORE_PRODUCTS.length) % CORE_PRODUCTS.length;
-  return `${safeId}-${productSlug(safeId)}`;
+  return `${id}-${productSlug(id)}`;
 }
 
 export function pdpHref(id: number) {
   return `/product/${productRouteParam(id)}`;
 }
-
-void parseFaPrice;
-void normalize;

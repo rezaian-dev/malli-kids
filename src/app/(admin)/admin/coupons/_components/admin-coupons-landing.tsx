@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Plus } from "lucide-react";
-import { AdminPageHeader, useAdmin } from "@/components/admin";
+import { AdminPageHeader } from "@/components/admin";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/lib/toast";
+import type { AdminCoupon } from "@/types";
+import { createCouponAction } from "../_lib/actions";
 import { CouponList } from "./coupon-list";
 import { NewCouponDialog } from "./new-coupon-dialog";
 
-export function AdminCouponsLanding() {
-  const { db, saveCoupons } = useAdmin();
+export function AdminCouponsLanding({ coupons }: { coupons: AdminCoupon[] }) {
   const [open, setOpen] = useState(false);
+  const [, startTransition] = useTransition();
 
   return (
     <div>
@@ -29,13 +32,26 @@ export function AdminCouponsLanding() {
         }
       />
 
-      <CouponList />
+      <CouponList coupons={coupons} />
 
       <NewCouponDialog
         open={open}
-        existingCodes={db.coupons.map((c) => c.code)}
+        existingCodes={coupons.map((c) => c.code)}
         onClose={() => setOpen(false)}
-        onCreate={(coupon) => saveCoupons([coupon, ...db.coupons])}
+        onCreate={(coupon) => {
+          startTransition(async () => {
+            const result = await createCouponAction({
+              code: coupon.code,
+              title: coupon.title,
+              rate: coupon.rate,
+              cap: coupon.cap,
+              min: coupon.min,
+              until: coupon.until,
+            });
+            if (result.ok) toast.success("کد تخفیف ذخیره شد", { description: coupon.code });
+            else toast.error(result.error);
+          });
+        }}
       />
     </div>
   );

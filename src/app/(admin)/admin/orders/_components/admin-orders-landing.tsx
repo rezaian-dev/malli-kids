@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { Banknote, Clock3, PackageCheck, ShoppingBag } from "lucide-react";
 
 import {
@@ -11,25 +11,33 @@ import {
   AdminTable,
 } from "@/components/admin";
 import { Pagination } from "@/components/ui/pagination";
-import { ORDER_FLOW } from "@/lib/admin/admin-data";
+import { ORDER_FLOW } from "@/lib/shop/order-status";
 import { usePagination } from "@/hooks/use-pagination";
-import { setOrderStatus, useOrders, type Order } from "@/lib/orders";
+import { usePolling } from "@/hooks/use-polling";
 import { formatToman } from "@/lib/locale/fa";
-import type { OrderStatus } from "@/types";
+import { toast } from "@/lib/toast";
+import type { AdminOrder, OrderStatus } from "@/types";
+import { getAllOrdersAction, setOrderStatusAction } from "../_lib/actions";
 import { ORDER_COLUMNS } from "./order-columns";
 import { OrderDetailSheet } from "./order-detail-sheet";
 
 const PER_PAGE = 6;
+const POLL_MS = 15_000;
 type StatusFilter = "all" | OrderStatus;
 type SortFilter = "newest" | "amount-desc" | "amount-asc" | "items";
 
-export function AdminOrdersLanding() {
-  const all = useOrders();
+export function AdminOrdersLanding({
+  orders: initialOrders,
+}: {
+  orders: AdminOrder[];
+}) {
+  const [all] = usePolling(getAllOrdersAction, POLL_MS, initialOrders);
+  const [, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [city, setCity] = useState("all");
   const [sort, setSort] = useState<SortFilter>("newest");
-  const [open, setOpen] = useState<Order | null>(null);
+  const [open, setOpen] = useState<AdminOrder | null>(null);
 
   const cities = useMemo(
     () =>
@@ -160,7 +168,7 @@ export function AdminOrdersLanding() {
         />
       </AdminFilterBar>
 
-      <AdminTable<Order>
+      <AdminTable<AdminOrder>
         cols={ORDER_COLUMNS}
         rows={pg.pageItems}
         empty="سفارشی مطابق فیلترهای انتخابی وجود ندارد."
@@ -174,8 +182,17 @@ export function AdminOrdersLanding() {
         onOpenChange={(value) => !value && setOpen(null)}
         onStatusChange={(next) => {
           if (!open) return;
-          setOrderStatus(open.id, next);
-          setOpen({ ...open, status: next });
+          const current = open;
+          setOpen({ ...current, status: next });
+          startTransition(async () => {
+            const result = await setOrderStatusAction(current.id, next);
+            if (result.ok) {
+              toast.success("وضعیت سفارش تغییر کرد", { description: next });
+            } else {
+              setOpen(current);
+              toast.error(result.error);
+            }
+          });
         }}
       />
     </div>

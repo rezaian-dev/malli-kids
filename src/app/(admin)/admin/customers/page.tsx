@@ -1,10 +1,11 @@
-import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth/admin";
+import { requireAdminPage } from "@/lib/auth/admin";
+import { getAllCustomers } from "./_lib/data";
 import { AdminCustomersLanding } from "./_components/admin-customers-landing";
 
 export default async function AdminCustomers() {
-  const admin = await requireAdmin();
-  if (!admin) redirect("/admin/login");
+  const admin = await requireAdminPage();
 
-  return <AdminCustomersLanding />;
+  const customers = await getAllCustomers();
+
+  return <AdminCustomersLanding customers={customers} />;
 }

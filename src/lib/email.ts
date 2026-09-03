@@ -1,3 +1,4 @@
+import "server-only";
 import { createTransport } from "nodemailer";
 
 /**
@@ -18,7 +19,9 @@ export async function sendEmail({
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env;
 
   if (!SMTP_HOST) {
-    console.log(`\n📧 [dev email] to: ${to}\n   subject: ${subject}\n${html}\n`);
+    console.log(
+      `\n📧 [dev email] to: ${to}\n   subject: ${subject}\n${html}\n`,
+    );
     return;
   }
 

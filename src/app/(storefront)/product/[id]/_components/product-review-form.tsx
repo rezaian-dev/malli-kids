@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useStore } from "@/providers/store-provider";
-import { STORAGE } from "@/lib/constants";
-import { faNow } from "@/lib/locale/fa";
 import { Button } from "@/components/ui/button";
 import {
   AppForm,
@@ -16,6 +14,10 @@ import {
 } from "@/components/form";
 import { cn } from "@/lib/utils";
 import { Product } from "@/types";
+import {
+  hasPurchasedProductAction,
+  submitReviewAction,
+} from "../_lib/actions";
 import {
   RATING_STARS,
   reviewDefaults,
@@ -34,24 +36,15 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
   });
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE.purchases);
-      const orders: { items?: { id?: number; name?: string }[] }[] = raw
-        ? JSON.parse(raw)
-        : [];
-      setPurchased(
-        orders.some(
-          (o) =>
-            Array.isArray(o?.items) &&
-            o.items.some(
-              (it) => it.id === product.id || it.name === product.name,
-            ),
-        ),
-      );
-    } catch {
-      setPurchased(false);
-    }
-  }, [product.id, product.name]);
+    if (!user) return setPurchased(false);
+    let active = true;
+    hasPurchasedProductAction(product.id).then((value) => {
+      if (active) setPurchased(value);
+    });
+    return () => {
+      active = false;
+    };
+  }, [product.id, user]);
 
   if (!user || !purchased) {
     return (
@@ -67,27 +60,14 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
     );
   }
 
-  function onValid({ rating, body }: typeof reviewDefaults) {
-    try {
-      const raw = window.localStorage.getItem(STORAGE.adminDb);
-      const db = raw ? (JSON.parse(raw) as { reviews?: unknown[] }) : {};
-      const reviews = Array.isArray(db.reviews) ? db.reviews : [];
-      reviews.unshift({
-        id: `ur-${Date.now().toString(36)}`,
-        product: product.name,
-        author: user
-          ? `${user.firstName} ${user.lastName ?? ""}`.trim()
-          : "کاربر",
-        rate: Number(rating),
-        text: body.trim(),
-        date: faNow(),
-        visible: false,
-      });
-      db.reviews = reviews;
-      window.localStorage.setItem(STORAGE.adminDb, JSON.stringify(db));
-    } catch {}
+  async function onValid(values: typeof reviewDefaults) {
+    const result = await submitReviewAction(product.id, product.name, values);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
     toast.success(
-      `نظرِ ${rating} ستاره‌تان ثبت شد — پس از تأیید ادمین نمایش داده می‌شود ✨`,
+      `نظرِ ${values.rating} ستاره‌تان ثبت شد — پس از تأیید ادمین نمایش داده می‌شود ✨`,
     );
     form.reset({ ...reviewDefaults });
   }

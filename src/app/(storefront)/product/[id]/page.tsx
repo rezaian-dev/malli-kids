@@ -1,20 +1,10 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 
-import {
-  CORE_PRODUCTS,
-  getProductById,
-  parseProductRouteId,
-  pdpHref,
-} from "@/lib/data/products";
+import { parseProductRouteId, pdpHref } from "@/lib/data/products";
+import { getProductById, getRelatedProducts } from "@/lib/shop/products";
 import { buildMetadata } from "@/lib/seo";
 import { ProductDetailLanding } from "./_components/product-detail-landing";
-
-export function generateStaticParams() {
-  return CORE_PRODUCTS.map((product) => ({
-    id: pdpHref(product.id).split("/").pop()!,
-  }));
-}
 
 export async function generateMetadata({
   params,
@@ -23,7 +13,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const productId = parseProductRouteId(id);
-  const product = getProductById(productId);
+  const product = await getProductById(productId);
 
   if (!product) {
     return buildMetadata({
@@ -51,7 +41,7 @@ export default async function ProductPage({
 }) {
   const { id } = await params;
   const productId = parseProductRouteId(id);
-  const product = getProductById(productId);
+  const product = await getProductById(productId);
 
   if (!product) notFound();
 
@@ -62,9 +52,7 @@ export default async function ProductPage({
     permanentRedirect(canonicalPath);
   }
 
-  const related = CORE_PRODUCTS.filter(
-    (item) => item.id !== product.id && item.cat === product.cat,
-  ).slice(0, 4);
+  const related = await getRelatedProducts(product.cat, product.id);
 
   return (
     <ProductDetailLanding
