@@ -42,7 +42,6 @@ export const STORAGE = {
   cart: "malli_cart",
   campaign: "malli_campaign",
   banner: "malli_banner",
-  admin: "malli_admin",
   adminDb: "malli_admin_db",
 };
 

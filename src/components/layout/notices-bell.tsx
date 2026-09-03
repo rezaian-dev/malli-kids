@@ -142,6 +142,7 @@ export function NoticesBell() {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="text-navy dark:text-ivory block text-[12px] leading-6 font-bold">
+                        {!n.read ? <span className="sr-only">نخوانده — </span> : null}
                         {n.text}
                       </span>
                       <span className="text-navy/70 dark:text-wheat mt-0.5 block text-[10px] font-bold">
@@ -150,8 +151,8 @@ export function NoticesBell() {
                     </span>
                     {!n.read ? (
                       <span
+                        aria-hidden="true"
                         className="bg-rose mt-1.5 size-2 shrink-0 rounded-full"
-                        aria-label="نخوانده"
                       />
                     ) : null}
                   </button>

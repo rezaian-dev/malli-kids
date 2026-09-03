@@ -15,7 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { toFaDigits } from "@/lib/locale/fa";
 import type { ShopState } from "@/lib/shop/shop-state";
-import { useShopExplorer } from "./use-shop-explorer";
+import { useShopExplorer } from "../_hooks/use-shop-explorer";
 import { ShopFilters } from "./shop-filters";
 import { ShopSortOptions } from "./shop-sort-options";
 import { ShopToolbar } from "./shop-toolbar";

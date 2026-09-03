@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
-import { pdpCard, pdpKicker, pdpWell } from "./product-chrome";
+import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
 
 function ProductDetailsFallback() {
   return (

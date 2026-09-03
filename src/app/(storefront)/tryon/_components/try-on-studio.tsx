@@ -1,6 +1,6 @@
 "use client";
 
-import { useTryOn } from "./use-try-on";
+import { useTryOn } from "../_hooks/use-try-on";
 import { TryOnPreview } from "./try-on-preview";
 import { TryOnControls } from "./try-on-controls";
 

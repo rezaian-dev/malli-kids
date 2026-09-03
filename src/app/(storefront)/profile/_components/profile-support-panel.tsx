@@ -112,10 +112,14 @@ export function ProfileSupportPanel() {
               }}
               maxLength={60}
               placeholder="سایز، سفارش…"
+              aria-invalid={Boolean(errors.subject)}
+              aria-describedby={errors.subject ? "ticket-subject-error" : undefined}
               className={cn(fieldClass(errors.subject), "h-11")}
             />
             {errors.subject ? (
-              <p className="text-rose text-xs font-bold">{errors.subject}</p>
+              <p id="ticket-subject-error" role="alert" className="text-rose text-xs font-bold">
+                {errors.subject}
+              </p>
             ) : null}
           </label>
 
@@ -129,10 +133,14 @@ export function ProfileSupportPanel() {
               }}
               maxLength={600}
               placeholder="سوال‌تان را بنویسید…"
+              aria-invalid={Boolean(errors.message)}
+              aria-describedby={errors.message ? "ticket-message-error" : undefined}
               className={cn(fieldClass(errors.message), "min-h-32 py-3")}
             />
             {errors.message ? (
-              <p className="text-rose text-xs font-bold">{errors.message}</p>
+              <p id="ticket-message-error" role="alert" className="text-rose text-xs font-bold">
+                {errors.message}
+              </p>
             ) : null}
           </label>
 

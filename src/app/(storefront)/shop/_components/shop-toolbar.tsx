@@ -51,9 +51,9 @@ export function ShopToolbar({
         <h1 className="text-navy dark:text-ivory text-lg font-black sm:text-xl">
           {shopHeading(state)}
         </h1>
-        <h2 className="text-navy/70 dark:text-wheat mt-1 text-xs font-normal">
+        <p className="text-navy/70 dark:text-wheat mt-1 text-xs font-normal">
           {toFaDigits(resultCount)} مدل در کالکشن
-        </h2>
+        </p>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <Button

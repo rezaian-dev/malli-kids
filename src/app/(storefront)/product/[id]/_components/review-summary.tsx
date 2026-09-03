@@ -1,6 +1,6 @@
 import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
-import { pdpKicker, pdpWell } from "./product-chrome";
+import { pdpKicker, pdpWell } from "../_lib/product-chrome";
 import { ReviewStars } from "./review-stars";
 
 function distFromAvg(avg: number) {

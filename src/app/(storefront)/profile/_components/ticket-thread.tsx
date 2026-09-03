@@ -62,6 +62,7 @@ export function TicketThread({ ticket }: { ticket: Ticket }) {
             send();
           }}
           placeholder="پیام پیگیری…"
+          aria-label="پیام پیگیری"
           className={cn(
             "h-10 flex-1 rounded-xl border bg-white px-4 text-sm outline-none",
             "border-navy/12 text-navy",

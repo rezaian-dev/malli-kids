@@ -19,14 +19,16 @@ export function NavActiveLink({
   ...props
 }: { href: string } & Omit<ComponentProps<typeof Link>, "href">) {
   const path = usePathname();
+  const active = isActive(path, href);
 
   return (
-    <NavigationMenuLink
-      asChild
-      active={isActive(path, href)}
-      className={className}
-    >
-      <Link href={href} prefetch={prefetch} {...props}>
+    <NavigationMenuLink asChild active={active} className={className}>
+      <Link
+        href={href}
+        prefetch={prefetch}
+        aria-current={active ? "page" : undefined}
+        {...props}
+      >
         {children}
       </Link>
     </NavigationMenuLink>
@@ -45,12 +47,14 @@ export function MobileActiveLink({
   activeClassName?: string;
 } & Omit<ComponentProps<typeof Link>, "href">) {
   const path = usePathname();
+  const active = isActive(path, href);
 
   return (
     <Link
       href={href}
       prefetch={prefetch}
-      className={cn(className, isActive(path, href) && activeClassName)}
+      aria-current={active ? "page" : undefined}
+      className={cn(className, active && activeClassName)}
       {...props}
     >
       {children}

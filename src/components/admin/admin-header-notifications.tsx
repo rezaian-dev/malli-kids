@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAdmin } from "@/lib/admin/admin-store";
+import { useAdmin } from "@/providers/admin-store";
 import { toFaDigits } from "@/lib/locale/fa";
 import { useTickets } from "@/lib/tickets";
 import { cn } from "@/lib/utils";

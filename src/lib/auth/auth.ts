@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { connectMongoClient } from "@/lib/db/mongo-client";
@@ -28,8 +29,20 @@ export const auth = betterAuth({
       await sendEmail({ to: user.email, subject, html });
     },
   },
-  // 🍪 Must stay the last plugin — it's what lets the server actions in
-  // `@/lib/auth/actions` call `auth.api.*` directly and have the
+  // 🛡️ Built-in limiter is already on by default in production (10s/100req);
+  // tighten just the sign-in endpoint against credential-stuffing/brute force
+  // — shared by the storefront and the admin login, both go through this
+  // same `/sign-in/email` call.
+  rateLimit: {
+    customRules: {
+      "/sign-in/email": { window: 60, max: 5 },
+    },
+  },
+  // 👮 Adds a server-managed `role`/`banned` field to the real `user`
+  // collection (never client-settable — see `@/lib/auth/admin`'s
+  // `requireAdmin()`, the actual authorization boundary for `/admin/**`).
+  // 🍪 `nextCookies()` must stay the last plugin — it's what lets the server
+  // actions in `@/lib/auth/actions` call `auth.api.*` directly and have the
   // session cookie set on the response without any client-side fetch.
-  plugins: [nextCookies()],
+  plugins: [admin(), nextCookies()],
 });

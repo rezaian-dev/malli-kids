@@ -18,8 +18,6 @@ import type {
   AdminDb,
 } from "@/types";
 
-export const ADMIN_CREDS = { user: "admin", pass: "Malli1405" };
-
 function money(items: AdminOrderItem[], rate = 0) {
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
   const discount = Math.round(subtotal * rate);

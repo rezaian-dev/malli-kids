@@ -6,7 +6,7 @@ import { splitName } from "@/lib/auth/user";
 import { connectMongoose } from "@/lib/db/mongoose";
 import type { ActionResult } from "@/lib/action-result";
 import type { User } from "@/types";
-import { Profile } from "@/lib/db/profile";
+import { Profile } from "@/lib/db/models/profile";
 import {
   AVATAR_MAX_BYTES,
   updateAccountSchema,

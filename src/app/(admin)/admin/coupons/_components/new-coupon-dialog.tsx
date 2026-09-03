@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Percent, X } from "lucide-react";
+import { Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { parseFaNumber } from "@/lib/digits";
 import { toEnDigits } from "@/lib/locale/fa";
 import { isJalaliFuture, jalaliParts } from "@/lib/locale/jalali";
@@ -73,7 +74,10 @@ function validateCouponForm(values: CouponFormValues): CouponFormErrors {
 }
 
 /** ➕ The "new coupon" modal form — validates locally, then hands a
- *  ready-to-save `AdminCoupon` up to the caller. */
+ *  ready-to-save `AdminCoupon` up to the caller. Built on the shared Radix
+ *  `Dialog` primitive (focus trap, focus return, Escape-to-close, and
+ *  `DialogTitle` labelling all come from there — matching every other
+ *  dialog/sheet in the app instead of a hand-rolled overlay). */
 export function NewCouponDialog({
   open,
   existingCodes,
@@ -88,8 +92,6 @@ export function NewCouponDialog({
   const [formValues, setFormValues] =
     useState<CouponFormValues>(COUPON_DEFAULTS);
   const [formErrors, setFormErrors] = useState<CouponFormErrors>({});
-
-  if (!open) return null;
 
   function updateFormField<K extends keyof CouponFormValues>(
     field: K,
@@ -136,114 +138,96 @@ export function NewCouponDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-90 grid place-items-center overflow-y-auto p-3 sm:p-4">
-      <button
-        type="button"
-        className="bg-navy-deep/65 fixed inset-0 backdrop-blur-sm"
-        onClick={close}
-        aria-label="بستن"
-      />
-      <form
-        onSubmit={submit}
-        noValidate
-        aria-label="کد تخفیف جدید"
+    <Dialog open={open} onOpenChange={(next) => (next ? null : close())}>
+      <DialogContent
+        showCloseButton
         className={cn(
-          "relative z-10 my-auto w-full max-w-md space-y-3 rounded-3xl border p-4 shadow-2xl sm:p-6",
-          "border-gold/18 bg-paper",
-          "dark:bg-navy-mid",
+          "max-w-md rounded-3xl p-4 sm:p-6",
+          "border-gold/18 bg-paper border",
+          "dark:bg-navy-mid dark:border-gold/18",
         )}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <p className="text-gold text-[9px] font-black tracking-[.2em]">
-              NEW PROMO
-            </p>
-            <h3 className="mt-1 text-lg font-black">کد تخفیف جدید</h3>
+        <div>
+          <p className="text-gold text-[9px] font-black tracking-[.2em]">
+            NEW PROMO
+          </p>
+          <DialogTitle className="mt-1 text-lg font-black">
+            کد تخفیف جدید
+          </DialogTitle>
+        </div>
+
+        <form onSubmit={submit} noValidate className="space-y-3">
+          <CouponField
+            id="coupon-code"
+            label="کد"
+            value={formValues.code}
+            onChange={(value) => updateFormField("code", value.toUpperCase())}
+            placeholder="MALLI10"
+            dir="ltr"
+            maxLength={16}
+            error={formErrors.code}
+            className="tracking-[0.12em] uppercase"
+            required
+          />
+          <CouponField
+            id="coupon-title"
+            label="عنوان"
+            value={formValues.title}
+            onChange={(value) => updateFormField("title", value)}
+            placeholder="تخفیف عضویت"
+            maxLength={60}
+            error={formErrors.title}
+            required
+          />
+
+          <div className="grid grid-cols-2 gap-3">
+            <CouponField
+              id="coupon-rate"
+              label="درصد تخفیف"
+              value={formValues.rate}
+              onChange={(value) => updateFormField("rate", value)}
+              inputMode="numeric"
+              placeholder="10"
+              error={formErrors.rate}
+              required
+            />
+            <CouponField
+              id="coupon-cap"
+              label="سقف استفاده"
+              value={formValues.cap}
+              onChange={(value) => updateFormField("cap", value)}
+              inputMode="numeric"
+              placeholder="200"
+              error={formErrors.cap}
+              required
+            />
           </div>
-          <button
-            type="button"
-            onClick={close}
-            className={cn(
-              "grid size-9 place-items-center rounded-xl",
-              "bg-navy/5 text-navy",
-              "dark:text-ivory dark:bg-white/7",
-            )}
-            aria-label="بستن"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
 
-        <CouponField
-          id="coupon-code"
-          label="کد"
-          value={formValues.code}
-          onChange={(value) => updateFormField("code", value.toUpperCase())}
-          placeholder="MALLI10"
-          dir="ltr"
-          maxLength={16}
-          error={formErrors.code}
-          className="tracking-[0.12em] uppercase"
-          required
-        />
-        <CouponField
-          id="coupon-title"
-          label="عنوان"
-          value={formValues.title}
-          onChange={(value) => updateFormField("title", value)}
-          placeholder="تخفیف عضویت"
-          maxLength={60}
-          error={formErrors.title}
-          required
-        />
-
-        <div className="grid grid-cols-2 gap-3">
           <CouponField
-            id="coupon-rate"
-            label="درصد تخفیف"
-            value={formValues.rate}
-            onChange={(value) => updateFormField("rate", value)}
+            id="coupon-min"
+            label="حداقل خرید (تومان)"
+            value={formValues.min}
+            onChange={(value) => updateFormField("min", value)}
             inputMode="numeric"
-            placeholder="10"
-            error={formErrors.rate}
-            required
+            placeholder="0"
+            error={formErrors.min}
           />
           <CouponField
-            id="coupon-cap"
-            label="سقف استفاده"
-            value={formValues.cap}
-            onChange={(value) => updateFormField("cap", value)}
-            inputMode="numeric"
-            placeholder="200"
-            error={formErrors.cap}
+            id="coupon-until"
+            label="انقضا"
+            value={formValues.until}
+            onChange={(value) => updateFormField("until", value)}
+            dir="ltr"
+            placeholder="1405/12/29"
+            error={formErrors.until}
             required
           />
-        </div>
 
-        <CouponField
-          id="coupon-min"
-          label="حداقل خرید (تومان)"
-          value={formValues.min}
-          onChange={(value) => updateFormField("min", value)}
-          inputMode="numeric"
-          placeholder="0"
-          error={formErrors.min}
-        />
-        <CouponField
-          id="coupon-until"
-          label="انقضا"
-          value={formValues.until}
-          onChange={(value) => updateFormField("until", value)}
-          dir="ltr"
-          placeholder="1405/12/29"
-          error={formErrors.until}
-          required
-        />
-
-        <Button type="submit" variant="navy" className="h-11 w-full rounded-xl">
-          <Percent className="size-4" /> ذخیره کد
-        </Button>
-      </form>
-    </div>
+          <Button type="submit" variant="navy" className="h-11 w-full rounded-xl">
+            <Percent className="size-4" /> ذخیره کد
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

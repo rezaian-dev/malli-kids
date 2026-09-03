@@ -6,7 +6,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Lock, ShieldCheck, Sparkles, User } from "lucide-react";
 
-import { useAdmin } from "@/components/admin";
+import { adminSignInAction } from "@/lib/auth/actions";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -32,10 +32,10 @@ const FIELD_INPUT =
 const FIELD_ERROR = "text-rose text-xs font-bold";
 
 export function AdminLoginLanding() {
-  const { login } = useAdmin();
   const router = useRouter();
   const [values, setValues] = useState<LoginValues>(EMPTY_VALUES);
   const [errors, setErrors] = useState<LoginErrors>({});
+  const [pending, setPending] = useState(false);
 
   function updateValue(field: keyof LoginValues, value: string) {
     setValues((current) => ({ ...current, [field]: value }));
@@ -49,18 +49,18 @@ export function AdminLoginLanding() {
   function validate(next: LoginValues): LoginErrors {
     const issues: LoginErrors = {};
 
-    if (next.user.trim().length < 3 || next.user.trim().length > 40) {
-      issues.user = "شناسه باید بین ۳ تا ۴۰ نویسه باشد";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(next.user.trim())) {
+      issues.user = "ایمیل معتبر وارد کنید";
     }
 
-    if (next.pass.length < 6) {
-      issues.pass = "رمز باید حداقل ۶ نویسه باشد";
+    if (next.pass.length < 1) {
+      issues.pass = "رمز عبور را وارد کنید";
     }
 
     return issues;
   }
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const nextErrors = validate(values);
@@ -69,8 +69,15 @@ export function AdminLoginLanding() {
       return;
     }
 
-    if (!login(values.user.trim(), values.pass)) {
-      setErrors({ root: "نام کاربری یا رمز نادرست است" });
+    setPending(true);
+    const result = await adminSignInAction({
+      email: values.user.trim(),
+      password: values.pass,
+    });
+    setPending(false);
+
+    if (!result.ok) {
+      setErrors({ root: result.error });
       return;
     }
 
@@ -166,16 +173,18 @@ export function AdminLoginLanding() {
 
             <div className="space-y-2">
               <label className={FIELD_LABEL} htmlFor="admin-user">
-                شناسه
+                ایمیل
               </label>
               <div className="relative rounded-3xl bg-white/70 dark:bg-white/5">
                 <User className={FIELD_ICON} />
                 <Input
                   id="admin-user"
+                  type="email"
                   value={values.user}
                   onChange={(event) => updateValue("user", event.target.value)}
-                  placeholder="شناسه همکار"
-                  autoComplete="username"
+                  placeholder="you@mallikids.ir"
+                  autoComplete="email"
+                  dir="ltr"
                   aria-invalid={Boolean(errors.user)}
                   className={FIELD_INPUT}
                   required
@@ -215,13 +224,15 @@ export function AdminLoginLanding() {
 
             <button
               type="submit"
+              disabled={pending}
               className={cn(
                 "group flex h-14 w-full items-center justify-between rounded-full px-6 text-sm font-black transition",
                 "bg-navy text-ivory hover:bg-navy-mid shadow-[0_16px_32px_-16px_rgba(14,42,71,.55)]",
                 "dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light",
+                "disabled:pointer-events-none disabled:opacity-60",
               )}
             >
-              ورود به کنسول
+              {pending ? "در حال ورود…" : "ورود به کنسول"}
               <span
                 className={cn(
                   "grid size-9 place-items-center rounded-full transition-transform group-hover:-translate-x-1",

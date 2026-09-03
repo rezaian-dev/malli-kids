@@ -237,6 +237,9 @@ export function orderedRange<T extends z.ZodType>(
   toKey: string,
   message = "حداقلِ قیمت نمی‌تواند بیشتر از حداکثر باشد",
 ): T {
+  // 🪶 `T`'s inferred output shape isn't known to be an object from `T
+  // extends z.ZodType` alone; `any` here is the pragmatic escape for dynamic
+  // `val[fromKey]`/`val[toKey]` access across arbitrary caller schemas.
   return schema.superRefine((val: any, ctx) => {
     const a = parseFaNumber(val?.[fromKey]);
     const b = parseFaNumber(val?.[toKey]);

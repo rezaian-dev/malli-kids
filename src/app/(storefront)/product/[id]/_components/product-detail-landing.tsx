@@ -9,7 +9,7 @@ import type { Product } from "@/types";
 import { ProductBuyPanel } from "./product-buy-panel";
 import { ProductDetailsMount } from "./product-details-mount";
 import { LiveName, ProductLiveProvider } from "./product-live-context";
-import { pdpCard, pdpKicker } from "./product-chrome";
+import { pdpCard, pdpKicker } from "../_lib/product-chrome";
 
 const CRUMB_LINK = "hover:text-gold inline-block py-1.5";
 

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { SliderArrow } from "@/components/ui/slider-arrow";
 import { cn } from "@/lib/utils";
-import { pdpCard } from "./product-chrome";
+import { pdpCard } from "../_lib/product-chrome";
 
 const CORNER_MARK =
   "border-gold/70 pointer-events-none absolute z-10 hidden h-6 w-6 min-[400px]:block sm:h-8 sm:w-8";

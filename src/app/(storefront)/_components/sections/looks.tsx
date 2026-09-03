@@ -28,6 +28,7 @@ export function Looks() {
   return (
     <section id="multi" className={`${wash.silk} py-10 sm:py-14`}>
       <div className="container mx-auto w-full px-4 sm:px-5 lg:px-7">
+        <h2 className="sr-only">دسته‌بندی‌ها بر اساس سن و جنسیت</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           {LOOKS.map((card) => (
             <Link

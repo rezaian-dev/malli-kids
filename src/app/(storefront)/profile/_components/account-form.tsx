@@ -12,7 +12,7 @@ import {
   type UpdateAccountValues,
 } from "../_lib/schemas";
 import { PROFILE_CARD } from "./profile-shared";
-import { SECTION_TITLE } from "./profile-form-styles";
+import { SECTION_TITLE } from "../_lib/profile-form-styles";
 
 function toValues(user: User): UpdateAccountValues {
   return {

@@ -4,12 +4,8 @@ import Image from "next/image";
 
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, Shirt, Truck, Users } from "lucide-react";
-import {
-  AdminPageHeader,
-  AdminTable,
-  SalesChart,
-  useAdmin,
-} from "@/components/admin";
+import { AdminPageHeader, AdminTable, useAdmin } from "@/components/admin";
+import { SalesChart } from "./sales-chart";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { statusTone } from "@/lib/admin/admin-data";
 import { Badge } from "@/components/ui/badge";

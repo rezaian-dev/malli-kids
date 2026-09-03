@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { APIError } from "better-auth";
 import { auth } from "@/lib/auth/auth";
 import { buildUser } from "@/lib/auth/user";
+import { isAdminUser } from "@/lib/auth/admin";
 import type { ActionResult } from "@/lib/action-result";
 import type { User } from "@/types";
 import {
@@ -51,6 +52,34 @@ export async function signInAction(
       body: parsed.data,
       headers: await headers(),
     });
+    return { ok: true, data: await buildUser(user) };
+  } catch (error) {
+    return actionError(error);
+  }
+}
+
+/** 🔒 Same real sign-in as `signInAction`, plus a server-side admin check —
+ *  the login form on `/admin/login` calls this, never `signInAction`. A
+ *  successfully-authenticated non-admin is immediately signed back out
+ *  (never left holding a session from an admin-login attempt) and gets the
+ *  same rejection an unauthenticated visitor would. */
+export async function adminSignInAction(
+  values: SignInValues,
+): Promise<ActionResult<User>> {
+  const parsed = signInSchema.safeParse(values);
+  if (!parsed.success) return { ok: false, error: FALLBACK_ERROR };
+
+  try {
+    const { user } = await auth.api.signInEmail({
+      body: parsed.data,
+      headers: await headers(),
+    });
+
+    if (!isAdminUser(user)) {
+      await auth.api.signOut({ headers: await headers() });
+      return { ok: false, error: "این حساب دسترسی مدیریت ندارد." };
+    }
+
     return { ok: true, data: await buildUser(user) };
   } catch (error) {
     return actionError(error);

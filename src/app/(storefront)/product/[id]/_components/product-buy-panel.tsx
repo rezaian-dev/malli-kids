@@ -20,7 +20,7 @@ import { useStore } from "@/providers/store-provider";
 import { CORE_PRODUCTS } from "@/lib/data/products";
 import { Button } from "@/components/ui/button";
 import { useLiveProduct } from "./product-live-context";
-import { pdpCard, pdpKicker, pdpWell } from "./product-chrome";
+import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
 import { ProductReadMore } from "./product-read-more";
 import { ProductCheckoutMount } from "./product-checkout-mount";
 import { ProductGallery } from "./product-gallery";

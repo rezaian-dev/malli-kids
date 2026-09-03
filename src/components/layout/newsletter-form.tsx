@@ -52,6 +52,7 @@ export function NewsletterForm({ className }: { className?: string }) {
           autoComplete="email"
           maxLength={120}
           placeholder="ایمیل شما…"
+          aria-label="ایمیل"
           aria-invalid={bad || undefined}
           value={email}
           onChange={(event) => {

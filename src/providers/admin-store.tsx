@@ -11,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast";
 import { isRetiredCategory, STORAGE } from "@/lib/constants";
+import { signOutAction } from "@/lib/auth/actions";
 import type {
   AdminArticle,
   AdminCoupon,
@@ -23,7 +24,7 @@ import type {
   OrderStatus,
   Product,
 } from "@/types";
-import { ADMIN_CREDS, seedAdminDb } from "./admin-data";
+import { seedAdminDb } from "@/lib/admin/admin-data";
 
 export type AdminIdentity = {
   username: string;
@@ -31,17 +32,10 @@ export type AdminIdentity = {
   avatar?: string;
 };
 
-type AdminSession = {
-  username: string;
-  loggedAt: string | null;
-};
-
 type AdminCtx = {
   ready: boolean;
-  logged: boolean;
-  profile: AdminIdentity;
+  profile: AdminIdentity | null;
   db: AdminDb;
-  login: (user: string, pass: string) => boolean;
   logout: () => void;
   saveProducts: (list: Product[]) => void;
   upsertProduct: (p: Product) => void;
@@ -69,26 +63,6 @@ type AdminCtx = {
 
 const Ctx = createContext<AdminCtx | null>(null);
 const KEY = STORAGE.adminDb;
-const SESSION_KEY = STORAGE.admin;
-const DEFAULT_SESSION: AdminSession = {
-  username: ADMIN_CREDS.user,
-  loggedAt: null,
-};
-
-function loadSession(): AdminSession {
-  try {
-    const raw = window.localStorage.getItem(SESSION_KEY);
-    if (!raw) return DEFAULT_SESSION;
-    const saved = JSON.parse(raw) as Partial<AdminSession> | string;
-    if (typeof saved === "string") return { username: saved, loggedAt: null };
-    return {
-      username: saved.username?.trim() || ADMIN_CREDS.user,
-      loggedAt: saved.loggedAt ?? null,
-    };
-  } catch {
-    return DEFAULT_SESSION;
-  }
-}
 
 function loadDb(): AdminDb {
   const seed = seedAdminDb();
@@ -131,15 +105,23 @@ function loadDb(): AdminDb {
   }
 }
 
-export function AdminStore({ children }: { children: ReactNode }) {
+export function AdminStore({
+  children,
+  initialAdmin,
+}: {
+  children: ReactNode;
+  /** 🔒 The real, server-verified admin (from `requireAdmin()` in
+   *  `admin/layout.tsx`) — `null` on `/admin/login` itself, where no admin
+   *  session exists yet. This is display data only; it grants no access by
+   *  itself — every protected page re-checks `requireAdmin()` server-side. */
+  initialAdmin: AdminIdentity | null;
+}) {
   const router = useRouter();
   const [db, setDb] = useState<AdminDb>(() => seedAdminDb());
-  const [session, setSession] = useState<AdminSession>(DEFAULT_SESSION);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setDb(loadDb());
-    setSession(loadSession());
     setHydrated(true);
   }, []);
 
@@ -151,51 +133,12 @@ export function AdminStore({ children }: { children: ReactNode }) {
   }, [db, hydrated]);
 
   const value = useMemo<AdminCtx>(() => {
-    const admins = db.customers.filter((customer) => customer.role === "admin");
-    const account =
-      admins.find(
-        (customer) =>
-          customer.email?.split("@")[0]?.toLocaleLowerCase("en") ===
-          session.username.toLocaleLowerCase("en"),
-      ) ?? admins[0];
-    const name = account
-      ? `${account.firstName} ${account.lastName}`.trim()
-      : session.username;
-    const profile: AdminIdentity = {
-      username: session.username,
-      name,
-      avatar: account?.avatar,
-    };
-
     return {
       ready: hydrated,
-      logged: true,
-      profile,
+      profile: initialAdmin,
       db,
-      login: (user, pass) => {
-        const username = user.trim();
-        if (
-          username.toLocaleLowerCase("en") !==
-            ADMIN_CREDS.user.toLocaleLowerCase("en") ||
-          pass !== ADMIN_CREDS.pass
-        )
-          return false;
-        const nextSession = { username, loggedAt: new Date().toISOString() };
-        setSession(nextSession);
-        try {
-          window.localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
-        } catch {}
-        return true;
-      },
       logout: () => {
-        try {
-          window.localStorage.removeItem(SESSION_KEY);
-        } catch {
-          /* 🪶 No-op. */
-        }
-        setSession(DEFAULT_SESSION);
-
-        router.push("/");
+        void signOutAction().then(() => router.push("/admin/login"));
       },
       saveProducts: (list) => {
         setDb((d) => ({
@@ -350,7 +293,7 @@ export function AdminStore({ children }: { children: ReactNode }) {
         });
       },
     };
-  }, [db, hydrated, router, session]);
+  }, [db, hydrated, router, initialAdmin]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
@@ -359,9 +302,4 @@ export function useAdmin() {
   const ctx = useContext(Ctx);
   if (!ctx) throw new Error("AdminStore missing");
   return ctx;
-}
-
-// 🪶 Real auth can wrap this gate later.
-export function AdminGate({ children }: { children: ReactNode }) {
-  return <>{children}</>;
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
-import { useAdmin } from "@/lib/admin/admin-store";
+import { useAdmin } from "@/providers/admin-store";
 import { ADMIN_NAV, ADMIN_NAV_GROUPS } from "@/lib/admin/nav";
 import { toFaDigits } from "@/lib/locale/fa";
 import { useTickets } from "@/lib/tickets";

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Faq } from "@/components/shared/faq";
+import { Faq } from "./faq";
 import { Intro } from "@/components/shared/intro";
 import { JsonLd } from "@/components/shared/json-ld";
 import { FAQ } from "@/lib/data/pages";

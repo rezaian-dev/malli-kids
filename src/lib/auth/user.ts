@@ -1,5 +1,6 @@
+import { cache } from "react";
 import { connectMongoose } from "@/lib/db/mongoose";
-import { Profile } from "@/lib/db/profile";
+import { Profile } from "@/lib/db/models/profile";
 import type { User } from "@/types";
 
 /** 👤 Splits Better Auth's single `name` field into the `firstName`/
@@ -13,12 +14,18 @@ export function splitName(name: string) {
  *  a Better Auth identity. Shared by `getSessionUser()` (from the session
  *  cookie) and the sign-in/sign-up actions (from their direct API response)
  *  so both paths — a fresh page load *and* logging in without one — return
- *  the exact same, complete shape. */
-export async function buildUser(identity: {
+ *  the exact same, complete shape.
+ *
+ *  🧊 `cache()`-wrapped: `getSessionUser()` and every `/admin/**` page's
+ *  `requireAdmin()` call this with the *same* `session.user` object
+ *  reference within one request (since `getSession()` in `./session` is
+ *  itself cached), so this collapses back down to one `Profile.findOne()`
+ *  Mongo query per request instead of one per call site. */
+export const buildUser = cache(async (identity: {
   id: string;
   name: string;
   email: string;
-}): Promise<User> {
+}): Promise<User> => {
   await connectMongoose();
   const profile = await Profile.findOne({ userId: identity.id }).lean();
 
@@ -34,4 +41,4 @@ export async function buildUser(identity: {
     childAge: profile?.childAge,
     childGender: profile?.childGender,
   };
-}
+});

@@ -14,7 +14,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useAdmin, type AdminIdentity } from "@/lib/admin/admin-store";
+import { useAdmin, type AdminIdentity } from "@/providers/admin-store";
 import { ADMIN_NAV } from "@/lib/admin/nav";
 import { cn } from "@/lib/utils";
 import { AdminAccountFooter } from "./admin-account-footer";

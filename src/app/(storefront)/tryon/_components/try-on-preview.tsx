@@ -3,7 +3,7 @@ import { Download, Loader2, Sparkles, Upload } from "lucide-react";
 import { CORE_PRODUCTS } from "@/lib/data/products";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { SAMPLE_MODELS, type TryOnPhase } from "./use-try-on";
+import { SAMPLE_MODELS, type TryOnPhase } from "../_hooks/use-try-on";
 
 function swatchClass(active: boolean) {
   return cn(

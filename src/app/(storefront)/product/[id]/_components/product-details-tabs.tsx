@@ -9,7 +9,7 @@ import { ProductSizeTable } from "./product-size-table";
 import { ProductReviewForm } from "./product-review-form";
 import { ProductReviews } from "./product-reviews";
 import { LiveDesc } from "./product-live-context";
-import { pdpCard, pdpKicker, pdpWell } from "./product-chrome";
+import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
 
 const SPEC_ITEM = `${pdpWell} p-4`;
 const SPEC_LABEL = "text-gold text-[11px] font-bold";

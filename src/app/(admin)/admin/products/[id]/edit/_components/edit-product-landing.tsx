@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAdmin } from "@/components/admin";
 import { Button } from "@/components/ui/button";
-import { ProductForm } from "../../../_components/product-form";
+import { ProductForm } from "@/components/admin/product-form";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
 
