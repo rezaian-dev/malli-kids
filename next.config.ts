@@ -7,17 +7,21 @@ import type { NextConfig } from "next";
 // static-first CSP; it's still a large step up from having no CSP at all,
 // and blocks the things that actually matter here: arbitrary third-party
 // script origins, framing, plugins/objects, mixed content.
-// `*.neshan.org` is allow-listed for the profile page's map (SDK script +
-// stylesheet from `static.neshan.org`, vector map tiles fetched by that SDK)
-// — see `src/app/(storefront)/profile/_components/neshan-loader.ts`.
+// `*.tile.openstreetmap.org` is allow-listed for the profile page's map —
+// the free OSM tile images it fetches directly in the browser (everything
+// else about that map, including the `leaflet` package itself and its
+// marker icons, is bundled same-origin — see
+// `src/app/(storefront)/profile/_components/leaflet-loader.ts`; reverse
+// geocoding happens server-side in `reverseGeocodeAction`, never from the
+// browser, so it needs no `connect-src` entry here).
 const isDev = process.env.NODE_ENV !== "production";
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline' https://*.neshan.org${isDev ? " 'unsafe-eval'" : ""};
-  style-src 'self' 'unsafe-inline' https://*.neshan.org;
-  img-src 'self' data: blob: https://*.neshan.org https://kimi-web-img.kimi.ai;
+  script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: blob: https://*.tile.openstreetmap.org https://kimi-web-img.kimi.ai;
   font-src 'self' data:;
-  connect-src 'self' https://*.neshan.org;
+  connect-src 'self';
   object-src 'none';
   base-uri 'self';
   form-action 'self';

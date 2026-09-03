@@ -2,7 +2,6 @@
 
 import { Heart } from "lucide-react";
 import { useFavorites } from "@/lib/favorites";
-import { useStore } from "@/providers/store-provider";
 import { cn } from "@/lib/utils";
 
 export function FavButton({
@@ -15,7 +14,6 @@ export function FavButton({
   className?: string;
 }) {
   const { ids, toggle } = useFavorites();
-  const { showToast } = useStore();
   const on = ids.includes(id);
 
   return (
@@ -30,10 +28,9 @@ export function FavButton({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
+        // 🔔 `toggle` itself decides — and shows — what actually happened
+        // (added/removed, or "please sign in first"); it never does both.
         toggle(id);
-        showToast(
-          on ? "از علاقه‌مندی‌ها حذف شد" : "به علاقه‌مندی‌ها اضافه شد ❤️",
-        );
       }}
       className={cn(
         "z-3 inline-flex size-9 items-center justify-center rounded-full border shadow-md backdrop-blur transition-all duration-300 motion-safe:hover:scale-110 motion-safe:active:scale-90",

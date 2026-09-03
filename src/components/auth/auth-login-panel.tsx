@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, KeyRound, Lock, Mail } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
 import { toast } from "@/lib/toast";
 import { AppForm, InsetField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TrustNote } from "./trust-note";
+import { OtpLoginPanel } from "./auth-otp-panel";
 import { signInAction } from "@/lib/auth/actions";
 import {
   signInDefaults,
@@ -16,8 +17,62 @@ import {
 } from "@/lib/auth/schemas";
 import { SUBMIT_NAVY } from "./auth-shared";
 
-/** 🔑 Email + password sign-in tab. */
+const METHOD_BTN = cn(
+  "inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-[12px] font-extrabold transition-colors",
+  "text-navy/70 hover:text-navy dark:text-linen/70 dark:hover:text-ivory",
+);
+const METHOD_BTN_ON = cn(
+  "bg-navy text-ivory shadow-sm",
+  "dark:bg-gold dark:text-navy-deep dark:shadow-gold/40",
+);
+
+/** 🔑 Email + password *or* phone OTP — a small segmented switch on top of
+ *  the login tab decides which; both end at the same `login()` call. */
 export function LoginPanel({ onForgot }: { onForgot: () => void }) {
+  const [method, setMethod] = useState<"password" | "otp">("password");
+
+  return (
+    <div className="space-y-4">
+      <div
+        className={cn(
+          "grid grid-cols-2 gap-1 rounded-2xl p-1",
+          "bg-sand ring-navy/5 ring-1",
+          "dark:bg-navy-deep/70 dark:ring-white/10",
+        )}
+        role="tablist"
+        aria-label="روش ورود"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={method === "password"}
+          onClick={() => setMethod("password")}
+          className={cn(METHOD_BTN, method === "password" && METHOD_BTN_ON)}
+        >
+          <Lock className="size-3.5" /> رمز عبور
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={method === "otp"}
+          onClick={() => setMethod("otp")}
+          className={cn(METHOD_BTN, method === "otp" && METHOD_BTN_ON)}
+        >
+          <KeyRound className="size-3.5" /> کدِ پیامکی
+        </button>
+      </div>
+
+      {method === "password" ? (
+        <PasswordLoginPanel onForgot={onForgot} />
+      ) : (
+        <OtpLoginPanel />
+      )}
+    </div>
+  );
+}
+
+/** 🔑 Email + password sign-in — the original login form, unchanged. */
+function PasswordLoginPanel({ onForgot }: { onForgot: () => void }) {
   const { login, showToast } = useStore();
   const [show, setShow] = useState(false);
   const form = useAppForm({ schema: signInSchema, defaultValues: signInDefaults });

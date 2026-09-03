@@ -43,7 +43,7 @@ type Ctx = {
   login: (u: User) => void;
   updateUser: (patch: Partial<User>) => void;
   logout: () => Promise<void>;
-  addToCart: (id: number, size: string, qty?: number) => void;
+  addToCart: (id: number, size: string, qty?: number) => boolean;
   setCartQty: (id: number, size: string, qty: number) => void;
   removeCartItem: (id: number, size: string) => void;
   clearCart: () => void;
@@ -140,16 +140,29 @@ export function StoreProvider({
     setUser(null);
   }, []);
 
-  const addToCart = useCallback((id: number, size: string, qty = 1) => {
-    setCart((current) => {
-      const hit = current.find((item) => sameLine(item, id, size));
-      if (!hit) return [...current, { id, size, qty: Math.min(9, qty) }];
+  // 🔐 A cart is a real order-in-waiting, not a scratch list — same rule as
+  // favorites/reviews: no session, nothing gets added. Returns whether it
+  // actually went in, so callers only fire their own "added to cart" toast
+  // when it's true instead of alongside the login dialog.
+  const addToCart = useCallback(
+    (id: number, size: string, qty = 1) => {
+      if (!user) {
+        setAuthOpen(true);
+        toast.warning("برای افزودن به سبد خرید ابتدا وارد شوید");
+        return false;
+      }
+      setCart((current) => {
+        const hit = current.find((item) => sameLine(item, id, size));
+        if (!hit) return [...current, { id, size, qty: Math.min(9, qty) }];
 
-      return current.map((item) =>
-        item === hit ? { ...item, qty: Math.min(9, item.qty + qty) } : item,
-      );
-    });
-  }, []);
+        return current.map((item) =>
+          item === hit ? { ...item, qty: Math.min(9, item.qty + qty) } : item,
+        );
+      });
+      return true;
+    },
+    [user],
+  );
 
   const setCartQty = useCallback((id: number, size: string, qty: number) => {
     setCart((current) =>

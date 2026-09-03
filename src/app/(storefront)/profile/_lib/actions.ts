@@ -66,9 +66,11 @@ export async function updateAccountAction(
   }
 }
 
-/** 🗺️ Turns a map pin into a text address — called by `AddressMapDialog`
- *  after the user places/drags the marker or uses GPS. `NESHAN_API_KEY`
- *  never leaves the server; the client only ever gets the resulting text. */
+/** 🗺️ Turns a map pin into a text address — called by `AddressMapField`
+ *  after the user places/drags the marker or uses GPS. Backed by OSM's free
+ *  Nominatim reverse-geocoder: no API key, nothing to configure, unlike the
+ *  paid Neshan API this replaced (see git history) — the trade-off is
+ *  coarser/less-Persian address text than a paid Iranian provider would give. */
 export async function reverseGeocodeAction(
   values: ReverseGeocodeValues,
 ): Promise<ActionResult<{ address: string }>> {
@@ -78,8 +80,10 @@ export async function reverseGeocodeAction(
   const userId = await requireUserId();
   if (!userId) return { ok: false, error: AUTH_ERROR };
 
-  // 🚦 Neshan's free tier has a request quota — throttle per user on top of
-  // whatever limit they enforce themselves.
+  // 🚦 Nominatim's usage policy caps free reverse-geocoding around ~1
+  // req/sec — this per-user throttle (paired with the map's own 600ms
+  // pick-debounce) keeps normal use well inside that even without a shared
+  // global limiter (see `rate-limit.ts`'s single-instance caveat).
   const limited = rateLimit(`geocode:${userId}`, {
     windowMs: 60_000,
     max: 20,
@@ -87,24 +91,29 @@ export async function reverseGeocodeAction(
   if (!limited.ok)
     return { ok: false, error: "تعداد درخواست زیاد بود؛ کمی صبر کنید." };
 
-  const key = process.env.NESHAN_API_KEY;
-  if (!key)
-    return { ok: false, error: "سرویس تشخیص آدرس هنوز پیکربندی نشده است." };
-
   try {
     const { lat, lng } = parsed.data;
+    const siteUrl = process.env.BETTER_AUTH_URL || "https://mallikids.ir";
     const res = await fetch(
-      `https://api.neshan.org/v5/reverse?lat=${lat}&lng=${lng}`,
-      { headers: { "Api-Key": key } },
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=fa`,
+      {
+        // 📛 Nominatim blocks generic/browser-like callers — its usage
+        // policy requires a real identifying User-Agent (no key needed,
+        // just honesty about who's calling).
+        headers: { "User-Agent": `MalliKids/1 (${siteUrl})` },
+        signal: AbortSignal.timeout(8000),
+      },
     );
-    const data = await res.json().catch(() => null);
-    if (!res.ok || !data || data.status !== "OK" || !data.formatted_address) {
+    const data = (await res.json().catch(() => null)) as {
+      display_name?: string;
+    } | null;
+    if (!res.ok || !data?.display_name) {
       return {
         ok: false,
         error: "آدرس این نقطه پیدا نشد؛ کمی نقشه را جابه‌جا کنید.",
       };
     }
-    return { ok: true, data: { address: data.formatted_address as string } };
+    return { ok: true, data: { address: data.display_name } };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
   }

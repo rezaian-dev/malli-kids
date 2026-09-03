@@ -10,7 +10,7 @@ export type ProfileDoc = {
   nationalId?: string;
   city?: string;
   address?: string;
-  // 🗺️ Set together with `address` from the profile's Leaflet/Neshan map
+  // 🗺️ Set together with `address` from the profile's Leaflet/OpenStreetMap map
   // picker (see `@/app/(storefront)/profile/_components/address-map-dialog`)
   // — optional, a plain-text address with no pin is still valid.
   lat?: number;

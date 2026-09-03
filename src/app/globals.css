@@ -1,5 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+/* 🗺️ Leaflet's own stylesheet — needed by the profile address map
+   (`address-map-dialog.tsx`); global CSS in the App Router can only be
+   imported from `layout.tsx`/here, never from the client component itself. */
+@import "leaflet/dist/leaflet.css";
 
 /* 🎨 Dark mode = `.dark` class on html (Tailwind v4 class strategy) */
 @custom-variant dark (&:where(.dark, .dark *));

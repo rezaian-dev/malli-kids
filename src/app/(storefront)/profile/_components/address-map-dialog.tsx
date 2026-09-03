@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
-import { Loader2, LocateFixed, MapPin } from "lucide-react";
+import { CheckCircle2, Loader2, LocateFixed, MapPin } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,13 +19,7 @@ import {
 import { BRAND } from "@/lib/constants";
 import { reverseGeocodeAction } from "../_lib/actions";
 import type { UpdateAccountValues } from "../_lib/schemas";
-import { loadNeshanLeaflet } from "./neshan-loader";
-
-// 🔑 Domain-restricted in the Neshan panel — this one is *meant* to be
-// public (it rides in every tile-image request the browser makes), unlike
-// `NESHAN_API_KEY` used by `reverseGeocodeAction`, which never leaves the
-// server. See the plan/CLAUDE notes on why that split is the correct one.
-const MAP_KEY = process.env.NEXT_PUBLIC_NESHAN_MAP_KEY;
+import { loadLeaflet } from "./leaflet-loader";
 
 const PICK_DEBOUNCE_MS = 600;
 const TYPE_CHARS_PER_TICK = 2;
@@ -59,6 +53,10 @@ export function AddressMapField() {
   const [locating, setLocating] = useState(false);
   const [geocoding, setGeocoding] = useState(false);
   const [typing, setTyping] = useState(false);
+  // ✨ Bumped once each time the typewriter finishes a full pass — keyed
+  // onto the success checkmark below so its pop-in animation replays every
+  // time a new address lands, not just the first.
+  const [doneTick, setDoneTick] = useState(0);
   const [preview, setPreview] = useState("");
   const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(
     null,
@@ -87,7 +85,10 @@ export function AddressMapField() {
       typeIntervalRef.current = setInterval(() => {
         shown += TYPE_CHARS_PER_TICK;
         setPreview(text.slice(0, shown));
-        if (shown >= text.length) stopTyping();
+        if (shown >= text.length) {
+          stopTyping();
+          setDoneTick((n) => n + 1);
+        }
       }, TYPE_TICK_MS);
     },
     [stopTyping],
@@ -99,6 +100,7 @@ export function AddressMapField() {
     if (!typeIntervalRef.current) return;
     stopTyping();
     setPreview(typeTargetRef.current);
+    setDoneTick((n) => n + 1);
   }, [stopTyping]);
 
   const runGeocode = useCallback(
@@ -167,7 +169,7 @@ export function AddressMapField() {
   // closes — simpler and safer than trying to keep one Leaflet instance
   // alive across a Radix portal unmounting its content.
   useEffect(() => {
-    if (!open || !MAP_KEY) return;
+    if (!open) return;
     let cancelled = false;
     setMapReady(false);
     setMapError(null);
@@ -184,20 +186,19 @@ export function AddressMapField() {
     setPreview(getValues("address") ?? "");
     typeTargetRef.current = getValues("address") ?? "";
 
-    loadNeshanLeaflet()
+    loadLeaflet()
       .then((L) => {
         if (cancelled || !mapElRef.current) return;
-        // 🗺️ `key`/`maptype`/`poi`/`traffic` are Neshan-specific — not part
-        // of stock Leaflet's `MapOptions` type, hence the cast.
-        const neshanOptions = {
-          key: MAP_KEY,
-          maptype: "dreamy",
-          poi: true,
-          traffic: false,
+        const map = new L.Map(mapElRef.current, {
           center: [startLat, startLng],
           zoom: 15,
-        } as unknown as import("leaflet").MapOptions;
-        const map = new L.Map(mapElRef.current, neshanOptions);
+        });
+        // 🆓 OpenStreetMap's own tile server — free, no key, no signup.
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution:
+            '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>',
+        }).addTo(map);
         const marker = L.marker([startLat, startLng], {
           draggable: true,
         }).addTo(map);
@@ -256,14 +257,7 @@ export function AddressMapField() {
     <div className="flex flex-wrap items-center gap-2.5">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="gap-1.5"
-            disabled={!MAP_KEY}
-            title={MAP_KEY ? undefined : "نقشه هنوز پیکربندی نشده است."}
-          >
+          <Button type="button" variant="outline" size="sm" className="gap-1.5">
             <MapPin className="size-3.5" />
             {hasPin ? "ویرایش موقعیت روی نقشه" : "انتخاب روی نقشه"}
           </Button>
@@ -314,10 +308,32 @@ export function AddressMapField() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-navy dark:text-ivory text-xs font-black">
-              آدرس یافت‌شده
-            </label>
-            <div className="relative overflow-hidden rounded-2xl">
+            <div className="flex items-center gap-1.5">
+              <label className="text-navy dark:text-ivory text-xs font-black">
+                آدرس یافت‌شده
+              </label>
+              {typing ? (
+                <span className="text-gold inline-flex items-center gap-1 text-[10px] font-bold">
+                  <span
+                    aria-hidden
+                    className="bg-gold animate-twinkle size-1.5 rounded-full"
+                  />
+                  در حال نوشتن…
+                </span>
+              ) : preview.trim() ? (
+                <CheckCircle2
+                  key={doneTick}
+                  aria-hidden
+                  className="text-emerald-600 animate-marker-drop size-3.5 dark:text-emerald-400"
+                />
+              ) : null}
+            </div>
+            <div
+              className={cn(
+                "relative overflow-hidden rounded-2xl transition-shadow duration-500",
+                typing && "ring-gold/40 ring-2",
+              )}
+            >
               <textarea
                 value={preview}
                 onFocus={finishTypingNow}
@@ -332,7 +348,7 @@ export function AddressMapField() {
                 className="bg-sand/60 text-navy placeholder:text-navy/50 dark:bg-navy-deep/40 dark:text-ivory dark:placeholder:text-ivory/30 min-h-20 w-full rounded-2xl px-4 py-3 text-sm font-semibold outline-none"
               />
               {geocoding ? (
-                <span className="animate-shimmer via-gold/25 pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent to-transparent" />
+                <span className="animate-shimmer via-gold/25 bg-linear-to-r pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 from-transparent to-transparent" />
               ) : null}
             </div>
           </div>

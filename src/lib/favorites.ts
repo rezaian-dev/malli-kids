@@ -26,6 +26,11 @@ export function useFavorites() {
     };
   }, [user]);
 
+  // 🍞 The toast belongs *here*, not at each call site — it's the only
+  // place that actually knows whether the toggle went through (guest → auth
+  // dialog, no list change) or really added/removed an id. A caller like
+  // `FavButton` that fires its own "added ❤️" toast unconditionally would
+  // show it right alongside the login dialog for a signed-out click.
   const toggle = useCallback(
     (id: number) => {
       if (!user) {
@@ -34,14 +39,16 @@ export function useFavorites() {
         return;
       }
 
+      const adding = !ids.includes(id);
       setIds((current) =>
-        current.includes(id) ? current.filter((x) => x !== id) : [id, ...current],
+        adding ? [id, ...current] : current.filter((x) => x !== id),
       );
+      toast.success(adding ? "به علاقه‌مندی‌ها اضافه شد ❤️" : "از علاقه‌مندی‌ها حذف شد");
       toggleFavoriteAction(id).then((result) => {
         if (result.ok) setIds(result.data);
       });
     },
-    [user, setAuthOpen],
+    [user, ids, setAuthOpen],
   );
 
   return { ids, toggle };

@@ -207,10 +207,12 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
               onClick={() => {
                 if (!product.stock)
                   return showToast("به محض موجود شدن خبرتان می‌کنیم");
-                addToCart(product.id, size, qty);
-                showToast(
-                  `${toFaDigits(qty)} عدد سایز ${size} به سبد اضافه شد`,
-                );
+                // 🔐 `addToCart` gates guests itself (login dialog + toast);
+                // only celebrate success when it actually added the line.
+                if (addToCart(product.id, size, qty))
+                  showToast(
+                    `${toFaDigits(qty)} عدد سایز ${size} به سبد اضافه شد`,
+                  );
               }}
             >
               <ShoppingBag className="size-4" />

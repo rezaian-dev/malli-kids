@@ -5,14 +5,20 @@ import { APIError } from "better-auth";
 import { auth } from "@/lib/auth/auth";
 import { buildUser } from "@/lib/auth/user";
 import { isAdminUser } from "@/lib/auth/admin";
+import { phoneDigits } from "@/lib/digits";
+import { rateLimit } from "@/lib/rate-limit";
 import type { ActionResult } from "@/lib/action-result";
 import type { User } from "@/types";
 import {
   forgotPasswordSchema,
+  otpRequestSchema,
+  otpVerifySchema,
   resetPasswordSchema,
   signInSchema,
   signUpSchema,
   type ForgotPasswordValues,
+  type OtpRequestValues,
+  type OtpVerifyValues,
   type ResetPasswordValues,
   type SignInValues,
   type SignUpValues,
@@ -131,6 +137,54 @@ export async function forgotPasswordAction(
     // 🤫 Never reveal whether the email exists — always report success.
   }
   return { ok: true };
+}
+
+// 📱 OTP sign-in — the UI (`AuthModal` → `OtpLoginPanel`) is fully built, but
+// no SMS panel has been purchased yet. Flip this once one is wired up (and
+// fill in the real `send()` below); nothing in the client needs to change —
+// it already only trusts `demo` to decide whether to show the preview note.
+const SMS_PROVIDER_CONFIGURED = false;
+
+/** 📨 Requests an OTP code for `phone`. With no SMS provider configured this
+ *  never actually sends anything — it answers `{ demo: true }` so the client
+ *  can still walk through the real code-entry screen as a labeled preview
+ *  instead of a dead button. */
+export async function requestOtpAction(
+  values: OtpRequestValues,
+): Promise<ActionResult<{ demo: boolean }>> {
+  const parsed = otpRequestSchema.safeParse(values);
+  if (!parsed.success) return { ok: false, error: FALLBACK_ERROR };
+
+  const phone = phoneDigits(parsed.data.phone);
+  // 🚦 One request per phone per cooldown window — same rhythm as the
+  // resend timer the client shows (`useCooldown`'s default 90s).
+  const limited = rateLimit(`otp-request:${phone}`, {
+    windowMs: 90_000,
+    max: 1,
+  });
+  if (!limited.ok)
+    return { ok: false, error: "کمی صبر کنید و دوباره تلاش کنید." };
+
+  if (!SMS_PROVIDER_CONFIGURED) return { ok: true, data: { demo: true } };
+
+  // TODO: send the real SMS via the configured provider once purchased.
+  return { ok: true, data: { demo: false } };
+}
+
+/** 🔐 Verifies an OTP code and signs the user in. No SMS provider means no
+ *  code was ever really sent, so this must never fake a successful
+ *  sign-in — it always explains that plainly instead. */
+export async function verifyOtpAction(
+  values: OtpVerifyValues,
+): Promise<ActionResult<User>> {
+  const parsed = otpVerifySchema.safeParse(values);
+  if (!parsed.success) return { ok: false, error: FALLBACK_ERROR };
+
+  return {
+    ok: false,
+    error:
+      "ورود با کدِ پیامکی هنوز فعال نشده — فعلاً از ایمیل و رمز عبور وارد شوید.",
+  };
 }
 
 export async function resetPasswordAction(

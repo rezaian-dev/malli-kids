@@ -3,7 +3,7 @@ import "server-only";
 // 🚦 Small in-memory fixed-window rate limiter for Route Handlers and Server
 // Actions that Better Auth's own `rateLimit.customRules` (see
 // `src/lib/auth/auth.ts`) doesn't cover — e.g. `/api/tryon` (burns paid
-// third-party API credits per call) and `reverseGeocodeAction` (Neshan quota).
+// third-party API credits per call) and `reverseGeocodeAction` (Nominatim rate policy).
 //
 // Deliberately simple: a `Map` keyed by caller-supplied string, single
 // process. Good enough for this app's current one-instance deployment; if it
