@@ -1,12 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 import type { Product } from "@/types";
+import { useIdlePreloadMount } from "@/hooks/use-idle-preload-mount";
+
+const loadCheckoutDialog = () => import("./checkout-dialog");
 
 // 🧾 Lazy mount the checkout dialog only once it matters. ✨
 const CheckoutDialog = dynamic(
-  () => import("./checkout-dialog").then((m) => m.CheckoutDialog),
+  () => loadCheckoutDialog().then((m) => m.CheckoutDialog),
   { ssr: false },
 );
 
@@ -25,26 +27,7 @@ export function CheckoutMount({
   qty: number;
   unit: number;
 }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    if (open) setMounted(true);
-  }, [open]);
-
-  useEffect(() => {
-    if (mounted) return;
-
-    const preload = () => void import("./checkout-dialog");
-    const hasIdle = typeof window.requestIdleCallback === "function";
-    const id = hasIdle
-      ? window.requestIdleCallback(preload, { timeout: 4000 })
-      : window.setTimeout(preload, 2500);
-
-    return () => {
-      if (hasIdle) window.cancelIdleCallback(id);
-      else window.clearTimeout(id);
-    };
-  }, [mounted]);
+  const mounted = useIdlePreloadMount(open, loadCheckoutDialog);
 
   return mounted ? (
     <CheckoutDialog

@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn, shell } from "@/lib/utils";
-import { FestiveBanner } from "@/components/festive/festive-banner";
+import { FestiveBannerBody } from "@/components/festive/festive-banner-body";
 import { HeaderEnter } from "@/components/motion/static";
 import { HeaderActions } from "./header-actions";
-import { HeaderNavMount } from "./header-nav-mount";
+import { DesktopNav } from "./desktop-nav";
 
 // 🧭 Keep the storefront shell visually stable on first paint. ✨
 export function Header() {
@@ -12,7 +12,7 @@ export function Header() {
     <header dir="rtl" aria-label="سربرگ" className="fixed inset-x-0 top-0 z-70">
       {/* ⚡ بدون انیمیشن ورود — سربرگ از همان اول کامل رندر می‌شود تا رفرش/ناوبری فلش نزند. */}
       <HeaderEnter>
-        <FestiveBanner />
+        <FestiveBannerBody />
 
         <div
           className="border-navy/10 bg-cream/80 border-b shadow-[0_8px_24px_-16px_rgba(14,42,71,.2)] supports-backdrop-filter:bg-cream/70 backdrop-blur-md dark:border-gold/20 dark:bg-navy-deep/60 dark:supports-backdrop-filter:bg-navy-deep/55 dark:backdrop-blur-md"
@@ -64,7 +64,7 @@ export function Header() {
               </span>
             </Link>
 
-            <HeaderNavMount />
+            <DesktopNav />
             <HeaderActions />
           </div>
         </div>

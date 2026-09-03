@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { toFaDigits } from "@/lib/locale/fa";
-import { useCooldown } from "@/hooks/use-cooldown";
 import {
   AppForm,
   Field,
@@ -36,7 +35,7 @@ import {
   type OtpRequestValues,
   type OtpVerifyValues,
 } from "@/lib/auth/schemas";
-import { onlyDigits, SUBMIT_NAVY } from "./auth-shared";
+import { onlyDigits, SUBMIT_NAVY, useCooldown } from "./auth-shared";
 
 /** 🔢 Five separate digit boxes standing in for one `code` field — its own
  *  local array so a mid-typed value (box 3 filled, box 2 still empty) never

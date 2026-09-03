@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Mail, MailCheck } from "lucide-react";
-import { useCooldown } from "@/hooks/use-cooldown";
 import { AppForm, InsetField, SubmitButton, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { forgotPasswordAction } from "@/lib/auth/actions";
@@ -11,7 +10,7 @@ import {
   forgotPasswordSchema,
   type ForgotPasswordValues,
 } from "@/lib/auth/schemas";
-import { SUBMIT_GOLD } from "./auth-shared";
+import { SUBMIT_GOLD, useCooldown } from "./auth-shared";
 
 /** 📮 "Sent!" state — same shape everywhere a card needs to call out one
  *  highlighted line, e.g. the address a link was just sent to. */
