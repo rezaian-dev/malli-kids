@@ -22,7 +22,7 @@ export const ICON_W = "w-9 min-[360px]:w-10 md:w-9 lg:w-10";
 export const ICON_BTN = cn(
   CLUSTER_H,
   ICON_W,
-  "shrink-0 rounded-full text-navy hover:bg-gold/12 hover:text-gold",
+  "shrink-0 cursor-pointer rounded-full text-navy hover:bg-gold/12 hover:text-gold",
   "focus-visible:ring-2 focus-visible:ring-gold/60",
   "dark:text-gold-soft dark:hover:bg-gold/20 dark:hover:text-gold-light",
 );

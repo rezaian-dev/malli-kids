@@ -2,8 +2,15 @@
 
 import { toast } from "@/lib/toast";
 import { useStore } from "@/providers/store-provider";
-import { AppForm, TextareaField, TextField, useAppForm } from "@/components/form";
+import {
+  AppForm,
+  ComboboxField,
+  TextareaField,
+  TextField,
+  useAppForm,
+} from "@/components/form";
 import { Button } from "@/components/ui/button";
+import { IRAN_CITIES } from "@/lib/data/iran-cities";
 import type { User } from "@/types";
 import { updateAccountAction } from "../_lib/actions";
 import {
@@ -76,11 +83,12 @@ export function AccountForm() {
           hint="۱۰ رقم؛ رقم کنترل هم بررسی می‌شود."
         />
 
-        <TextField
+        <ComboboxField
           name="city"
           label="شهر"
-          autoComplete="address-level2"
-          placeholder="تهران"
+          options={IRAN_CITIES}
+          placeholder="انتخاب شهر"
+          searchPlaceholder="جستجوی شهر…"
         />
 
         <TextareaField
