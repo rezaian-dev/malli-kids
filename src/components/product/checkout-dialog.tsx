@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { BadgeCheck, Ticket } from "lucide-react";
+import { AppForm, SubmitButton } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -11,7 +12,10 @@ import { toast } from "@/lib/toast";
 import { useAuth } from "@/providers/auth-provider";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
 import { createOrderAction } from "@/lib/shop/checkout-actions";
-import { useCheckoutDeliveryForm } from "@/hooks/use-checkout-delivery-form";
+import {
+  useCheckoutDeliveryForm,
+  type DeliveryValues,
+} from "@/hooks/use-checkout-delivery-form";
 import { DeliveryFields } from "./checkout-delivery-fields";
 import { cn } from "@/lib/utils";
 
@@ -36,30 +40,19 @@ export function CheckoutDialog({
 }) {
   const { user } = useAuth();
   const subtotal = unit * qty;
-  const form = useCheckoutDeliveryForm({ open, user, subtotal });
   const {
-    city,
-    setCity,
-    address,
-    setAddress,
-    phone,
-    setPhone,
-    postal,
-    setPostal,
+    form,
     couponIn,
     setCouponIn,
     applied,
     couponBad,
     setCouponBad,
-    pending,
-    startTransition,
+    couponPending,
     idempotencyKey,
     discount,
-    errors,
     applyCoupon,
-    validateDelivery,
     deliveryPayload,
-  } = form;
+  } = useCheckoutDeliveryForm({ open, user, subtotal });
 
   // 🚚 Shipping is decided by the *post-discount* subtotal, same as the
   // server (`createOrder` in `lib/shop/orders.ts`) — a coupon big enough to
@@ -68,30 +61,27 @@ export function CheckoutDialog({
   const shipping =
     subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
 
-  function submitOrder() {
+  async function submitOrder(values: DeliveryValues) {
     if (!user) return;
-    if (!validateDelivery()) return;
 
-    startTransition(async () => {
-      const result = await createOrderAction({
-        productId: product.id,
-        size,
-        qty,
-        ...deliveryPayload(),
-        couponCode: applied?.code,
-        idempotencyKey,
-      });
-
-      if (!result.ok) {
-        toast(result.error);
-        return;
-      }
-
-      onOpenChange(false);
-      toast(
-        `سفارش ${result.data.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`,
-      );
+    const result = await createOrderAction({
+      productId: product.id,
+      size,
+      qty,
+      ...deliveryPayload(values),
+      couponCode: applied?.code,
+      idempotencyKey,
     });
+
+    if (!result.ok) {
+      toast(result.error);
+      return;
+    }
+
+    onOpenChange(false);
+    toast(
+      `سفارش ${result.data.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`,
+    );
   }
 
   return (
@@ -149,39 +139,13 @@ export function CheckoutDialog({
           </p>
         </div>
 
-        {/* 📮 A real `<form>` (not a bare stack of `onClick`-driven inputs) —
-            lets Enter submit from any field like every other form in the app,
-            and gives Chrome's address autofill a submit boundary + `name`s
-            to correlate phone/city/address/postal code as one saved profile
-            instead of four unrelated fields. */}
-        <form
+        <AppForm
+          form={form}
+          onSubmit={submitOrder}
+          ariaLabel="ثبت سفارش"
           className="space-y-2.5"
-          // ♿ The `required`/`aria-required` on each field is for assistive
-          // tech, not the browser's own popup — this form shows its own
-          // inline Persian error per field (see `DeliveryFields`), same as
-          // every other form in the app (`AppForm` sets the same
-          // `noValidate`). Without it, an empty required field never even
-          // reaches `submitOrder` below: the browser's native constraint
-          // validation intercepts the click first and shows its own
-          // (English, untranslated) "Please fill out this field" bubble
-          // instead.
-          noValidate
-          onSubmit={(e) => {
-            e.preventDefault();
-            submitOrder();
-          }}
         >
-          <DeliveryFields
-            phone={phone}
-            setPhone={setPhone}
-            city={city}
-            setCity={setCity}
-            address={address}
-            setAddress={setAddress}
-            postal={postal}
-            setPostal={setPostal}
-            errors={errors}
-          />
+          <DeliveryFields />
           <div className="flex gap-2">
             <Input
               dir="ltr"
@@ -211,7 +175,7 @@ export function CheckoutDialog({
               variant="outline"
               className="h-11 shrink-0 rounded-xl border-gold/50 text-gold-deep dark:text-gold-soft"
               onClick={applyCoupon}
-              disabled={pending}
+              disabled={couponPending}
             >
               <Ticket className="size-4" /> اعمال کد
             </Button>
@@ -224,15 +188,14 @@ export function CheckoutDialog({
             <p className="text-rose text-[11px] font-black">این کد معتبر نیست.</p>
           ) : null}
 
-          <Button
-            type="submit"
+          <SubmitButton
             variant="navy"
             className="h-12 w-full rounded-2xl font-black"
-            disabled={pending}
+            pendingLabel="در حال ثبت…"
           >
-            {pending ? "در حال ثبت…" : "تأیید و ثبتِ سفارش"}
-          </Button>
-        </form>
+            تأیید و ثبتِ سفارش
+          </SubmitButton>
+        </AppForm>
         <p
           className="text-center text-[10px] leading-5 font-bold text-navy/70 dark:text-wheat"
         >

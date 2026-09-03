@@ -1,43 +1,49 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { z } from "zod";
 import { phoneDigits } from "@/lib/digits";
 import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
 import { toast } from "@/lib/toast";
+import { useAppForm } from "@/components/form";
 import { checkCouponAction } from "@/lib/shop/checkout-actions";
 import type { AppliedCoupon } from "@/lib/shop/coupons";
 import type { User } from "@/types";
 
 /** 🧾 The delivery-form + coupon state shared by `CheckoutDialog` (single
  *  item) and `CartCheckoutDialog` (whole cart) — both dialogs mirror each
- *  other's city/address/phone/postal fields, coupon flow, validation, and
+ *  other's city/address/phone/postal fields, coupon flow, and
  *  idempotency-key handling. What stays in each dialog instead: the actual
  *  submit call (different action + payload shape per dialog) and the
- *  item-summary markup (single product card vs a scrollable row list). */
-export type DeliveryErrors = {
-  city?: string;
-  address?: string;
-  phone?: string;
-  postal?: string;
-};
+ *  item-summary markup (single product card vs a scrollable row list).
+ *
+ *  Field validation goes through the app's usual react-hook-form + zod combo
+ *  (`useAppForm`) instead of a hand-rolled checker — `<DeliveryFields>` is
+ *  just `<TextField>`s reading this `form`, same as every other form in the
+ *  app. */
+export const deliverySchema = z.object({
+  city: z.string().trim().min(2, "شهر را بنویسید").max(60),
+  address: z.string().trim().min(10, "آدرس کامل را بنویسید").max(300),
+  phone: z
+    .string()
+    .refine((v) => phoneDigits(v).length === 11, "شمارهٔ موبایل ۱۱ رقمی بنویسید"),
+  postal: z
+    .string()
+    .refine(
+      (v) => toEnDigits(v).replace(/\D/g, "").length === 10,
+      "کد پستیِ ۱۰ رقمی بنویسید",
+    ),
+});
 
-/** ✅ Same 4 checks both dialogs need — as a map (one message per invalid
- *  field) instead of "first failing message", so the form can show every
- *  problem inline next to its own field instead of one toast at a time. */
-function computeErrors(
-  city: string,
-  address: string,
-  phone: string,
-  postal: string,
-): DeliveryErrors {
-  const errors: DeliveryErrors = {};
-  if (city.trim().length < 2) errors.city = "شهر را بنویسید";
-  if (address.trim().length < 10) errors.address = "آدرس کامل را بنویسید";
-  if (phoneDigits(phone).length !== 11)
-    errors.phone = "شمارهٔ موبایل ۱۱ رقمی بنویسید";
-  if (toEnDigits(postal).replace(/\D/g, "").length !== 10)
-    errors.postal = "کد پستیِ ۱۰ رقمی بنویسید";
-  return errors;
+export type DeliveryValues = z.infer<typeof deliverySchema>;
+
+function deliveryDefaults(user: Pick<User, "city" | "address" | "phone" | "postalCode"> | null) {
+  return {
+    city: user?.city || "",
+    address: user?.address || "",
+    phone: user?.phone || "",
+    postal: user?.postalCode || "",
+  };
 }
 
 export function useCheckoutDeliveryForm({
@@ -49,18 +55,15 @@ export function useCheckoutDeliveryForm({
   user: Pick<User, "city" | "address" | "phone" | "postalCode"> | null;
   subtotal: number;
 }) {
-  const [city, setCity] = useState(user?.city || "");
-  const [address, setAddress] = useState(user?.address || "");
-  const [phone, setPhone] = useState(user?.phone || "");
-  const [postal, setPostal] = useState(user?.postalCode || "");
+  const form = useAppForm({
+    schema: deliverySchema,
+    defaultValues: deliveryDefaults(user),
+  });
+
   const [couponIn, setCouponIn] = useState("");
   const [applied, setApplied] = useState<AppliedCoupon | null>(null);
   const [couponBad, setCouponBad] = useState(false);
-  const [pending, startTransition] = useTransition();
-  // ♿ Errors only render once a submit has actually been attempted — so
-  // the form doesn't greet an untouched dialog with four red fields.
-  const [attempted, setAttempted] = useState(false);
-  const errors = attempted ? computeErrors(city, address, phone, postal) : {};
+  const [couponPending, startCouponTransition] = useTransition();
   // 🔁 One key per checkout attempt — a double-click or a retried request
   // while this same dialog is open reuses it, so the server collapses them
   // into the one order; reopening the dialog for a new purchase gets a
@@ -72,12 +75,8 @@ export function useCheckoutDeliveryForm({
   // 🔄 Re-sync from the profile every time the dialog opens.
   useEffect(() => {
     if (!open) return;
-    setCity(user?.city || "");
-    setAddress(user?.address || "");
-    setPhone(user?.phone || "");
-    setPostal(user?.postalCode || "");
+    form.reset(deliveryDefaults(user));
     setIdempotencyKey(crypto.randomUUID());
-    setAttempted(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -87,7 +86,7 @@ export function useCheckoutDeliveryForm({
     const code = toEnDigits(couponIn).trim().toUpperCase();
     if (!code) return;
 
-    startTransition(async () => {
+    startCouponTransition(async () => {
       const hit = await checkCouponAction(code, subtotal);
       if (hit) {
         setApplied(hit);
@@ -102,47 +101,28 @@ export function useCheckoutDeliveryForm({
     });
   }
 
-  /** ✅ Marks the form "attempted" (so `errors` above starts showing inline)
-   *  and returns whether it's clean — the one gate `submitOrder` needs
-   *  before calling the real order action. */
-  function validateDelivery(): boolean {
-    setAttempted(true);
-    const fresh = computeErrors(city, address, phone, postal);
-    return Object.keys(fresh).length === 0;
-  }
-
   /** 📦 The delivery fields shaped exactly as both order-creating actions
    *  expect them (trimmed / digit-normalized). */
-  function deliveryPayload() {
+  function deliveryPayload(values: DeliveryValues) {
     return {
-      city: city.trim(),
-      address: address.trim(),
-      phone: phoneDigits(phone),
-      postalCode: toEnDigits(postal).replace(/\D/g, ""),
+      city: values.city.trim(),
+      address: values.address.trim(),
+      phone: phoneDigits(values.phone),
+      postalCode: toEnDigits(values.postal).replace(/\D/g, ""),
     };
   }
 
   return {
-    city,
-    setCity,
-    address,
-    setAddress,
-    phone,
-    setPhone,
-    postal,
-    setPostal,
+    form,
     couponIn,
     setCouponIn,
     applied,
     couponBad,
     setCouponBad,
-    pending,
-    startTransition,
+    couponPending,
     idempotencyKey,
     discount,
-    errors,
     applyCoupon,
-    validateDelivery,
     deliveryPayload,
   };
 }

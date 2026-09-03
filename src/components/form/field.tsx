@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, type ReactNode } from "react";
+import { useController, useFormContext } from "react-hook-form";
 import { CircleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
@@ -14,7 +15,18 @@ import {
   SHELL_BARE_IDLE,
   type Skin,
 } from "./styles";
-import { useField } from "./use-field";
+
+/** 🧩 Binds a field name to the surrounding `<AppForm>`'s react-hook-form
+ *  context. Throws outside a form — every `Field`-based component needs it. */
+function useField(name: string) {
+  const form = useFormContext();
+  if (!form) throw new Error("‹Field› باید داخل <AppForm> قرار بگیرد.");
+  const { field, fieldState } = useController({
+    control: form.control as never,
+    name: name as never,
+  });
+  return { form, field, fieldState };
+}
 
 export type FieldShellProps = {
   name: string;

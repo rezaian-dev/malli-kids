@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { BadgeCheck, Ticket } from "lucide-react";
+import { AppForm, SubmitButton } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -11,7 +12,10 @@ import { toast } from "@/lib/toast";
 import { useAuth } from "@/providers/auth-provider";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
 import { createCartOrderAction } from "@/lib/shop/checkout-actions";
-import { useCheckoutDeliveryForm } from "@/hooks/use-checkout-delivery-form";
+import {
+  useCheckoutDeliveryForm,
+  type DeliveryValues,
+} from "@/hooks/use-checkout-delivery-form";
 import { DeliveryFields } from "@/components/product";
 import { cn } from "@/lib/utils";
 
@@ -42,62 +46,48 @@ export function CartCheckoutDialog({
     (sum, { item, unitPrice }) => sum + unitPrice * item.qty,
     0,
   );
-  const form = useCheckoutDeliveryForm({ open, user, subtotal });
   const {
-    city,
-    setCity,
-    address,
-    setAddress,
-    phone,
-    setPhone,
-    postal,
-    setPostal,
+    form,
     couponIn,
     setCouponIn,
     applied,
     couponBad,
     setCouponBad,
-    pending,
-    startTransition,
+    couponPending,
     idempotencyKey,
     discount,
-    errors,
     applyCoupon,
-    validateDelivery,
     deliveryPayload,
-  } = form;
+  } = useCheckoutDeliveryForm({ open, user, subtotal });
 
   const shipping =
     subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
   const itemCount = rows.reduce((sum, { item }) => sum + item.qty, 0);
 
-  function submitOrder() {
+  async function submitOrder(values: DeliveryValues) {
     if (!user || rows.length === 0) return;
-    if (!validateDelivery()) return;
 
-    startTransition(async () => {
-      const result = await createCartOrderAction({
-        items: rows.map(({ item }) => ({
-          productId: item.id,
-          size: item.size,
-          qty: item.qty,
-        })),
-        ...deliveryPayload(),
-        couponCode: applied?.code,
-        idempotencyKey,
-      });
-
-      if (!result.ok) {
-        toast(result.error);
-        return;
-      }
-
-      onOpenChange(false);
-      onSuccess();
-      toast(
-        `سفارش ${result.data.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`,
-      );
+    const result = await createCartOrderAction({
+      items: rows.map(({ item }) => ({
+        productId: item.id,
+        size: item.size,
+        qty: item.qty,
+      })),
+      ...deliveryPayload(values),
+      couponCode: applied?.code,
+      idempotencyKey,
     });
+
+    if (!result.ok) {
+      toast(result.error);
+      return;
+    }
+
+    onOpenChange(false);
+    onSuccess();
+    toast(
+      `سفارش ${result.data.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`,
+    );
   }
 
   return (
@@ -163,28 +153,13 @@ export function CartCheckoutDialog({
             </p>
           </div>
 
-          <form
+          <AppForm
+            form={form}
+            onSubmit={submitOrder}
+            ariaLabel="تکمیل خرید"
             className="space-y-2.5"
-            // ♿ Same reasoning as `CheckoutDialog` — `noValidate` so the
-            // browser's own untranslated constraint-validation bubble never
-            // pre-empts this form's inline Persian field errors.
-            noValidate
-            onSubmit={(e) => {
-              e.preventDefault();
-              submitOrder();
-            }}
           >
-            <DeliveryFields
-              phone={phone}
-              setPhone={setPhone}
-              city={city}
-              setCity={setCity}
-              address={address}
-              setAddress={setAddress}
-              postal={postal}
-              setPostal={setPostal}
-              errors={errors}
-            />
+            <DeliveryFields />
             <div className="flex gap-2">
               <Input
                 dir="ltr"
@@ -211,7 +186,7 @@ export function CartCheckoutDialog({
                 variant="outline"
                 className="h-11 shrink-0 rounded-xl border-gold/50 text-gold-deep dark:text-gold-soft"
                 onClick={applyCoupon}
-                disabled={pending}
+                disabled={couponPending}
               >
                 <Ticket className="size-4" /> اعمال کد
               </Button>
@@ -224,15 +199,15 @@ export function CartCheckoutDialog({
               <p className="text-rose text-[11px] font-black">این کد معتبر نیست.</p>
             ) : null}
 
-            <Button
-              type="submit"
+            <SubmitButton
               variant="navy"
               className="h-12 w-full rounded-2xl font-black"
-              disabled={pending || rows.length === 0}
+              pendingLabel="در حال ثبت…"
+              disabled={rows.length === 0}
             >
-              {pending ? "در حال ثبت…" : "تأیید و ثبتِ سفارش"}
-            </Button>
-          </form>
+              تأیید و ثبتِ سفارش
+            </SubmitButton>
+          </AppForm>
         </div>
 
         <p

@@ -80,7 +80,7 @@ export const TRIGGER_SHELL = cn(
 export function AccountIcon() {
   return (
     <span
-      className="border-gold from-navy to-navy-mid relative flex size-full items-center justify-center rounded-full border-2 bg-linear-to-br shadow-[0_2px_14px_-6px_rgba(193,147,87,.75)] transition-[box-shadow] duration-300 group-hover:shadow-[0_4px_20px_-6px_rgba(193,147,87,.9)] dark:border-gold-soft dark:from-dusk-alt dark:to-dusk dark:shadow-[0_2px_14px_-6px_rgba(232,197,122,.5)]"
+      className="border-gold from-navy to-navy-mid relative flex size-full items-center justify-center rounded-full border-2 bg-linear-to-br shadow-[0_2px_14px_-6px_rgba(193,147,87,.75)] transition-shadow duration-300 group-hover:shadow-[0_4px_20px_-6px_rgba(193,147,87,.9)] dark:border-gold-soft dark:from-dusk-alt dark:to-dusk dark:shadow-[0_2px_14px_-6px_rgba(232,197,122,.5)]"
     >
       <UserRound className="text-gold-soft size-[58%]" strokeWidth={2.25} />
     </span>
