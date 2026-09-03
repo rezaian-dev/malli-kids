@@ -689,17 +689,3 @@ input.newsletter-field:autofill {
 #nprogress .peg {
   display: none;
 }
-
-/* 🧩 Header placeholders pick the right shell before React hydrates. ✨ */
-.header-account-shell[data-shell="guest"] {
-  display: flex;
-}
-.header-account-shell[data-shell="user"] {
-  display: none;
-}
-html[data-auth="user"] .header-account-shell[data-shell="guest"] {
-  display: none;
-}
-html[data-auth="user"] .header-account-shell[data-shell="user"] {
-  display: flex;
-}
