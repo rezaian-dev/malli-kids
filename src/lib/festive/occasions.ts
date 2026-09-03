@@ -1,4 +1,5 @@
 import type { FestiveBanner } from "@/types";
+import { toEnDigits } from "@/lib/locale/fa";
 
 export function toJalali(d = new Date()) {
   const gy = d.getFullYear();
@@ -249,8 +250,7 @@ export function pickBanner(
   const hit = list.find((b) => {
     if (!b.active) return false;
 
-    const num = (s: string) =>
-      Number(s.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))));
+    const num = (s: string) => Number(toEnDigits(s));
     const [fm, fd] = b.from.split("/").map(num);
     const [tm, td] = b.to.split("/").map(num);
     return inRange(jm, jd, fm, fd, tm, td);

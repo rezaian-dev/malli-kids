@@ -12,12 +12,12 @@ import {
 import { toast } from "@/lib/toast";
 import { STORAGE } from "@/lib/constants";
 import { pickBanner } from "@/lib/festive/occasions";
+import { signOutAction } from "@/features/auth/actions";
 import {
   NO_CAMPAIGN,
   clearCookie,
   sanitizeCampaign,
   sanitizeCart,
-  sanitizeUser,
   writeCookie,
   writeJsonCookie,
   type StoreBootstrap,
@@ -44,7 +44,7 @@ type Ctx = {
   setAuthOpen: (v: boolean) => void;
   login: (u: User) => void;
   updateUser: (patch: Partial<User>) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   addToCart: (id: number, size: string, qty?: number) => void;
   setCartQty: (id: number, size: string, qty: number) => void;
   removeCartItem: (id: number, size: string) => void;
@@ -70,10 +70,6 @@ function readLocalJson<T>(
   } catch {
     return current;
   }
-}
-
-function readLocalUser(current: User | null) {
-  return readLocalJson(STORAGE.user, sanitizeUser, current);
 }
 
 function readLocalCart(current: CartItem[]) {
@@ -106,18 +102,9 @@ function readBannerFromAdminDb(current: BannerItem | null) {
     : current;
 }
 
-// A cart line is identified by product + size together, never id alone.
+// 🛒 A cart line is identified by product + size together, never id alone.
 function sameLine(item: CartItem, id: number, size: string) {
   return item.id === id && item.size === size;
-}
-
-function normalizeUser(input: User) {
-  const parts = (input.firstName || "").trim().split(/\s+/);
-  return {
-    ...input,
-    firstName: parts[0] || "کاربر",
-    lastName: input.lastName || parts.slice(1).join(" ") || undefined,
-  } satisfies User;
 }
 
 // 🪶 Start from the server snapshot, then sync tiny client deltas. ✨
@@ -144,7 +131,6 @@ export function StoreProvider({
   const [banner, setBanner] = useState<BannerItem | null>(boot.banner);
 
   useEffect(() => {
-    setUser((current) => readLocalUser(current));
     setCart((current) => readLocalCart(current));
     setCampaign((current) => readCampaignFromAdminDb(current));
     setBanner((current) => readBannerFromAdminDb(current));
@@ -155,22 +141,15 @@ export function StoreProvider({
     if (!ready) return;
 
     try {
-      if (user) window.localStorage.setItem(STORAGE.user, JSON.stringify(user));
-      else window.localStorage.removeItem(STORAGE.user);
-
       window.localStorage.setItem(STORAGE.cart, JSON.stringify(cart));
     } catch {}
-
-    if (user) writeJsonCookie(STORAGE.user, user);
-    else clearCookie(STORAGE.user);
 
     writeJsonCookie(STORAGE.cart, cart);
     writeJsonCookie(STORAGE.campaign, campaign);
     if (banner) writeJsonCookie(STORAGE.banner, banner);
     else clearCookie(STORAGE.banner);
     writeCookie(STORAGE.boot, "1");
-    document.documentElement.dataset.auth = user ? "user" : "guest";
-  }, [ready, user, cart, campaign, banner]);
+  }, [ready, cart, campaign, banner]);
 
   useEffect(() => {
     const syncFestive = () => {
@@ -194,8 +173,10 @@ export function StoreProvider({
     };
   }, [banner, campaign]);
 
+  // 🔐 Called after a server action (sign in/up) already created the real,
+  // httpOnly-cookie-backed session — this only mirrors it into UI state.
   const login = useCallback((nextUser: User) => {
-    setUser(normalizeUser(nextUser));
+    setUser(nextUser);
     setAuthOpen(false);
   }, []);
 
@@ -205,7 +186,11 @@ export function StoreProvider({
     [],
   );
 
-  const logout = useCallback(() => setUser(null), []);
+  // 🔐 Revokes the real session server-side first, then clears UI state.
+  const logout = useCallback(async () => {
+    await signOutAction();
+    setUser(null);
+  }, []);
 
   const addToCart = useCallback((id: number, size: string, qty = 1) => {
     setCart((current) => {

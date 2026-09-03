@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore } from "@/providers/store-provider";
-import { formatToman, toFaDigits } from "@/lib/format";
+import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
 export function PriceTag({

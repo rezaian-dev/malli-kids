@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft, Gift, PartyPopper, Sparkles, Ticket } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import type { FestiveTheme } from "@/types";
 import { FestiveDecor } from "./festive-decor";

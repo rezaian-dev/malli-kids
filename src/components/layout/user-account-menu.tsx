@@ -6,17 +6,8 @@
 // `next/dynamic` in the parent — not parsed/evaluated on every guest
 // pageview, which is the majority of storefront traffic. ✨
 import Link from "next/link";
-import {
-  ChevronDown,
-  Heart,
-  Headphones,
-  LogOut,
-  Phone,
-  Truck,
-  User,
-} from "lucide-react";
+import { Heart, Headphones, LogOut, Phone, Truck, User } from "lucide-react";
 import type { useStore } from "@/providers/store-provider";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -25,28 +16,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { CLUSTER_H } from "./header-styles";
+import { AccountFace, Face, TRIGGER_SHELL } from "./account-trigger";
 
 const MENU_ITEM = "rounded-[10px] py-2.5 font-bold";
-
-function Face({
-  src,
-  letter,
-  className,
-}: {
-  src?: string;
-  letter: string;
-  className?: string;
-}) {
-  return (
-    <Avatar className={cn("ring-gold dark:ring-gold-soft ring-2", className)}>
-      <AvatarImage src={src} alt="" />
-      <AvatarFallback className="bg-navy text-gold-soft dark:bg-dusk-alt font-black">
-        {letter}
-      </AvatarFallback>
-    </Avatar>
-  );
-}
 
 export default function UserAccountMenu({
   user,
@@ -62,37 +34,8 @@ export default function UserAccountMenu({
   return (
     <DropdownMenu dir="rtl" modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn(
-            CLUSTER_H,
-            "group shrink-0 gap-1.5 rounded-full px-1 sm:pe-3 md:pe-1 lg:pe-3",
-            "border-gold/55 hover:border-gold bg-white hover:bg-white",
-            "focus-visible:ring-gold/60 focus-visible:ring-2",
-            "dark:border-gold/45 dark:bg-dusk dark:hover:border-gold dark:hover:bg-dusk",
-          )}
-        >
-          <Face
-            src={user.avatar}
-            letter={first.charAt(0)}
-            className="size-7 text-xs sm:size-8"
-          />
-          <span
-            className={cn(
-              "hidden max-w-20 truncate min-[480px]:inline md:hidden lg:inline",
-              "text-navy text-xs font-extrabold",
-              "dark:text-linen",
-            )}
-          >
-            {first}
-          </span>
-          <ChevronDown
-            className={cn(
-              "hidden size-3.5 min-[480px]:block md:hidden lg:block",
-              "text-gold transition-transform",
-              "group-data-open:rotate-180",
-            )}
-          />
+        <Button variant="outline" className={TRIGGER_SHELL}>
+          <AccountFace avatar={user.avatar} first={first} />
         </Button>
       </DropdownMenuTrigger>
 

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Paged } from "@/types";
 
 /**
- * Client-side pagination over an in-memory list.
+ * 📄 Client-side pagination over an in-memory list.
  *
  * The admin data source is a local seeded store, so slicing in memory is the
  * correct scaling strategy here. When this moves to a real API, the same public
@@ -23,12 +23,12 @@ export function usePagination<T>(
   const total = items.length;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
 
-  // Reset to page 1 whenever the filtered set identity changes.
+  // 🔁 Reset to page 1 whenever the filtered set identity changes.
   useEffect(() => {
     setPageRaw(1);
   }, [resetKey]);
 
-  // Keep the page in range when the list shrinks.
+  // 📏 Keep the page in range when the list shrinks.
   useEffect(() => {
     setPageRaw((p) => Math.min(p, pageCount));
   }, [pageCount]);

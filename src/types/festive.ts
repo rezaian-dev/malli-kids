@@ -1,4 +1,4 @@
-// Occasion / festive announcement banner model (storefront header + admin).
+// 🎉 Occasion / festive announcement banner model (storefront header + admin).
 
 export type FestiveTheme = "navy" | "gold" | "night";
 

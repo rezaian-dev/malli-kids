@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { formatFaMoney, parseFaNumber, toLatinDigits } from "@/lib/forms";
+import { formatFaMoney, parseFaNumber } from "@/lib/forms";
+import { toEnDigits } from "@/lib/locale/fa";
 import { Input } from "@/components/ui/input";
 import { INPUT, LATIN_ANCHOR, type Skin } from "./styles";
 import { Field } from "./field";
@@ -46,7 +47,7 @@ export function MoneyField({
           value={formatFaMoney(parseFaNumber(field.value))}
           name={field.name}
           onChange={(e) =>
-            field.onChange(toLatinDigits(e.target.value).replace(/\D/g, ""))
+            field.onChange(toEnDigits(e.target.value).replace(/\D/g, ""))
           }
           onBlur={field.onBlur}
           ref={field.ref}

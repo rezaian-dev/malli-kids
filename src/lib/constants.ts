@@ -37,9 +37,7 @@ export const SORTS: Record<string, string> = {
 
 export const STORAGE = {
   theme: "malli_theme",
-  themeResolved: "malli_theme_resolved",
   boot: "malli_boot",
-  user: "malli_user",
   purchases: "malli_purchases",
   cart: "malli_cart",
   campaign: "malli_campaign",

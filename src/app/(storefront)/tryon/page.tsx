@@ -1,6 +1,6 @@
 import { Intro } from "@/components/shared/intro";
 import { buildMetadata } from "@/lib/seo";
-import { TryOnComingSoon } from "./_components/try-on-coming-soon";
+import { TryOnComingSoon } from "@/features/tryon/components/try-on-coming-soon";
 
 export const metadata = buildMetadata({
   title: "پرو مجازی",

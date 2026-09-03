@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
 export type AdminStatItem = {

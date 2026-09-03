@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { formatToman, toFaDigits } from "@/lib/format";
+import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { pdpHref } from "@/lib/data/products";
 import { SheetClose } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";

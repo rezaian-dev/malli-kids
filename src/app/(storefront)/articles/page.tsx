@@ -2,7 +2,7 @@ import { Intro } from "@/components/shared/intro";
 import { JsonLd } from "@/components/shared/json-ld";
 import { loadPublishedArticles } from "@/lib/articles";
 import { buildMetadata, itemListSchema } from "@/lib/seo";
-import { ArticlesList } from "./_components/articles-list";
+import { ArticlesList } from "@/features/articles/components/list/articles-list";
 
 export const metadata = buildMetadata({
   title: "مجله",

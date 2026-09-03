@@ -1,4 +1,4 @@
-// Authenticated customer profile (account area, checkout prefill).
+// 👤 Authenticated customer profile (account area, checkout prefill).
 
 export type User = {
   firstName: string;

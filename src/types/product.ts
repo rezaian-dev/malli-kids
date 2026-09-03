@@ -1,4 +1,4 @@
-// Storefront catalog domain model. Shared across product cards, PDP, shop,
+// 🛍️ Storefront catalog domain model. Shared across product cards, PDP, shop,
 // admin catalog and the data seed.
 
 export type Season = "بهاره" | "تابستانه" | "پاییزه" | "زمستانه";

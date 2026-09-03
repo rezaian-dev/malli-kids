@@ -15,7 +15,7 @@ import {
   useNotices,
   type NoticeKind,
 } from "@/lib/notifications";
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

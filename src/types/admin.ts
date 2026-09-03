@@ -1,4 +1,4 @@
-// Admin-panel domain model (orders, customers, coupons, reviews, articles,
+// 🛠️ Admin-panel domain model (orders, customers, coupons, reviews, articles,
 // messages, settings and the aggregate in-memory DB).
 
 import type { Product } from "./product";

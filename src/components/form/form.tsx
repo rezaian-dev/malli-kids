@@ -9,7 +9,7 @@ import {
   type UseFormReturn,
 } from "react-hook-form";
 import { toast } from "@/lib/toast";
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import { countErrors } from "@/lib/forms";
 import { cn } from "@/lib/utils";
 

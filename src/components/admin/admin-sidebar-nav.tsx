@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { useAdmin } from "@/lib/admin/admin-store";
 import { ADMIN_NAV, ADMIN_NAV_GROUPS } from "@/lib/admin/nav";
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import { useTickets } from "@/lib/tickets";
 import { cn } from "@/lib/utils";
 

@@ -1,5 +1,5 @@
 import { Truck } from "lucide-react";
-import { formatToman, toFaDigits } from "@/lib/format";
+import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
 /** 🚚 The free-shipping progress bar shown above the cart line items. */

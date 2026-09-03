@@ -8,15 +8,8 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { JsonLd } from "@/components/shared/json-ld";
 import { getRootMetadata, organizationSchema, websiteSchema } from "@/lib/seo";
-import {
-  buildThemeScript,
-  readResolvedTheme,
-  readStoreBootstrap,
-  readThemePreference,
-  resolveInitialTheme,
-  THEME_KEY,
-  THEME_RESOLVED_KEY,
-} from "@/lib/storefront-state";
+import { readStoreBootstrap } from "@/lib/storefront-state";
+import { getSessionUser } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -39,7 +32,8 @@ const playfair = localFont({
 });
 
 // 🎨 Mirrors the `--background`/`--foreground` tokens in globals.css, inlined
-// in <head> so the shell paints on-theme before the stylesheet lands.
+// in <head> so the shell paints on-theme the instant next-themes' own
+// pre-paint script sets the `.dark` class — no server-resolved theme needed.
 const CRITICAL_CSS =
   "html{background:#ece6dc;color:#0e2a47;color-scheme:light}" +
   "html.dark{background:#041427;color:#fff8ec;color-scheme:dark}" +
@@ -59,57 +53,36 @@ const TOP_LOADER = {
 
 export const metadata = getRootMetadata();
 
-// 🍪 The single place the shell resolves its theme. Both `generateViewport`
-// and the layout need it, and `cookies()` is request-cached, so reading it
-// from each costs nothing. Returns the jar too — the layout also boots the
-// store from the same cookies.
-async function readShellCookies() {
-  const jar = await cookies();
-  const theme = readThemePreference(jar.get(THEME_KEY)?.value);
-  const resolved = resolveInitialTheme(
-    theme,
-    readResolvedTheme(jar.get(THEME_RESOLVED_KEY)?.value),
-  );
+// 🎨 No cookie-driven theme on the server anymore (next-themes owns that
+// client-side), so the browser is told about both variants and picks
+// whichever matches the OS preference until the app's own script runs.
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ece6dc" },
+    { media: "(prefers-color-scheme: dark)", color: "#061728" },
+  ],
+};
 
-  return { jar, theme, resolved };
-}
-
-export async function generateViewport(): Promise<Viewport> {
-  const { resolved } = await readShellCookies();
-
-  return {
-    colorScheme: resolved,
-    // Browser chrome sits a shade deeper than the page itself in dark mode.
-    themeColor: resolved === "dark" ? "#061728" : "#ece6dc",
-  };
-}
-
-// 🌗 Hydrate from cookies first so the shell matches before React wakes up. ✨
 export default async function RootLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const { jar, theme, resolved } = await readShellCookies();
-  const initialState = readStoreBootstrap((name) => jar.get(name)?.value);
+  const [jar, user] = await Promise.all([cookies(), getSessionUser()]);
+  const initialState = readStoreBootstrap((name) => jar.get(name)?.value, user);
 
   return (
     <html
       lang="fa-IR"
       dir="rtl"
       data-scroll-behavior="smooth"
-      className={cn(
-        vazir.variable,
-        playfair.variable,
-        "scrollbar-gutter-stable",
-        resolved === "dark" && "dark",
-      )}
-      style={{ colorScheme: resolved }}
+      data-auth={user ? "user" : "guest"}
+      className={cn(vazir.variable, playfair.variable, "scrollbar-gutter-stable")}
       suppressHydrationWarning
     >
       <head>
         <style>{CRITICAL_CSS}</style>
-        <script dangerouslySetInnerHTML={{ __html: buildThemeScript() }} />
       </head>
       <body
         className={cn(
@@ -122,7 +95,7 @@ export default async function RootLayout({
         <JsonLd data={websiteSchema()} />
         <NextTopLoader {...TOP_LOADER} />
 
-        <ThemeProvider initialTheme={theme} initialResolved={resolved}>
+        <ThemeProvider>
           <StoreProvider initialState={initialState}>
             {children}
             <Toaster />

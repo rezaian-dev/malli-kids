@@ -6,7 +6,7 @@ import { absoluteUrl } from "@/lib/seo";
 import {
   defaultShopState,
   toShopHref,
-} from "@/app/(storefront)/shop/_lib/shop-state";
+} from "@/features/shop/lib/shop-state";
 
 const now = new Date();
 

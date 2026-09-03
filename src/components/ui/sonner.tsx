@@ -10,7 +10,7 @@ import {
   Loader2Icon,
 } from "lucide-react";
 
-import { useTheme } from "@/providers/theme-provider";
+import { useTheme } from "next-themes";
 
 // 🍞 One brand-consistent toast style for the whole app: a start-edge accent
 // stripe + icon tint + tinted background wash + colored glow per type (same
@@ -62,7 +62,7 @@ export function Toaster(props: ToasterProps) {
 
   return (
     <Sonner
-      theme={resolvedTheme}
+      theme={resolvedTheme === "dark" ? "dark" : "light"}
       dir="rtl"
       position="bottom-right"
       className="toaster group"
@@ -96,7 +96,7 @@ export function Toaster(props: ToasterProps) {
       }}
       style={
         {
-          // `--normal-bg` is set per-toast in `TOAST_BASE`/`TOAST_ACCENT`
+          // 🍞 `--normal-bg` is set per-toast in `TOAST_BASE`/`TOAST_ACCENT`
           // above (it needs to vary by toast type); this only covers the
           // theme-invariant bits.
           "--normal-text": "var(--popover-foreground)",

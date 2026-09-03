@@ -1,5 +1,5 @@
 import type { AdminOrder } from "@/types";
-import { toEnDigits, toFaDigits } from "@/lib/format";
+import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
 
 const FA_MONTHS = [
   "فروردین",
@@ -38,7 +38,7 @@ export type SalesPoint = {
   count: number;
 };
 
-/** Paid, non-returned orders with a parseable date — the honest revenue base. */
+/** 📈 Paid, non-returned orders with a parseable date — the honest revenue base. */
 function revenueOrders(orders: AdminOrder[]) {
   return orders
     .filter((o) => o.pay === "پرداخت‌شده" && o.status !== "مرجوعی")
@@ -46,7 +46,7 @@ function revenueOrders(orders: AdminOrder[]) {
     .filter((x): x is { o: AdminOrder; p: Parsed } => x.p !== null);
 }
 
-/** Revenue grouped by Jalali month, ending at the latest month present, `count` buckets (missing months = 0). */
+/** 📅 Revenue grouped by Jalali month, ending at the latest month present, `count` buckets (missing months = 0). */
 export function monthlySeries(orders: AdminOrder[], count = 6): SalesPoint[] {
   const paid = revenueOrders(orders);
   if (!paid.length) return [];
@@ -71,7 +71,7 @@ export function monthlySeries(orders: AdminOrder[], count = 6): SalesPoint[] {
   return out;
 }
 
-/** Revenue grouped by the most recent distinct order-days (real days only — no fabricated calendar). */
+/** 📆 Revenue grouped by the most recent distinct order-days (real days only — no fabricated calendar). */
 export function dailySeries(orders: AdminOrder[], count = 7): SalesPoint[] {
   const paid = revenueOrders(orders);
   if (!paid.length) return [];

@@ -3,7 +3,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, TrendingUp } from "lucide-react";
 import type { AdminOrder } from "@/types";
-import { formatToman, toFaDigits } from "@/lib/format";
+import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import {
   Select,

@@ -1,38 +1,5 @@
-"use client";
-
-import { useState } from "react";
-import type { AdminArticle } from "@/types";
-import {
-  ArticleEditor,
-  EMPTY_ARTICLE_DRAFT,
-  type ArticleDraft,
-} from "./_components/article-editor";
-import { ArticleList } from "./_components/article-list";
-
-function draftFromArticle(article: AdminArticle): ArticleDraft {
-  return {
-    slug: article.slug,
-    title: article.title,
-    tag: article.tag,
-    excerpt: article.excerpt,
-    body: article.body ?? "",
-    cover: article.cover ?? "",
-    published: article.published,
-    date: article.date,
-  };
-}
+import { AdminArticlesLanding } from "@/features/admin/articles/components/admin-articles-landing";
 
 export default function AdminArticles() {
-  const [draft, setDraft] = useState<ArticleDraft | null>(null);
-
-  if (draft) {
-    return <ArticleEditor initial={draft} onDone={() => setDraft(null)} />;
-  }
-
-  return (
-    <ArticleList
-      onNew={() => setDraft(EMPTY_ARTICLE_DRAFT)}
-      onEdit={(article) => setDraft(draftFromArticle(article))}
-    />
-  );
+  return <AdminArticlesLanding />;
 }

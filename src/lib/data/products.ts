@@ -1,5 +1,5 @@
 import type { Product } from "@/types";
-import { parseFaPrice } from "../format";
+import { parseFaPrice } from "@/lib/locale/fa";
 
 const BASE: Omit<Product, "id">[] = [
   {

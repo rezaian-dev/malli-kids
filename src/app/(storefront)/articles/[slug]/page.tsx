@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { findPublishedArticle, loadPublishedArticles } from "@/lib/articles";
 import { JsonLd } from "@/components/shared/json-ld";
 import { articleSchema, breadcrumbSchema, buildMetadata } from "@/lib/seo";
-import { ArticleActions } from "./_components/article-actions";
-import { ArticleMissing } from "./_components/article-missing";
-import { ArticleView } from "./_components/article-view";
+import { ArticleActions } from "@/features/articles/components/detail/article-actions";
+import { ArticleMissing } from "@/features/articles/components/detail/article-missing";
+import { ArticleView } from "@/features/articles/components/detail/article-view";
 
 function decode(slug: string) {
   try {

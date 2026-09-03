@@ -2,7 +2,7 @@ import Image from "next/image";
 import { ShieldCheck } from "lucide-react";
 import { cn, shell } from "@/lib/utils";
 
-// NOTE: replace each href with the verification URL issued for this domain
+// 🔗 NOTE: replace each href with the verification URL issued for this domain
 // (e.g. https://trustseal.enamad.ir/?id=…&Code=… and the samandehi logo link).
 
 /** 🛡️ Official Iranian e-commerce trust seals. */

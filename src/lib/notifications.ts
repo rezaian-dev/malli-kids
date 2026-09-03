@@ -1,6 +1,6 @@
 "use client";
 
-import { faNow } from "./format";
+import { faNow } from "@/lib/locale/fa";
 import { createLocalList } from "./local-store";
 
 export type NoticeKind = "ticket" | "order" | "system";

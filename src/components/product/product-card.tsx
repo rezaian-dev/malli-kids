@@ -1,6 +1,6 @@
 import { ShoppingBag } from "lucide-react";
 import type { Product } from "@/types";
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import { pdpHref } from "@/lib/data/products";
 import { PriceTag } from "./price-tag";
 import { ProductCardList } from "./product-card-list";

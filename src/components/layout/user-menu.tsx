@@ -1,32 +1,22 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import { lazy, Suspense } from "react";
 import { LogIn } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
-import { fullName, givenName } from "@/lib/format";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { fullName, givenName } from "@/lib/text/name";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CLUSTER_H } from "./header-styles";
+import { AccountFace, TRIGGER_SHELL } from "./account-trigger";
 
-// 🎯 Radix DropdownMenu + floating-ui only ship to signed-in visitors —
-// see the comment in `user-account-menu.tsx`. The skeleton keeps the
-// header's width/height stable while that chunk streams in, so there's
-// no layout shift.
-const UserAccountMenu = dynamic(() => import("./user-account-menu"), {
-  loading: () => (
-    <div
-      className={cn(
-        CLUSTER_H,
-        "flex shrink-0 items-center gap-1.5 rounded-full px-1 sm:pe-3 md:pe-1 lg:pe-3",
-      )}
-    >
-      <Avatar className="ring-gold/40 size-7 shrink-0 animate-pulse ring-2 sm:size-8">
-        <AvatarFallback className="bg-navy/10 dark:bg-dusk-alt/60" />
-      </Avatar>
-    </div>
-  ),
-});
+// 🎯 Radix DropdownMenu + floating-ui only ship to signed-in visitors — see
+// the comment in `user-account-menu.tsx`. `Suspense` (not `next/dynamic`'s
+// own `loading` option) so the fallback below can be the *real* button
+// (we already know the avatar/name from the server-rendered `user`) instead
+// of a content-free skeleton: nothing visibly moves or blinks while the
+// dropdown's chunk streams in — only its click-ability "wakes up" a moment
+// later.
+const UserAccountMenu = lazy(() => import("./user-account-menu"));
 
 export function UserMenu() {
   const { user, setAuthOpen, logout } = useStore();
@@ -55,6 +45,18 @@ export function UserMenu() {
   const name = fullName(user.firstName, user.lastName);
 
   return (
-    <UserAccountMenu user={user} first={first} name={name} logout={logout} />
+    <Suspense
+      fallback={
+        <div
+          aria-hidden
+          tabIndex={-1}
+          className={cn(TRIGGER_SHELL, "pointer-events-none flex items-center")}
+        >
+          <AccountFace avatar={user.avatar} first={first} />
+        </div>
+      }
+    >
+      <UserAccountMenu user={user} first={first} name={name} logout={logout} />
+    </Suspense>
   );
 }

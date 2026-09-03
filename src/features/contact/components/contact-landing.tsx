@@ -1,0 +1,167 @@
+import Link from "next/link";
+import { ArrowLeft, Clock, Headphones, MapPin, Phone } from "lucide-react";
+
+import { Intro } from "@/components/shared/intro";
+import { JsonLd } from "@/components/shared/json-ld";
+import { Button } from "@/components/ui/button";
+import { BRAND } from "@/lib/constants";
+import { contactPageSchema } from "@/lib/seo";
+import { cn } from "@/lib/utils";
+import { ContactMap } from "./contact-map";
+
+export function ContactLanding() {
+  return (
+    <>
+      <Intro
+        crumb="تماس با ما"
+        kicker="گالری و پشتیبانی"
+        title="کنارتان هستیم"
+        lead="پشتیبانی ما فقط از طریق سایت است؛ هر سوالی بپرسید، پاسخش را در پنل کاربری خودتان می‌بینید. برای دیدن لباس‌ها از نزدیک هم گالری ولیعصر میزبان شماست."
+        path="/contact"
+        schemaType="ContactPage"
+      />
+      <JsonLd data={contactPageSchema()} />
+
+      <div className="xs:px-4 container mx-auto w-full max-w-5xl space-y-9 px-3 sm:px-5 lg:px-7">
+        <section
+          className={cn(
+            "overflow-hidden rounded-[28px] px-6 py-8 sm:px-10 sm:py-10",
+            "from-navy via-navy-mid to-navy-light bg-linear-to-br shadow-[0_24px_60px_-30px_rgba(4,20,39,.6)]",
+          )}
+        >
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
+            <div className="min-w-0 flex-1">
+              <p
+                className={cn(
+                  "flex items-center gap-2",
+                  "text-brown-mid dark:text-gold text-[11px] font-black tracking-[0.22em]",
+                )}
+              >
+                <Headphones className="size-4" /> SUPPORT
+              </p>
+              <h2 className="mt-2 text-xl font-black text-white sm:text-2xl">
+                پشتیبانی، در پنل خودتان
+              </h2>
+              <p className="mt-3 max-w-xl text-sm leading-8 text-white/75">
+                سوال سایز، پیگیری سفارش یا هر چیز دیگر — به‌جای فرم و ایمیل،
+                تیکت ثبت کنید؛ پاسخ ما فقط و فقط در پنل کاربری خودتان ثبت
+                می‌شود، همیشه در دسترس و هرگز گم‌نشده.
+              </p>
+
+              <ol className="mt-7 grid gap-4 sm:grid-cols-3">
+                {[
+                  ["۱", "وارد شوید", "با موبایل یا ایمیل، چند ثانیه"],
+                  ["۲", "تیکت بزنید", "در تب «پشتیبانی» پنل کاربری"],
+                  ["۳", "پاسخ بگیرید", "همان‌جا، در پنل خودتان"],
+                ].map(([n, t, d]) => (
+                  <li
+                    key={n}
+                    className="rounded-2xl border border-white/12 bg-white/6 px-4 py-4"
+                  >
+                    <span className="bg-gold text-navy-deep grid size-8 place-items-center rounded-full font-black">
+                      {n}
+                    </span>
+                    <p className="mt-3 text-sm font-black text-white">{t}</p>
+                    <p className="mt-1 text-[11px] leading-5 font-bold text-white/60">
+                      {d}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row lg:flex-col">
+              <Button asChild variant="gold" size="pill" className="h-12 px-7">
+                <Link href="/profile#support">
+                  ورود و ثبت تیکت <ArrowLeft className="size-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="h-12 rounded-full border-white/30 bg-white/10 px-7 text-white hover:bg-white/15"
+              >
+                <Link href="/faq">سوالات پرتکرار</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-brown-mid dark:text-gold text-[11px] font-black tracking-[0.22em]">
+            راه‌های ارتباطی
+          </h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <Info
+              ico={Phone}
+              k="تلفن"
+              v={BRAND.phoneFa}
+              href={`tel:${BRAND.phone}`}
+              ltr
+            />
+            <Info ico={MapPin} k="نشانی گالری" v={BRAND.address} />
+            <Info
+              ico={Clock}
+              k="ساعت پاسخ‌گویی"
+              v="شنبه تا پنجشنبه، ۹ صبح تا ۹ شب"
+            />
+          </div>
+        </section>
+
+        <ContactMap />
+      </div>
+    </>
+  );
+}
+
+function Info({
+  ico: Icon,
+  k,
+  v,
+  href,
+  ltr,
+}: {
+  ico: typeof MapPin;
+  k: string;
+  v: string;
+  href?: string;
+  ltr?: boolean;
+}) {
+  const body = (
+    <>
+      <span
+        className={cn(
+          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+          "bg-gold/15 text-gold",
+        )}
+      >
+        <Icon className="h-5 w-5" />
+      </span>
+      <span className="min-w-0">
+        <span className="text-brown-mid dark:text-gold-glow block text-xs font-black">
+          {k}
+        </span>
+        <span
+          className="text-navy dark:text-ivory mt-1 block font-bold"
+          dir={ltr ? "ltr" : undefined}
+        >
+          {v}
+        </span>
+      </span>
+    </>
+  );
+
+  const CARD_CLS = cn(
+    "flex items-start gap-3 rounded-[26px] border p-4",
+    "border-navy/8 bg-white/94 shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50 hover:shadow-[0_22px_44px_-22px_rgba(193,147,87,.28)]",
+    "dark:border-gold/30 dark:bg-slate/60",
+  );
+
+  return href ? (
+    <a href={href} className={CARD_CLS}>
+      {body}
+    </a>
+  ) : (
+    <div className={`${CARD_CLS} hover:translate-y-0`}>{body}</div>
+  );
+}

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
 export const FILTER_LABEL =

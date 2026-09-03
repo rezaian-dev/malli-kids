@@ -1,4 +1,4 @@
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import { COUNT_TEXT } from "./styles";
 

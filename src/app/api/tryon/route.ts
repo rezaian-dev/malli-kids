@@ -5,7 +5,7 @@ import { fal } from "@fal-ai/client";
 export const runtime = "nodejs";
 export const maxDuration = 120;
 
-// Pick the engine with one env var. Default = free Hugging Face Space (no key).
+// 🔀 Pick the engine with one env var. Default = free Hugging Face Space (no key).
 //   huggingface → free, no signup. ⚠️ shared public demo: often busy/down; NOT for production.
 //   fal         → reliable Kolors try-on ($0.07/img). needs FAL_KEY.
 //   fashn       → reliable, private ($0.075/img). needs FASHN_API_KEY.
@@ -40,7 +40,7 @@ function timeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   ]);
 }
 
-/* ─── Free: Hugging Face (Kolors) — best-effort, unstable public demo ─── */
+/* 🆓 ─── Free: Hugging Face (Kolors) — best-effort, unstable public demo ─── */
 const HF_SPACE =
   process.env.HF_TRYON_SPACE || "Kwai-Kolors/Kolors-Virtual-Try-On";
 
@@ -75,7 +75,7 @@ async function tryonHuggingFace(person: Img, garment: Img): Promise<string> {
   return url;
 }
 
-/* ─── Reliable: fal.ai (Kling Kolors v1.5) ─── */
+/* ⚡ ─── Reliable: fal.ai (Kling Kolors v1.5) ─── */
 async function tryonFal(person: Img, garment: Img): Promise<string> {
   const key = process.env.FAL_KEY;
   if (!key) throw new Error("FAL_KEY تنظیم نشده است.");
@@ -94,7 +94,7 @@ async function tryonFal(person: Img, garment: Img): Promise<string> {
   return url;
 }
 
-/* ─── Reliable: FASHN AI ─── */
+/* 🛡️ ─── Reliable: FASHN AI ─── */
 const FASHN_URL = "https://api.fashn.ai/v1";
 
 async function fashnStart(person: Img, garment: Img): Promise<string> {
@@ -165,14 +165,14 @@ export async function POST(req: NextRequest) {
         image: await tryonFal(person, garment),
       });
     }
-    // free HF (default)
+    // 🆓 free HF (default)
     return NextResponse.json({
       status: "completed",
       image: await tryonHuggingFace(person, garment),
     });
   } catch (e) {
     const raw = (e as Error).message || "";
-    // The free public demo is frequently busy/offline — return a clear, friendly message.
+    // 💬 The free public demo is frequently busy/offline — return a clear, friendly message.
     const friendly =
       PROVIDER === "huggingface"
         ? "سرویس رایگانِ پرو مجازی الان شلوغ یا در دسترس نیست. چند لحظه بعد دوباره امتحان کنید، یا برای نتیجهٔ پایدار حالت حرفه‌ای (fal/FASHN) را فعال کنید."
@@ -181,7 +181,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// FASHN polling only.
+// 🔁 FASHN polling only.
 export async function GET(req: NextRequest) {
   if (PROVIDER !== "fashn")
     return NextResponse.json(

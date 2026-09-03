@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { parseFaNumber, phoneDigits, toLatinDigits } from "./digits";
-import { toFaDigits } from "./format";
+import { parseFaNumber, phoneDigits } from "./digits";
+import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
 import { jalaliParts } from "./jalali";
 
-export { parseFaNumber, phoneDigits, toLatinDigits };
+export { parseFaNumber, phoneDigits };
 
 export function formatFaMoney(n: number): string {
   if (!Number.isFinite(n)) return "";
@@ -19,7 +19,7 @@ export const RE = {
 } as const;
 
 export function isIranianNationalId(input: string): boolean {
-  const code = toLatinDigits(input).trim();
+  const code = toEnDigits(input).trim();
   if (!/^\d{10}$/.test(code) || /^(\d)\1{9}$/.test(code)) return false;
   const d = Number(code[9]);
   let sum = 0;
@@ -101,7 +101,7 @@ export const emailOrMobile = (label = "ایمیل یا موبایل") =>
 
 export const nationalId = () =>
   optionalPattern(
-    (v) => RE.nationalId.test(toLatinDigits(v)) && isIranianNationalId(v),
+    (v) => RE.nationalId.test(toEnDigits(v)) && isIranianNationalId(v),
     fa.nationalId,
   );
 
@@ -184,7 +184,8 @@ export const fullName = (opts: { required?: boolean } = {}) => {
     .min(required ? 3 : 0, fa.min(3, "نام"))
     .max(60, fa.max(60, "نام و نام خانوادگی"))
     .refine(
-      (v) => v === "" || /^[\p{L}][\p{L}\s'’.-]+$/u.test(v),
+      // ‌ (U+200C, نیم‌فاصله) در نام‌های ترکیبی فارسی خیلی رایج است، مثل «احمدی‌نژاد».
+      (v) => v === "" || /^[\p{L}][\p{L}\s'’.‌-]+$/u.test(v),
       "فقط حروف و فاصله مجاز است",
     )
     .refine(
@@ -200,7 +201,7 @@ export const otpCode = (len = 5) =>
     .min(1, fa.required("کد تأیید"))
     .refine(
       (v) =>
-        new RegExp(`^\\d{${len}}$`).test(toLatinDigits(v).replace(/\s/g, "")),
+        new RegExp(`^\\d{${len}}$`).test(toEnDigits(v).replace(/\s/g, "")),
       `کد ${toFaDigits(len)} رقمی را کامل وارد کنید`,
     );
 
@@ -208,6 +209,13 @@ export const password = (min = 6) =>
   z
     .string({ error: () => fa.required("رمز عبور") })
     .min(min, `رمز باید حداقل ${toFaDigits(min)} نویسه باشد`);
+
+// 🔐 Registration/reset password: length + letter + number, the same bar
+// Better Auth's account creation should hold callers to.
+export const strongPassword = (min = 8) =>
+  password(min)
+    .refine((v) => /[A-Za-z]/.test(v), "رمز باید شامل حداقل یک حرف باشد")
+    .refine((v) => /\d/.test(v), "رمز باید شامل حداقل یک عدد باشد");
 
 export const longText = (label: string, min = 10, max = 600) =>
   z

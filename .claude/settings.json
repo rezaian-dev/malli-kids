@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status *)",
+      "Bash(node -e \"const net=require\\('net'\\);const s=net.connect\\(27017,'127.0.0.1'\\);s.on\\('connect',\\(\\)=>{console.log\\('MONGO OPEN'\\);s.end\\(\\)}\\);s.on\\('error',\\(e\\)=>{console.log\\('MONGO CLOSED',e.code\\)}\\);setTimeout\\(\\(\\)=>{console.log\\('TIMEOUT'\\);process.exit\\(\\)},2000\\);\")",
+      "Bash(python3 -c ' *)",
+      "Bash(node -e ' *)",
+      "Bash(node scratch-profile.mjs)",
+      "Bash(powershell -Command \"Stop-Process -Id 11152 -Force\")",
+      "Bash(rm -f scratch-profile.mjs scratch-profile2.mjs scratch-scrolltop.mjs)",
+      "Bash(rm -f D:/tmp/*.png D:/tmp/small.png D:/tmp/big.jpg /tmp/dev2.log)"
+    ]
+  }
+}

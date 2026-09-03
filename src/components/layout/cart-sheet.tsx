@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, Trash2, XIcon } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import { getProductById } from "@/lib/data/products";
 import { BRAND } from "@/lib/constants";
 import { SHIPPING_FEE } from "@/lib/orders";

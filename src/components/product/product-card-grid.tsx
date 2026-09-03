@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Bell, Eye, PackageX, ShoppingBag, Star } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Product } from "@/types";
-import { formatToman, toFaDigits } from "@/lib/format";
+import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { AddToCartButton } from "./add-to-cart-button";
 import { FavButton } from "./fav-button";
 import { cn } from "@/lib/utils";

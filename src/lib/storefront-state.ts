@@ -1,8 +1,6 @@
 import { STORAGE } from "@/lib/constants";
 import type { FestiveBanner as BannerItem, User } from "@/types";
 
-export type ThemePreference = "light" | "dark" | "system";
-export type ResolvedTheme = "light" | "dark";
 export type StoredCartItem = { id: number; size: string; qty: number };
 export type StoredCampaign = {
   active: boolean;
@@ -18,8 +16,6 @@ export type StoreBootstrap = {
   ready: boolean;
 };
 
-export const THEME_KEY = STORAGE.theme;
-export const THEME_RESOLVED_KEY = STORAGE.themeResolved;
 export const COOKIE_AGE = 60 * 60 * 24 * 180;
 export const NO_CAMPAIGN: StoredCampaign = {
   active: false,
@@ -37,7 +33,7 @@ function decode(value?: string) {
   }
 }
 
-// An optional field from cookie/localStorage JSON: keep it only if it's
+// 🍪 An optional field from cookie/localStorage JSON: keep it only if it's
 // actually a (trimmed) string — used by every sanitize* below.
 function str(value: unknown): string | undefined {
   return typeof value === "string" ? value.trim() : undefined;
@@ -52,57 +48,6 @@ function parseJson<T>(value: string | undefined, fallback: T) {
   } catch {
     return fallback;
   }
-}
-
-export function readThemePreference(value?: string): ThemePreference {
-  const theme = decode(value);
-  return theme === "light" || theme === "dark" || theme === "system"
-    ? theme
-    : "system";
-}
-
-export function readResolvedTheme(value?: string): ResolvedTheme | null {
-  const theme = decode(value);
-  return theme === "light" || theme === "dark" ? theme : null;
-}
-
-export function resolveThemePreference(
-  theme: ThemePreference,
-  systemDark: boolean,
-): ResolvedTheme {
-  if (theme === "system") return systemDark ? "dark" : "light";
-  return theme;
-}
-
-export function resolveInitialTheme(
-  theme: ThemePreference,
-  resolved: ResolvedTheme | null,
-) {
-  if (theme === "light" || theme === "dark") return theme;
-  return resolved ?? "light";
-}
-
-export function sanitizeUser(value: unknown): User | null {
-  if (!value || typeof value !== "object") return null;
-
-  const user = value as Record<string, unknown>;
-  const firstName = str(user.firstName) ?? "";
-  const email = str(user.email) ?? "";
-  if (!firstName || !email) return null;
-
-  return {
-    firstName,
-    email,
-    lastName: str(user.lastName),
-    phone: str(user.phone),
-    avatar: str(user.avatar),
-    nationalId: str(user.nationalId),
-    city: str(user.city),
-    address: str(user.address),
-    childName: str(user.childName),
-    childAge: str(user.childAge),
-    childGender: str(user.childGender),
-  };
 }
 
 export function sanitizeCart(value: unknown): StoredCartItem[] {
@@ -177,23 +122,26 @@ export function sanitizeBanner(value: unknown): BannerItem | null {
   };
 }
 
+// 👤 `user` isn't read from a cookie here — the real session lives in
+// Better Auth's httpOnly cookie, only readable server-side via
+// `getSessionUser()` — so the caller (`app/layout.tsx`) passes it in
+// straight from that.
 export function readStoreBootstrap(
   getCookie: (name: string) => string | undefined,
+  user: User | null,
 ) {
-  const userCookie = getCookie(STORAGE.user);
   const cartCookie = getCookie(STORAGE.cart);
   const campaignCookie = getCookie(STORAGE.campaign);
   const bannerCookie = getCookie(STORAGE.banner);
   const bootCookie = getCookie(STORAGE.boot);
 
   return {
-    user: sanitizeUser(parseJson(userCookie, null)),
+    user,
     cart: sanitizeCart(parseJson(cartCookie, [])),
     campaign: sanitizeCampaign(parseJson(campaignCookie, NO_CAMPAIGN)),
     banner: sanitizeBanner(parseJson(bannerCookie, null)),
     ready:
-      bootCookie === "1" ||
-      Boolean(userCookie || cartCookie || campaignCookie || bannerCookie),
+      bootCookie === "1" || Boolean(cartCookie || campaignCookie || bannerCookie),
   } satisfies StoreBootstrap;
 }
 
@@ -209,36 +157,4 @@ export function clearCookie(name: string) {
 
 export function writeJsonCookie(name: string, value: unknown) {
   writeCookie(name, encodeURIComponent(JSON.stringify(value)));
-}
-
-export function buildThemeScript() {
-  return `(() => {
-    const themeKey = ${JSON.stringify(THEME_KEY)};
-    const resolvedKey = ${JSON.stringify(THEME_RESOLVED_KEY)};
-    const userKey = ${JSON.stringify(STORAGE.user)};
-    const cookieAge = ${COOKIE_AGE};
-    const readCookie = (key) => {
-      const hit = document.cookie
-        .split('; ')
-        .find((part) => part.startsWith(key + '='));
-      if (!hit) return '';
-      try { return decodeURIComponent(hit.slice(key.length + 1)); }
-      catch { return hit.slice(key.length + 1); }
-    };
-
-    try {
-      const saved = localStorage.getItem(themeKey) || readCookie(themeKey) || 'system';
-      const theme = saved === 'light' || saved === 'dark' || saved === 'system' ? saved : 'system';
-      const dark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      const resolved = dark ? 'dark' : 'light';
-      const root = document.documentElement;
-      root.classList.toggle('dark', dark);
-      root.style.colorScheme = resolved;
-      root.dataset.auth = localStorage.getItem(userKey) || readCookie(userKey) ? 'user' : 'guest';
-      document.cookie = themeKey + '=' + encodeURIComponent(theme) + '; path=/; max-age=' + cookieAge + '; samesite=lax';
-      document.cookie = resolvedKey + '=' + resolved + '; path=/; max-age=' + cookieAge + '; samesite=lax';
-    } catch {
-      document.documentElement.dataset.auth = 'guest';
-    }
-  })();`;
 }

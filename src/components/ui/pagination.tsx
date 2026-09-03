@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
 import { pageWindow } from "@/hooks/use-pagination";
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import type { Paged } from "@/types";
 

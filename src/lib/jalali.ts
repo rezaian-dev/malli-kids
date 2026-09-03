@@ -1,9 +1,9 @@
-import { toLatinDigits } from "./digits";
+import { toEnDigits } from "@/lib/locale/fa";
 
 export function jalaliParts(
   input: string,
 ): { y: number; m: number; d: number } | null {
-  const value = toLatinDigits(input)
+  const value = toEnDigits(input)
     .trim()
     .replace(/[.\u200c\-]/g, "/");
   const match = /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.exec(value);

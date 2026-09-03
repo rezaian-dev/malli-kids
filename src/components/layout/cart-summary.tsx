@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import { formatToman } from "@/lib/format";
+import { formatToman } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
 /** 🧾 Subtotal / shipping / total breakdown. */

@@ -1,4 +1,4 @@
-/** Light-only section canvases. Gradients live on ::before so dark
+/** 🎨 Light-only section canvases. Gradients live on ::before so dark
  *  never inherits a background-image (dark:bg-transparent cannot kill it). */
 const layer =
   "relative before:pointer-events-none before:absolute before:inset-0 before:content-[''] after:pointer-events-none after:absolute after:inset-x-[10%] after:bottom-0 after:h-px after:content-[''] after:bg-linear-to-l after:from-transparent after:via-gold/28 after:to-transparent dark:before:hidden dark:after:hidden";

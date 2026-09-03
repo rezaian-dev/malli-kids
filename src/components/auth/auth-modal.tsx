@@ -13,8 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { AuthAside } from "./auth-aside";
 import { LoginPanel } from "./auth-login-panel";
-import { OtpPanel } from "./auth-otp-panel";
 import { RegisterPanel } from "./auth-register-panel";
+import { ForgotPasswordPanel } from "./auth-forgot-password-panel";
 
 const TAB_TRIGGER = cn(
   "min-w-0 rounded-xl py-2.5 text-[13px] font-extrabold transition-colors",
@@ -25,18 +25,24 @@ const TAB_TRIGGER = cn(
 
 const TITLES = {
   login: "ورود به حساب",
-  otp: "ورود با پیامک",
   register: "ساخت حساب",
+  forgot: "بازیابیِ رمز عبور",
 } as const;
-type Tab = keyof typeof TITLES;
+type View = keyof typeof TITLES;
 
-// 🔐 Auth dialog with clear tab-based flows.
+// 🔐 Auth dialog: login/register tabs, plus a "forgot password" step that
+// swaps in over the login tab (not a third tab — it isn't a sign-in method).
 export function AuthModal() {
   const { authOpen, setAuthOpen } = useStore();
-  const [tab, setTab] = useState<Tab>("login");
+  const [view, setView] = useState<View>("login");
+
+  function onOpenChange(next: boolean) {
+    setAuthOpen(next);
+    if (!next) setView("login");
+  }
 
   return (
-    <Dialog open={authOpen} onOpenChange={setAuthOpen}>
+    <Dialog open={authOpen} onOpenChange={onOpenChange}>
       <DialogContent
         dir="rtl"
         showCloseButton={false}
@@ -69,40 +75,40 @@ export function AuthModal() {
               MALLI KIDS
             </p>
             <DialogTitle className="mt-1 text-lg font-black">
-              {TITLES[tab]}
+              {TITLES[view]}
             </DialogTitle>
           </div>
 
-          <Tabs
-            value={tab}
-            onValueChange={(v) => setTab(v as Tab)}
-            dir="rtl"
-            className="min-h-0 flex-1 gap-0"
-          >
-            <TabsList className="bg-sand ring-navy/5 dark:bg-navy-deep/70 grid h-auto w-full min-w-0 shrink-0 grid-cols-3 gap-1 rounded-2xl p-1 ring-1 dark:ring-white/10">
-              <TabsTrigger value="login" className={TAB_TRIGGER}>
-                ورود
-              </TabsTrigger>
-              <TabsTrigger value="otp" className={TAB_TRIGGER}>
-                پیامک
-              </TabsTrigger>
-              <TabsTrigger value="register" className={TAB_TRIGGER}>
-                ثبت‌نام
-              </TabsTrigger>
-            </TabsList>
-
+          {view === "forgot" ? (
             <div className="auth-fields -mx-2 min-h-0 flex-1 scrollbar-thin overflow-x-clip overflow-y-auto overscroll-contain px-2">
-              <TabsContent value="login" className="mt-5">
-                <LoginPanel onOtp={() => setTab("otp")} />
-              </TabsContent>
-              <TabsContent value="otp" className="mt-5">
-                <OtpPanel />
-              </TabsContent>
-              <TabsContent value="register" className="mt-4">
-                <RegisterPanel />
-              </TabsContent>
+              <ForgotPasswordPanel onBack={() => setView("login")} />
             </div>
-          </Tabs>
+          ) : (
+            <Tabs
+              value={view}
+              onValueChange={(v) => setView(v as View)}
+              dir="rtl"
+              className="min-h-0 flex-1 gap-0"
+            >
+              <TabsList className="bg-sand ring-navy/5 dark:bg-navy-deep/70 grid h-auto w-full min-w-0 shrink-0 grid-cols-2 gap-1 rounded-2xl p-1 ring-1 dark:ring-white/10">
+                <TabsTrigger value="login" className={TAB_TRIGGER}>
+                  ورود
+                </TabsTrigger>
+                <TabsTrigger value="register" className={TAB_TRIGGER}>
+                  ثبت‌نام
+                </TabsTrigger>
+              </TabsList>
+
+              <div className="auth-fields -mx-2 min-h-0 flex-1 scrollbar-thin overflow-x-clip overflow-y-auto overscroll-contain px-2">
+                <TabsContent value="login" className="mt-5">
+                  <LoginPanel onForgot={() => setView("forgot")} />
+                </TabsContent>
+                <TabsContent value="register" className="mt-4">
+                  <RegisterPanel />
+                </TabsContent>
+              </div>
+            </Tabs>
+          )}
         </div>
       </DialogContent>
     </Dialog>

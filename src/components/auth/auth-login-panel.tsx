@@ -3,38 +3,33 @@
 import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
-import { RE } from "@/lib/forms";
+import { toast } from "@/lib/toast";
 import { AppForm, InsetField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TrustNote } from "./trust-note";
+import { signInAction } from "@/features/auth/actions";
 import {
-  loginDefaults,
-  loginSchema,
-  smsAccount,
-  type LoginValues,
-} from "./schema";
-import { digits, SUBMIT_NAVY } from "./auth-shared";
+  signInDefaults,
+  signInSchema,
+  type SignInValues,
+} from "@/features/auth/schemas";
+import { SUBMIT_NAVY } from "./auth-shared";
 
-/** 🔑 Email/phone + password sign-in tab. */
-export function LoginPanel({ onOtp }: { onOtp: () => void }) {
+/** 🔑 Email + password sign-in tab. */
+export function LoginPanel({ onForgot }: { onForgot: () => void }) {
   const { login, showToast } = useStore();
   const [show, setShow] = useState(false);
-  const form = useAppForm({
-    schema: loginSchema,
-    defaultValues: loginDefaults,
-  });
+  const form = useAppForm({ schema: signInSchema, defaultValues: signInDefaults });
 
-  function onValid({ identifier }: LoginValues) {
-    const id = identifier.trim();
-    const tel = digits(id);
-    const isMobile = RE.mobile.test(tel);
-    login({
-      firstName: isMobile ? "کاربر" : id.split("@")[0],
-      email: isMobile ? smsAccount(tel).email : id,
-      phone: isMobile ? tel : undefined,
-    });
-    showToast("خوش آمدید ✨");
+  async function onValid(values: SignInValues) {
+    const result = await signInAction(values);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    login(result.data);
+    showToast(`خوش آمدید، ${result.data.firstName} ✨`);
     form.reset();
   }
 
@@ -47,9 +42,10 @@ export function LoginPanel({ onOtp }: { onOtp: () => void }) {
       notify
     >
       <InsetField
-        name="identifier"
-        label="ایمیل یا موبایل"
+        name="email"
+        label="ایمیل"
         icon={<Mail className="size-4" />}
+        type="email"
         dir="ltr"
         autoComplete="username"
         placeholder="you@mail.com"
@@ -66,7 +62,6 @@ export function LoginPanel({ onOtp }: { onOtp: () => void }) {
         autoComplete="current-password"
         inputClassName="text-left"
         required
-        hint="حداقل ۶ نویسه"
         trailing={
           <Button
             type="button"
@@ -84,17 +79,17 @@ export function LoginPanel({ onOtp }: { onOtp: () => void }) {
         }
       />
 
-      <Button type="submit" className={SUBMIT_NAVY}>
-        ورود به حساب <ArrowLeft className="size-4" />
-      </Button>
-
       <Button
         type="button"
         variant="link"
-        className="text-gold w-full text-xs font-bold"
-        onClick={onOtp}
+        className="text-gold -mt-1.5 h-auto w-full justify-end p-0 text-xs font-bold"
+        onClick={onForgot}
       >
-        ورود بدونِ رمز، با پیامک
+        فراموشیِ رمز عبور؟
+      </Button>
+
+      <Button type="submit" className={SUBMIT_NAVY}>
+        ورود به حساب <ArrowLeft className="size-4" />
       </Button>
 
       <TrustNote />

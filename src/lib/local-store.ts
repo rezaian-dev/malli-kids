@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-// A small client-side collection backed by localStorage. Every module below
+// 💾 A small client-side collection backed by localStorage. Every module below
 // (favorites, notices, orders, tickets, collab requests) needs the exact
 // same three operations — read the list, write it back while telling
 // everyone it changed, and a hook that stays in sync across tabs and other

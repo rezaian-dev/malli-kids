@@ -59,14 +59,14 @@ export function resolveShopSearchIntent(raw: string): {
   const q = normalizeShopText(trimmed);
   if (!q) return { q: "" };
 
-  // Exact category name (or alias) → pure category filter.
+  // ✅ Exact category name (or alias) → pure category filter.
   const exactCat = matchShopCategory(q);
   if (exactCat) return { cat: exactCat, q: "" };
 
-  // Exact season → pure season filter.
+  // ✅ Exact season → pure season filter.
   if ((SEASONS as readonly string[]).includes(q)) return { season: q, q: "" };
 
-  // Compound intent: tokens may mix a category, a season and/or a product
+  // 🧩 Compound intent: tokens may mix a category, a season and/or a product
   // keyword. An explicit category token wins → clean facet URL.
   const tokens = q.split(" ");
   if (tokens.length > 1) {
@@ -84,7 +84,7 @@ export function resolveShopSearchIntent(raw: string): {
     const isUnresolvedToken = (index: number) =>
       !cats[index] && !seasons[index] && !keywords[index];
 
-    // Every token maps to a known facet/synonym — treat the whole phrase as a
+    // ✅ Every token maps to a known facet/synonym — treat the whole phrase as a
     // filtered collection, not a free-text search.
     if (tokens.every((_, index) => !isUnresolvedToken(index))) {
       const hasCategoryToken = cats.some(Boolean) || keywords.some(Boolean);
@@ -98,7 +98,7 @@ export function resolveShopSearchIntent(raw: string): {
         };
       }
 
-      // Only seasons + synonyms (e.g. "پالتو زمستانه"): keep the keyword as
+      // 🔍 Only seasons + synonyms (e.g. "پالتو زمستانه"): keep the keyword as
       // the search text but lift the season into a facet.
       const rest = tokens.filter((_, index) => keywords[index]);
       return { season: firstSeason, q: rest.join(" ") };

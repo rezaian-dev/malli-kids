@@ -703,12 +703,3 @@ html[data-auth="user"] .header-account-shell[data-shell="guest"] {
 html[data-auth="user"] .header-account-shell[data-shell="user"] {
   display: flex;
 }
-
-/* 🌗 Kill color/background transitions while the theme class is swapping. */
-html.theme-transitioning,
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
-  transition: none !important;
-  animation: none !important;
-}

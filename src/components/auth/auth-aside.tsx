@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { Percent, ScanFace, Sparkles, Star } from "lucide-react";
+import { Percent, ShieldCheck, Sparkles, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function Perk({ icon, t, d }: { icon: ReactNode; t: string; d: string }) {
@@ -99,9 +99,9 @@ export function AuthAside() {
               d="لباس را روی تن ببینید"
             />
             <Perk
-              icon={<ScanFace className="size-4" />}
-              t="ورود با پیامک"
-              d="ورود سریع بدون رمز عبور"
+              icon={<ShieldCheck className="size-4" />}
+              t="حسابِ امن"
+              d="رمزنگاریِ استاندارد صنعتی"
             />
           </ul>
 

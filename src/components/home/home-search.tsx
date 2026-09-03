@@ -15,7 +15,7 @@ import { CORE_PRODUCTS } from "@/lib/data/products";
 import { shopHrefFromSearch, shopCategoryHref } from "@/lib/shop-query";
 import { FIELD_FOCUS_WITHIN } from "@/lib/field";
 import { cn } from "@/lib/utils";
-import { formatToman } from "@/lib/format";
+import { formatToman } from "@/lib/locale/fa";
 
 // 🏷️ Quick chips: each maps to a clean, indexable `category=` URL so the
 // category filter engages (real search terms stay as `query=`).

@@ -1,5 +1,5 @@
 import { FAQ } from "@/lib/data/pages";
-import { toFaDigits } from "@/lib/format";
+import { toFaDigits } from "@/lib/locale/fa";
 import {
   Accordion,
   AccordionContent,
