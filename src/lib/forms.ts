@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { parseFaNumber, phoneDigits } from "./digits";
 import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
-import { jalaliParts } from "./jalali";
+import { jalaliParts } from "./locale/jalali";
 
 export { parseFaNumber, phoneDigits };
 

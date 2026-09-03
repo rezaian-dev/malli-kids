@@ -1,4 +1,4 @@
-import { AboutLanding } from "@/components/about";
+import { AboutLanding } from "./_components";
 import { Intro } from "@/components/shared/intro";
 import { ABOUT } from "@/lib/data/pages";
 import { buildMetadata } from "@/lib/seo";

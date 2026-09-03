@@ -1,5 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
-import { TermsLanding } from "@/features/terms/components/terms-landing";
+import { TermsLanding } from "./_components/terms-landing";
 
 export const metadata = buildMetadata({
   title: "قوانین و مقررات",

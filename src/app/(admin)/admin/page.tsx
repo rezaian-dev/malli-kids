@@ -1,4 +1,4 @@
-import { DashboardLanding } from "@/features/admin/dashboard/components/dashboard-landing";
+import { DashboardLanding } from "./_components/dashboard-landing";
 
 export default function AdminHome() {
   return <DashboardLanding />;

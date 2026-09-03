@@ -8,7 +8,39 @@
       "Bash(node scratch-profile.mjs)",
       "Bash(powershell -Command \"Stop-Process -Id 11152 -Force\")",
       "Bash(rm -f scratch-profile.mjs scratch-profile2.mjs scratch-scrolltop.mjs)",
-      "Bash(rm -f D:/tmp/*.png D:/tmp/small.png D:/tmp/big.jpg /tmp/dev2.log)"
+      "Bash(rm -f D:/tmp/*.png D:/tmp/small.png D:/tmp/big.jpg /tmp/dev2.log)",
+      "Bash(git mv *)",
+      "Bash(sed -i 's#@/lib/admin-sync#@/lib/admin/sync#' src/features/shop/hooks/use-shop-explorer.ts src/features/product/components/product-reviews.tsx src/features/product/components/product-live-context.tsx src/features/product/components/product-checkout-dialog.tsx)",
+      "Bash(sed -i 's#@/lib/jalali#@/lib/locale/jalali#' src/features/admin/coupons/components/new-coupon-dialog.tsx)",
+      "Bash(sed -i -E 's#@/features/admin/[a-z]+/components/\\([a-z-]+\\)#./_components/\\\\1#' 'src/app/\\(admin\\)/admin/articles/page.tsx' 'src/app/\\(admin\\)/admin/banners/page.tsx' 'src/app/\\(admin\\)/admin/collab/page.tsx' 'src/app/\\(admin\\)/admin/coupons/page.tsx' 'src/app/\\(admin\\)/admin/customers/page.tsx' 'src/app/\\(admin\\)/admin/inventory/page.tsx' 'src/app/\\(admin\\)/admin/login/page.tsx' 'src/app/\\(admin\\)/admin/messages/page.tsx' 'src/app/\\(admin\\)/admin/orders/page.tsx' 'src/app/\\(admin\\)/admin/reviews/page.tsx' 'src/app/\\(admin\\)/admin/products/[id]/edit/page.tsx' 'src/app/\\(admin\\)/admin/products/page.tsx')",
+      "Bash(sed -i -E 's#@/features/admin/dashboard/components/\\([a-z-]+\\)#./_components/\\\\1#' \"src/app/\\(admin\\)/admin/page.tsx\")",
+      "Bash(sed -i -E 's#@/features/admin/products/components/\\([a-z-]+\\)#../_components/\\\\1#' \"src/app/\\(admin\\)/admin/products/new/page.tsx\")",
+      "Bash(cd /d/malli-kids *)",
+      "Bash(sed -i -E 's#@/features/articles/components/list/\\([a-z-]+\\)#./_components/\\\\1#' \"src/app/\\(storefront\\)/articles/page.tsx\")",
+      "Bash(sed -i -E 's#@/features/articles/components/detail/\\([a-z-]+\\)#./_components/\\\\1#' \"src/app/\\(storefront\\)/articles/[slug]/page.tsx\")",
+      "Bash(grep -v \"^.*from \\\\\"@/\\\\|^.*from \\\\\"next\\\\|^.*from \\\\\"react\")",
+      "Bash(sed -i 's#@/features/shop/lib/shop-state#@/lib/shop/shop-state#' 'src/app/\\(storefront\\)/shop/page.tsx' 'src/app/\\(storefront\\)/shop/_components/shop-explorer.tsx' 'src/app/\\(storefront\\)/shop/_components/shop-filters.tsx' 'src/app/\\(storefront\\)/shop/_components/shop-toolbar.tsx' 'src/app/\\(storefront\\)/shop/_components/use-shop-explorer.ts' src/app/sitemap.ts)",
+      "Bash(sed -i 's#@/features/shop/components/shop-explorer#./_components/shop-explorer#' \"src/app/\\(storefront\\)/shop/page.tsx\")",
+      "Bash(set -e)",
+      "Bash(sed -i 's#from \"../actions\"#from \"@/lib/auth/actions\"#' \"src/app/\\(storefront\\)/reset-password/_components/reset-password-view.tsx\")",
+      "Bash(sed -i 's#from \"../schemas\"#from \"@/lib/auth/schemas\"#' \"src/app/\\(storefront\\)/reset-password/_components/reset-password-view.tsx\")",
+      "Bash(grep -v \"^.*:.*//\")",
+      "Bash(sed -i 's#@/features/profile/components/profile-view#./_components/profile-view#' \"src/app/\\(storefront\\)/profile/page.tsx\")",
+      "Bash(sed -i 's#@/features/profile/model#@/lib/db/profile#' src/lib/auth/user.ts)",
+      "Bash(sed -i 's#\"../../../../public/brand/hero-dress.jpg\"#\"../../../../../public/brand/hero-dress.jpg\"#' \"src/app/\\(storefront\\)/_components/sections/hero.tsx\")",
+      "Bash(sed -i 's#\"../../../../public/brand/look-tryon.jpg\"#\"../../../../../public/brand/look-tryon.jpg\"#' \"src/app/\\(storefront\\)/_components/sections/try-on.tsx\")",
+      "Bash(xargs grep -l \"@/lib/db/\\\\|@/lib/auth/auth\\\\\"\\\\|mongoose\\\\|nodemailer\")",
+      "Bash(grep -rnE \"from ['\\\\\"]\\\\.\\\\./\\\\.\\\\./components\" src/lib src/types)",
+      "Bash(xargs grep -l \"_components\\\\|_lib\\\\|_hooks\")",
+      "Bash(xargs grep -n \"from ['\\\\\"].*/_components\\\\|from ['\\\\\"].*/_lib\\\\|from ['\\\\\"].*/_hooks\")",
+      "Bash(echo \"=== files with use client ===\" *)",
+      "Bash(grep -rn \"from ['\\\\\"]@/lib/auth/actions['\\\\\"]\\\\|from ['\\\\\"]\\\\.\\\\./\\\\.\\\\./lib/auth/actions['\\\\\"]\\\\|auth/actions\" src --include=\"*.ts\" --include=\"*.tsx\")"
+    ],
+    "additionalDirectories": [
+      "D:\\malli-kids\\src\\app\\(admin)\\admin\\products\\[id]\\edit\\_components",
+      "D:\\malli-kids\\src\\app\\(storefront)\\product\\[id]",
+      "D:\\malli-kids\\src\\app\\api\\auth\\[...all]",
+      "\\"
     ]
   }
 }

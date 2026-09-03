@@ -8,12 +8,12 @@ import { AppForm, InsetField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TrustNote } from "./trust-note";
-import { signUpAction } from "@/features/auth/actions";
+import { signUpAction } from "@/lib/auth/actions";
 import {
   signUpDefaults,
   signUpSchema,
   type SignUpValues,
-} from "@/features/auth/schemas";
+} from "@/lib/auth/schemas";
 import { SUBMIT_GOLD } from "./auth-shared";
 
 /** 🆕 Name + email + password → account-creation tab. */

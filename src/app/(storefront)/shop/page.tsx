@@ -8,7 +8,7 @@ import {
   itemListSchema,
   pageSchema,
 } from "@/lib/seo";
-import { ShopExplorer } from "@/features/shop/components/shop-explorer";
+import { ShopExplorer } from "./_components/shop-explorer";
 import {
   defaultShopState,
   isShopIndexable,
@@ -17,7 +17,7 @@ import {
   shopHeading,
   toShopHref,
   type ShopPageSearchParams,
-} from "@/features/shop/lib/shop-state";
+} from "@/lib/shop/shop-state";
 
 export async function generateMetadata({
   searchParams,

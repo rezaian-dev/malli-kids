@@ -1,5 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
-import { CollabLanding } from "@/features/collab/components/collab-landing";
+import { CollabLanding } from "./_components/collab-landing";
 
 export const metadata = buildMetadata({
   title: "همکاری با ما",

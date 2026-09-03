@@ -1,5 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
-import { PrivacyLanding } from "@/features/privacy/components/privacy-landing";
+import { PrivacyLanding } from "./_components/privacy-landing";
 
 export const metadata = buildMetadata({
   title: "حریم خصوصی",

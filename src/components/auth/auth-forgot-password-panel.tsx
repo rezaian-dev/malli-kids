@@ -6,12 +6,12 @@ import { useCooldown } from "@/hooks/use-cooldown";
 import { AppForm, InsetField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { forgotPasswordAction } from "@/features/auth/actions";
+import { forgotPasswordAction } from "@/lib/auth/actions";
 import {
   forgotPasswordDefaults,
   forgotPasswordSchema,
   type ForgotPasswordValues,
-} from "@/features/auth/schemas";
+} from "@/lib/auth/schemas";
 import { SUBMIT_GOLD } from "./auth-shared";
 
 /** 📮 "Sent!" state — same shape everywhere a card needs to call out one

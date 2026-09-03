@@ -1,5 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
-import { ResetPasswordView } from "@/features/auth/components/reset-password-view";
+import { ResetPasswordView } from "./_components/reset-password-view";
 
 export const metadata = buildMetadata({
   title: "بازنشانی رمز عبور",

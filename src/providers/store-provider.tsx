@@ -12,7 +12,7 @@ import {
 import { toast } from "@/lib/toast";
 import { STORAGE } from "@/lib/constants";
 import { pickBanner } from "@/lib/festive/occasions";
-import { signOutAction } from "@/features/auth/actions";
+import { signOutAction } from "@/lib/auth/actions";
 import {
   NO_CAMPAIGN,
   clearCookie,

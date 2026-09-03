@@ -1,4 +1,4 @@
-import { HomeLanding } from "@/components/home/home-landing";
+import { HomeLanding } from "./_components/home-landing";
 import { JsonLd } from "@/components/shared/json-ld";
 import { CORE_PRODUCTS, pdpHref } from "@/lib/data/products";
 import { buildMetadata, itemListSchema, pageSchema } from "@/lib/seo";

@@ -8,7 +8,7 @@ import {
   pdpHref,
 } from "@/lib/data/products";
 import { buildMetadata } from "@/lib/seo";
-import { ProductDetailLanding } from "@/features/product/components/product-detail-landing";
+import { ProductDetailLanding } from "./_components/product-detail-landing";
 
 export function generateStaticParams() {
   return CORE_PRODUCTS.map((product) => ({

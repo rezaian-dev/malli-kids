@@ -1,5 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
-import { SizeGuideLanding } from "@/features/size-guide/components/size-guide-landing";
+import { SizeGuideLanding } from "./_components/size-guide-landing";
 
 export const metadata = buildMetadata({
   title: "راهنمای سایز",

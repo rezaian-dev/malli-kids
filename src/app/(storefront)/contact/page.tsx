@@ -1,5 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
-import { ContactLanding } from "@/features/contact/components/contact-landing";
+import { ContactLanding } from "./_components/contact-landing";
 
 export const metadata = buildMetadata({
   title: "تماس با ما",

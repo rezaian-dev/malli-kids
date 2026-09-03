@@ -1,4 +1,4 @@
-import { AdminReviewsLanding } from "@/features/admin/reviews/components/admin-reviews-landing";
+import { AdminReviewsLanding } from "./_components/admin-reviews-landing";
 
 export default function AdminReviews() {
   return <AdminReviewsLanding />;

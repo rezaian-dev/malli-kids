@@ -1,4 +1,4 @@
-import { EditProductLanding } from "@/features/admin/products/components/edit-product-landing";
+import { EditProductLanding } from "./_components/edit-product-landing";
 
 export default function EditProductPage() {
   return <EditProductLanding />;

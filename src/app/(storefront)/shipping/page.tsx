@@ -1,5 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
-import { ShippingLanding } from "@/features/shipping/components/shipping-landing";
+import { ShippingLanding } from "./_components/shipping-landing";
 
 export const metadata = buildMetadata({
   title: "ارسال و بازگشت",

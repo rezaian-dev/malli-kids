@@ -29,7 +29,7 @@ export const auth = betterAuth({
     },
   },
   // 🍪 Must stay the last plugin — it's what lets the server actions in
-  // `@/features/auth/actions` call `auth.api.*` directly and have the
+  // `@/lib/auth/actions` call `auth.api.*` directly and have the
   // session cookie set on the response without any client-side fetch.
   plugins: [nextCookies()],
 });

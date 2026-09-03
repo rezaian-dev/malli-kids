@@ -8,12 +8,12 @@ import { AppForm, InsetField, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TrustNote } from "./trust-note";
-import { signInAction } from "@/features/auth/actions";
+import { signInAction } from "@/lib/auth/actions";
 import {
   signInDefaults,
   signInSchema,
   type SignInValues,
-} from "@/features/auth/schemas";
+} from "@/lib/auth/schemas";
 import { SUBMIT_NAVY } from "./auth-shared";
 
 /** 🔑 Email + password sign-in tab. */

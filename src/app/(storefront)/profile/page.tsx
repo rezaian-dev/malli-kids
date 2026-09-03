@@ -1,4 +1,4 @@
-import { ProfileView } from "@/features/profile/components/profile-view";
+import { ProfileView } from "./_components/profile-view";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({

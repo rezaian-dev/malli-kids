@@ -1,5 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
-import { FaqLanding } from "@/features/faq/components/faq-landing";
+import { FaqLanding } from "./_components/faq-landing";
 
 export const metadata = buildMetadata({
   title: "سوال‌های پرتکرار",

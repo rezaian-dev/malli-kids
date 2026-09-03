@@ -1,5 +1,5 @@
 import { connectMongoose } from "@/lib/db/mongoose";
-import { Profile } from "@/features/profile/model";
+import { Profile } from "@/lib/db/profile";
 import type { User } from "@/types";
 
 /** 👤 Splits Better Auth's single `name` field into the `firstName`/
