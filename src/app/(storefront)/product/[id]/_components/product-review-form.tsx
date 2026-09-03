@@ -20,7 +20,7 @@ import {
   RATING_STARS,
   reviewDefaults,
   reviewSchema,
-} from "@/lib/validation/product-review-schema";
+} from "../_lib/product-review-schema";
 import { useLiveProduct } from "./product-live-context";
 
 // ✍️ Review form with lightweight validation.

@@ -14,7 +14,7 @@ import {
   collabDefaults,
   collabSchema,
   type CollabValues,
-} from "@/lib/validation/collab-schema";
+} from "../_lib/collab-schema";
 
 export function CollabForm() {
   const form = useAppForm({

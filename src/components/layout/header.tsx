@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn, shell } from "@/lib/utils";
-import { FestiveBanner } from "@/components/festive";
+import { FestiveBanner } from "@/components/festive/festive-banner";
 import { HeaderActions } from "./header-actions";
 import { HeaderNavMount } from "./header-nav-mount";
 
