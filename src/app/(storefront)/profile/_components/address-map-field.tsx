@@ -56,6 +56,7 @@ export function AddressMapField() {
 
   const mapElRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const typeTargetRef = useRef("");
@@ -176,12 +177,25 @@ export function AddressMapField() {
           center: [startLat, startLng],
           zoom: 15,
         });
-        // 🆓 OpenStreetMap's own tile server — free, no key, no signup.
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 19,
-          attribution:
-            '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>',
-        }).addTo(map);
+        // 🆓 Esri's public "World Street Map" tile service — free, no key,
+        // no signup, same as the OSM tile server this replaced (see git
+        // history). That switch was forced, not stylistic: OSM's own
+        // `tile.openstreetmap.org` enforces a strict, unappealable
+        // automated tile-usage policy and had started silently serving its
+        // "Access blocked" placeholder tile (still HTTP 200, so Leaflet
+        // never saw an error — every tile "loaded" successfully and just
+        // rendered blank) instead of real imagery to this app's traffic —
+        // see https://operations.osmfoundation.org/policies/tiles/. Esri's
+        // tile path is `{z}/{y}/{x}` (y before x — the reverse of the
+        // `{z}/{x}/{y}` every other provider, OSM included, uses).
+        L.tileLayer(
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+          {
+            maxZoom: 19,
+            attribution:
+              'Tiles © <a href="https://www.esri.com" target="_blank" rel="noreferrer">Esri</a> — Source: Esri, HERE, Garmin, © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
+          },
+        ).addTo(map);
 
         // 🎯 The pin is a plain overlay element (`AddressMapField`'s own
         // JSX, see below) fixed at the container's visual center — it
@@ -205,9 +219,19 @@ export function AddressMapField() {
 
         mapRef.current = map;
         setMapReady(true);
-        // 🩹 Leaflet measures its container on init; while the card is still
-        // mid-expand that can race the CSS transition, leaving grey tiles.
-        setTimeout(() => map.invalidateSize(), 80);
+        // 🩹 Leaflet measures its container once at init; the card is still
+        // mid-expand at that point (`grid-template-rows` animating 0fr→1fr
+        // over 300ms above), so a one-shot `invalidateSize()` timed to any
+        // fixed delay either fires too early (mid-transition size — tiles
+        // load but land in the wrong place, leaving the real viewport
+        // blank) or leaves a visible pop once it *does* fire late. A
+        // `ResizeObserver` instead re-syncs Leaflet's internal size on
+        // every frame of that transition (it also fires once immediately
+        // on `observe()`, and keeps working for any later resize) — no
+        // guessed delay needed.
+        const ro = new ResizeObserver(() => map.invalidateSize());
+        ro.observe(mapElRef.current);
+        resizeObserverRef.current = ro;
       })
       .catch((e: Error) => {
         if (!cancelled) setMapError(e.message);
@@ -217,6 +241,8 @@ export function AddressMapField() {
       cancelled = true;
       if (debounceRef.current) clearTimeout(debounceRef.current);
       stopTyping();
+      resizeObserverRef.current?.disconnect();
+      resizeObserverRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
     };

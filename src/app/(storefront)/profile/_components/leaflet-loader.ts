@@ -1,10 +1,13 @@
 "use client";
 
-// 🗺️ Plain, free Leaflet + OpenStreetMap tiles — no account, no API key,
-// nothing to configure. Replaces the old Neshan-hosted SDK (see git
-// history), which needed two paid/keyed services (map tiles + reverse
-// geocoding) that were never actually configured in this app's `.env`,
-// which is exactly why the map never loaded.
+// 🗺️ Plain, free Leaflet — no account, no API key, nothing to configure.
+// Replaces the old Neshan-hosted SDK (see git history), which needed two
+// paid/keyed services (map tiles + reverse geocoding) that were never
+// actually configured in this app's `.env`, which is exactly why the map
+// never loaded. Tiles come from Esri's free `World_Street_Map` service
+// (see `address-map-field.tsx`) and reverse geocoding from OSM's Nominatim
+// (see `reverseGeocodeAction`) — both still free/keyless, just no longer
+// the same single OSM tile server for both.
 //
 // The npm `leaflet` package is dynamically imported here (never at module
 // scope) so nothing Leaflet does at load time — it touches `window`/

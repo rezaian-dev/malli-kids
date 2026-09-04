@@ -7,13 +7,17 @@ import type { NextConfig } from "next";
 // static-first CSP; it's still a large step up from having no CSP at all,
 // and blocks the things that actually matter here: arbitrary third-party
 // script origins, framing, plugins/objects, mixed content.
-// `*.tile.openstreetmap.org` is allow-listed for the profile page's map —
-// the free OSM tile images it fetches directly in the browser (everything
+// `server.arcgisonline.com` is allow-listed for the profile page's map —
+// the free Esri tile images it fetches directly in the browser (everything
 // else about that map, including the `leaflet` package itself and its
 // marker icons, is bundled same-origin — see
 // `src/app/(storefront)/profile/_components/leaflet-loader.ts`; reverse
 // geocoding happens server-side in `reverseGeocodeAction`, never from the
-// browser, so it needs no `connect-src` entry here).
+// browser, so it needs no `connect-src` entry here). This used to point at
+// `*.tile.openstreetmap.org` — switched to Esri because OSM's own tile
+// server started silently serving its "Access blocked" placeholder tile
+// (still HTTP 200 — see `address-map-field.tsx`) instead of real imagery
+// under their tile-usage policy.
 // `frame-src www.openstreetmap.org` is for the *contact* page's embedded
 // map iframe (`contact-map.tsx`) — a different OSM surface (their embed
 // widget, not the tile server) that was silently CSP-blocked (no
@@ -29,7 +33,7 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob: https://*.tile.openstreetmap.org https://kimi-web-img.kimi.ai;
+  img-src 'self' data: blob: https://server.arcgisonline.com https://kimi-web-img.kimi.ai;
   font-src 'self' data:;
   connect-src 'self';
   frame-src https://www.openstreetmap.org;
