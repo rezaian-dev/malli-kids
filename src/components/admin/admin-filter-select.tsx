@@ -58,7 +58,7 @@ export function AdminFilterSelect({
                   <span
                     className={cn(
                       "rounded-md px-1.5 py-0.5 text-[10px]",
-                      "bg-navy/6 text-navy/50",
+                      "bg-navy/6 text-navy/70",
                       "dark:text-wheat dark:bg-white/8",
                     )}
                   >

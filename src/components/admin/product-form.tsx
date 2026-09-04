@@ -31,7 +31,7 @@ import type { Product } from "@/types";
 const MAX_IMAGES = 6;
 const CAT_OPTIONS = CATS.filter((item) => item !== "همه");
 
-const FIELD_LABEL = "text-navy/55 dark:text-wheat text-xs font-black";
+const FIELD_LABEL = "text-navy/70 dark:text-wheat text-xs font-black";
 const FIELD_INPUT =
   "border-navy/12 dark:border-gold/20 h-11 rounded-2xl bg-transparent px-4 text-sm";
 const SELECT_TRIGGER = cn(FIELD_INPUT, "shadow-none");
@@ -431,7 +431,7 @@ export function ProductForm({ product }: { product?: Product }) {
                   className="h-64 w-full object-cover"
                 />
               ) : (
-                <div className="text-navy/40 dark:text-wheat/50 flex h-64 items-center justify-center text-sm font-bold">
+                <div className="text-navy/70 dark:text-wheat/70 flex h-64 items-center justify-center text-sm font-bold">
                   هنوز تصویری بارگذاری نشده
                 </div>
               )}
@@ -444,7 +444,7 @@ export function ProductForm({ product }: { product?: Product }) {
                     {/* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use local files and data URLs. */}
                     <img
                       src={src}
-                      alt=""
+                      alt={`تصویر ${i + 2} محصول`}
                       className="border-navy/10 dark:border-gold/20 size-16 rounded-xl border object-cover"
                     />
                     <button
@@ -514,7 +514,7 @@ export function ProductForm({ product }: { product?: Product }) {
             >
               <span className="space-y-1">
                 <span className="block text-sm font-black">موجود در انبار</span>
-                <span className="text-navy/45 dark:text-wheat block text-[11px] font-bold">
+                <span className="text-navy/70 dark:text-wheat block text-[11px] font-bold">
                   در صورت خاموش بودن، «ناموجود» نمایش داده می‌شود.
                 </span>
               </span>
@@ -566,6 +566,6 @@ function FieldNote({ error, hint }: { error?: string; hint?: string }) {
       {error}
     </p>
   ) : (
-    <p className="text-navy/45 dark:text-wheat text-[11px] font-bold">{hint}</p>
+    <p className="text-navy/70 dark:text-wheat text-[11px] font-bold">{hint}</p>
   );
 }

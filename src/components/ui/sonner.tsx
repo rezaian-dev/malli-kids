@@ -85,7 +85,7 @@ export function Toaster(props: ToasterProps) {
           icon: "mt-0.5",
           title: "!text-[13px] font-black tracking-tight",
           description:
-            "!mt-0.5 !text-[11px] font-bold !text-navy/60 dark:!text-wheat/70",
+            "!mt-0.5 !text-[11px] font-bold !text-navy/70 dark:!text-wheat/70",
           closeButton:
             "hover:!border-gold hover:!text-gold-deep dark:hover:!text-gold-soft transition-colors",
           actionButton:

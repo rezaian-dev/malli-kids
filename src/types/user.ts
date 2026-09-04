@@ -6,7 +6,7 @@ export type User = {
   email: string;
   phone?: string;
   avatar?: string;
-  nationalId?: string;
+  postalCode?: string;
   city?: string;
   address?: string;
   lat?: number;

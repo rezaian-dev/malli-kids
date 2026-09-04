@@ -30,7 +30,7 @@ function SentCard({ email }: { email: string }) {
       </span>
       <div>
         <p className="text-navy dark:text-ivory font-black">ایمیل را بررسی کنید</p>
-        <p className="text-navy/70 dark:text-linen/60 mt-1.5 text-[13px] leading-6">
+        <p className="text-navy/70 dark:text-linen/70 mt-1.5 text-[13px] leading-6">
           اگر حسابی با این نشانی وجود داشته باشد، لینکِ بازنشانیِ رمز برایش ارسال شد:
         </p>
         <p className="text-gold mt-1.5 text-sm font-black" dir="ltr">
@@ -70,7 +70,7 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
 
         <div className="flex items-center justify-between text-[11px] font-bold">
           {cd.sec > 0 ? (
-            <span className="text-navy/70 dark:text-linen/60">
+            <span className="text-navy/70 dark:text-linen/70">
               ارسالِ دوباره تا {cd.sec} ثانیه
             </span>
           ) : (
@@ -86,7 +86,7 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
           <Button
             type="button"
             variant="link"
-            className="text-navy/70 dark:text-linen/60 h-auto p-0 text-[11px] font-bold"
+            className="text-navy/70 dark:text-linen/70 h-auto p-0 text-[11px] font-bold"
             onClick={onBack}
           >
             بازگشت به ورود <ArrowRight className="size-3.5" />
@@ -104,7 +104,7 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
       className="space-y-4"
       notify
     >
-      <p className="text-navy/70 dark:text-linen/60 -mt-1 text-[13px] leading-6">
+      <p className="text-navy/70 dark:text-linen/70 -mt-1 text-[13px] leading-6">
         ایمیلِ حساب‌تان را وارد کنید تا لینکِ بازنشانیِ رمز برایتان ارسال شود.
       </p>
 
@@ -127,7 +127,7 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
       <Button
         type="button"
         variant="ghost"
-        className="text-navy/70 dark:text-linen/60 w-full text-xs font-bold"
+        className="text-navy/70 dark:text-linen/70 w-full text-xs font-bold"
         onClick={onBack}
       >
         بازگشت به ورود

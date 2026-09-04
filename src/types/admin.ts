@@ -24,6 +24,7 @@ export type AdminOrder = {
   phone: string;
   city: string;
   address: string;
+  postalCode: string;
   items: AdminOrderItem[];
   subtotal: number;
   discount: number;

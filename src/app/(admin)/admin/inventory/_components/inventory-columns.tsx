@@ -31,7 +31,7 @@ export function buildInventoryColumns({
           </span>
           <div className="min-w-0">
             <p className="truncate">{product.name}</p>
-            <p className="text-navy/40 dark:text-wheat mt-0.5 text-[9px] font-bold">
+            <p className="text-navy/70 dark:text-wheat mt-0.5 text-[9px] font-bold">
               کد محصول #{toFaDigits(product.id)}
             </p>
           </div>
@@ -44,7 +44,7 @@ export function buildInventoryColumns({
       width: "1.1fr",
       hideTablet: true,
       render: (product) => (
-        <span className="text-navy/60 dark:text-wheat font-semibold">
+        <span className="text-navy/70 dark:text-wheat font-semibold">
           {product.cat}
         </span>
       ),

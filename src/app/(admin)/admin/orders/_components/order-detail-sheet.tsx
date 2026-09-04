@@ -19,7 +19,7 @@ import type { AdminOrder, OrderStatus } from "@/types";
 function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }) {
   return (
     <div className="flex items-center justify-between gap-3 font-bold">
-      <span className="text-navy/55 dark:text-wheat">{k}</span>
+      <span className="text-navy/70 dark:text-wheat">{k}</span>
       <span
         className={
           strong
@@ -60,7 +60,7 @@ export function OrderDetailSheet({
               <SheetTitle className="text-navy dark:text-ivory">
                 جزئیات سفارش
               </SheetTitle>
-              <SheetDescription className="text-navy/50 dark:text-wheat" dir="ltr">
+              <SheetDescription className="text-navy/70 dark:text-wheat" dir="ltr">
                 {order.id}
               </SheetDescription>
             </SheetHeader>
@@ -73,11 +73,17 @@ export function OrderDetailSheet({
               )}
             >
               <p className="font-black">{order.customer}</p>
-              <p className="text-navy/55 dark:text-wheat mt-1 text-xs" dir="ltr">
+              <p className="text-navy/70 dark:text-wheat mt-1 text-xs" dir="ltr">
                 {order.phone}
               </p>
-              <p className="text-navy/55 dark:text-wheat mt-1 text-xs leading-6">
+              <p className="text-navy/70 dark:text-wheat mt-1 text-xs leading-6">
                 {order.city} — {order.address}
+              </p>
+              <p
+                className="text-navy/70 dark:text-wheat mt-1 text-xs font-bold"
+                dir="ltr"
+              >
+                کد پستی: {order.postalCode}
               </p>
             </div>
 
@@ -101,7 +107,7 @@ export function OrderDetailSheet({
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-black">{item.name}</p>
-                    <p className="text-navy/50 dark:text-wheat mt-1 text-[10px]">
+                    <p className="text-navy/70 dark:text-wheat mt-1 text-[10px]">
                       سایز {item.size} × {toFaDigits(item.qty)}
                     </p>
                   </div>

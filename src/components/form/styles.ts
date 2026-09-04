@@ -47,4 +47,4 @@ export const ERROR_TEXT =
   "flex items-start gap-1 text-[11px] font-bold leading-5 text-rose animate-fade-up";
 export const HINT_TEXT = "text-[11px] leading-5 text-navy/70 dark:text-wheat";
 export const COUNT_TEXT =
-  "text-[10px] font-bold tabular-nums text-navy/70 dark:text-wheat/60";
+  "text-[10px] font-bold tabular-nums text-navy/70 dark:text-wheat/70";

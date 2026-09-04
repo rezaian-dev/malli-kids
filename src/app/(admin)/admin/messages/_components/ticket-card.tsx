@@ -35,7 +35,7 @@ const STATUS: Record<TicketStatus, { label: string; cls: string; dot: string }> 
   },
   closed: {
     label: "بسته شده",
-    cls: "bg-navy/7 text-navy/55 dark:bg-white/7 dark:text-ivory/60",
+    cls: "bg-navy/7 text-navy/70 dark:bg-white/7 dark:text-ivory/70",
     dot: "bg-navy/35 dark:bg-white/35",
   },
 };
@@ -114,10 +114,10 @@ export function TicketCard({
             </div>
           </div>
           <div className="flex shrink-0 items-center justify-between gap-3 sm:block sm:text-end">
-            <p className="text-navy/40 dark:text-wheat text-[10px] font-bold">
+            <p className="text-navy/70 dark:text-wheat text-[10px] font-bold">
               {ticket.createdAt}
             </p>
-            <p className="text-navy/35 dark:text-wheat/55 mt-1 text-[9px] font-black">
+            <p className="text-navy/70 dark:text-wheat/70 mt-1 text-[9px] font-black">
               {ticket.replies.length} پیام
             </p>
           </div>
@@ -139,12 +139,12 @@ export function TicketCard({
                   className={
                     item.from === "support"
                       ? "text-gold-deep dark:text-gold-soft"
-                      : "text-navy/45 dark:text-wheat"
+                      : "text-navy/70 dark:text-wheat"
                   }
                 >
                   {item.from === "support" ? "پشتیبانی ملی‌کیدز" : "کاربر"}
                 </span>
-                <span className="text-navy/30 dark:text-wheat/45 font-bold">
+                <span className="text-navy/70 dark:text-wheat/70 font-bold">
                   {item.at}
                 </span>
               </div>
@@ -154,7 +154,7 @@ export function TicketCard({
         </div>
 
         <div className="border-navy/6 dark:border-gold/12 mt-4 flex flex-wrap items-center justify-between gap-2 border-t pt-3">
-          <p className="text-navy/35 dark:text-wheat/55 hidden text-[9px] font-bold sm:block">
+          <p className="text-navy/70 dark:text-wheat/70 hidden text-[9px] font-bold sm:block">
             آخرین پیام: {lastReply?.from === "support" ? "پشتیبانی" : "کاربر"}
           </p>
           <div className="ms-auto flex w-full gap-2 sm:w-auto">
@@ -203,7 +203,7 @@ export function TicketCard({
                 }
                 className={cn(
                   "shrink-0 rounded-xl border bg-white/70 px-3 py-1.5 text-[10px] font-bold transition",
-                  "border-navy/8 text-navy/60 hover:border-gold/40",
+                  "border-navy/8 text-navy/70 hover:border-gold/40",
                   "dark:border-gold/14 dark:bg-navy-deep/35 dark:text-wheat",
                 )}
               >

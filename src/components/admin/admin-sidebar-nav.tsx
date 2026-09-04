@@ -32,7 +32,7 @@ export function AdminSidebarNav({
             <div className="mb-1 flex items-center gap-2 px-3 pt-2">
               <p
                 id={`admin-nav-${group.id}`}
-                className="text-navy/45 dark:text-wheat/58 text-[9px] font-black"
+                className="text-navy/70 dark:text-wheat/70 text-[9px] font-black"
               >
                 {group.label}
               </p>
@@ -65,7 +65,7 @@ export function AdminSidebarNav({
                       "group relative flex items-center gap-3 overflow-hidden rounded-2xl px-2.5 py-2 transition-all duration-300",
                       active
                         ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep shadow-[0_14px_30px_-18px_rgba(4,20,39,.85)]"
-                        : "text-navy/68 hover:bg-navy/5 hover:text-navy dark:text-ivory/68 dark:hover:text-ivory dark:hover:bg-white/6",
+                        : "text-navy/70 hover:bg-navy/5 hover:text-navy dark:text-ivory/70 dark:hover:text-ivory dark:hover:bg-white/6",
                     )}
                   >
                     {}
@@ -90,7 +90,7 @@ export function AdminSidebarNav({
                         "grid size-9 shrink-0 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-105",
                         active
                           ? "bg-gold text-navy-deep dark:bg-navy-deep dark:text-gold"
-                          : "bg-navy/6 text-navy/55 dark:text-gold-soft dark:bg-white/6",
+                          : "bg-navy/6 text-navy/70 dark:text-gold-soft dark:bg-white/6",
                       )}
                     >
                       <item.Icon className="size-4" />
@@ -103,8 +103,8 @@ export function AdminSidebarNav({
                         className={cn(
                           "block truncate text-[9px] font-bold",
                           active
-                            ? "text-ivory/55 dark:text-navy/55"
-                            : "text-navy/36 dark:text-ivory/34",
+                            ? "text-ivory/80 dark:text-navy/80"
+                            : "text-navy/70 dark:text-ivory/70",
                         )}
                       >
                         {item.hint}

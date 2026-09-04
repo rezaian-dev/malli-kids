@@ -1,7 +1,6 @@
 "use server";
 
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/session";
 import {
   getNotificationsForUser,
   markAllNotificationsRead,
@@ -10,7 +9,7 @@ import {
 } from "./notifications";
 
 async function requireUserId() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   return session?.user.id ?? null;
 }
 

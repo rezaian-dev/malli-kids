@@ -157,7 +157,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
 
         <div className="flex items-center gap-3">
           <div className="hidden text-left sm:block">
-            <p className="text-navy/45 dark:text-wheat text-[10px] font-bold">
+            <p className="text-navy/70 dark:text-wheat text-[10px] font-bold">
               مجموع بازه
             </p>
             <p className="text-gold-deep dark:text-gold-soft text-sm font-black">
@@ -191,7 +191,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
         <div
           className={cn(
             "grid h-44 place-items-center rounded-2xl text-sm font-bold",
-            "bg-navy/4 text-navy/45",
+            "bg-navy/4 text-navy/70",
             "dark:bg-navy-deep/50 dark:text-wheat",
           )}
         >
@@ -346,7 +346,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
               <p className="text-navy dark:text-ivory text-[11px] font-black">
                 {activePoint.label}
                 {activePoint.sub ? (
-                  <span className="text-navy/40 dark:text-wheat">
+                  <span className="text-navy/70 dark:text-wheat">
                     {" "}
                     {activePoint.sub}
                   </span>
@@ -355,7 +355,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
               <p className="text-gold-deep dark:text-gold-soft mt-0.5 text-sm font-black">
                 {formatToman(activePoint.value)} ت
               </p>
-              <p className="text-navy/45 dark:text-wheat text-[10px] font-bold">
+              <p className="text-navy/70 dark:text-wheat text-[10px] font-bold">
                 {toFaDigits(activePoint.count)} سفارش
               </p>
             </div>

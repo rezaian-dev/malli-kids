@@ -24,9 +24,9 @@ const EMPTY_VALUES: LoginValues = {
   pass: "",
 };
 
-const FIELD_LABEL = "text-navy/60 dark:text-wheat text-xs font-black";
+const FIELD_LABEL = "text-navy/70 dark:text-wheat text-xs font-black";
 const FIELD_ICON =
-  "text-navy/35 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 z-10 my-auto size-4";
+  "text-navy/70 dark:text-wheat pointer-events-none absolute inset-y-0 inset-s-4 z-10 my-auto size-4";
 const FIELD_INPUT =
   "border-navy/12 dark:border-gold/20 h-14 rounded-3xl bg-transparent ps-11 pe-4 text-sm";
 const FIELD_ERROR = "text-rose text-xs font-bold";
@@ -106,7 +106,11 @@ export function AdminLoginLanding() {
         }}
       />
 
-      <section className="relative flex flex-col justify-between px-6 py-8 sm:px-10 lg:px-16 lg:py-12">
+      {/* ♿ AdminShell renders its own `<main>` for every other admin route
+          but bypasses its whole chrome here (see `admin-shell.tsx`'s
+          `path === "/admin/login"` check) — this page needs its own main
+          landmark since nothing upstream provides one. */}
+      <main className="relative flex flex-col justify-between px-6 py-8 sm:px-10 lg:px-16 lg:py-12">
         <header className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Image
@@ -143,8 +147,8 @@ export function AdminLoginLanding() {
               href="/"
               className={cn(
                 "inline-flex min-h-11 items-center text-xs font-black",
-                "text-navy/50 hover:text-gold",
-                "dark:text-ivory/45",
+                "text-navy/70 hover:text-gold",
+                "dark:text-ivory/70",
               )}
             >
               بازگشت به فروشگاه
@@ -160,7 +164,7 @@ export function AdminLoginLanding() {
             ورود تیم
             <span className="text-gold"> گالری</span>
           </h1>
-          <p className="text-navy/55 dark:text-wheat mt-3 text-sm leading-7">
+          <p className="text-navy/70 dark:text-wheat mt-3 text-sm leading-7">
             پنل سفارش، موجودی و مجله — فقط برای همکاران ملی‌کیدز.
           </p>
 
@@ -246,7 +250,7 @@ export function AdminLoginLanding() {
           </form>
         </div>
 
-        <ul className="text-navy/60 dark:text-wheat grid max-w-md grid-cols-3 gap-3 text-[11px] font-bold">
+        <ul className="text-navy/70 dark:text-wheat grid max-w-md grid-cols-3 gap-3 text-[11px] font-bold">
           <li className={cn(adminGlassCard, "px-3 py-3")}>
             <ShieldCheck className="text-gold mb-1 size-4" /> دسترسی محدود
           </li>
@@ -257,7 +261,7 @@ export function AdminLoginLanding() {
             <Lock className="text-gold mb-1 size-4" /> نشست امن
           </li>
         </ul>
-      </section>
+      </main>
 
       <aside className="bg-navy relative hidden min-h-72 overflow-hidden lg:block">
         <Image

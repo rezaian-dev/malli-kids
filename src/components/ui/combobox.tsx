@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronDown, Search } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { FIELD_FOCUS } from "@/lib/field";
+import { Check, ChevronDown } from "lucide-react";
+import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
+import { FIELD_FOCUS_WITHIN } from "@/lib/field";
 import { cn } from "@/lib/utils";
 
 export type ComboboxProps = {
@@ -12,62 +12,71 @@ export type ComboboxProps = {
   onOpenChange?: (open: boolean) => void;
   options: readonly string[];
   placeholder?: string;
-  searchPlaceholder?: string;
   emptyText?: string;
   id?: string;
   className?: string;
+  invalid?: boolean;
   "aria-required"?: boolean;
   "aria-invalid"?: boolean;
   "aria-describedby"?: string;
 };
 
-/** 🔎 A searchable, RTL-aware select — Radix `Popover` + a filtered list,
- *  no extra dependency. Full keyboard nav: ↑/↓ to move, Enter to pick,
- *  Esc to close. */
+/** ✍️ Type-ahead combobox — the visible field *is* the search box (no
+ *  separate popover search input, unlike the old cmdk-style pattern this
+ *  replaced): typing filters the suggestion list live, and whatever's
+ *  typed is the value whether or not it matches a suggestion — picking one
+ *  from the list is a shortcut, never a requirement to submit. */
 export function Combobox({
   value,
   onChange,
   onOpenChange,
   options,
-  placeholder = "انتخاب کنید",
-  searchPlaceholder = "جستجو…",
-  emptyText = "نتیجه‌ای یافت نشد.",
+  placeholder = "تایپ کنید…",
+  emptyText = "نتیجه‌ای یافت نشد — همین متن ثبت می‌شود.",
   id,
   className,
+  invalid,
   ...aria
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
-  const [query, setQuery] = React.useState("");
   const [active, setActive] = React.useState(0);
-  const searchRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const listId = React.useId();
 
   const filtered = React.useMemo(() => {
-    const q = query.trim();
+    const q = value.trim();
     return q ? options.filter((o) => o.includes(q)) : options;
-  }, [options, query]);
+  }, [options, value]);
 
   function setOpenState(next: boolean) {
     setOpen(next);
     onOpenChange?.(next);
-    if (!next) setQuery("");
-    setActive(0);
+    if (next) setActive(0);
   }
 
   function pick(city: string) {
     onChange(city);
     setOpenState(false);
+    inputRef.current?.focus();
   }
 
   function onKeyDown(e: React.KeyboardEvent) {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActive((i) => Math.min(i + 1, filtered.length - 1));
+      if (!open) setOpenState(true);
+      else setActive((i) => Math.min(i + 1, filtered.length - 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActive((i) => Math.max(i - 1, 0));
+      if (open) setActive((i) => Math.max(i - 1, 0));
     } else if (e.key === "Enter") {
-      e.preventDefault();
-      if (filtered[active]) pick(filtered[active]);
+      if (open && filtered[active]) {
+        e.preventDefault();
+        pick(filtered[active]);
+      } else {
+        // ✅ Nothing highlighted (or the list is closed) — Enter just
+        // confirms whatever text is already typed, free-form.
+        setOpenState(false);
+      }
     } else if (e.key === "Escape") {
       setOpenState(false);
     }
@@ -75,51 +84,76 @@ export function Combobox({
 
   return (
     <Popover open={open} onOpenChange={setOpenState}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          id={id}
-          {...aria}
+      <PopoverAnchor asChild>
+        <div
+          data-field-shell
           className={cn(
-            "group/combobox flex w-full cursor-pointer items-center justify-between gap-2 rounded-2xl border px-3.5",
-            "border-navy/12 text-navy hover:border-gold/50 aria-invalid:border-destructive bg-white text-sm font-bold shadow-none transition-[color,box-shadow,border-color] duration-200 outline-none disabled:cursor-not-allowed disabled:opacity-50",
-            FIELD_FOCUS,
-            "dark:border-gold/25 dark:bg-navy-mid dark:text-ivory dark:hover:border-gold/50",
-            !value && "text-navy/70 dark:text-wheat/70",
+            "group/combobox flex items-center gap-2 rounded-2xl border",
+            "bg-white text-navy transition-[color,box-shadow,border-color] duration-200",
+            "dark:bg-navy-mid dark:text-ivory",
+            invalid
+              ? "border-rose"
+              : "border-navy/12 hover:border-gold/50 dark:border-gold/25 dark:hover:border-gold/50",
+            FIELD_FOCUS_WITHIN,
             className,
           )}
         >
-          <span className="truncate">{value || placeholder}</span>
-          <ChevronDown className="text-gold size-4 shrink-0 transition-transform duration-200 group-data-open/combobox:rotate-180" />
-        </button>
-      </PopoverTrigger>
+          <input
+            ref={inputRef}
+            id={id}
+            {...aria}
+            role="combobox"
+            aria-expanded={open}
+            aria-controls={listId}
+            aria-autocomplete="list"
+            aria-invalid={invalid || undefined}
+            aria-activedescendant={
+              open && filtered.length > 0 ? `${listId}-opt-${active}` : undefined
+            }
+            value={value}
+            onChange={(e) => {
+              onChange(e.target.value);
+              if (!open) setOpenState(true);
+            }}
+            onFocus={() => setOpenState(true)}
+            onKeyDown={onKeyDown}
+            placeholder={placeholder}
+            autoComplete="off"
+            className="placeholder:text-navy/70 dark:placeholder:text-wheat/70 h-full w-full min-w-0 bg-transparent text-sm font-bold outline-none"
+          />
+          <ChevronDown
+            aria-hidden
+            onMouseDown={(e) => {
+              // 🖱️ A plain click would blur the input first (closing the
+              // popover via its own onOpenChange) and only then fire this
+              // handler — preventing default keeps focus in the input so
+              // toggling the chevron and toggling by typing feel the same.
+              e.preventDefault();
+              setOpenState(!open);
+              inputRef.current?.focus();
+            }}
+            className="text-gold size-4 shrink-0 cursor-pointer transition-transform duration-200 group-data-open/combobox:rotate-180"
+          />
+        </div>
+      </PopoverAnchor>
 
       <PopoverContent
         align="start"
-        className="w-(--radix-popover-trigger-width) overflow-hidden p-0"
-        onOpenAutoFocus={(e) => {
-          e.preventDefault();
-          searchRef.current?.focus();
-        }}
+        // 🩹 Radix's Popper primitives expose `--radix-popper-anchor-width`
+        // (not `-popover-`) — the wrong name here silently fell through to
+        // `PopoverContent`'s own `w-72`, capping this list at ~288px no
+        // matter how wide the field actually was.
+        className="w-(--radix-popper-anchor-width) overflow-hidden p-1"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        onCloseAutoFocus={(e) => e.preventDefault()}
       >
-        <div className="border-navy/10 dark:border-gold/15 flex items-center gap-2 border-b px-3">
-          <Search className="text-gold size-4 shrink-0" />
-          <input
-            ref={searchRef}
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setActive(0);
-            }}
-            onKeyDown={onKeyDown}
-            placeholder={searchPlaceholder}
-            className="text-navy placeholder:text-navy/50 dark:text-ivory dark:placeholder:text-wheat/50 h-11 w-full bg-transparent text-sm font-semibold outline-none"
-          />
-        </div>
-
-        <ul role="listbox" className="scrollbar-thin max-h-64 overflow-y-auto p-1">
+        <ul
+          id={listId}
+          role="listbox"
+          className="scrollbar-thin max-h-64 overflow-y-auto"
+        >
           {filtered.length === 0 ? (
-            <li className="text-navy/60 dark:text-wheat/60 px-3 py-6 text-center text-xs font-bold">
+            <li className="text-navy/70 dark:text-wheat/70 px-3 py-6 text-center text-xs font-bold">
               {emptyText}
             </li>
           ) : (
@@ -127,9 +161,11 @@ export function Combobox({
               <li key={city}>
                 <button
                   type="button"
+                  id={`${listId}-opt-${i}`}
                   role="option"
                   aria-selected={city === value}
                   onMouseEnter={() => setActive(i)}
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={() => pick(city)}
                   className={cn(
                     "text-navy dark:text-ivory flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-sm font-bold",

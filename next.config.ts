@@ -14,6 +14,10 @@ import type { NextConfig } from "next";
 // `src/app/(storefront)/profile/_components/leaflet-loader.ts`; reverse
 // geocoding happens server-side in `reverseGeocodeAction`, never from the
 // browser, so it needs no `connect-src` entry here).
+// `frame-src www.openstreetmap.org` is for the *contact* page's embedded
+// map iframe (`contact-map.tsx`) — a different OSM surface (their embed
+// widget, not the tile server) that was silently CSP-blocked (no
+// `frame-src` fell back to `default-src 'self'`) until this was added.
 const isDev = process.env.NODE_ENV !== "production";
 const cspHeader = `
   default-src 'self';
@@ -22,6 +26,7 @@ const cspHeader = `
   img-src 'self' data: blob: https://*.tile.openstreetmap.org https://kimi-web-img.kimi.ai;
   font-src 'self' data:;
   connect-src 'self';
+  frame-src https://www.openstreetmap.org;
   object-src 'none';
   base-uri 'self';
   form-action 'self';
@@ -59,6 +64,14 @@ const nextConfig: NextConfig = {
   compress: false,
   // 🔐 Allow local and Arena preview origins in dev.
   allowedDevOrigins: ["*.e2b.app", "127.0.0.1", "localhost"],
+  // 🎯 The default `true` chunking merges CSS across the (admin)/(storefront)
+  // route-group split in `storefront.css`/`admin.css` back into shared
+  // chunks that both sides download in full (optimizing request count over
+  // per-route bytes) — exactly the case the docs call out `graph` for:
+  // route-aware, minimizes the unused CSS each route actually ships.
+  experimental: {
+    cssChunking: "graph",
+  },
   images: {
     qualities: [75, 85, 90, 95],
     formats: ["image/avif", "image/webp"],

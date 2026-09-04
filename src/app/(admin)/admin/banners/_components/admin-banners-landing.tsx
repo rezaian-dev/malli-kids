@@ -123,7 +123,7 @@ export function AdminBannersLanding({ banners }: { banners: FestiveBanner[] }) {
               "w-max rounded-xl px-3 py-1.5 text-[9px] font-black",
               live
                 ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-                : "bg-navy/6 text-navy/55 dark:text-wheat dark:bg-white/6",
+                : "bg-navy/6 text-navy/70 dark:text-wheat dark:bg-white/6",
             )}
           >
             {live ? "در حال نمایش" : "بدون کمپین فعال"}

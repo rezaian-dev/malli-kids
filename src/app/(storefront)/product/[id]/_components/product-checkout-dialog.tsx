@@ -36,6 +36,7 @@ export function ProductCheckoutDialog({
   const [city, setCity] = useState(user?.city || "");
   const [address, setAddress] = useState(user?.address || "");
   const [phone, setPhone] = useState(user?.phone || "");
+  const [postal, setPostal] = useState(user?.postalCode || "");
   const [couponIn, setCouponIn] = useState("");
   const [applied, setApplied] = useState<{ code: string; rate: number } | null>(
     null,
@@ -50,6 +51,7 @@ export function ProductCheckoutDialog({
     setCity(user?.city || "");
     setAddress(user?.address || "");
     setPhone(user?.phone || "");
+    setPostal(user?.postalCode || "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -84,6 +86,9 @@ export function ProductCheckoutDialog({
     if (address.trim().length < 10) return showToast("آدرس کامل را بنویسید");
     if (phoneDigits(phone).length !== 11)
       return showToast("شمارهٔ موبایل ۱۱ رقمی بنویسید");
+    const postalDigits = toEnDigits(postal).replace(/\D/g, "");
+    if (postalDigits.length !== 10)
+      return showToast("کد پستیِ ۱۰ رقمی بنویسید");
 
     startTransition(async () => {
       const result = await createOrderAction({
@@ -93,6 +98,7 @@ export function ProductCheckoutDialog({
         city: city.trim(),
         address: address.trim(),
         phone: phoneDigits(phone),
+        postalCode: postalDigits,
         couponCode: applied?.code,
       });
 
@@ -194,6 +200,16 @@ export function ProductCheckoutDialog({
             placeholder="آدرس کامل"
             className="h-11 rounded-xl"
             aria-label="آدرس"
+          />
+          <Input
+            dir="ltr"
+            value={postal}
+            onChange={(e) => setPostal(e.target.value)}
+            placeholder="کد پستی (۱۰ رقم)"
+            inputMode="numeric"
+            maxLength={10}
+            className="h-11 rounded-xl text-right"
+            aria-label="کد پستی"
           />
           <div className="flex gap-2">
             <Input

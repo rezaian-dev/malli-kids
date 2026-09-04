@@ -85,7 +85,7 @@ export function ProfileHeader({ user }: { user: User }) {
             {user.avatar ? (
               <Image
                 src={user.avatar}
-                alt=""
+                alt={`تصویر پروفایل ${nick}`}
                 fill
                 unoptimized
                 className="object-cover"

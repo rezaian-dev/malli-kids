@@ -74,7 +74,7 @@ export function CartLineItem({
             className={cn(
               "grid size-7 shrink-0 place-items-center",
               "text-navy/70 hover:bg-rose/10 hover:text-rose rounded-full transition-all motion-safe:hover:scale-110 motion-safe:active:scale-90",
-              "dark:text-wheat/50 dark:hover:bg-rose/15 dark:hover:text-rose",
+              "dark:text-wheat/70 dark:hover:bg-rose/15 dark:hover:text-rose",
             )}
           >
             <Trash2 className="size-3.5" />
@@ -158,7 +158,7 @@ export function CartLineItem({
             )}
           >
             {formatToman(unitPrice * item.qty)}{" "}
-            <span className="text-navy/70 dark:text-wheat/60 text-[10px] font-bold">
+            <span className="text-navy/70 dark:text-wheat/70 text-[10px] font-bold">
               تومان
             </span>
           </span>

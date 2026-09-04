@@ -39,6 +39,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   INVALID_TOKEN: "لینکِ بازنشانی نامعتبر یا منقضی شده — دوباره درخواست دهید.",
   TOKEN_EXPIRED: "لینکِ بازنشانی منقضی شده — دوباره درخواست دهید.",
   USER_NOT_FOUND: "کاربری با این مشخصات پیدا نشد.",
+  BANNED_USER: "دسترسیِ این حساب مسدود شده — برای پیگیری با پشتیبانی تماس بگیرید.",
 };
 
 function actionError(error: unknown): { ok: false; error: string } {

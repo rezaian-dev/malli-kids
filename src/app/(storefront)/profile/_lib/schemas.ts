@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { fullName, nationalId, optMobile, optText } from "@/lib/forms";
+import { fullName, optMobile, optText, postalCode } from "@/lib/forms";
 
 // 📍 Set together by the map picker; either both present or both absent —
 // never trusted as-is server-side (`reverseGeocodeAction`/`updateAccountAction`
@@ -7,12 +7,16 @@ import { fullName, nationalId, optMobile, optText } from "@/lib/forms";
 const latitude = z.number().min(-90).max(90).optional();
 const longitude = z.number().min(-180).max(180).optional();
 
+// 📏 Shared with `formatAddress` in `_lib/actions.ts` so the reverse-geocoded
+// text it builds is trimmed to the same limit this field enforces.
+export const ADDRESS_MAX_LEN = 160;
+
 export const updateAccountSchema = z.object({
   name: fullName(),
   phone: optMobile(),
-  nationalId: nationalId(),
+  postalCode: postalCode(),
   city: optText(40, "شهر"),
-  address: optText(160, "آدرس"),
+  address: optText(ADDRESS_MAX_LEN, "آدرس"),
   lat: latitude,
   lng: longitude,
 });
@@ -20,7 +24,7 @@ export type UpdateAccountValues = z.infer<typeof updateAccountSchema>;
 export const updateAccountDefaults: UpdateAccountValues = {
   name: "",
   phone: "",
-  nationalId: "",
+  postalCode: "",
   city: "",
   address: "",
   lat: undefined,

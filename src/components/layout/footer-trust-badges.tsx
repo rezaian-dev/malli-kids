@@ -42,6 +42,7 @@ export function FooterTrustBadges() {
               alt="نماد اعتماد الکترونیکی"
               width={466}
               height={429}
+              sizes="(min-width: 640px) 96px, 80px"
               className="max-h-full w-auto object-contain"
             />
           </a>
@@ -60,6 +61,7 @@ export function FooterTrustBadges() {
               alt="نشان ملی ثبت (ساماندهی)"
               width={700}
               height={391}
+              sizes="(min-width: 640px) 160px, 128px"
               className="max-h-full w-auto object-contain"
             />
           </a>

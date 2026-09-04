@@ -177,7 +177,7 @@ export function ArticleList({
               /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use saved data URLs. */
               <img
                 src={article.cover}
-                alt=""
+                alt={article.title}
                 className="h-32 w-full rounded-2xl object-cover transition-transform duration-500 group-hover:scale-102 sm:h-24 sm:w-32"
               />
             ) : (
@@ -211,14 +211,14 @@ export function ArticleList({
                   )}
                   {article.published ? "منتشرشده" : "پیش‌نویس"}
                 </span>
-                <span className="text-navy/35 dark:text-wheat text-[9px] font-bold">
+                <span className="text-navy/70 dark:text-wheat text-[9px] font-bold">
                   {article.date}
                 </span>
               </div>
               <h2 className="text-navy dark:text-ivory mt-2 truncate text-sm font-black">
                 {article.title}
               </h2>
-              <p className="text-navy/50 dark:text-wheat mt-1 line-clamp-2 text-xs leading-6">
+              <p className="text-navy/70 dark:text-wheat mt-1 line-clamp-2 text-xs leading-6">
                 {article.excerpt}
               </p>
             </div>
@@ -226,7 +226,7 @@ export function ArticleList({
               <label
                 className={cn(
                   "flex min-h-9 flex-1 items-center justify-center gap-2 rounded-xl border px-3 text-[10px] font-black sm:flex-none",
-                  "border-navy/8 text-navy/55",
+                  "border-navy/8 text-navy/70",
                   "dark:border-gold/14 dark:text-wheat",
                 )}
               >

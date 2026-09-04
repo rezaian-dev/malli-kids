@@ -8,7 +8,7 @@ import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
 export const FILTER_LABEL =
-  "text-navy/50 dark:text-wheat/75 mb-1.5 block text-[10px] font-black";
+  "text-navy/70 dark:text-wheat/75 mb-1.5 block text-[10px] font-black";
 
 type AdminFilterBarProps = {
   children?: ReactNode;
@@ -68,7 +68,7 @@ export function AdminFilterBar({
             <h2 className="text-navy dark:text-ivory text-xs font-black">
               فیلتر و مرتب‌سازی
             </h2>
-            <p className="text-navy/45 dark:text-wheat/65 mt-0.5 text-[10px] font-bold">
+            <p className="text-navy/70 dark:text-wheat/70 mt-0.5 text-[10px] font-bold">
               {toFaDigits(resultCount)} {resultLabel} پیدا شد
               {activeCount > 0
                 ? ` · ${toFaDigits(activeCount)} فیلتر فعال`
@@ -117,8 +117,8 @@ export function AdminFilterBar({
                   aria-label="پاک‌کردن جستجو"
                   className={cn(
                     "absolute inset-e-2.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-lg transition",
-                    "text-navy/40 hover:bg-navy/7 hover:text-navy",
-                    "dark:text-wheat/60 dark:hover:text-ivory dark:hover:bg-white/8",
+                    "text-navy/70 hover:bg-navy/7 hover:text-navy",
+                    "dark:text-wheat/70 dark:hover:text-ivory dark:hover:bg-white/8",
                   )}
                 >
                   <X className="size-3.5" />

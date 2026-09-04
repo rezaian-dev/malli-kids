@@ -20,7 +20,7 @@ export default async function EditProductPage({
     return (
       <div className={cn(adminGlassCard, "mx-auto mt-10 max-w-md p-8 text-center")}>
         <p className="text-navy dark:text-ivory font-black">محصول پیدا نشد</p>
-        <p className="text-navy/50 dark:text-wheat mt-1 text-sm">
+        <p className="text-navy/70 dark:text-wheat mt-1 text-sm">
           ممکن است حذف شده باشد.
         </p>
         <Button asChild variant="navy" className="mt-4 rounded-2xl">

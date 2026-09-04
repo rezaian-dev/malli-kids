@@ -21,11 +21,11 @@ export function AdminPageHeader({
       />
       <div className="relative flex flex-col justify-between gap-5 px-4 pt-4 pb-5 sm:flex-row sm:items-end sm:px-6 sm:pt-5 sm:pb-6">
         <div className="min-w-0">
-          <div className="text-navy/38 dark:text-wheat/50 mb-3 flex min-w-0 items-center gap-1.5 text-[9px] font-black">
+          <div className="text-navy/70 dark:text-wheat/70 mb-3 flex min-w-0 items-center gap-1.5 text-[9px] font-black">
             <LayoutGrid className="text-gold size-3" />
             <span>کنسول مدیریت</span>
             <ChevronLeft className="size-3 opacity-45" />
-            <span className="text-navy/58 dark:text-ivory/66 truncate">
+            <span className="text-navy/70 dark:text-ivory/70 truncate">
               {title}
             </span>
           </div>
@@ -39,7 +39,7 @@ export function AdminPageHeader({
               {title}
             </h1>
             {description ? (
-              <p className="text-navy/50 dark:text-wheat/68 mt-2 max-w-2xl text-[11px] leading-6 font-bold sm:text-xs">
+              <p className="text-navy/70 dark:text-wheat/70 mt-2 max-w-2xl text-[11px] leading-6 font-bold sm:text-xs">
                 {description}
               </p>
             ) : null}
@@ -51,7 +51,7 @@ export function AdminPageHeader({
           </div>
         ) : null}
       </div>
-      <div className="border-navy/7 bg-navy/[0.018] text-navy/42 dark:border-gold/12 dark:text-wheat/52 relative flex flex-wrap items-center justify-between gap-2 border-t px-4 py-2.5 text-[9px] font-bold sm:px-6 dark:bg-white/[0.018]">
+      <div className="border-navy/7 bg-navy/[0.018] text-navy/70 dark:border-gold/12 dark:text-wheat/70 relative flex flex-wrap items-center justify-between gap-2 border-t px-4 py-2.5 text-[9px] font-bold sm:px-6 dark:bg-white/[0.018]">
         <span className="flex items-center gap-1.5">
           <Activity className="size-3.5 text-emerald-600 dark:text-emerald-300" />
           <span className="size-1.5 rounded-full bg-emerald-500" /> وضعیت

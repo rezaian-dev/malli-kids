@@ -20,13 +20,13 @@ import {
 } from "../_lib/schemas";
 import { PROFILE_CARD } from "./profile-shared";
 import { SECTION_TITLE } from "../_lib/profile-form-styles";
-import { AddressMapField } from "./address-map-dialog";
+import { AddressMapField } from "./address-map-field";
 
 function toValues(user: User): UpdateAccountValues {
   return {
     name: [user.firstName, user.lastName].filter(Boolean).join(" "),
     phone: user.phone || "",
-    nationalId: user.nationalId || "",
+    postalCode: user.postalCode || "",
     city: user.city || "",
     address: user.address || "",
     lat: user.lat,
@@ -76,22 +76,21 @@ export function AccountForm() {
         />
 
         <TextField
-          name="nationalId"
-          label="کد ملی"
+          name="postalCode"
+          label="کد پستی"
           dir="ltr"
           inputMode="numeric"
           inputClassName="text-left"
           placeholder="0123456789"
           maxLength={10}
-          hint="۱۰ رقم؛ رقم کنترل هم بررسی می‌شود."
+          hint="۱۰ رقم، بدون خط تیره."
         />
 
         <ComboboxField
           name="city"
           label="شهر"
           options={IRAN_CITIES}
-          placeholder="انتخاب شهر"
-          searchPlaceholder="جستجوی شهر…"
+          placeholder="نام شهر را تایپ کنید"
         />
 
         <TextareaField

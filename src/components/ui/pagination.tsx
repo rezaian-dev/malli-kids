@@ -108,7 +108,7 @@ export function Pagination({
                 <li
                   key={`gap-${index}`}
                   aria-hidden="true"
-                  className="text-navy/70 dark:text-wheat/60 grid size-9 place-items-center"
+                  className="text-navy/70 dark:text-wheat/70 grid size-9 place-items-center"
                 >
                   <MoreHorizontal className="size-4" />
                 </li>
@@ -138,7 +138,7 @@ export function Pagination({
           </ul>
         </>
       ) : (
-        <span className="text-navy/70 dark:text-wheat/45 text-[10px] font-bold">
+        <span className="text-navy/70 dark:text-wheat/70 text-[10px] font-bold">
           تنها صفحه
         </span>
       )}

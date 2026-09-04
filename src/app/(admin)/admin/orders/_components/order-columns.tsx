@@ -25,7 +25,7 @@ export const ORDER_COLUMNS: AdminCol<AdminOrder>[] = [
       <div className="min-w-0">
         <p className="truncate">{order.customer}</p>
         <p
-          className="text-navy/40 dark:text-wheat mt-0.5 text-[10px] font-bold"
+          className="text-navy/70 dark:text-wheat mt-0.5 text-[10px] font-bold"
           dir="ltr"
         >
           {order.phone}
@@ -48,7 +48,7 @@ export const ORDER_COLUMNS: AdminCol<AdminOrder>[] = [
     align: "center",
     hideTablet: true,
     render: (order) => (
-      <span className="text-navy/55 dark:text-wheat whitespace-nowrap">
+      <span className="text-navy/70 dark:text-wheat whitespace-nowrap">
         {order.date}
       </span>
     ),

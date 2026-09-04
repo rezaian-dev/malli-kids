@@ -48,7 +48,7 @@ export function AdminStatStrip({
             <item.Icon className="size-4" />
           </span>
           <div className="min-w-0">
-            <p className="text-navy/45 dark:text-wheat/65 truncate text-[10px] font-black">
+            <p className="text-navy/70 dark:text-wheat/70 truncate text-[10px] font-black">
               {item.label}
             </p>
             <p className="text-navy dark:text-ivory mt-0.5 text-base font-black sm:text-lg">
@@ -57,7 +57,7 @@ export function AdminStatStrip({
                 : item.value}
             </p>
             {item.hint ? (
-              <p className="text-navy/35 dark:text-wheat/45 truncate text-[9px] font-bold">
+              <p className="text-navy/70 dark:text-wheat/70 truncate text-[9px] font-bold">
                 {item.hint}
               </p>
             ) : null}

@@ -23,7 +23,7 @@ const TICKET_STATUS: Record<TicketStatus, { label: string; cls: string }> = {
   },
   closed: {
     label: "بسته شده",
-    cls: "bg-navy/8 text-navy/70 dark:bg-white/10 dark:text-ivory/55",
+    cls: "bg-navy/8 text-navy/70 dark:bg-white/10 dark:text-ivory/70",
   },
 };
 

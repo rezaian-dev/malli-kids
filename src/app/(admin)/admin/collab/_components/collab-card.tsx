@@ -43,7 +43,7 @@ export function CollabCard({
               href={`tel:${request.phone}`}
               className={cn(
                 "mt-0.5 inline-flex items-center gap-1 text-[10px] font-bold",
-                "text-navy/45 hover:text-gold",
+                "text-navy/70 hover:text-gold",
                 "dark:text-wheat",
               )}
               dir="ltr"
@@ -83,7 +83,7 @@ export function CollabCard({
         {request.text}
       </p>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-navy/35 dark:text-wheat/55 text-[9px] font-bold">
+        <p className="text-navy/70 dark:text-wheat/70 text-[9px] font-bold">
           {request.at}
         </p>
         {waiting ? (

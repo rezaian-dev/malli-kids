@@ -98,7 +98,7 @@ export function TryOnPreview({
         {}
         <Image
           src={CORE_PRODUCTS[garment].img}
-          alt=""
+          alt={CORE_PRODUCTS[garment].name}
           width={80}
           height={96}
           className={cn(

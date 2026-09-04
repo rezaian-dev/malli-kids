@@ -115,7 +115,7 @@ export function ProductReviewForm({ product: seed }: { product: Product }) {
                     "hover:bg-gold/10 focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none",
                     on
                       ? "text-gold scale-105"
-                      : "text-navy/25 dark:text-ivory/25",
+                      : "text-navy/25 dark:text-ivory/70",
                   )}
                 >
                   <Star className={cn("size-6", on && "fill-gold")} />

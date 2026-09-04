@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import type { AdminOrder, Product } from "@/types";
 
-const META_TEXT = "text-navy/40 dark:text-wheat mt-0.5 text-[9px] font-bold";
+const META_TEXT = "text-navy/70 dark:text-wheat mt-0.5 text-[9px] font-bold";
 const HIGHLIGHT_TEXT = "text-gold-deep dark:text-gold-soft font-black";
 
 export function DashboardLanding({
@@ -55,6 +55,7 @@ export function DashboardLanding({
           width={800}
           height={600}
           priority
+          sizes="100vw"
           className="absolute inset-0 size-full object-cover opacity-20"
         />
         <div
@@ -176,7 +177,7 @@ export function DashboardLanding({
             align: "center",
             hideTablet: true,
             render: (order) => (
-              <span className="text-navy/55 dark:text-wheat">{order.date}</span>
+              <span className="text-navy/70 dark:text-wheat">{order.date}</span>
             ),
           },
           {

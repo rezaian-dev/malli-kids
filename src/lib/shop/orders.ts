@@ -14,6 +14,7 @@ function toAdminOrder(doc: OrderDoc & { createdAt: Date }): AdminOrder {
     phone: doc.phone,
     city: doc.city,
     address: doc.address,
+    postalCode: doc.postalCode,
     items: doc.items,
     subtotal: doc.subtotal,
     discount: doc.discount,
@@ -44,6 +45,7 @@ export type CreateOrderInput = {
   phone: string;
   city: string;
   address: string;
+  postalCode: string;
   items: OrderDoc["items"];
   couponCode?: string;
   discountRate?: number;
@@ -67,6 +69,7 @@ export async function createOrder(input: CreateOrderInput): Promise<AdminOrder> 
     phone: input.phone,
     city: input.city,
     address: input.address,
+    postalCode: input.postalCode,
     items: input.items,
     subtotal,
     discount,

@@ -22,6 +22,7 @@ export type OrderDoc = {
   phone: string;
   city: string;
   address: string;
+  postalCode: string;
   items: OrderItemDoc[];
   subtotal: number;
   discount: number;
@@ -54,6 +55,7 @@ const orderSchema = new Schema<OrderDoc>(
     phone: { type: String, required: true },
     city: { type: String, required: true },
     address: { type: String, required: true },
+    postalCode: { type: String, required: true },
     items: { type: [orderItemSchema], required: true },
     subtotal: { type: Number, required: true },
     discount: { type: Number, default: 0 },

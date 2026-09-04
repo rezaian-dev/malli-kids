@@ -113,7 +113,7 @@ export function OrderCard({ order }: { order: AdminOrder }) {
                       "grid size-9 place-items-center rounded-full border-2 transition-colors",
                       done
                         ? "border-gold bg-gold text-navy-deep"
-                        : "border-navy/15 text-navy/70 dark:border-gold/25 dark:text-wheat/50",
+                        : "border-navy/15 text-navy/70 dark:border-gold/25 dark:text-wheat/70",
                     )}
                   >
                     <Icon className="size-4" />
@@ -123,7 +123,7 @@ export function OrderCard({ order }: { order: AdminOrder }) {
                       "text-[9px] font-black",
                       done
                         ? "text-navy dark:text-ivory"
-                        : "text-navy/70 dark:text-wheat/50",
+                        : "text-navy/70 dark:text-wheat/70",
                     )}
                   >
                     {label}

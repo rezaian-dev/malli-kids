@@ -1,8 +1,7 @@
 "use server";
 
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/session";
 import { findApplicableCoupon, type AppliedCoupon } from "@/lib/shop/coupons";
 import { createOrder } from "@/lib/shop/orders";
 import { getProductById } from "@/lib/shop/products";
@@ -14,6 +13,7 @@ import {
 import { getCampaign } from "@/lib/shop/settings";
 import { campaignPrice } from "@/lib/shop/pricing";
 import { phoneDigits } from "@/lib/digits";
+import { toEnDigits } from "@/lib/locale/fa";
 import type { ActionResult } from "@/lib/action-result";
 import type { AdminOrder, AdminReview } from "@/types";
 import { reviewSchema } from "./product-review-schema";
@@ -23,7 +23,7 @@ const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تل
 const AUTH_ERROR = "برای این کار باید وارد حساب‌تان باشید.";
 
 async function requireSessionUser() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session?.user) return null;
   return { id: session.user.id, name: session.user.name };
 }
@@ -92,6 +92,7 @@ export async function createOrderAction(
   const parsed = checkoutSchema.safeParse({
     ...values,
     phone: phoneDigits(values.phone),
+    postalCode: toEnDigits(values.postalCode).replace(/\D/g, ""),
   });
   if (!parsed.success) return { ok: false, error: "اطلاعات سفارش را کامل کنید." };
 
@@ -114,6 +115,7 @@ export async function createOrderAction(
       phone: parsed.data.phone,
       city: parsed.data.city,
       address: parsed.data.address,
+      postalCode: parsed.data.postalCode,
       items: [
         {
           id: product.id,

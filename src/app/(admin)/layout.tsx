@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import "../admin.css";
 
 // 🎛️ This route group only paints the admin backdrop.
 export default function AdminSectionLayout({

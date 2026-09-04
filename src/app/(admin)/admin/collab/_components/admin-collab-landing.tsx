@@ -152,7 +152,7 @@ export function AdminCollabLanding({ requests }: { requests: CollabRequest[] }) 
               ? "هنوز درخواستی ثبت نشده"
               : "درخواستی مطابق فیلترها نیست"}
           </p>
-          <p className="text-navy/50 dark:text-wheat mx-auto mt-1 max-w-xs text-xs leading-6">
+          <p className="text-navy/70 dark:text-wheat mx-auto mt-1 max-w-xs text-xs leading-6">
             درخواست‌های فرم همکاری، همراه با وضعیت پیگیری، در این بخش مدیریت
             می‌شوند.
           </p>

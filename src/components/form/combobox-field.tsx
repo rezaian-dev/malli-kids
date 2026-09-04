@@ -12,7 +12,6 @@ export type ComboboxFieldProps = {
   className?: string;
   options: readonly string[];
   placeholder?: string;
-  searchPlaceholder?: string;
   emptyText?: string;
   required?: boolean;
 };
@@ -25,7 +24,6 @@ export function ComboboxField({
   className,
   options,
   placeholder,
-  searchPlaceholder,
   emptyText,
   required,
 }: ComboboxFieldProps) {
@@ -46,10 +44,9 @@ export function ComboboxField({
           onOpenChange={(o) => !o && field.onBlur()}
           options={options}
           placeholder={placeholder}
-          searchPlaceholder={searchPlaceholder}
           emptyText={emptyText}
+          invalid={invalid}
           aria-required={required || undefined}
-          aria-invalid={invalid || undefined}
           aria-describedby={describedBy}
           className={cn("w-full", INPUT[skin])}
         />

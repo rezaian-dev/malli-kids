@@ -21,7 +21,7 @@ const PER_PAGE = 8;
 type StatusFilter = "all" | "active" | "inactive" | "full";
 type SortFilter = "default" | "usage" | "discount" | "expiry";
 
-const STAT_LABEL = "text-navy/40 dark:text-wheat text-[9px] font-black";
+const STAT_LABEL = "text-navy/70 dark:text-wheat text-[9px] font-black";
 
 /** 🎟️ Filterable/paginated coupon grid with an inline active/inactive
  *  switch per card. */
@@ -174,7 +174,7 @@ export function CouponList({ coupons }: { coupons: AdminCoupon[] }) {
                               : "غیرفعال"}
                         </span>
                       </div>
-                      <p className="text-navy/65 dark:text-wheat mt-1 truncate text-xs font-bold">
+                      <p className="text-navy/70 dark:text-wheat mt-1 truncate text-xs font-bold">
                         {coupon.title}
                       </p>
                     </div>
@@ -212,7 +212,7 @@ export function CouponList({ coupons }: { coupons: AdminCoupon[] }) {
                   </div>
 
                   <div className="mt-4">
-                    <div className="text-navy/45 dark:text-wheat mb-1.5 flex items-center justify-between text-[9px] font-bold">
+                    <div className="text-navy/70 dark:text-wheat mb-1.5 flex items-center justify-between text-[9px] font-bold">
                       <span>
                         مصرف {toFaDigits(coupon.used)} از{" "}
                         {toFaDigits(coupon.cap)}
@@ -239,7 +239,7 @@ export function CouponList({ coupons }: { coupons: AdminCoupon[] }) {
                     "dark:border-gold/12 dark:bg-white/1.5",
                   )}
                 >
-                  <span className="text-navy/40 dark:text-wheat font-bold">
+                  <span className="text-navy/70 dark:text-wheat font-bold">
                     تاریخ انقضا
                   </span>
                   <span className="text-navy dark:text-ivory font-black">

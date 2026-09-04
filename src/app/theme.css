@@ -1,9 +1,12 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-/* 🗺️ Leaflet's own stylesheet — needed by the profile address map
-   (`address-map-dialog.tsx`); global CSS in the App Router can only be
-   imported from `layout.tsx`/here, never from the client component itself. */
-@import "leaflet/dist/leaflet.css";
+/* 🧱 Shared theme: design tokens, base layer, custom variants/utilities —
+   everything both `storefront.css` and `admin.css` need, minus Tailwind's
+   own generator (`@import "tailwindcss"`, which stays in each of those two
+   entry files so each route group's build only scans its own subtree — see
+   the comment atop either for why). Also imported straight from the root
+   `layout.tsx` for the tokens/base rules that render before either route
+   group mounts (the inline critical-CSS `<style>`, `html`/`body`, etc.) —
+   root `layout.tsx` doesn't import `storefront.css`/`admin.css` itself, so
+   it never carries either section's Tailwind utility-class output. */
 
 /* 🎨 Dark mode = `.dark` class on html (Tailwind v4 class strategy) */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -55,6 +58,9 @@
   --color-gold-glow: #f0c878;
   --color-gold-deep: #b8893f;
   --color-gold-pale: #f0e2cc;
+  /* ♿ AA-passing gold, for *text* only — see the override rule near the
+     theme vars below for why this isn't just a darker `--color-gold`. */
+  --color-gold-ink: #82581f;
 
   /* 🧺 Cream / paper / sand family */
   --color-atelier: #ece6dc;
@@ -83,6 +89,9 @@
   --color-rose: #e11d48;
   --color-rose-light: #fb7185;
   --color-rose-pale: #fff1f2;
+  /* ♿ AA-passing rose, for *text* only — see the override rule near the
+     theme vars below. */
+  --color-rose-ink: #b81f43;
 
   /* 🎛️ shadcn semantic aliases (resolve via CSS vars below) */
   --color-background: var(--background);
@@ -135,8 +144,9 @@
   --animate-admin-orbit: adminOrbit 28s linear infinite;
   --animate-admin-glow: adminGlow 7s ease-in-out infinite alternate;
   --animate-arrow-ripple: arrow-ripple 0.5s ease-out;
-  /* 📍 The profile page's Leaflet/Neshan address picker — marker drop-in
-     when a point is placed (click/drag/GPS result). */
+  /* 📍 The profile page's Leaflet/OpenStreetMap address picker — marker
+     drop-in when a point is placed (click/drag/GPS result), also reused for
+     the "found it" checkmark pop next to the typed-out address. */
   --animate-marker-drop: markerDrop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)
     both;
 
@@ -467,6 +477,39 @@
   --ring: #e8c57a;
 }
 
+/* ────────────────── ♿ Accessible text-color overrides ─────────────────── */
+/* `text-gold`, `text-gold-deep` and `text-rose` read fine (≥4.5:1, often much
+   higher) everywhere they're already scoped to a `dark:` variant or a navy/
+   dark-navy backdrop (footer, hero bands, `gold-light`/`-soft`/`-glow` on
+   dark cards) — those are untouched. But used at full brightness as small
+   *text* directly on this app's light backgrounds (atelier/cream/sand/paper)
+   they measure ~2.2–3.8:1, under the 4.5:1 minimum for normal-size text.
+   Redefining `--color-gold`/`--color-rose` themselves would also flatten
+   borders/icons/backgrounds that don't carry that requirement and are
+   deliberately kept bright. So instead: override just the generated *text*
+   utility classes, light mode only, to the darker `-ink` siblings above
+   (picked to clear 4.5:1 against `--color-atelier`, the darkest surface
+   either sits on) — then revert to the original tokens under `.dark`, where
+   they already pass against the dark navy/dusk surfaces measured there. */
+.text-gold,
+.text-gold-deep {
+  color: var(--color-gold-ink);
+}
+.dark .text-gold,
+.dark .text-gold-deep {
+  color: var(--color-gold);
+}
+.text-rose,
+.text-destructive {
+  color: var(--color-rose-ink);
+}
+.dark .text-rose {
+  color: var(--color-rose);
+}
+.dark .text-destructive {
+  color: var(--color-destructive);
+}
+
 /* ─────────────────────────── 📦 Custom utilities ──────────────────────── */
 /* 🔲 `container` — Tailwind locks width per breakpoint; with custom `xs`
    it capped the page at 320px. This just sets an 80rem ceiling and stays
@@ -506,7 +549,12 @@
 @layer base {
   /* 📜 Page scaffold */
   html {
-    @apply max-w-full overflow-x-hidden scroll-smooth;
+    /* Plain-CSS equivalents of `max-w-full overflow-x-hidden scroll-smooth`
+       — this file is also imported bare (without Tailwind's utility
+       generator) by the root layout, see the file banner above. */
+    max-width: 100%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
     scroll-padding-top: 110px;
     color-scheme: light;
     background-color: var(--color-atelier);
@@ -516,7 +564,8 @@
     background-color: var(--color-navy-deep);
   }
   main {
-    @apply min-w-0 overflow-x-clip;
+    min-width: 0;
+    overflow-x: clip;
   }
 
   /* 🖱️ Selection & focus */
@@ -535,12 +584,20 @@
 
   /* 🧍 Body — linen atelier canvas; grain sits above. Scene paints the graphic. */
   body {
-    @apply text-navy dark:text-ivory min-h-dvh max-w-full overflow-x-hidden antialiased;
+    /* Plain-CSS equivalent of
+       `text-navy dark:text-ivory min-h-dvh max-w-full overflow-x-hidden antialiased` */
+    color: var(--color-navy);
+    min-height: 100dvh;
+    max-width: 100%;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-family: var(--font-vazir), Vazirmatn, Tahoma, sans-serif;
     background-color: var(--color-atelier);
     background-image: none;
   }
   .dark body {
+    color: var(--color-ivory);
     background-color: var(--color-navy-deep);
     background-image: none;
   }
@@ -583,7 +640,7 @@
   }
 
   * {
-    @apply border-border;
+    border-color: var(--color-border);
   }
 
   /* 🔠 Display font helper */

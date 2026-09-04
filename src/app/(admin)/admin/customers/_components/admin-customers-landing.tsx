@@ -20,7 +20,11 @@ import {
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/use-pagination";
 import type { AdminCustomer } from "@/types";
-import { removeCustomerAction, setCustomerStatusAction } from "../_lib/actions";
+import {
+  promoteCustomerAction,
+  removeCustomerAction,
+  setCustomerStatusAction,
+} from "../_lib/actions";
 import { buildCustomerColumns } from "./customer-columns";
 
 const PER_PAGE = 8;
@@ -112,9 +116,23 @@ export function AdminCustomersLanding({
     });
   }
 
+  function promote(customer: AdminCustomer) {
+    startTransition(async () => {
+      const result = await promoteCustomerAction(customer.id);
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+      toast.success("دسترسیِ ادمین اعطا شد ✨", {
+        description: `${customer.firstName} ${customer.lastName}`,
+      });
+    });
+  }
+
   const cols = buildCustomerColumns({
     onToggleStatus: toggleStatus,
     onRemove: remove,
+    onPromote: promote,
   });
 
   return (

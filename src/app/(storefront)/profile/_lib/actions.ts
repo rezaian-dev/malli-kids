@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/session";
 import { splitName } from "@/lib/auth/user";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { rateLimit } from "@/lib/rate-limit";
@@ -17,6 +18,7 @@ import {
 } from "@/lib/shop/tickets";
 import type { AdminOrder } from "@/types";
 import {
+  ADDRESS_MAX_LEN,
   AVATAR_MAX_BYTES,
   reverseGeocodeSchema,
   updateAccountSchema,
@@ -32,12 +34,12 @@ const AUTH_ERROR = "برای این کار باید وارد حساب‌تان �
 // 🔐 Every action re-checks the real session server-side — the client never
 // gets to say whose profile it's editing.
 async function requireUserId() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   return session?.user.id ?? null;
 }
 
 async function requireSessionUser() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session?.user) return null;
   return { id: session.user.id, name: session.user.name };
 }
@@ -64,6 +66,60 @@ export async function updateAccountAction(
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
   }
+}
+
+// 📐 Biggest → smallest. A level's first present key wins; `essential`
+// levels are never dropped for length (state/city/road/house number are
+// the whole point of the address), the rest go first when trimming, finest
+// (`neighbourhood`) before coarsest (`county`) — see `formatAddress`.
+const ADDRESS_LEVELS = [
+  { keys: ["state"], essential: true },
+  { keys: ["county"], essential: false },
+  { keys: ["city", "town", "village"], essential: true },
+  { keys: ["city_district", "borough"], essential: false },
+  { keys: ["suburb"], essential: false },
+  { keys: ["neighbourhood", "quarter"], essential: false },
+  { keys: ["road"], essential: true },
+  { keys: ["house_number"], essential: true },
+] as const satisfies readonly { keys: readonly string[]; essential: boolean }[];
+
+/** 🧭 Nominatim's own `display_name` reads smallest → biggest (street first,
+ *  country last), tacks the postal code on as its own segment, and — for a
+ *  point inside a capital like Tehran — repeats the same city name once per
+ *  administrative level (`state`/`county`/`city` are all literally "تهران"),
+ *  which blew well past the address field's 160-char cap and read like a
+ *  stutter. This instead builds the text from the structured `address`
+ *  fields (`addressdetails=1`), province → … → house number: a value that
+ *  repeats one already used higher up is folded out, and if it's still too
+ *  long the most granular optional levels (neighbourhood/suburb/district)
+ *  are dropped first, before falling back to a hard cut. */
+function formatAddress(
+  displayName: string,
+  address: Record<string, string> | undefined,
+): string {
+  if (!address) return displayName.trim();
+
+  const seen = new Set<string>();
+  const parts = ADDRESS_LEVELS.map((level) => {
+    const value = level.keys.map((k) => address[k]).find(Boolean)?.trim();
+    if (!value || seen.has(value)) return null;
+    seen.add(value);
+    return { value, essential: level.essential };
+  }).filter((p): p is { value: string; essential: boolean } => p !== null);
+
+  const join = (list: typeof parts) => list.map((p) => p.value).join("، ");
+
+  // ✂️ Drop optional parts finest-first (from the tail, since the array is
+  // biggest → smallest) until it fits, but never touch the essential ones.
+  let trimmed = parts;
+  while (join(trimmed).length > ADDRESS_MAX_LEN) {
+    const i = trimmed.map((p) => p.essential).lastIndexOf(false);
+    if (i === -1) break;
+    trimmed = [...trimmed.slice(0, i), ...trimmed.slice(i + 1)];
+  }
+
+  const text = join(trimmed);
+  return text.length > ADDRESS_MAX_LEN ? text.slice(0, ADDRESS_MAX_LEN) : text;
 }
 
 /** 🗺️ Turns a map pin into a text address — called by `AddressMapField`
@@ -106,6 +162,7 @@ export async function reverseGeocodeAction(
     );
     const data = (await res.json().catch(() => null)) as {
       display_name?: string;
+      address?: Record<string, string>;
     } | null;
     if (!res.ok || !data?.display_name) {
       return {
@@ -113,7 +170,10 @@ export async function reverseGeocodeAction(
         error: "آدرس این نقطه پیدا نشد؛ کمی نقشه را جابه‌جا کنید.",
       };
     }
-    return { ok: true, data: { address: data.display_name } };
+    return {
+      ok: true,
+      data: { address: formatAddress(data.display_name, data.address) },
+    };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
   }

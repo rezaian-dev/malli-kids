@@ -21,7 +21,7 @@ export function ReviewStars({
           key={i}
           className={cn(
             className,
-            i < n ? "fill-gold text-gold" : "text-navy/15 dark:text-wheat/25",
+            i < n ? "fill-gold text-gold" : "text-navy/15 dark:text-wheat/70",
           )}
         />
       ))}

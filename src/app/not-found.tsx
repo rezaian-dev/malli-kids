@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { PackageSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
+// 🎨 This fallback can render outside the `(storefront)` route group's own
+// layout (no closer `not-found.tsx` matched), so it needs its own Tailwind
+// utility-class output rather than relying on that layout's `storefront.css`
+// import having already run.
+import "./storefront.css";
 
 // 🧭 Global 404 — the last resort when no closer not-found.tsx matches.
 export default function NotFound() {

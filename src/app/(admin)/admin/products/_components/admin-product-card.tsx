@@ -54,7 +54,7 @@ export function AdminProductCard({
             <span
               className={cn(
                 "inline-flex shrink-0 items-center gap-0.5 text-[9px] font-black",
-                "text-navy/45",
+                "text-navy/70",
                 "dark:text-wheat",
               )}
             >
@@ -74,12 +74,12 @@ export function AdminProductCard({
           <div className="mt-1 flex flex-wrap items-baseline gap-1.5">
             <p className="text-navy dark:text-ivory text-xs font-black">
               {formatToman(product.price)}{" "}
-              <span className="text-navy/45 dark:text-wheat text-[9px]">
+              <span className="text-navy/70 dark:text-wheat text-[9px]">
                 تومان
               </span>
             </p>
             {product.old ? (
-              <del className="text-navy/35 dark:text-wheat/50 text-[9px]">
+              <del className="text-navy/70 dark:text-wheat/70 text-[9px]">
                 {formatToman(product.old)}
               </del>
             ) : null}

@@ -14,19 +14,9 @@ export const RE = {
   mobile: /^09\d{9}$/,
   tel: /^0\d{2,3}\d{7,8}$/,
   email: /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/,
-  nationalId: /^\d{10}$/,
+  postalCode: /^\d{10}$/,
   code: /^[A-Za-z0-9_-]{4,16}$/,
 } as const;
-
-export function isIranianNationalId(input: string): boolean {
-  const code = toEnDigits(input).trim();
-  if (!/^\d{10}$/.test(code) || /^(\d)\1{9}$/.test(code)) return false;
-  const d = Number(code[9]);
-  let sum = 0;
-  for (let i = 0; i < 9; i++) sum += Number(code[i]) * (10 - i);
-  const r = sum % 11;
-  return r < 2 ? d === r : d === 11 - r;
-}
 
 export const fa = {
   required: (label: string) => `${label} را وارد کنید`,
@@ -37,7 +27,7 @@ export const fa = {
   number: "عددِ معتبر وارد کنید",
   mobile: "شمارهٔ موبایل ۱۱ رقمی و با ۰۹ شروع می‌شود",
   email: "ایمیل را کامل وارد کنید (مثل name@mail.com)",
-  nationalId: "کد ملی ۱۰ رقمی و معتبر وارد کنید",
+  postalCode: "کد پستی ۱۰ رقمی وارد کنید",
   jalali: "تاریخ شمسی را کامل بنویسید؛ ماه ۰۱ تا ۱۲ و روز تا ۳۱",
   code: "فقط حروف و عدد لاتین، بین ۴ تا ۱۶ نویسه",
   range: (from: number, to: number) =>
@@ -99,11 +89,8 @@ export const emailOrMobile = (label = "ایمیل یا موبایل") =>
       "ایمیل یا شمارهٔ موبایلِ ۰۹ را وارد کنید",
     );
 
-export const nationalId = () =>
-  optionalPattern(
-    (v) => RE.nationalId.test(toEnDigits(v)) && isIranianNationalId(v),
-    fa.nationalId,
-  );
+export const postalCode = () =>
+  optionalPattern((v) => RE.postalCode.test(toEnDigits(v)), fa.postalCode);
 
 export const amount = (
   label: string,

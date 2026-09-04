@@ -1,6 +1,7 @@
 import {
   Ban,
   CircleCheckBig,
+  Crown,
   Mail,
   Phone,
   ShieldCheck,
@@ -17,9 +18,11 @@ import type { AdminCustomer } from "@/types";
 export function buildCustomerColumns({
   onToggleStatus,
   onRemove,
+  onPromote,
 }: {
   onToggleStatus: (customer: AdminCustomer) => void;
   onRemove: (id: string) => void;
+  onPromote: (customer: AdminCustomer) => void;
 }): AdminCol<AdminCustomer>[] {
   return [
     {
@@ -52,7 +55,7 @@ export function buildCustomerColumns({
             <p
               className={cn(
                 "mt-0.5 truncate text-[10px] font-bold",
-                "text-navy/40",
+                "text-navy/70",
                 "dark:text-wheat",
               )}
             >
@@ -105,7 +108,7 @@ export function buildCustomerColumns({
           <span
             className={cn(
               "flex w-max max-w-full items-center gap-1.5 text-[11px] font-bold",
-              "text-navy/65",
+              "text-navy/70",
               "dark:text-wheat",
             )}
             dir="ltr"
@@ -169,7 +172,7 @@ export function buildCustomerColumns({
     {
       key: "actions",
       title: "عملیات",
-      width: "6.5rem",
+      width: "9.5rem",
       align: "end",
       renderMobile: (customer) =>
         customer.role === "admin" ? (
@@ -184,6 +187,20 @@ export function buildCustomerColumns({
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                onPromote(customer);
+              }}
+              className={cn(
+                "col-span-2 inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl border px-2 text-[10px] font-black transition",
+                "border-gold/40 text-gold-deep hover:border-gold hover:bg-gold/10",
+                "dark:border-gold/30 dark:text-gold-soft",
+              )}
+            >
+              <Crown className="size-3.5" /> ارتقا به ادمین
+            </button>
             <button
               type="button"
               onClick={(event) => {
@@ -232,6 +249,22 @@ export function buildCustomerColumns({
           <div className="flex items-center justify-end gap-1.5">
             <button
               type="button"
+              title="ارتقا به ادمین"
+              aria-label="ارتقا به ادمین"
+              onClick={(event) => {
+                event.stopPropagation();
+                onPromote(customer);
+              }}
+              className={cn(
+                "grid size-9 shrink-0 place-items-center rounded-xl border transition",
+                "border-navy/10 text-navy/70 hover:border-gold hover:text-gold-deep",
+                "dark:border-gold/20 dark:text-wheat",
+              )}
+            >
+              <Crown className="size-4" />
+            </button>
+            <button
+              type="button"
               title={
                 (customer.status ?? "فعال") === "فعال"
                   ? "مسدودکردن"
@@ -248,7 +281,7 @@ export function buildCustomerColumns({
               }}
               className={cn(
                 "grid size-9 shrink-0 place-items-center rounded-xl border transition",
-                "border-navy/10 text-navy/60 hover:border-gold hover:text-gold-deep",
+                "border-navy/10 text-navy/70 hover:border-gold hover:text-gold-deep",
                 "dark:border-gold/20 dark:text-wheat",
               )}
             >

@@ -52,7 +52,7 @@ export function AdminHeaderNotifications({
           type="button"
           className={cn(
             "relative hidden size-10 shrink-0 place-items-center rounded-xl border transition md:grid",
-            "border-navy/8 text-navy/65 hover:border-gold/35 hover:text-gold bg-white/60",
+            "border-navy/8 text-navy/70 hover:border-gold/35 hover:text-gold bg-white/60",
             "dark:border-gold/14 dark:text-wheat/70 dark:bg-white/[0.035]",
           )}
           aria-label={`${toFaDigits(total)} اعلان مدیریتی`}
@@ -114,8 +114,8 @@ export function AdminHeaderNotifications({
                 <span
                   className={cn(
                     "mt-0.5 block truncate text-[9px] font-bold",
-                    "text-navy/38",
-                    "dark:text-wheat/48",
+                    "text-navy/70",
+                    "dark:text-wheat/70",
                   )}
                 >
                   {notice.hint}

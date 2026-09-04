@@ -300,7 +300,7 @@ export function AdminTable<T extends { id: string | number }>({
                         <dt
                           className={cn(
                             "mb-0.5 text-[8px] leading-4 font-black max-[340px]:mb-0 max-[340px]:flex-none",
-                            "text-navy/52",
+                            "text-navy/70",
                             "dark:text-wheat/72",
                           )}
                         >
@@ -349,7 +349,7 @@ export function AdminTable<T extends { id: string | number }>({
             >
               <Inbox className="size-5" />
             </span>
-            <p className="text-navy/55 dark:text-wheat mt-3 text-sm font-black">
+            <p className="text-navy/70 dark:text-wheat mt-3 text-sm font-black">
               {empty}
             </p>
           </div>

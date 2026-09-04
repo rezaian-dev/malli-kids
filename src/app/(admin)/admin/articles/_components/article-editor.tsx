@@ -21,7 +21,7 @@ const RichEditor = dynamic(
       <div
         className={cn(
           "grid min-h-88 place-items-center rounded-3xl border border-dashed text-sm font-bold",
-          "border-navy/15 text-navy/40",
+          "border-navy/15 text-navy/70",
           "dark:border-gold/25 dark:text-wheat",
         )}
       >
@@ -39,7 +39,7 @@ const TAGS = [
   "مجله",
 ];
 
-const FIELD_LABEL = "text-navy/50 dark:text-wheat text-[11px] font-black";
+const FIELD_LABEL = "text-navy/70 dark:text-wheat text-[11px] font-black";
 
 export type ArticleDraft = {
   slug: string | null;
@@ -175,7 +175,7 @@ export function ArticleEditor({
                     "rounded-full px-3 py-1.5 text-[11px] font-black transition",
                     draft.tag === t
                       ? "bg-navy text-ivory dark:bg-gold dark:text-navy-deep"
-                      : "border-navy/12 text-navy/65 hover:border-gold/50 dark:border-gold/25 dark:bg-navy-mid dark:text-wheat border bg-white",
+                      : "border-navy/12 text-navy/70 hover:border-gold/50 dark:border-gold/25 dark:bg-navy-mid dark:text-wheat border bg-white",
                   )}
                 >
                   {t}
@@ -242,7 +242,7 @@ export function ArticleEditor({
           <label className="border-navy/8 dark:border-gold/20 flex items-center justify-between rounded-2xl border px-3 py-3">
             <span className="text-sm font-black">
               انتشار{" "}
-              <span className="text-navy/45 dark:text-wheat text-[11px] font-bold">
+              <span className="text-navy/70 dark:text-wheat text-[11px] font-bold">
                 {draft.published ? "در مجله دیده می‌شود" : "فقط پیش‌نویس"}
               </span>
             </span>

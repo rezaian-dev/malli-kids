@@ -26,7 +26,7 @@ export function CartShippingProgress({
             تا ارسالِ رایگان
           </span>
         )}
-        <span className="text-navy/70 dark:text-wheat/60 ms-auto text-[10px] font-bold">
+        <span className="text-navy/70 dark:text-wheat/70 ms-auto text-[10px] font-bold">
           {toFaDigits(progress)}٪
         </span>
       </div>

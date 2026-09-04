@@ -1,0 +1,26 @@
+/* 🛍️ Tailwind entry for the storefront route group only — see `admin.css`
+   for the counterpart. Each route group gets its own Tailwind compilation
+   (rather than one project-wide `globals.css`) so a storefront page's CSS
+   doesn't carry the admin dashboard's tables/charts/rich-editor utility
+   classes, and vice versa — that shared-bundle CSS was ~330KB of mostly
+   unused-per-page rules (see the `@source not` below), enough to be a
+   render-blocking Lighthouse Performance hit on every single page. Imported
+   from `(storefront)/layout.tsx` (and the root `not-found.tsx`, which is
+   customer-styled) — never import this from an admin file. */
+@import "tailwindcss";
+@import "tw-animate-css";
+/* 🗺️ Leaflet's own stylesheet — needed by the profile address map
+   (`address-map-field.tsx`); only the storefront ever renders it. */
+@import "leaflet/dist/leaflet.css";
+@import "./theme.css";
+
+/* 🚫 `src/app/(admin)/**` and the admin-only component tree are never
+   imported from storefront code (verified: no cross-imports either way) —
+   excluding them from this entry's scan keeps admin-exclusive utility
+   classes (dense data tables, the Tiptap editor, the sales chart, arbitrary
+   `text-[9px]`/`shadow-[...]` values found nowhere else) out of every
+   storefront page's CSS. Everything else (shared `components/ui`, `form`,
+   `layout`, `shared`, `product`, `auth`, all of `lib`) stays on the default
+   full-project scan, so nothing shared silently goes missing. */
+@source not "./(admin)";
+@source not "../components/admin";

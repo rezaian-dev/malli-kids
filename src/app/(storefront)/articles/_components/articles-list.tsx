@@ -35,7 +35,7 @@ export function ArticlesList({ initial: articles }: { initial: JournalArticle[] 
             /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin article covers can be raw data URLs. */
             <img
               src={a.cover}
-              alt=""
+              alt={a.title}
               width={160}
               height={128}
               className="h-24 w-24 shrink-0 rounded-2xl object-cover sm:h-32 sm:w-40"

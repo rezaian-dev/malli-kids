@@ -19,7 +19,7 @@ function BannerField({
 }) {
   return (
     <div className="min-w-0">
-      <Label className="text-navy/50 dark:text-wheat/75 text-[10px] font-black">
+      <Label className="text-navy/70 dark:text-wheat/75 text-[10px] font-black">
         {label}
       </Label>
       <Input
@@ -75,7 +75,7 @@ export function BannerCard({
                 </span>
               ) : null}
             </div>
-            <p className="text-navy/45 dark:text-wheat mt-2 text-[10px] font-bold">
+            <p className="text-navy/70 dark:text-wheat mt-2 text-[10px] font-bold">
               بازه نمایش: {banner.from} تا {banner.to}
             </p>
           </div>
@@ -87,7 +87,7 @@ export function BannerCard({
             )}
           >
             <label className="flex items-center gap-2 text-[10px] font-black">
-              <span className="text-navy/55 dark:text-wheat">پین</span>
+              <span className="text-navy/70 dark:text-wheat">پین</span>
               <Switch
                 checked={banner.pinned}
                 onCheckedChange={(value) => onUpdate({ pinned: value })}

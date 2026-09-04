@@ -15,8 +15,16 @@ const RATE_ERROR =
 // require a real session (never trust a client-claimed id) and throttle it,
 // instead of leaving the route open to anyone on the internet.
 async function requireUserId(req: NextRequest) {
-  const session = await auth.api.getSession({ headers: req.headers });
-  return session?.user.id ?? null;
+  try {
+    // 🚫 A banned user's session throws (Better Auth's `admin()` plugin
+    // hooks `/get-session` to reject it) rather than resolving to "no
+    // session" — caught here so they get the same 401 as any signed-out
+    // caller instead of this route 500ing on them.
+    const session = await auth.api.getSession({ headers: req.headers });
+    return session?.user.id ?? null;
+  } catch {
+    return null;
+  }
 }
 
 // 🔀 Pick the engine with one env var. Default = free Hugging Face Space (no key).

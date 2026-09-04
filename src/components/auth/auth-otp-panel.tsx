@@ -188,7 +188,7 @@ export function OtpLoginPanel() {
         className="space-y-3.5"
         notify
       >
-        <p className="text-navy/70 dark:text-linen/60 -mt-1 text-[13px] leading-6">
+        <p className="text-navy/70 dark:text-linen/70 -mt-1 text-[13px] leading-6">
           شمارهٔ موبایل‌تان را وارد کنید تا کدِ یکبارمصرف برایتان پیامک شود.
         </p>
 
@@ -233,7 +233,7 @@ export function OtpLoginPanel() {
         </p>
       ) : null}
 
-      <p className="text-navy/70 dark:text-linen/60 text-[13px] leading-6">
+      <p className="text-navy/70 dark:text-linen/70 text-[13px] leading-6">
         کدِ {toFaDigits(OTP_LEN)} رقمیِ ارسال‌شده به{" "}
         <span dir="ltr" className="text-gold font-black">
           {phone}
@@ -258,7 +258,7 @@ export function OtpLoginPanel() {
 
       <div className="flex items-center justify-between text-[11px] font-bold">
         {cd.sec > 0 ? (
-          <span className="text-navy/70 dark:text-linen/60">
+          <span className="text-navy/70 dark:text-linen/70">
             ارسالِ دوباره تا {toFaDigits(cd.sec)} ثانیه
           </span>
         ) : (
@@ -274,7 +274,7 @@ export function OtpLoginPanel() {
         <Button
           type="button"
           variant="link"
-          className="text-navy/70 dark:text-linen/60 h-auto p-0 text-[11px] font-bold"
+          className="text-navy/70 dark:text-linen/70 h-auto p-0 text-[11px] font-bold"
           onClick={() => setStep("phone")}
         >
           بازگشت <ArrowRight className="size-3.5" />

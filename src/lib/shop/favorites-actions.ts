@@ -1,7 +1,6 @@
 "use server";
 
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/session";
 import { getFavoriteIds, toggleFavorite } from "./favorites";
 import type { ActionResult } from "@/lib/action-result";
 
@@ -9,7 +8,7 @@ const AUTH_ERROR = "برای این کار باید وارد حساب‌تان �
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 
 async function requireUserId() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   return session?.user.id ?? null;
 }
 

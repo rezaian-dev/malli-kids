@@ -14,7 +14,11 @@ import { ensureSeeded } from "@/lib/db/seed";
 import { getCampaign } from "@/lib/shop/settings";
 import { getActiveBanner } from "@/lib/shop/banners";
 import { cn } from "@/lib/utils";
-import "./globals.css";
+// 🧱 Shared tokens/base only — no Tailwind utility-class generation here.
+// `(storefront)/layout.tsx` and `(admin)/layout.tsx` each import their own
+// route-group-scoped stylesheet (`storefront.css`/`admin.css`) instead of a
+// single project-wide `globals.css` — see the comment atop `theme.css`.
+import "./theme.css";
 
 // 🪶 Single variable-font files replace the old per-weight woff2 sets: one
 // download (~108KB) covers the whole 100–900 axis instead of up to six

@@ -1,0 +1,13 @@
+/* 🎛️ Tailwind entry for the admin route group only — see `storefront.css`
+   for the counterpart and the full rationale. Imported from
+   `(admin)/layout.tsx` only. */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./theme.css";
+
+/* 🚫 `src/app/(storefront)/**` is never imported from admin code (verified:
+   no cross-imports either way) — excluding it keeps the storefront's own
+   large surface (hero/marquee/carousel sections, product cards, the whole
+   public site) out of every admin page's CSS. Shared component/lib
+   directories stay on the default full-project scan. */
+@source not "./(storefront)";

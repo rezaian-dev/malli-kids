@@ -85,7 +85,7 @@ export function ReviewCard({
                       )}
                     />
                   ))}
-                  <span className="text-navy/45 dark:text-wheat ms-1.5 text-[9px] font-black">
+                  <span className="text-navy/70 dark:text-wheat ms-1.5 text-[9px] font-black">
                     {toFaDigits(review.rate)} از ۵
                   </span>
                 </div>
@@ -101,7 +101,7 @@ export function ReviewCard({
             >
               “{review.text}”
             </blockquote>
-            <p className="text-navy/35 dark:text-wheat/55 mt-2 text-[9px] font-bold">
+            <p className="text-navy/70 dark:text-wheat/70 mt-2 text-[9px] font-bold">
               ثبت‌شده در {review.date}
             </p>
           </div>
@@ -113,7 +113,7 @@ export function ReviewCard({
               className={cn(
                 ACTION_BUTTON_BASE,
                 review.visible
-                  ? "border-navy/10 text-navy/65 hover:border-gold dark:border-gold/18 dark:text-wheat border"
+                  ? "border-navy/10 text-navy/70 hover:border-gold dark:border-gold/18 dark:text-wheat border"
                   : "bg-emerald-500 text-white shadow-[0_10px_24px_-15px_rgba(16,185,129,.8)] hover:bg-emerald-600",
               )}
             >

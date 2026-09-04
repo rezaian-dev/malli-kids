@@ -72,7 +72,7 @@ function StrengthMeter({ value }: { value: string }) {
           />
         ))}
       </div>
-      <span className="text-navy/60 dark:text-linen/55 text-[11px] font-bold">
+      <span className="text-navy/70 dark:text-linen/70 text-[11px] font-bold">
         {label}
       </span>
     </div>
@@ -90,7 +90,7 @@ function InvalidCard() {
         <h1 className="text-navy dark:text-ivory text-lg font-black">
           لینک نامعتبر است
         </h1>
-        <p className="text-navy/70 dark:text-linen/60 text-sm leading-7">
+        <p className="text-navy/70 dark:text-linen/70 text-sm leading-7">
           این لینکِ بازنشانی منقضی شده یا قبلاً استفاده شده. از صفحهٔ ورود، دوباره
           «فراموشیِ رمز عبور» را بزنید.
         </p>
@@ -116,7 +116,7 @@ function SuccessCard() {
         <h1 className="text-navy dark:text-ivory text-lg font-black">
           رمز عبور تغییر کرد
         </h1>
-        <p className="text-navy/70 dark:text-linen/60 text-sm leading-7">
+        <p className="text-navy/70 dark:text-linen/70 text-sm leading-7">
           می‌توانید با رمزِ جدید وارد حساب‌تان شوید.
         </p>
         <Button
@@ -185,7 +185,7 @@ export function ResetPasswordView({
           <h1 className="text-navy dark:text-ivory text-lg font-black">
             تعیینِ رمز جدید
           </h1>
-          <p className="text-navy/70 dark:text-linen/60 mt-1 text-sm">
+          <p className="text-navy/70 dark:text-linen/70 mt-1 text-sm">
             رمزِ تازه‌ای برای حساب‌تان انتخاب کنید.
           </p>
         </div>

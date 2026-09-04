@@ -1,5 +1,6 @@
 "use client";
 
+import "@/lib/zod-config";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
@@ -294,8 +295,8 @@ export function AdminShell({
                 <p
                   className={cn(
                     "hidden truncate text-[9px] font-bold sm:block",
-                    "text-navy/40",
-                    "dark:text-wheat/55",
+                    "text-navy/70",
+                    "dark:text-wheat/70",
                   )}
                 >
                   فضای عملیاتی ملی کیدز

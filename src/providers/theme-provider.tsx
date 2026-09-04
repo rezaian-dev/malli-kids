@@ -8,7 +8,7 @@ import { STORAGE } from "@/lib/constants";
 
 // 🌗 Thin next-themes wrapper — the single place the app's dark-mode defaults
 // live. `attribute="class"` toggles Tailwind's `.dark` class on `<html>`
-// (see `@custom-variant dark` in globals.css); next-themes injects its own
+// (see `@custom-variant dark` in theme.css); next-themes injects its own
 // pre-paint script, so there's no flash and no manual cookie/localStorage
 // plumbing to maintain here.
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {

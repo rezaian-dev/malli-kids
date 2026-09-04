@@ -45,6 +45,41 @@ export async function setCustomerStatusAction(
   }
 }
 
+/** 👑 Promotes a real customer to admin (`role: "admin"`, via Better Auth's
+ *  `admin()` plugin) — the missing half of `guardTarget`'s protection below:
+ *  that function only ever *shields* an existing admin from being banned/
+ *  removed, nothing in this file could ever create one before this action.
+ *  One-way on purpose (no demote here) — an admin who needs their own
+ *  access revoked is a decision for whoever controls `ADMIN_EMAILS`/the
+ *  database directly, not a button anyone with console access can click on
+ *  another admin (including themselves). */
+export async function promoteCustomerAction(userId: string): Promise<ActionResult> {
+  const admin = await requireAdmin();
+  if (!admin) return { ok: false, error: AUTH_ERROR };
+
+  try {
+    const target = await auth.api
+      .listUsers({
+        headers: await headers(),
+        query: { filterField: "id", filterValue: userId, filterOperator: "eq" },
+      })
+      .then((result) => result.users[0]);
+    if (!target) return { ok: false, error: FALLBACK_ERROR };
+    if (target.role === "admin")
+      return { ok: false, error: "این کاربر همین حالا ادمین است." };
+
+    await auth.api.setRole({
+      headers: await headers(),
+      body: { userId, role: "admin" },
+    });
+
+    revalidatePath("/admin/customers");
+    return { ok: true };
+  } catch {
+    return { ok: false, error: FALLBACK_ERROR };
+  }
+}
+
 export async function removeCustomerAction(userId: string): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };

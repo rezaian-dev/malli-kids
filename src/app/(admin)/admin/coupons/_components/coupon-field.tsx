@@ -21,7 +21,7 @@ export function CouponField({
   return (
     <div className="space-y-1.5">
       <label
-        className="text-navy/55 dark:text-wheat text-xs font-black"
+        className="text-navy/70 dark:text-wheat text-xs font-black"
         htmlFor={id}
       >
         {label}

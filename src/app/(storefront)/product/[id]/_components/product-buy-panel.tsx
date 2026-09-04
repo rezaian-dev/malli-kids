@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   BadgeCheck,
   Minus,
@@ -16,6 +17,8 @@ import {
 } from "lucide-react";
 import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
+import { toast } from "@/lib/toast";
+import { getMissingShippingFields } from "@/lib/shop/shipping";
 import { useStore } from "@/providers/store-provider";
 import { Button } from "@/components/ui/button";
 import { useLiveProduct } from "./product-live-context";
@@ -44,6 +47,7 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
   const product = useLiveProduct(seed);
   const { addToCart, showToast, user, setAuthOpen, campaign, priceOf } =
     useStore();
+  const router = useRouter();
   const [size, setSize] = useState("۹۸");
   const [qty, setQty] = useState(1);
   const [checkout, setCheckout] = useState(false);
@@ -57,6 +61,20 @@ export function ProductBuyPanel({ product: seed }: { product: Product }) {
       showToast("برای ثبت سفارش اول وارد شوید");
       return;
     }
+
+    // 📦 A COD order with no phone/address/postal code is undeliverable —
+    // nudge toward the profile *before* the checkout dialog opens, but
+    // don't block it: the dialog itself repeats these fields inline, so
+    // filling them in right there works just as well as visiting the
+    // profile page first.
+    const missing = getMissingShippingFields(user);
+    if (missing.length) {
+      toast.warning(`برای ارسالِ درست و بدون تأخیر، ${missing.join("، ")} را در پروفایل‌تان تکمیل کنید`, {
+        description: "می‌توانید همین‌جا هم در فرمِ سفارش وارد کنید.",
+        action: { label: "تکمیل پروفایل", onClick: () => router.push("/profile") },
+      });
+    }
+
     setCheckout(true);
   }
 

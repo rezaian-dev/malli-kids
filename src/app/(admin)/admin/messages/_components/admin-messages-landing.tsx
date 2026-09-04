@@ -188,7 +188,7 @@ export function AdminMessagesLanding({
               ? "هنوز تیکتی ثبت نشده"
               : "تیکتی مطابق فیلترها پیدا نشد"}
           </p>
-          <p className="text-navy/50 dark:text-wheat mx-auto mt-1 max-w-sm text-xs leading-6">
+          <p className="text-navy/70 dark:text-wheat mx-auto mt-1 max-w-sm text-xs leading-6">
             {tickets.length === 0
               ? "تیکت‌های ساخته‌شده در پنل کاربران، همراه با وضعیت پاسخ، اینجا نمایش داده می‌شوند."
               : "فیلتر وضعیت یا عبارت جستجو را تغییر دهید."}

@@ -7,6 +7,7 @@ export const checkoutSchema = z.object({
   city: z.string().trim().min(2).max(60),
   address: z.string().trim().min(10).max(300),
   phone: z.string().regex(/^\d{11}$/),
+  postalCode: z.string().regex(/^\d{10}$/),
   couponCode: z.string().trim().max(20).optional(),
 });
 
