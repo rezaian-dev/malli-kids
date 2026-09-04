@@ -3,13 +3,14 @@ import { Suspense } from "react";
 
 import { JsonLd } from "@/components/shared/json-ld";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getSession } from "@/lib/auth/session";
 import { breadcrumbSchema, productSchema } from "@/lib/seo";
+import { getVisibleReviewsForProduct, hasPurchased } from "@/lib/shop/reviews";
 import { cn, shell } from "@/lib/utils";
 import { wash } from "@/components/shared/section-wash";
 import type { Product } from "@/types";
 import { ProductBuyPanel } from "./product-buy-panel";
 import { ProductDetailsMount } from "./product-details-mount";
-import { LiveName, ProductLiveProvider } from "./product-live-context";
 import { ProductRelated } from "./product-related";
 import { pdpCard } from "../_lib/product-chrome";
 
@@ -28,13 +29,21 @@ function RelatedFallback() {
   );
 }
 
-export function ProductDetailLanding({
+export async function ProductDetailLanding({
   product,
   canonicalPath,
 }: {
   product: Product;
   canonicalPath: string;
 }) {
+  const [reviews, session] = await Promise.all([
+    getVisibleReviewsForProduct(product.name),
+    getSession(),
+  ]);
+  const canReview = session?.user
+    ? await hasPurchased(session.user.id, product.id)
+    : false;
+
   return (
     <>
       <JsonLd
@@ -45,51 +54,53 @@ export function ProductDetailLanding({
         ])}
       />
       <JsonLd data={productSchema(product)} />
-      <ProductLiveProvider product={product}>
-        <div className={`${wash.silk} pb-2`}>
-          <div className={shell}>
-            <nav
-              aria-label="مسیر محصول"
-              className={`${pdpCard} mb-4 px-3 py-1.5 sm:mb-8 sm:px-5`}
+      <div className={`${wash.silk} pb-2`}>
+        <div className={shell}>
+          <nav
+            aria-label="مسیر محصول"
+            className={`${pdpCard} mb-4 px-3 py-1.5 sm:mb-8 sm:px-5`}
+          >
+            <ol
+              className={cn(
+                "flex flex-wrap items-center gap-1.5 text-xs font-bold",
+                "text-navy/70",
+                "dark:text-wheat",
+              )}
             >
-              <ol
-                className={cn(
-                  "flex flex-wrap items-center gap-1.5 text-xs font-bold",
-                  "text-navy/70",
-                  "dark:text-wheat",
-                )}
-              >
-                <li>
-                  <Link href="/" className={CRUMB_LINK}>
-                    خانه
-                  </Link>
-                </li>
-                <li aria-hidden className="text-gold">
-                  /
-                </li>
-                <li>
-                  <Link href="/shop" className={CRUMB_LINK}>
-                    فروشگاه
-                  </Link>
-                </li>
-                <li aria-hidden className="text-gold">
-                  /
-                </li>
-                <li className="text-navy/70 dark:text-ivory/80">
-                  <LiveName product={product} />
-                </li>
-              </ol>
-            </nav>
+              <li>
+                <Link href="/" className={CRUMB_LINK}>
+                  خانه
+                </Link>
+              </li>
+              <li aria-hidden className="text-gold">
+                /
+              </li>
+              <li>
+                <Link href="/shop" className={CRUMB_LINK}>
+                  فروشگاه
+                </Link>
+              </li>
+              <li aria-hidden className="text-gold">
+                /
+              </li>
+              <li className="text-navy/70 dark:text-ivory/80">
+                {product.name}
+              </li>
+            </ol>
+          </nav>
 
-            <ProductBuyPanel product={product} />
-            <ProductDetailsMount product={product} />
+          <ProductBuyPanel product={product} />
+          <ProductDetailsMount
+            product={product}
+            reviews={reviews}
+            canReview={canReview}
+          />
 
-            <Suspense fallback={<RelatedFallback />}>
-              <ProductRelated cat={product.cat} excludeId={product.id} />
-            </Suspense>
-          </div>
+          <Suspense fallback={<RelatedFallback />}>
+            <ProductRelated cat={product.cat} excludeId={product.id} />
+          </Suspense>
         </div>
-      </ProductLiveProvider>
+      </div>
     </>
   );
 }

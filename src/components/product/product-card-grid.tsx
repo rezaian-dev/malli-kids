@@ -6,6 +6,7 @@ import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { AddToCartButton } from "./add-to-cart-button";
 import { FavButton } from "./fav-button";
+import { CART, VIEW } from "./card-styles";
 import { cn } from "@/lib/utils";
 
 const BADGE: Record<string, string> = {
@@ -14,16 +15,6 @@ const BADGE: Record<string, string> = {
   "منتخب مادران": "bg-white text-ink",
 };
 
-const VIEW = cn(
-  "inline-flex items-center justify-center gap-1.5 rounded-xl font-black no-underline transition-all duration-300 hover:-translate-y-0.5",
-  "border-2 border-ink bg-white text-ink hover:bg-ink hover:text-white",
-  "dark:border-ivory dark:bg-transparent dark:text-ivory dark:hover:bg-ivory dark:hover:text-navy-deep",
-);
-const CART = cn(
-  "inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border-0 font-extrabold transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110",
-  "bg-navy text-ivory",
-  "dark:bg-gold dark:text-navy-deep",
-);
 const GRID_SIZES =
   "(max-width: 479px) calc((100vw - 3.75rem) / 2), (max-width: 639px) calc((100vw - 5.5rem) / 2), (max-width: 1023px) calc((100vw - 5.5rem) / 2), (max-width: 1535px) 33vw, 18rem";
 

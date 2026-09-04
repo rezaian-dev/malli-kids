@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { Product } from "@/types";
+import type { AdminReview, Product } from "@/types";
 import { cn } from "@/lib/utils";
 import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
 
@@ -50,6 +50,16 @@ const ProductDetailsTabs = dynamic(
 );
 
 // 📚 Defer below-the-fold product tabs and review logic.
-export function ProductDetailsMount({ product }: { product: Product }) {
-  return <ProductDetailsTabs product={product} />;
+export function ProductDetailsMount({
+  product,
+  reviews,
+  canReview,
+}: {
+  product: Product;
+  reviews: AdminReview[];
+  canReview: boolean;
+}) {
+  return (
+    <ProductDetailsTabs product={product} reviews={reviews} canReview={canReview} />
+  );
 }

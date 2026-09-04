@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { toast } from "@/lib/toast";
-import { useStore } from "@/providers/store-provider";
 import { Button } from "@/components/ui/button";
 import {
   AppForm,
@@ -14,39 +12,29 @@ import {
 } from "@/components/form";
 import { cn } from "@/lib/utils";
 import { Product } from "@/types";
-import {
-  hasPurchasedProductAction,
-  submitReviewAction,
-} from "../_lib/actions";
+import { submitReviewAction } from "../_lib/actions";
 import {
   RATING_STARS,
   reviewDefaults,
   reviewSchema,
 } from "../_lib/product-review-schema";
-import { useLiveProduct } from "./product-live-context";
 
-// ✍️ Review form with lightweight validation.
-export function ProductReviewForm({ product: seed }: { product: Product }) {
-  const product = useLiveProduct(seed);
-  const { user } = useStore();
-  const [purchased, setPurchased] = useState(false);
+// ✍️ Review form with lightweight validation. `canReview` (has this session's
+// user actually purchased this product?) is resolved server-side and passed
+// down as a prop — no client round-trip needed to gate the form.
+export function ProductReviewForm({
+  product,
+  canReview,
+}: {
+  product: Product;
+  canReview: boolean;
+}) {
   const form = useAppForm({
     schema: reviewSchema,
     defaultValues: reviewDefaults,
   });
 
-  useEffect(() => {
-    if (!user) return setPurchased(false);
-    let active = true;
-    hasPurchasedProductAction(product.id).then((value) => {
-      if (active) setPurchased(value);
-    });
-    return () => {
-      active = false;
-    };
-  }, [product.id, user]);
-
-  if (!user || !purchased) {
+  if (!canReview) {
     return (
       <p
         className={cn(

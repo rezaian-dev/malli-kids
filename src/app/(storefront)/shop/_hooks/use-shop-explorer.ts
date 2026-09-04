@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PRICE_CAP, SORTS } from "@/lib/constants";
-import { formatToman } from "@/lib/locale/fa";
 import {
   filterShopProducts,
   toShopHref,
@@ -68,42 +67,18 @@ export function useShopExplorer(
   const page = Math.min(state.page, pages);
   const slice = filtered.slice((page - 1) * perPage, page * perPage);
 
-  const activeChips = [
-    state.cat !== "همه" && {
-      label: state.cat,
-      clear: () => push({ cat: "همه", page: 1 }),
-    },
-    state.season !== "همه" && {
-      label: state.season,
-      clear: () => push({ season: "همه", page: 1 }),
-    },
-    !!state.q && {
-      label: `«${state.q}»`,
-      clear: () => push({ q: "", page: 1 }),
-    },
-    state.stock && {
-      label: "فقط موجود",
-      clear: () => push({ stock: false, page: 1 }),
-    },
-    state.disc && {
-      label: "تخفیف‌دار",
-      clear: () => push({ disc: false, page: 1 }),
-    },
-    state.hot && {
-      label: "پرفروش",
-      clear: () => push({ hot: false, page: 1 }),
-    },
-    state.onlyNew && {
-      label: "جدید",
-      clear: () => push({ onlyNew: false, page: 1 }),
-    },
-    (state.min > 0 || state.max !== PRICE_CAP) && {
-      label: `${formatToman(state.min)} تا ${formatToman(state.max)}`,
-      clear: () => push({ min: 0, max: PRICE_CAP, page: 1 }),
-    },
-  ].filter(Boolean) as { label: string; clear: () => void }[];
-
-  const activeN = activeChips.length;
+  // 🔢 Count of active filters (shown as a badge) — nothing renders these as
+  // removable chips today, so this only needs the count, not chip objects.
+  const activeN = [
+    state.cat !== "همه",
+    state.season !== "همه",
+    !!state.q,
+    state.stock,
+    state.disc,
+    state.hot,
+    state.onlyNew,
+    state.min > 0 || state.max !== PRICE_CAP,
+  ].filter(Boolean).length;
 
   function commitQuery() {
     if (typedQ.length === 1) return;
@@ -140,7 +115,6 @@ export function useShopExplorer(
     slice,
     page,
     pages,
-    activeChips,
     activeN,
     query,
     setQuery,

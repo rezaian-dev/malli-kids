@@ -25,6 +25,7 @@ export function ShopResults({
 }) {
   return (
     <>
+      <h2 className="sr-only">نتایج فروشگاه</h2>
       <div
         className={
           view === "list"

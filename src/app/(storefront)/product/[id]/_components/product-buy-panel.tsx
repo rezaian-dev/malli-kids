@@ -21,7 +21,6 @@ import { toast } from "@/lib/toast";
 import { getMissingShippingFields } from "@/lib/shop/shipping";
 import { useStore } from "@/providers/store-provider";
 import { Button } from "@/components/ui/button";
-import { useLiveProduct } from "./product-live-context";
 import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
 import { ProductReadMore } from "./product-read-more";
 import { ProductCheckoutMount } from "./product-checkout-mount";
@@ -43,8 +42,7 @@ const SHIP_ITEM =
   "border-navy/8 dark:border-gold/20 px-2 py-3.5 text-center not-last:border-e";
 const SHIP_ICON = "text-gold mx-auto mb-1 size-4";
 
-export function ProductBuyPanel({ product: seed }: { product: Product }) {
-  const product = useLiveProduct(seed);
+export function ProductBuyPanel({ product }: { product: Product }) {
   const { addToCart, showToast, user, setAuthOpen, campaign, priceOf } =
     useStore();
   const router = useRouter();

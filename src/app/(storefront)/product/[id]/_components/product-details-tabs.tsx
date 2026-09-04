@@ -1,14 +1,14 @@
 "use client";
 
 import { Ruler, Sparkles } from "lucide-react";
-import type { Product } from "@/types";
+import type { AdminReview, Product } from "@/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { toFaDigits } from "@/lib/locale/fa";
 import { ProductSizeTable } from "./product-size-table";
+import { ProductReadMore } from "./product-read-more";
 import { ProductReviewForm } from "./product-review-form";
 import { ProductReviews } from "./product-reviews";
-import { LiveDesc } from "./product-live-context";
 import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
 
 const SPEC_ITEM = `${pdpWell} p-4`;
@@ -22,8 +22,18 @@ const TRIGGER = cn(
   "dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep",
 );
 
-// 📚 Server-first product tabs with small client leaves.
-export function ProductDetailsTabs({ product }: { product: Product }) {
+// 📚 Deferred, client-only product tabs (mounted via `dynamic(ssr:false)` in
+// `product-details-mount.tsx` for bundle-splitting) — `reviews`/`canReview`
+// arrive as server-fetched props, not client fetches.
+export function ProductDetailsTabs({
+  product,
+  reviews,
+  canReview,
+}: {
+  product: Product;
+  reviews: AdminReview[];
+  canReview: boolean;
+}) {
   return (
     <section className={`${pdpCard} mt-10 overflow-hidden sm:mt-12`}>
       <Tabs defaultValue="info" dir="rtl" className="gap-0">
@@ -75,7 +85,11 @@ export function ProductDetailsTabs({ product }: { product: Product }) {
                   <Sparkles className="text-gold size-4" />
                   معرفی مدل
                 </p>
-                <LiveDesc product={product} />
+                <ProductReadMore
+                  text={product.desc}
+                  lines={4}
+                  className="leading-8"
+                />
                 <p className="mt-3">
                   دوخت ایرانی، پارچه گواهی‌شده و پرو مجازی پیش از خرید.
                 </p>
@@ -115,8 +129,8 @@ export function ProductDetailsTabs({ product }: { product: Product }) {
 
           <TabsContent value="rev" className="mt-0">
             <div className="max-w-3xl space-y-4">
-              <ProductReviews product={product} />
-              <ProductReviewForm product={product} />
+              <ProductReviews product={product} reviews={reviews} />
+              <ProductReviewForm product={product} canReview={canReview} />
             </div>
           </TabsContent>
         </div>

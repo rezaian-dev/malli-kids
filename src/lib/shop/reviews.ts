@@ -16,8 +16,8 @@ function toAdminReview(doc: ReviewDoc & { _id: { toString(): string }; createdAt
   };
 }
 
-/** ✅ Real replacement for `hasPurchasedProductAction`'s old client-side
- *  purchase-history scan — did this user actually buy this product? */
+/** ✅ Did this user actually buy this product? Backs both the PDP's
+ *  server-resolved "write a review" gate and the review-submit action. */
 export async function hasPurchased(userId: string, productId: number): Promise<boolean> {
   await connectMongoose();
   const purchased = await OrderModel.exists({
