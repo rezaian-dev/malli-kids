@@ -7,8 +7,9 @@
 // panel, so the import rides along on that same on-demand chunk.
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { useFormContext } from "react-hook-form";
-import type { Map as LeafletMap } from "leaflet";
+import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
 import { CheckCircle2, ChevronUp, LocateFixed, MapPin, MapPinned } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
@@ -23,12 +24,13 @@ const TYPE_CHARS_PER_TICK = 2;
 const TYPE_TICK_MS = 22;
 
 /** 📍 "انتخاب روی نقشه" — an inline (never a dialog/overlay) map card that
- *  expands right below the address field. A pin stays fixed at the map's
- *  center; the user pans/zooms the map underneath it (or uses GPS), and
- *  whatever ends up under the pin gets reverse-geocoded into the account
- *  form's `address` field (typed in with a small animation) — the same
- *  center-pin pattern as most modern map pickers, rather than a
- *  click-to-drop/drag marker tied to a geographic point. Reads and writes
+ *  expands right below the address field. No marker shows until the user
+ *  actually picks a spot — clicking anywhere on the map (or confirming a
+ *  GPS fix) drops a real Leaflet marker exactly there and reverse-geocodes
+ *  it into the account form's `address` field (typed in with a small
+ *  animation). A previous version instead kept a pin permanently glued to
+ *  the map's visual center, picking up whatever was under it on every pan —
+ *  dropped in favor of this explicit click-to-place model. Reads and writes
  *  `lat`/`lng`/`address` straight off the surrounding `<AppForm>`'s
  *  react-hook-form context — those three only ever get committed together
  *  when the user presses "تأیید", and only really saved once "ذخیره حساب"
@@ -43,7 +45,6 @@ export function AddressMapField() {
   const [mapError, setMapError] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
   const [geocoding, setGeocoding] = useState(false);
-  const [panning, setPanning] = useState(false);
   const [typing, setTyping] = useState(false);
   // ✨ Bumped once each time the typewriter finishes a full pass — keyed
   // onto the success checkmark below so its pop-in animation replays every
@@ -56,7 +57,15 @@ export function AddressMapField() {
 
   const mapElRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  const markerRef = useRef<LeafletMarker | null>(null);
+  // 🎯 Set once the map's ready, so `handleLocate` (defined outside the
+  // map-building effect, no access to that effect's own `L`/`map` closure)
+  // can still drop/move the marker after a GPS fix.
+  const placeMarkerRef = useRef<((lat: number, lng: number) => void) | null>(
+    null,
+  );
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const keydownHandlerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const typeTargetRef = useRef("");
@@ -108,9 +117,8 @@ export function AddressMapField() {
     startTypewriter(result.data.address);
   }
 
-  // 📌 Called once per pan/zoom gesture (Leaflet's own `moveend`) with
-  // whatever point is now under the fixed center pin — never from a click
-  // or a marker drag, since there's no marker anymore.
+  // 📌 Called once per explicit selection — a map click or a confirmed GPS
+  // fix — never from a plain pan/zoom, which no longer picks anything.
   function handlePick(nextLat: number, nextLng: number) {
     setPicked({ lat: nextLat, lng: nextLng });
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -129,11 +137,19 @@ export function AddressMapField() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocating(false);
-        // 🎯 Just moves the map — `moveend` (below) is the single place a
-        // pan ever turns into a picked point, GPS included.
-        mapRef.current?.flyTo(
+        const map = mapRef.current;
+        if (!map) return;
+        // 🎯 GPS is itself an explicit selection — unlike a plain pan, it
+        // picks the point it flies to. `once` (not `on`) so this doesn't
+        // also fire for whatever the user pans to next.
+        map.once("moveend", () => {
+          const c = map.getCenter();
+          placeMarkerRef.current?.(c.lat, c.lng);
+          handlePick(c.lat, c.lng);
+        });
+        map.flyTo(
           [pos.coords.latitude, pos.coords.longitude],
-          Math.max(mapRef.current.getZoom(), 16),
+          Math.max(map.getZoom(), 16),
           { duration: 0.9 },
         );
       },
@@ -162,11 +178,13 @@ export function AddressMapField() {
 
     const existingLat = getValues("lat");
     const existingLng = getValues("lng");
+    const hasExisting = existingLat != null && existingLng != null;
     const startLat = existingLat ?? BRAND.map.lat;
     const startLng = existingLng ?? BRAND.map.lng;
-    // 📍 The center pin always represents *some* point the instant the map
-    // exists, so `picked` starts here too — never null once the card is open.
-    setPicked({ lat: startLat, lng: startLng });
+    // 📍 A previously-saved location *is* already a selection — show its
+    // marker right away. Otherwise nothing's been picked yet, so no marker
+    // (and no `picked`) until the user actually clicks the map or uses GPS.
+    setPicked(hasExisting ? { lat: existingLat, lng: existingLng } : null);
     setPreview(getValues("address") ?? "");
     typeTargetRef.current = getValues("address") ?? "";
 
@@ -197,25 +215,55 @@ export function AddressMapField() {
           },
         ).addTo(map);
 
-        // 🎯 The pin is a plain overlay element (`AddressMapField`'s own
-        // JSX, see below) fixed at the container's visual center — it
-        // never moves; the *map* moves underneath it. `moveend` fires once
-        // per discrete pan/zoom/flyTo, whatever the input device (mouse
-        // drag, touch, scroll-wheel zoom, or the arrow-key panning Leaflet
-        // already supports on a focused map).
-        map.on("movestart", () => setPanning(true));
-        map.on("moveend", () => {
-          setPanning(false);
-          const c = map.getCenter();
-          handlePick(c.lat, c.lng);
-        });
-        // 🖱️ A click still moves the map (flies the clicked point to
-        // center) instead of dropping a separate marker — clicking is just
-        // a faster way to pan, consistent with "the pin never leaves the
-        // center."
+        // 📍 A real Leaflet marker, created lazily on the first selection
+        // (or immediately below, if a location was already saved) and just
+        // moved on every one after — never re-created, so it doesn't flash.
+        function placeMarker(nextLat: number, nextLng: number) {
+          if (markerRef.current) {
+            markerRef.current.setLatLng([nextLat, nextLng]);
+            return;
+          }
+          markerRef.current = L.marker([nextLat, nextLng], {
+            // 🎨 Rendered from the same lucide icon the old fixed overlay
+            // used, so the pin looks identical — it's just a real marker
+            // tied to a coordinate now, not viewport-center chrome.
+            icon: L.divIcon({
+              html: renderToStaticMarkup(
+                <MapPinned
+                  strokeWidth={1.75}
+                  className="text-navy fill-gold size-9 drop-shadow-[0_10px_10px_rgba(4,20,39,0.4)] dark:text-gold-light dark:fill-navy"
+                />,
+              ),
+              className: "", // 🧹 drops Leaflet's default white-box marker styling
+              iconSize: [36, 36],
+              iconAnchor: [18, 34],
+            }),
+            keyboard: false, // the map container itself carries keyboard selection, below
+            interactive: false,
+          }).addTo(map);
+        }
+        placeMarkerRef.current = placeMarker;
+        if (hasExisting) placeMarker(existingLat, existingLng);
+
+        // 🖱️ Click drops (or moves) the marker exactly where clicked and
+        // picks that point — no more "fly the click to center" detour.
         map.on("click", (e: import("leaflet").LeafletMouseEvent) => {
-          map.flyTo(e.latlng, map.getZoom(), { duration: 0.5 });
+          placeMarker(e.latlng.lat, e.latlng.lng);
+          handlePick(e.latlng.lat, e.latlng.lng);
         });
+
+        // ♿️ Keyboard equivalent of a click: Leaflet already lets a
+        // focused map pan via the arrow keys, so Enter/Space here picks
+        // whatever's currently centered — no mouse required.
+        function onKeyDown(e: KeyboardEvent) {
+          if (e.key !== "Enter" && e.key !== " ") return;
+          e.preventDefault();
+          const c = map.getCenter();
+          placeMarker(c.lat, c.lng);
+          handlePick(c.lat, c.lng);
+        }
+        mapElRef.current.addEventListener("keydown", onKeyDown);
+        keydownHandlerRef.current = onKeyDown;
 
         mapRef.current = map;
         setMapReady(true);
@@ -243,6 +291,15 @@ export function AddressMapField() {
       stopTyping();
       resizeObserverRef.current?.disconnect();
       resizeObserverRef.current = null;
+      if (keydownHandlerRef.current) {
+        mapElRef.current?.removeEventListener(
+          "keydown",
+          keydownHandlerRef.current,
+        );
+        keydownHandlerRef.current = null;
+      }
+      placeMarkerRef.current = null;
+      markerRef.current = null; // 🗑️ destroyed along with the map below, not separately
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -250,12 +307,13 @@ export function AddressMapField() {
   }, [open]);
 
   function handleConfirm() {
-    // ♿️ `picked` (the point under the center pin) is the fast path, but
-    // lat/lng are optional on the account schema — a keyboard user who'd
-    // rather not pan the map can still tab into this card's textarea
-    // below, edit the address text, and confirm without ever moving it.
+    // ♿️ `picked` (the last clicked/GPS'd/Enter-selected point) is the
+    // fast path, but lat/lng are optional on the account schema — a
+    // keyboard user who'd rather not touch the map at all can still tab
+    // into this card's textarea below, edit the address text, and confirm
+    // without ever selecting a point.
     if (!picked && !preview.trim()) {
-      toast.warning("اول نقشه را جابه‌جا کنید یا آدرس را تایپ کنید.");
+      toast.warning("اول روی نقشه کلیک کنید یا آدرس را تایپ کنید.");
       return;
     }
     if (picked) {
@@ -319,47 +377,37 @@ export function AddressMapField() {
             )}
           >
             <p className="text-navy/70 dark:text-wheat text-xs leading-6">
-              نقشه را جابه‌جا کنید تا نشانگر وسط، روی نقطهٔ موردنظر بایستد؛
-              آدرس متنی خودکار پر می‌شود.
+              روی نقطهٔ موردنظر روی نقشه کلیک کنید تا نشانگر همان‌جا قرار
+              بگیرد؛ آدرس متنی خودکار پر می‌شود.
             </p>
 
             <div className="bg-sand relative h-72 w-full overflow-hidden rounded-2xl sm:h-80">
+              {/* 🩹 The opacity fade is on this *wrapper*, not on the div
+                  Leaflet mounts onto below. `new L.Map(el)` adds its own
+                  classes (`leaflet-container`, …) straight to `el.className`
+                  outside React's knowledge; if that same element also had a
+                  React-controlled `className` that changes when `mapReady`
+                  flips true (as this used to), React's very next re-render
+                  overwrites `el.className` wholesale and silently wipes
+                  every class Leaflet just added — a race that (depending on
+                  exactly when that re-render lands relative to Leaflet's own
+                  work) could leave the map partially or completely
+                  unstyled. The inner div's `className` below is now a
+                  constant literal, so React never has a reason to touch it
+                  again after the first paint. */}
               <div
-                ref={mapElRef}
-                role="group"
-                aria-label="نقشه‌ی انتخاب موقعیت — نقشه را با ماوس، لمس یا کلیدهای جهت‌دار جابه‌جا کنید؛ نشانگر ثابتِ وسطِ نقشه نقطهٔ انتخابی است. برای واردکردن آدرس با صفحه‌کلید از فیلد «آدرس یافت‌شده» زیر نقشه استفاده کنید"
                 className={cn(
                   "absolute inset-0 opacity-0 transition-opacity duration-500",
                   mapReady && "opacity-100",
                 )}
-              />
-
-              {/* 🎯 Fixed center-pin overlay — part of the map's own chrome,
-                  never a Leaflet marker: it never moves, the map moves
-                  underneath it. Lifts slightly while panning and settles
-                  back down on `moveend`, echoing how a real pin would come
-                  to rest. */}
-              {mapReady ? (
+              >
                 <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
-                >
-                  <span
-                    className={cn(
-                      "bg-navy-deep/35 absolute size-2.5 rounded-full blur-[2px] transition-all duration-200 ease-out dark:bg-black/45",
-                      panning ? "mt-0.5 scale-75 opacity-40" : "mt-6 scale-100 opacity-80",
-                    )}
-                  />
-                  <MapPinned
-                    strokeWidth={1.75}
-                    className={cn(
-                      "text-navy fill-gold size-9 -translate-y-1/2 drop-shadow-[0_10px_10px_rgba(4,20,39,0.4)] transition-transform duration-200 ease-out",
-                      "dark:text-gold-light dark:fill-navy",
-                      panning ? "-translate-y-[calc(50%+10px)] scale-105" : "scale-100",
-                    )}
-                  />
-                </div>
-              ) : null}
+                  ref={mapElRef}
+                  role="group"
+                  aria-label="نقشه‌ی انتخاب موقعیت — روی نقطهٔ موردنظر کلیک کنید تا نشانگر همان‌جا قرار بگیرد؛ یا با کلیدهای جهت‌دار نقشه را جابه‌جا و با اینتر همان نقطهٔ مرکز را انتخاب کنید. برای واردکردن آدرس با صفحه‌کلید می‌توانید از فیلد «آدرس یافت‌شده» زیر نقشه هم استفاده کنید"
+                  className="absolute inset-0"
+                />
+              </div>
 
               {!mapReady && !mapError ? (
                 <div
@@ -444,7 +492,7 @@ export function AddressMapField() {
                   readOnly={typing}
                   rows={3}
                   maxLength={160}
-                  placeholder="پس از جابه‌جایی نقشه، آدرس اینجا نوشته می‌شود…"
+                  placeholder="پس از انتخاب نقطه روی نقشه، آدرس اینجا نوشته می‌شود…"
                   className="bg-sand/60 text-navy placeholder:text-navy/70 dark:bg-navy-deep/40 dark:text-ivory dark:placeholder:text-ivory/30 min-h-20 w-full rounded-2xl px-4 py-3 text-sm font-semibold outline-none"
                 />
                 {geocoding ? (
