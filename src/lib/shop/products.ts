@@ -2,9 +2,19 @@
 // sitemap) and the admin catalog/inventory screens. Writes live in
 // `admin/products/_lib/actions.ts`; this module is read-only.
 
+import { unstable_cache } from "next/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { ProductModel, type ProductDoc } from "@/lib/db/models/product";
 import type { Product } from "@/types";
+
+// 🧊 The catalog is public and identical for every visitor, so it's cached
+// (not queried fresh per request) — same `unstable_cache` tag-and-time
+// pattern as `getActiveBanner` (see `@/lib/shop/banners`). Every admin write
+// (`admin/products/_lib/actions.ts`) revalidates this tag on demand; the
+// 1-hour `revalidate` is just a safety net, not the primary invalidation
+// path. `nextProductId` below stays uncached on purpose — it hands out the
+// next id for a brand-new product and must always see the real current max.
+export const PRODUCTS_TAG = "products";
 
 function toProduct(doc: ProductDoc): Product {
   // 🖼️ `images` (any pre-existing document written before this field
@@ -34,37 +44,49 @@ function toProduct(doc: ProductDoc): Product {
 
 /** 📚 Every product, newest first — the single source both the shop grid and
  *  the admin catalog/inventory tables filter/sort client-side. */
-export async function getAllProducts(): Promise<Product[]> {
-  await connectMongoose();
-  const docs = await ProductModel.find().sort({ id: -1 }).lean();
-  return docs.map(toProduct);
-}
+export const getAllProducts = unstable_cache(
+  async (): Promise<Product[]> => {
+    await connectMongoose();
+    const docs = await ProductModel.find().sort({ id: -1 }).lean();
+    return docs.map(toProduct);
+  },
+  ["all-products"],
+  { tags: [PRODUCTS_TAG], revalidate: 3600 },
+);
 
-export async function getProductById(id: number): Promise<Product | null> {
-  await connectMongoose();
-  const doc = await ProductModel.findOne({ id }).lean();
-  return doc ? toProduct(doc) : null;
-}
+export const getProductById = unstable_cache(
+  async (id: number): Promise<Product | null> => {
+    await connectMongoose();
+    const doc = await ProductModel.findOne({ id }).lean();
+    return doc ? toProduct(doc) : null;
+  },
+  ["product-by-id"],
+  { tags: [PRODUCTS_TAG], revalidate: 3600 },
+);
 
 /** 💛 Hydrates a locally-stored favorites id list into real product cards. */
-export async function getProductsByIds(ids: number[]): Promise<Product[]> {
-  if (!ids.length) return [];
-  await connectMongoose();
-  const docs = await ProductModel.find({ id: { $in: ids } }).lean();
-  return docs.map(toProduct);
-}
+export const getProductsByIds = unstable_cache(
+  async (ids: number[]): Promise<Product[]> => {
+    if (!ids.length) return [];
+    await connectMongoose();
+    const docs = await ProductModel.find({ id: { $in: ids } }).lean();
+    return docs.map(toProduct);
+  },
+  ["products-by-ids"],
+  { tags: [PRODUCTS_TAG], revalidate: 3600 },
+);
 
-export async function getRelatedProducts(
-  cat: string,
-  excludeId: number,
-  limit = 4,
-): Promise<Product[]> {
-  await connectMongoose();
-  const docs = await ProductModel.find({ cat, id: { $ne: excludeId } })
-    .limit(limit)
-    .lean();
-  return docs.map(toProduct);
-}
+export const getRelatedProducts = unstable_cache(
+  async (cat: string, excludeId: number, limit = 4): Promise<Product[]> => {
+    await connectMongoose();
+    const docs = await ProductModel.find({ cat, id: { $ne: excludeId } })
+      .limit(limit)
+      .lean();
+    return docs.map(toProduct);
+  },
+  ["related-products"],
+  { tags: [PRODUCTS_TAG], revalidate: 3600 },
+);
 
 /** 🔢 The next auto-assigned public id for a new product — mirrors the
  *  admin form's old client-side `Math.max(999, …) + 1` scheme, just computed

@@ -269,7 +269,8 @@ export function AdminLoginLanding() {
           alt=""
           width={900}
           height={1200}
-          priority
+          preload
+          fetchPriority="high"
           className="absolute inset-0 size-full object-cover object-[center_15%]"
         />
         <div className="from-navy-deep via-navy-deep/35 absolute inset-0 bg-linear-to-t to-transparent" />

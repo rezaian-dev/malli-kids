@@ -1,10 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { requireAdmin } from "@/lib/auth/admin";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { ProductModel } from "@/lib/db/models/product";
-import { nextProductId } from "@/lib/shop/products";
+import { nextProductId, PRODUCTS_TAG } from "@/lib/shop/products";
 import type { ActionResult } from "@/lib/action-result";
 import { productSchema, type ProductValues } from "./schemas";
 
@@ -15,7 +15,12 @@ function revalidateCatalog() {
   revalidatePath("/admin/products");
   revalidatePath("/admin/inventory");
   revalidatePath("/admin");
-  revalidatePath("/shop");
+  // 🧊 The public catalog itself is served from `getAllProducts`/
+  // `getProductById`'s own `unstable_cache` (tag `PRODUCTS_TAG`), not from a
+  // route-level page cache — `/shop` renders dynamically (root layout reads
+  // per-request session/cart state), so there's no route cache entry here
+  // for `revalidatePath("/shop")` to bust.
+  revalidateTag(PRODUCTS_TAG, "max");
 }
 
 export async function createProductAction(

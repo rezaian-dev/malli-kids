@@ -374,9 +374,28 @@ export function contactPageSchema() {
   };
 }
 
-// 🛍️ Product schema powers rich product snippets.
-export function productSchema(product: Product) {
+// 🛍️ Product schema powers rich product snippets. `reviews` are the same
+// real, visible `AdminReview[]` the page already fetches (`getVisibleReviewsForProduct`)
+// to render its on-page review list — never `product.rate`/`product.sold`
+// (a default-4.8 marketing field and a units-sold counter, neither of which
+// is a real review), so `aggregateRating` is only emitted when genuine
+// reviews back it. Google disallows self-serving ratings; an unreviewed
+// product simply gets no `aggregateRating` at all, matching what's visibly
+// on the page.
+export function productSchema(product: Product, reviews: { rate: number }[] = []) {
   const url = absoluteUrl(pdpHref(product.id));
+  const aggregateRating = reviews.length
+    ? {
+        "@type": "AggregateRating" as const,
+        ratingValue:
+          Math.round(
+            (reviews.reduce((sum, r) => sum + r.rate, 0) / reviews.length) * 10,
+          ) / 10,
+        reviewCount: reviews.length,
+        bestRating: 5,
+        worstRating: 1,
+      }
+    : undefined;
 
   return {
     "@context": "https://schema.org",
@@ -391,13 +410,7 @@ export function productSchema(product: Product) {
       "@type": "Brand",
       name: SEO.siteNameFa,
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.rate,
-      reviewCount: Math.max(product.sold, 1),
-      bestRating: 5,
-      worstRating: 1,
-    },
+    ...(aggregateRating ? { aggregateRating } : {}),
     offers: {
       "@type": "Offer",
       url,

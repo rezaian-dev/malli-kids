@@ -83,16 +83,26 @@ const ADDRESS_LEVELS = [
   { keys: ["house_number"], essential: true },
 ] as const satisfies readonly { keys: readonly string[]; essential: boolean }[];
 
+// 🏷️ Nominatim's Iranian data prefixes `state`/`county` with their own
+// scope word — "استان تهران" (state), "شهرستان تهران" (county) — while
+// `city` for the same point comes back as plain "تهران". Three different
+// strings, same place, so a plain `Set` of raw values never catches the
+// repeat; stripping this leading word first gets both down to the same
+// "تهران" core for comparison (the raw, prefixed value is still what gets
+// displayed — only the *comparison* is normalized).
+const ADMIN_SCOPE_PREFIX = /^(استان|شهرستان|بخش|دهستان)\s+/;
+const addressCore = (value: string) => value.replace(ADMIN_SCOPE_PREFIX, "");
+
 /** 🧭 Nominatim's own `display_name` reads smallest → biggest (street first,
  *  country last), tacks the postal code on as its own segment, and — for a
  *  point inside a capital like Tehran — repeats the same city name once per
- *  administrative level (`state`/`county`/`city` are all literally "تهران"),
+ *  administrative level (`state`/`county`/`city` all boil down to "تهران"),
  *  which blew well past the address field's 160-char cap and read like a
  *  stutter. This instead builds the text from the structured `address`
- *  fields (`addressdetails=1`), province → … → house number: a value that
- *  repeats one already used higher up is folded out, and if it's still too
- *  long the most granular optional levels (neighbourhood/suburb/district)
- *  are dropped first, before falling back to a hard cut. */
+ *  fields (`addressdetails=1`), province → … → house number: a value whose
+ *  core name repeats one already used higher up is folded out, and if it's
+ *  still too long the most granular optional levels (neighbourhood/suburb/
+ *  district) are dropped first, before falling back to a hard cut. */
 function formatAddress(
   displayName: string,
   address: Record<string, string> | undefined,
@@ -102,8 +112,10 @@ function formatAddress(
   const seen = new Set<string>();
   const parts = ADDRESS_LEVELS.map((level) => {
     const value = level.keys.map((k) => address[k]).find(Boolean)?.trim();
-    if (!value || seen.has(value)) return null;
-    seen.add(value);
+    if (!value) return null;
+    const core = addressCore(value);
+    if (seen.has(core)) return null;
+    seen.add(core);
     return { value, essential: level.essential };
   }).filter((p): p is { value: string; essential: boolean } => p !== null);
 

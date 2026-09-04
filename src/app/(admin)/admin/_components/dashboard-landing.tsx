@@ -52,7 +52,8 @@ export function DashboardLanding({
           alt=""
           width={800}
           height={600}
-          priority
+          preload
+          fetchPriority="high"
           sizes="100vw"
           className="absolute inset-0 size-full object-cover opacity-20"
         />

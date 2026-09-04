@@ -53,7 +53,7 @@ export async function ProductDetailLanding({
           { name: product.name, path: canonicalPath },
         ])}
       />
-      <JsonLd data={productSchema(product)} />
+      <JsonLd data={productSchema(product, reviews)} />
       <div className={`${wash.silk} pb-2`}>
         <div className={shell}>
           <nav

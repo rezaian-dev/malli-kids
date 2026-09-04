@@ -9,10 +9,11 @@ import { Toaster } from "@/components/ui/sonner";
 import { JsonLd } from "@/components/shared/json-ld";
 import { getRootMetadata, organizationSchema, websiteSchema } from "@/lib/seo";
 import { readStoreBootstrap } from "@/lib/storefront-state";
-import { getSessionUser } from "@/lib/auth/session";
+import { getSession, getSessionUser } from "@/lib/auth/session";
 import { ensureSeeded } from "@/lib/db/seed";
 import { getCampaign } from "@/lib/shop/settings";
 import { getActiveBanner } from "@/lib/shop/banners";
+import { getFavoriteIds } from "@/lib/shop/favorites";
 import { cn } from "@/lib/utils";
 // 🧱 Shared tokens/base only — no Tailwind utility-class generation here.
 // `(storefront)/layout.tsx` and `(admin)/layout.tsx` each import their own
@@ -83,11 +84,19 @@ export default async function RootLayout({
     getCampaign(),
     getActiveBanner(),
   ]);
+  // 💛 `getSession()` is request-memoized (see `lib/auth/session.ts`), so
+  // this is free for the `getSessionUser()` call above — reached only for
+  // its `user.id`, which the client-facing `User` shape doesn't carry.
+  // Fetched here (not left to `useFavorites`'s own post-mount effect) so a
+  // returning signed-in user's hearts are already filled on first paint.
+  const session = user ? await getSession() : null;
+  const favorites = session ? await getFavoriteIds(session.user.id) : [];
   const initialState = readStoreBootstrap(
     (name) => jar.get(name)?.value,
     user,
     campaign,
     banner,
+    favorites,
   );
 
   return (

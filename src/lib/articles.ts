@@ -1,7 +1,13 @@
+import { unstable_cache } from "next/cache";
 import sanitizeHtmlLib from "sanitize-html";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { ArticleModel, type ArticleDoc } from "@/lib/db/models/article";
 import { faDate } from "@/lib/locale/fa";
+
+// 🧊 Published articles are public and shared — cached the same way as the
+// product catalog (`@/lib/shop/products`), not queried fresh per request.
+// Admin writes (`admin/articles/_lib/actions.ts`) revalidate this tag.
+export const ARTICLES_TAG = "articles";
 
 export type JournalArticle = {
   slug: string;
@@ -95,18 +101,24 @@ function toJournalArticle(doc: ArticleDoc): JournalArticle {
 /** 📰 Every published article, newest first — the real replacement for the
  *  old client-only `localStorage` read (which the server side of every page
  *  below silently ignored, always falling back to the static seed). */
-export async function loadPublishedArticles(): Promise<JournalArticle[]> {
-  await connectMongoose();
-  const docs = await ArticleModel.find({ published: true })
-    .sort({ createdAt: -1 })
-    .lean();
-  return docs.map(toJournalArticle);
-}
+export const loadPublishedArticles = unstable_cache(
+  async (): Promise<JournalArticle[]> => {
+    await connectMongoose();
+    const docs = await ArticleModel.find({ published: true })
+      .sort({ createdAt: -1 })
+      .lean();
+    return docs.map(toJournalArticle);
+  },
+  ["published-articles"],
+  { tags: [ARTICLES_TAG], revalidate: 3600 },
+);
 
-export async function findPublishedArticle(
-  slug: string,
-): Promise<JournalArticle | undefined> {
-  await connectMongoose();
-  const doc = await ArticleModel.findOne({ slug, published: true }).lean();
-  return doc ? toJournalArticle(doc) : undefined;
-}
+export const findPublishedArticle = unstable_cache(
+  async (slug: string): Promise<JournalArticle | undefined> => {
+    await connectMongoose();
+    const doc = await ArticleModel.findOne({ slug, published: true }).lean();
+    return doc ? toJournalArticle(doc) : undefined;
+  },
+  ["published-article-by-slug"],
+  { tags: [ARTICLES_TAG], revalidate: 3600 },
+);

@@ -22,10 +22,16 @@ export function Footer() {
           className={`${shell} flex flex-wrap items-center justify-between gap-6 py-10 sm:py-12`}
         >
           <div className="min-w-0 flex-1 basis-65">
-            <h3 className="m-0 text-[clamp(18px,2.4vw,24px)] leading-snug font-black text-white">
+            {/* ♿ `h2`, not `h3` — this is the `<footer>` landmark's own
+                top-level heading, not a subsection of whatever's in `<main>`
+                above it. A page whose main content never reaches `h2`
+                itself (e.g. the signed-out `/profile` prompt, which is just
+                an `h1`) would otherwise skip straight from `h1` to `h3`,
+                failing Lighthouse/axe's heading-order check. */}
+            <h2 className="m-0 text-[clamp(18px,2.4vw,24px)] leading-snug font-black text-white">
               اولین نفری باشید که{" "}
               <span className="text-gold-light">کالکشن جدید</span> را می‌بیند
-            </h3>
+            </h2>
             <p className="text-taupe mt-2 text-sm">
               عضو خبرنامه شوید و ۱۰٪ تخفیف اولین خرید بگیرید.
             </p>

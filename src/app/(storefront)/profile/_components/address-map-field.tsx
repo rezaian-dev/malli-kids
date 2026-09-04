@@ -1,40 +1,34 @@
 "use client";
 
+// 🗺️ Leaflet's own stylesheet — scoped to this file (the map's only
+// consumer) instead of the storefront's global CSS entry, so it isn't
+// shipped as render-blocking CSS on every unrelated page. This component
+// only ever mounts inside the profile's already-lazy (`ssr:false`) info
+// panel, so the import rides along on that same on-demand chunk.
+import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
-import { CheckCircle2, ChevronUp, Loader2, LocateFixed, MapPin } from "lucide-react";
+import type { Map as LeafletMap } from "leaflet";
+import { CheckCircle2, ChevronUp, LocateFixed, MapPin, MapPinned } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { BRAND } from "@/lib/constants";
 import { reverseGeocodeAction } from "../_lib/actions";
 import type { UpdateAccountValues } from "../_lib/schemas";
-import { createPinIcon, loadLeaflet } from "./leaflet-loader";
+import { loadLeaflet } from "./leaflet-loader";
 
 const PICK_DEBOUNCE_MS = 600;
 const TYPE_CHARS_PER_TICK = 2;
 const TYPE_TICK_MS = 22;
 
-function bounceMarker(marker: LeafletMarker) {
-  // 🩹 Animate the inner `.marker-bounce` wrapper (see `createPinIcon`), not
-  // the icon root itself — the root's `transform` is how Leaflet positions
-  // the marker on the map, and this animation also drives `transform`;
-  // putting both on one element made the marker jump off to the map's
-  // transform origin (looking like it vanished) the first time it bounced.
-  const el = marker.getElement()?.querySelector<HTMLElement>(".marker-bounce");
-  if (!el) return;
-  // 🔁 Restart the CSS animation even if the class never left — a plain
-  // re-`add` on an already-present class is a no-op in the browser.
-  el.classList.remove("animate-marker-drop");
-  void el.offsetWidth;
-  el.classList.add("animate-marker-drop");
-}
-
 /** 📍 "انتخاب روی نقشه" — an inline (never a dialog/overlay) map card that
- *  expands right below the address field. The user clicks, drags the pin,
- *  or uses GPS, and the point gets reverse-geocoded into the account form's
- *  `address` field (typed in with a small animation). Reads and writes
+ *  expands right below the address field. A pin stays fixed at the map's
+ *  center; the user pans/zooms the map underneath it (or uses GPS), and
+ *  whatever ends up under the pin gets reverse-geocoded into the account
+ *  form's `address` field (typed in with a small animation) — the same
+ *  center-pin pattern as most modern map pickers, rather than a
+ *  click-to-drop/drag marker tied to a geographic point. Reads and writes
  *  `lat`/`lng`/`address` straight off the surrounding `<AppForm>`'s
  *  react-hook-form context — those three only ever get committed together
  *  when the user presses "تأیید", and only really saved once "ذخیره حساب"
@@ -49,6 +43,7 @@ export function AddressMapField() {
   const [mapError, setMapError] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
   const [geocoding, setGeocoding] = useState(false);
+  const [panning, setPanning] = useState(false);
   const [typing, setTyping] = useState(false);
   // ✨ Bumped once each time the typewriter finishes a full pass — keyed
   // onto the success checkmark below so its pop-in animation replays every
@@ -61,7 +56,6 @@ export function AddressMapField() {
 
   const mapElRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
-  const markerRef = useRef<LeafletMarker | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const typeTargetRef = useRef("");
@@ -113,19 +107,11 @@ export function AddressMapField() {
     startTypewriter(result.data.address);
   }
 
-  function handlePick(nextLat: number, nextLng: number, recenter = false) {
+  // 📌 Called once per pan/zoom gesture (Leaflet's own `moveend`) with
+  // whatever point is now under the fixed center pin — never from a click
+  // or a marker drag, since there's no marker anymore.
+  function handlePick(nextLat: number, nextLng: number) {
     setPicked({ lat: nextLat, lng: nextLng });
-    if (markerRef.current) {
-      markerRef.current.setLatLng([nextLat, nextLng]);
-      bounceMarker(markerRef.current);
-    }
-    if (recenter && mapRef.current) {
-      mapRef.current.flyTo(
-        [nextLat, nextLng],
-        Math.max(mapRef.current.getZoom(), 16),
-        { duration: 0.9 },
-      );
-    }
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(
       () => runGeocode(nextLat, nextLng),
@@ -142,7 +128,13 @@ export function AddressMapField() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocating(false);
-        handlePick(pos.coords.latitude, pos.coords.longitude, true);
+        // 🎯 Just moves the map — `moveend` (below) is the single place a
+        // pan ever turns into a picked point, GPS included.
+        mapRef.current?.flyTo(
+          [pos.coords.latitude, pos.coords.longitude],
+          Math.max(mapRef.current.getZoom(), 16),
+          { duration: 0.9 },
+        );
       },
       (err) => {
         setLocating(false);
@@ -171,11 +163,9 @@ export function AddressMapField() {
     const existingLng = getValues("lng");
     const startLat = existingLat ?? BRAND.map.lat;
     const startLng = existingLng ?? BRAND.map.lng;
-    setPicked(
-      existingLat != null && existingLng != null
-        ? { lat: existingLat, lng: existingLng }
-        : null,
-    );
+    // 📍 The center pin always represents *some* point the instant the map
+    // exists, so `picked` starts here too — never null once the card is open.
+    setPicked({ lat: startLat, lng: startLng });
     setPreview(getValues("address") ?? "");
     typeTargetRef.current = getValues("address") ?? "";
 
@@ -192,20 +182,28 @@ export function AddressMapField() {
           attribution:
             '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>',
         }).addTo(map);
-        const marker = L.marker([startLat, startLng], {
-          draggable: true,
-          icon: createPinIcon(L),
-        }).addTo(map);
-        marker.on("dragend", () => {
-          const { lat: mLat, lng: mLng } = marker.getLatLng();
-          handlePick(mLat, mLng);
+
+        // 🎯 The pin is a plain overlay element (`AddressMapField`'s own
+        // JSX, see below) fixed at the container's visual center — it
+        // never moves; the *map* moves underneath it. `moveend` fires once
+        // per discrete pan/zoom/flyTo, whatever the input device (mouse
+        // drag, touch, scroll-wheel zoom, or the arrow-key panning Leaflet
+        // already supports on a focused map).
+        map.on("movestart", () => setPanning(true));
+        map.on("moveend", () => {
+          setPanning(false);
+          const c = map.getCenter();
+          handlePick(c.lat, c.lng);
         });
+        // 🖱️ A click still moves the map (flies the clicked point to
+        // center) instead of dropping a separate marker — clicking is just
+        // a faster way to pan, consistent with "the pin never leaves the
+        // center."
         map.on("click", (e: import("leaflet").LeafletMouseEvent) => {
-          handlePick(e.latlng.lat, e.latlng.lng);
+          map.flyTo(e.latlng, map.getZoom(), { duration: 0.5 });
         });
 
         mapRef.current = map;
-        markerRef.current = marker;
         setMapReady(true);
         // 🩹 Leaflet measures its container on init; while the card is still
         // mid-expand that can race the CSS transition, leaving grey tiles.
@@ -221,18 +219,17 @@ export function AddressMapField() {
       stopTyping();
       mapRef.current?.remove();
       mapRef.current = null;
-      markerRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 🎯 only re-run on open/close.
   }, [open]);
 
   function handleConfirm() {
-    // ♿️ `picked` (a map click/drag/GPS fix) is the fast path, but lat/lng
-    // are optional on the account schema — a keyboard user who can't click
-    // the map itself can still tab into this card's textarea below, edit
-    // the address text, and confirm without ever placing a pin.
+    // ♿️ `picked` (the point under the center pin) is the fast path, but
+    // lat/lng are optional on the account schema — a keyboard user who'd
+    // rather not pan the map can still tab into this card's textarea
+    // below, edit the address text, and confirm without ever moving it.
     if (!picked && !preview.trim()) {
-      toast.warning("اول یک نقطه روی نقشه انتخاب کنید یا آدرس را تایپ کنید.");
+      toast.warning("اول نقشه را جابه‌جا کنید یا آدرس را تایپ کنید.");
       return;
     }
     if (picked) {
@@ -296,22 +293,60 @@ export function AddressMapField() {
             )}
           >
             <p className="text-navy/70 dark:text-wheat text-xs leading-6">
-              روی نقشه بزنید یا نشانگر را جابه‌جا کنید؛ آدرس متنی خودکار پر
-              می‌شود.
+              نقشه را جابه‌جا کنید تا نشانگر وسط، روی نقطهٔ موردنظر بایستد؛
+              آدرس متنی خودکار پر می‌شود.
             </p>
 
             <div className="bg-sand relative h-72 w-full overflow-hidden rounded-2xl sm:h-80">
               <div
                 ref={mapElRef}
                 role="group"
-                aria-label="نقشه‌ی انتخاب موقعیت — با ماوس یا لمس؛ برای واردکردن آدرس با صفحه‌کلید از فیلد «آدرس یافت‌شده» زیر نقشه استفاده کنید"
-                className="absolute inset-0"
+                aria-label="نقشه‌ی انتخاب موقعیت — نقشه را با ماوس، لمس یا کلیدهای جهت‌دار جابه‌جا کنید؛ نشانگر ثابتِ وسطِ نقشه نقطهٔ انتخابی است. برای واردکردن آدرس با صفحه‌کلید از فیلد «آدرس یافت‌شده» زیر نقشه استفاده کنید"
+                className={cn(
+                  "absolute inset-0 opacity-0 transition-opacity duration-500",
+                  mapReady && "opacity-100",
+                )}
               />
 
+              {/* 🎯 Fixed center-pin overlay — part of the map's own chrome,
+                  never a Leaflet marker: it never moves, the map moves
+                  underneath it. Lifts slightly while panning and settles
+                  back down on `moveend`, echoing how a real pin would come
+                  to rest. */}
+              {mapReady ? (
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
+                >
+                  <span
+                    className={cn(
+                      "bg-navy-deep/35 absolute size-2.5 rounded-full blur-[2px] transition-all duration-200 ease-out dark:bg-black/45",
+                      panning ? "mt-0.5 scale-75 opacity-40" : "mt-6 scale-100 opacity-80",
+                    )}
+                  />
+                  <MapPinned
+                    strokeWidth={1.75}
+                    className={cn(
+                      "text-navy fill-gold size-9 -translate-y-1/2 drop-shadow-[0_10px_10px_rgba(4,20,39,0.4)] transition-transform duration-200 ease-out",
+                      "dark:text-gold-light dark:fill-navy",
+                      panning ? "-translate-y-[calc(50%+10px)] scale-105" : "scale-100",
+                    )}
+                  />
+                </div>
+              ) : null}
+
               {!mapReady && !mapError ? (
-                <div className="text-navy/70 dark:text-ivory/70 absolute inset-0 flex items-center justify-center gap-2">
-                  <Loader2 className="size-5 animate-spin" />
-                  <span className="text-xs font-bold">
+                <div
+                  aria-hidden
+                  className="from-sand via-gold-pale/40 to-sand absolute inset-0 flex flex-col items-center justify-center gap-2.5 bg-linear-to-br dark:from-navy-deep dark:via-navy-mid/60 dark:to-navy-deep"
+                >
+                  <span className="relative">
+                    <span className="bg-gold/25 absolute inset-0 -m-2 animate-ping rounded-full" />
+                    <span className="bg-navy text-gold-soft relative grid size-11 place-items-center rounded-full shadow-lg dark:bg-gold dark:text-navy-deep">
+                      <MapPin className="size-5" />
+                    </span>
+                  </span>
+                  <span className="text-navy/70 dark:text-ivory/70 rounded-full bg-white/60 px-3 py-1 text-[11px] font-bold dark:bg-white/10">
                     در حال بارگذاری نقشه…
                   </span>
                 </div>
@@ -327,14 +362,14 @@ export function AddressMapField() {
                 variant="navy"
                 size="sm"
                 onClick={handleLocate}
-                disabled={locating}
+                disabled={locating || !mapReady}
                 className={cn(
-                  "absolute inset-e-3 top-3 z-10 gap-1.5 shadow-lg",
+                  "absolute inset-e-3 top-3 z-30 gap-1.5 shadow-lg",
                   locating && "animate-st-pulse",
                 )}
               >
                 {locating ? (
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <span className="border-gold-soft size-3.5 animate-spin rounded-full border-2 border-t-transparent" />
                 ) : (
                   <LocateFixed className="size-3.5" />
                 )}
@@ -383,7 +418,7 @@ export function AddressMapField() {
                   readOnly={typing}
                   rows={3}
                   maxLength={160}
-                  placeholder="پس از انتخاب نقطه، آدرس اینجا نوشته می‌شود…"
+                  placeholder="پس از جابه‌جایی نقشه، آدرس اینجا نوشته می‌شود…"
                   className="bg-sand/60 text-navy placeholder:text-navy/70 dark:bg-navy-deep/40 dark:text-ivory dark:placeholder:text-ivory/30 min-h-20 w-full rounded-2xl px-4 py-3 text-sm font-semibold outline-none"
                 />
                 {geocoding ? (

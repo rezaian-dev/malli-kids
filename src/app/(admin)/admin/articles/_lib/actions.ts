@@ -1,10 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { requireAdmin } from "@/lib/auth/admin";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { ArticleModel } from "@/lib/db/models/article";
 import { toFaDigits } from "@/lib/locale/fa";
+import { ARTICLES_TAG } from "@/lib/articles";
 import type { ActionResult } from "@/lib/action-result";
 import { articleSchema, type ArticleValues } from "./schemas";
 
@@ -13,7 +14,11 @@ const AUTH_ERROR = "برای این کار باید ادمین وارد شده �
 
 function revalidateArticles() {
   revalidatePath("/admin/articles");
-  revalidatePath("/articles");
+  // 🧊 The public article list/detail pages read from `loadPublishedArticles`/
+  // `findPublishedArticle`'s own `unstable_cache` (tag `ARTICLES_TAG`), not a
+  // route-level page cache — those routes render dynamically, so there's no
+  // cache entry here for `revalidatePath("/articles")` to bust.
+  revalidateTag(ARTICLES_TAG, "max");
 }
 
 /** 🪶 A clean Persian-friendly slug from the title, de-duplicated against
@@ -73,7 +78,6 @@ export async function updateArticleAction(
     if (!updated) return { ok: false, error: "مقاله پیدا نشد." };
 
     revalidateArticles();
-    revalidatePath(`/articles/${slug}`);
     return { ok: true };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
@@ -91,7 +95,6 @@ export async function setArticlePublishedAction(
     await connectMongoose();
     await ArticleModel.updateOne({ slug }, { $set: { published } });
     revalidateArticles();
-    revalidatePath(`/articles/${slug}`);
     return { ok: true };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };

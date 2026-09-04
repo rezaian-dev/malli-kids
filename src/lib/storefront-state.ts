@@ -13,6 +13,7 @@ export type StoreBootstrap = {
   cart: StoredCartItem[];
   campaign: StoredCampaign;
   banner: BannerItem | null;
+  favorites: number[];
   ready: boolean;
 };
 
@@ -124,17 +125,21 @@ export function sanitizeBanner(value: unknown): BannerItem | null {
 
 // 👤 `user` isn't read from a cookie here — the real session lives in
 // Better Auth's httpOnly cookie, only readable server-side via
-// `getSessionUser()`. Likewise `campaign`/`banner` are real, freshly-read
-// DB values (`@/lib/shop/settings`, `@/lib/shop/banners`) computed on every
-// request — the caller (`app/layout.tsx`) passes all three in directly
-// instead of this module trying to resync them from a client-side source.
-// `cart` is the one genuinely client-only piece (no backend), so it's still
-// bootstrapped from its cookie.
+// `getSessionUser()`. Likewise `campaign`/`banner`/`favorites` are real,
+// freshly-read DB values (`@/lib/shop/settings`, `@/lib/shop/banners`,
+// `@/lib/shop/favorites`) computed on every request — the caller
+// (`app/layout.tsx`) passes them in directly instead of this module trying
+// to resync them from a client-side source. `favorites` rides along here
+// (rather than `FavButton`/`useFavorites` fetching it after mount) so a
+// returning signed-in user's hearts are already filled on the very first
+// paint instead of flashing empty-then-filled. `cart` is the one genuinely
+// client-only piece (no backend), so it's still bootstrapped from its cookie.
 export function readStoreBootstrap(
   getCookie: (name: string) => string | undefined,
   user: User | null,
   campaign: StoredCampaign,
   banner: BannerItem | null,
+  favorites: number[],
 ) {
   const cartCookie = getCookie(STORAGE.cart);
   const bootCookie = getCookie(STORAGE.boot);
@@ -144,6 +149,7 @@ export function readStoreBootstrap(
     cart: sanitizeCart(parseJson(cartCookie, [])),
     campaign: sanitizeCampaign(campaign),
     banner: sanitizeBanner(banner),
+    favorites,
     ready: bootCookie === "1" || Boolean(cartCookie),
   } satisfies StoreBootstrap;
 }
