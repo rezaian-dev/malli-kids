@@ -18,6 +18,12 @@ import type { NextConfig } from "next";
 // map iframe (`contact-map.tsx`) — a different OSM surface (their embed
 // widget, not the tile server) that was silently CSP-blocked (no
 // `frame-src` fell back to `default-src 'self'`) until this was added.
+// `worker-src 'self' blob:` — the profile avatar uploader's
+// `browser-image-compression` step (`components/ui/image-upload.ts`) does
+// its resizing on a Web Worker it spins up from a same-origin `blob:` URL;
+// without this, `worker-src` falls back to `script-src` (no `blob:` there),
+// so the worker was silently blocked and every upload fell back to
+// compressing on the main thread instead.
 const isDev = process.env.NODE_ENV !== "production";
 const cspHeader = `
   default-src 'self';
@@ -27,6 +33,7 @@ const cspHeader = `
   font-src 'self' data:;
   connect-src 'self';
   frame-src https://www.openstreetmap.org;
+  worker-src 'self' blob:;
   object-src 'none';
   base-uri 'self';
   form-action 'self';

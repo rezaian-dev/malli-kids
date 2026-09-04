@@ -15,6 +15,10 @@ import { STORAGE } from "@/lib/constants";
 import { campaignPrice } from "@/lib/shop/pricing";
 import { signOutAction } from "@/lib/auth/actions";
 import {
+  getMyFavoritesAction,
+  toggleFavoriteAction,
+} from "@/lib/shop/favorites-actions";
+import {
   NO_CAMPAIGN,
   sanitizeCart,
   writeCookie,
@@ -40,6 +44,7 @@ type Ctx = {
   cartCount: number;
   campaign: Campaign;
   banner: BannerItem | null;
+  favorites: number[];
   setAuthOpen: (v: boolean) => void;
   login: (u: User) => void;
   updateUser: (patch: Partial<User>) => void;
@@ -48,6 +53,7 @@ type Ctx = {
   setCartQty: (id: number, size: string, qty: number) => void;
   removeCartItem: (id: number, size: string) => void;
   clearCart: () => void;
+  toggleFavorite: (id: number) => void;
   showToast: (text: string) => void;
   priceOf: (price: number) => number;
 };
@@ -94,12 +100,19 @@ export function StoreProvider({
     cart: [],
     campaign: NO_CAMPAIGN,
     banner: null,
+    favorites: [],
   };
 
   const [ready, setReady] = useState(boot.ready);
   const [user, setUser] = useState<User | null>(boot.user);
   const [authOpen, setAuthOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>(boot.cart);
+  // 💛 Seeded server-side (see `app/layout.tsx`) so a returning signed-in
+  // user's hearts are already filled on first paint — never fetched fresh
+  // client-side on mount, which was the old flash (empty → filled a beat
+  // later). Real state (not a plain variable like `campaign`/`banner`
+  // below) because `toggle`/`login`/`logout` all still mutate it in place.
+  const [favorites, setFavorites] = useState<number[]>(boot.favorites);
   // 🎉 Real, server-computed values (see `app/layout.tsx`) — fresh on every
   // navigation, never mutated client-side, so plain variables instead of
   // state that nothing ever sets again.
@@ -124,9 +137,13 @@ export function StoreProvider({
 
   // 🔐 Called after a server action (sign in/up) already created the real,
   // httpOnly-cookie-backed session — this only mirrors it into UI state.
+  // Favorites weren't known yet at the last page load (there was no session
+  // then), so this is the one legitimate post-mount fetch for them — a
+  // one-off right after a fresh login, not a flash on every render.
   const login = useCallback((nextUser: User) => {
     setUser(nextUser);
     setAuthOpen(false);
+    getMyFavoritesAction().then(setFavorites);
   }, []);
 
   const updateUser = useCallback(
@@ -139,6 +156,7 @@ export function StoreProvider({
   const logout = useCallback(async () => {
     await signOutAction();
     setUser(null);
+    setFavorites([]);
   }, []);
 
   // 🔐 A cart is a real order-in-waiting, not a scratch list — same rule as
@@ -183,6 +201,32 @@ export function StoreProvider({
 
   const clearCart = useCallback(() => setCart([]), []);
 
+  // 💛 Real, account-backed wishlist only — a guest (no session) has
+  // nothing to persist to, so this sends them to the login dialog instead
+  // of silently keeping a local list. Optimistic locally, then reconciled
+  // with whatever the server actually ended up storing.
+  const toggleFavorite = useCallback(
+    (id: number) => {
+      if (!user) {
+        setAuthOpen(true);
+        toast.warning("برای افزودن به علاقه‌مندی‌ها ابتدا وارد شوید");
+        return;
+      }
+
+      const adding = !favorites.includes(id);
+      setFavorites((current) =>
+        adding ? [id, ...current] : current.filter((x) => x !== id),
+      );
+      toast.success(
+        adding ? "به علاقه‌مندی‌ها اضافه شد ❤️" : "از علاقه‌مندی‌ها حذف شد",
+      );
+      toggleFavoriteAction(id).then((result) => {
+        if (result.ok) setFavorites(result.data);
+      });
+    },
+    [user, favorites],
+  );
+
   // 🧮 A plain reduce over the cart — cheap enough (a handful of line
   // items) that memoizing it buys nothing; it still keeps `value`'s own
   // `useMemo` below correctly bailing out, since a primitive number
@@ -205,6 +249,7 @@ export function StoreProvider({
       cartCount,
       campaign,
       banner,
+      favorites,
       setAuthOpen,
       login,
       updateUser,
@@ -213,6 +258,7 @@ export function StoreProvider({
       setCartQty,
       removeCartItem,
       clearCart,
+      toggleFavorite,
       showToast,
       priceOf,
     }),
@@ -224,6 +270,7 @@ export function StoreProvider({
       cartCount,
       campaign,
       banner,
+      favorites,
       login,
       updateUser,
       logout,
@@ -231,6 +278,7 @@ export function StoreProvider({
       setCartQty,
       removeCartItem,
       clearCart,
+      toggleFavorite,
       showToast,
       priceOf,
     ],

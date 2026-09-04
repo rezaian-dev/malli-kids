@@ -9,9 +9,6 @@
    customer-styled) — never import this from an admin file. */
 @import "tailwindcss";
 @import "tw-animate-css";
-/* 🗺️ Leaflet's own stylesheet — needed by the profile address map
-   (`address-map-field.tsx`); only the storefront ever renders it. */
-@import "leaflet/dist/leaflet.css";
 @import "./theme.css";
 
 /* 🚫 `src/app/(admin)/**` and the admin-only component tree are never
