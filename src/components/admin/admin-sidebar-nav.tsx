@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
@@ -22,16 +23,17 @@ export function AdminSidebarNav({
   counts: AdminNotifCounts;
 }) {
   const path = usePathname();
+  const uid = useId();
 
   return (
     <nav className="flex flex-col gap-2 px-3 pb-4" aria-label="منوی مدیریت">
       {ADMIN_NAV_GROUPS.map((group) => {
         const items = ADMIN_NAV.filter((item) => item.group === group.id);
         return (
-          <section key={group.id} aria-labelledby={`admin-nav-${group.id}`}>
+          <section key={group.id} aria-labelledby={`admin-nav-${uid}-${group.id}`}>
             <div className="mb-1 flex items-center gap-2 px-3 pt-2">
               <p
-                id={`admin-nav-${group.id}`}
+                id={`admin-nav-${uid}-${group.id}`}
                 className="text-navy/70 dark:text-wheat/70 text-[9px] font-black"
               >
                 {group.label}

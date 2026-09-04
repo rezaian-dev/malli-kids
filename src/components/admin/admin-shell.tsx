@@ -7,6 +7,7 @@ import { useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
 
 import { ModeToggle } from "@/components/shared/mode-toggle";
+import { SkipLink } from "@/components/shared/skip-link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -138,6 +139,7 @@ export function AdminShell({
         "dark:text-ivory dark:bg-[#03111f] dark:bg-[radial-gradient(58%_44%_at_103%_-4%,rgba(193,147,87,0.18),transparent_68%),radial-gradient(45%_38%_at_-5%_105%,rgba(44,86,128,0.34),transparent_72%),linear-gradient(rgba(232,197,122,0.027)_1px,transparent_1px),linear-gradient(90deg,rgba(232,197,122,0.027)_1px,transparent_1px)] dark:bg-size-[auto,auto,42px_42px,42px_42px]",
       )}
     >
+      <SkipLink />
       {}
       <span
         aria-hidden="true"
@@ -318,7 +320,10 @@ export function AdminShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-400 px-3 py-5 sm:px-5 sm:py-7 lg:px-8 lg:py-8">
+        <main
+          id="main-content"
+          className="mx-auto w-full max-w-400 px-3 py-5 sm:px-5 sm:py-7 lg:px-8 lg:py-8"
+        >
           {children}
         </main>
       </div>

@@ -5,17 +5,13 @@ import { getSession } from "@/lib/auth/session";
 import { findApplicableCoupon, type AppliedCoupon } from "@/lib/shop/coupons";
 import { createOrder } from "@/lib/shop/orders";
 import { getProductById } from "@/lib/shop/products";
-import {
-  createReview,
-  getVisibleReviewsForProduct,
-  hasPurchased,
-} from "@/lib/shop/reviews";
+import { createReview, hasPurchased } from "@/lib/shop/reviews";
 import { getCampaign } from "@/lib/shop/settings";
 import { campaignPrice } from "@/lib/shop/pricing";
 import { phoneDigits } from "@/lib/digits";
 import { toEnDigits } from "@/lib/locale/fa";
 import type { ActionResult } from "@/lib/action-result";
-import type { AdminOrder, AdminReview } from "@/types";
+import type { AdminOrder } from "@/types";
 import { reviewSchema } from "./product-review-schema";
 import { checkoutSchema, type CheckoutValues } from "./checkout-schema";
 
@@ -58,21 +54,6 @@ export async function submitReviewAction(
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
   }
-}
-
-/** 🧾 Gates `ProductReviewForm`'s "write a review" UI. */
-export async function hasPurchasedProductAction(
-  productId: number,
-): Promise<boolean> {
-  const user = await requireSessionUser();
-  if (!user) return false;
-  return hasPurchased(user.id, productId);
-}
-
-export async function getProductReviewsAction(
-  productName: string,
-): Promise<AdminReview[]> {
-  return getVisibleReviewsForProduct(productName);
 }
 
 export async function checkCouponAction(

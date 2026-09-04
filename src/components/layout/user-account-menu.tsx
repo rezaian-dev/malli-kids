@@ -34,7 +34,11 @@ export default function UserAccountMenu({
   return (
     <DropdownMenu dir="rtl" modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className={TRIGGER_SHELL}>
+        <Button
+          variant="outline"
+          aria-label="حساب کاربری"
+          className={TRIGGER_SHELL}
+        >
           <AccountFace avatar={user.avatar} first={first} />
         </Button>
       </DropdownMenuTrigger>

@@ -1,28 +1,16 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { getProductReviewsAction } from "../_lib/actions";
 import type { AdminReview, Product } from "@/types";
-import { useLiveProduct } from "./product-live-context";
 import { ReviewSummary } from "./review-summary";
 import { FeaturedReview } from "./featured-review";
 import { BuyerReviewCard } from "./buyer-review-card";
 import { cn } from "@/lib/utils";
 
-export function ProductReviews({ product: seed }: { product: Product }) {
-  const product = useLiveProduct(seed);
-  const [reviews, setReviews] = useState<AdminReview[]>([]);
-
-  useEffect(() => {
-    let active = true;
-    getProductReviewsAction(product.name).then((list) => {
-      if (active) setReviews(list);
-    });
-    return () => {
-      active = false;
-    };
-  }, [product.name]);
-
+export function ProductReviews({
+  product,
+  reviews,
+}: {
+  product: Product;
+  reviews: AdminReview[];
+}) {
   const [featured, ...others] = reviews;
   const avg = reviews.length
     ? reviews.reduce((sum, r) => sum + r.rate, 0) / reviews.length

@@ -67,12 +67,13 @@ export function Field({
   const message = fieldState.error?.message;
   const shell = noShell ? undefined : SHELL[skin];
   const showMsg = Boolean(message) && !hideMessage;
+  const showHint = !showMsg && Boolean(hint);
 
   const control = children({
     field,
     invalid,
     id,
-    describedBy: showMsg ? `${id}-msg` : undefined,
+    describedBy: showMsg ? `${id}-msg` : showHint ? `${id}-hint` : undefined,
   });
 
   return (
@@ -135,8 +136,10 @@ export function Field({
             <span>{message}</span>
           </span>
         </p>
-      ) : hint ? (
-        <p className={HINT_TEXT}>{hint}</p>
+      ) : showHint ? (
+        <p id={`${id}-hint`} className={HINT_TEXT}>
+          {hint}
+        </p>
       ) : null}
     </div>
   );

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Search, Tag } from "lucide-react";
 import { CATS, PRICE_CAP } from "@/lib/constants";
 import { SEASONS } from "@/lib/data/products";
@@ -61,17 +62,18 @@ export function ShopFilters({
   /** 📱 Called after a category pick — the mobile sheet uses this to close itself. */
   onCategoryPick?: () => void;
 }) {
+  const searchId = useId();
   return (
     <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-5">
       {/* 🔎 Search */}
       <div className="space-y-2.5">
-        <label htmlFor="shop-search" className={SECTION_LABEL}>
+        <label htmlFor={searchId} className={SECTION_LABEL}>
           <Search className="size-3.5" /> جستجو
         </label>
         <span className="dark:bg-navy-mid relative block rounded-2xl bg-white">
           <Search className="text-gold pointer-events-none absolute inset-e-3.5 top-1/2 size-4 -translate-y-1/2" />
           <Input
-            id="shop-search"
+            id={searchId}
             type="search"
             inputMode="search"
             autoComplete="off"
