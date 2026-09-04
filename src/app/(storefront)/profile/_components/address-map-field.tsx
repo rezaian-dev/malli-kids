@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useFormContext } from "react-hook-form";
 import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
-import { CheckCircle2, ChevronUp, LocateFixed, MapPin, MapPinned } from "lucide-react";
+import { CheckCircle2, ChevronUp, LocateFixed, MapPin } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,18 +20,45 @@ import type { UpdateAccountValues } from "../_lib/schemas";
 import { loadLeaflet } from "./leaflet-loader";
 
 const PICK_DEBOUNCE_MS = 600;
-const TYPE_CHARS_PER_TICK = 2;
-const TYPE_TICK_MS = 22;
+// ✍️ The reverse-geocoded address reveals one *word* at a time via a
+// staggered `animation-delay` per chunk (see the "آدرس یافت‌شده" field
+// below) — word-level, not character-level: Persian is a cursive script
+// where a letter's glyph shape depends on its neighbors, and giving each
+// character its own box (required for the per-chunk transform) breaks that
+// joining, rendering every letter in its isolated form until the reveal
+// finishes — exactly the "garbled, then fixes itself" look this replaces.
+// A whole word is one unbroken text node, so shaping inside it is
+// untouched; only the (shaping-irrelevant) gaps between words animate in
+// separately. `REVEAL_ANIM_MS` must track `--animate-letter-in`'s own
+// duration in `theme.css` so the "typing" state clears exactly when the
+// last chunk's animation actually finishes, not before or after.
+const WORD_STAGGER_MS = 45;
+const REVEAL_ANIM_MS = 340;
+// 🪁 How long the settle bounce (`--animate-marker-drop`, also in
+// theme.css) takes before the marker resumes its idle float — kept a hair
+// after that animation's own 500ms so the two never overlap mid-bounce.
+// Applies every time the marker settles, not just its very first drop-in:
+// floating is the marker's permanent resting state (only suspended while
+// actually being dragged), not a one-time "unconfirmed" flag — a location
+// already being saved doesn't make the *marker* stop floating in place,
+// only its picked coordinates stop moving.
+const FLOAT_START_DELAY_MS = 520;
 
 /** 📍 "انتخاب روی نقشه" — an inline (never a dialog/overlay) map card that
- *  expands right below the address field. No marker shows until the user
- *  actually picks a spot — clicking anywhere on the map (or confirming a
- *  GPS fix) drops a real Leaflet marker exactly there and reverse-geocodes
- *  it into the account form's `address` field (typed in with a small
- *  animation). A previous version instead kept a pin permanently glued to
- *  the map's visual center, picking up whatever was under it on every pan —
- *  dropped in favor of this explicit click-to-place model. Reads and writes
- *  `lat`/`lng`/`address` straight off the surrounding `<AppForm>`'s
+ *  expands right below the address field. A real, draggable Leaflet marker
+ *  shows the instant the card opens — at the saved location if there is
+ *  one, a brand default otherwise — gently floating in place whenever it's
+ *  not actively being touched, so there's always something on the map to
+ *  orient by instead of a blank canvas waiting for a first click. Clicking
+ *  anywhere on the map (or confirming a GPS fix) drops that marker exactly
+ *  there and reverse-geocodes it into the account form's `address` field
+ *  (revealed with a small per-word animation); dragging it afterwards
+ *  fine-tunes the point without re-clicking, lifting/wobbling higher while
+ *  held and settling with a little bounce — then resuming its idle float —
+ *  on release. A previous version instead kept a pin permanently glued to
+ *  the map's visual center, picking up whatever was under it on every pan
+ *  — dropped in favor of this explicit click-then-drag model. Reads and
+ *  writes `lat`/`lng`/`address` straight off the surrounding `<AppForm>`'s
  *  react-hook-form context — those three only ever get committed together
  *  when the user presses "تأیید", and only really saved once "ذخیره حساب"
  *  is submitted like every other account field. */
@@ -67,8 +94,13 @@ export function AddressMapField() {
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const keydownHandlerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const typeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const typeTargetRef = useRef("");
+  const typeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // 🪁 Bridges `placeMarker`'s "resume floating after the settle bounce"
+  // timeout (scheduled inside the map-building effect's `.then`, every
+  // time the marker settles — not just once) to the effect's own cleanup
+  // (a sibling scope) and to `setLifted`/`replayDrop` (need to cancel it
+  // early if another action lands before it ever fires).
+  const floatTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 🧊 Plain functions, not `useCallback` — none of these are ever compared
   // by reference (not a `useEffect`/`useMemo` dependency, not passed to a
@@ -76,33 +108,37 @@ export function AddressMapField() {
   // whatever version of `handlePick` exists when it runs, via its own
   // `[open]`-only dependency array), so memoizing them buys nothing.
   function stopTyping() {
-    if (typeIntervalRef.current) clearInterval(typeIntervalRef.current);
-    typeIntervalRef.current = null;
+    if (typeTimeoutRef.current) clearTimeout(typeTimeoutRef.current);
+    typeTimeoutRef.current = null;
     setTyping(false);
   }
 
+  // ✍️ Unlike the old JS-driven char-by-char slice, `preview` is set to the
+  // *full* text immediately — the letter-by-letter reveal is now purely a
+  // CSS stagger on already-present `<span>`s (see the JSX below), so this
+  // just needs one `setTimeout` sized to when the last letter's own
+  // animation finishes, not a repeating tick per character.
   function startTypewriter(text: string) {
     stopTyping();
-    typeTargetRef.current = text;
-    setPreview("");
+    setPreview(text);
     setTyping(true);
-    let shown = 0;
-    typeIntervalRef.current = setInterval(() => {
-      shown += TYPE_CHARS_PER_TICK;
-      setPreview(text.slice(0, shown));
-      if (shown >= text.length) {
-        stopTyping();
-        setDoneTick((n) => n + 1);
-      }
-    }, TYPE_TICK_MS);
+    // 🧮 Same split the JSX below uses to build the animated chunks — the
+    // count (not the string content) is all that matters here.
+    const chunks = text.split(/(\s+)/).length;
+    const total = Math.max(chunks - 1, 0) * WORD_STAGGER_MS + REVEAL_ANIM_MS;
+    typeTimeoutRef.current = setTimeout(() => {
+      typeTimeoutRef.current = null;
+      setTyping(false);
+      setDoneTick((n) => n + 1);
+    }, total);
   }
 
   // ⏩ Editing the preview mid-animation (or just wanting the full text
-  // instantly) should feel responsive, not fight the typewriter.
+  // instantly) should feel responsive, not fight the reveal — `preview`
+  // already holds the full text, so this just cuts the reveal short.
   function finishTypingNow() {
-    if (!typeIntervalRef.current) return;
+    if (!typeTimeoutRef.current) return;
     stopTyping();
-    setPreview(typeTargetRef.current);
     setDoneTick((n) => n + 1);
   }
 
@@ -181,12 +217,12 @@ export function AddressMapField() {
     const hasExisting = existingLat != null && existingLng != null;
     const startLat = existingLat ?? BRAND.map.lat;
     const startLng = existingLng ?? BRAND.map.lng;
-    // 📍 A previously-saved location *is* already a selection — show its
-    // marker right away. Otherwise nothing's been picked yet, so no marker
-    // (and no `picked`) until the user actually clicks the map or uses GPS.
+    // 📍 A previously-saved location *is* already a selection. Otherwise
+    // nothing's been picked yet — `picked` stays null (the marker still
+    // shows either way, see `placeMarker` below) until the user actually
+    // clicks the map, drags, or uses GPS.
     setPicked(hasExisting ? { lat: existingLat, lng: existingLng } : null);
     setPreview(getValues("address") ?? "");
-    typeTargetRef.current = getValues("address") ?? "";
 
     loadLeaflet()
       .then((L) => {
@@ -215,38 +251,205 @@ export function AddressMapField() {
           },
         ).addTo(map);
 
-        // 📍 A real Leaflet marker, created lazily on the first selection
-        // (or immediately below, if a location was already saved) and just
-        // moved on every one after — never re-created, so it doesn't flash.
+        // 🩹 Both helpers reach into the marker's *actual* DOM node
+        // (`getElement()`) and toggle plain classes on it — cheaper and
+        // simpler than routing marker visuals through React state, since
+        // this element lives entirely outside React's tree (Leaflet owns
+        // it). `[data-pin-body]`/`[data-pin-shadow]` are the two children
+        // inside the icon markup built below.
+        function getPinParts(marker: LeafletMarker) {
+          const el = marker.getElement();
+          return {
+            body: el?.querySelector<HTMLElement>("[data-pin-body]") ?? null,
+            shadow:
+              el?.querySelector<HTMLElement>("[data-pin-shadow]") ?? null,
+          };
+        }
+        // 🎈 The idle float — its own `animate-pin-float` token (see
+        // `theme.css`), tuned faster/smaller than the app's generic
+        // `animate-floaty` so it actually reads at a glance on a 34px
+        // marker. This is the pin's *permanent* resting state, suspended
+        // only while it's actively being dragged — not a one-time
+        // "unconfirmed placeholder" flag. `animate-marker-drop` and
+        // `animate-pin-float` both set the same `animation` CSS property,
+        // so only one may ever be present at once, or the one later in the
+        // stylesheet silently wins outright (not "both play") — hence the
+        // explicit removal here rather than trusting `classList.toggle`.
+        function setFloating(marker: LeafletMarker, floating: boolean) {
+          const { body } = getPinParts(marker);
+          if (!body) return;
+          if (floating) body.classList.remove("animate-marker-drop");
+          body.classList.toggle("animate-pin-float", floating);
+        }
+        // ⏳ Cancels a still-pending "resume floating" timeout — needed
+        // whenever the marker is about to do something else (settle again,
+        // get lifted) before that timeout ever got the chance to fire.
+        function cancelFloatTimeout() {
+          if (!floatTimeoutRef.current) return;
+          clearTimeout(floatTimeoutRef.current);
+          floatTimeoutRef.current = null;
+        }
+        // 🎬 Removing+re-adding the same class doesn't replay a CSS
+        // animation — the browser sees no change. Forcing a reflow
+        // (`offsetWidth`) in between makes the removal "count" first. Also
+        // schedules the float resuming once this bounce settles — every
+        // settle does, not just the marker's very first drop-in.
+        function replayDrop(marker: LeafletMarker) {
+          const { body } = getPinParts(marker);
+          if (!body) return;
+          cancelFloatTimeout();
+          body.classList.remove("animate-marker-drop", "animate-pin-float");
+          void body.offsetWidth;
+          body.classList.add("animate-marker-drop");
+          floatTimeoutRef.current = setTimeout(() => {
+            floatTimeoutRef.current = null;
+            setFloating(marker, true);
+          }, FLOAT_START_DELAY_MS);
+        }
+        // 🪁 The lifted state is what sells "held in the air, not glued to
+        // the map": the pin floats/wobbles faster and higher
+        // (`animate-pin-lift`, an infinite loop — see `theme.css`) while
+        // its ground shadow shrinks and fades, exactly the inverse of a
+        // real object moving away from its shadow's light source.
+        function setLifted(marker: LeafletMarker, lifted: boolean) {
+          const { body, shadow } = getPinParts(marker);
+          if (lifted) {
+            cancelFloatTimeout();
+            body?.classList.remove("animate-marker-drop", "animate-pin-float");
+          }
+          body?.classList.toggle("animate-pin-lift", lifted);
+          shadow?.classList.toggle("scale-50", lifted);
+          shadow?.classList.toggle("opacity-30", lifted);
+        }
+
+        // 📍 A real, draggable Leaflet marker — shown immediately when the
+        // card opens (never withheld until a click), so there's always
+        // something on the map to orient by. `draggable: true` lets the
+        // user fine-tune the exact spot after a rough click/GPS placement.
         function placeMarker(nextLat: number, nextLng: number) {
           if (markerRef.current) {
             markerRef.current.setLatLng([nextLat, nextLng]);
+            replayDrop(markerRef.current); // an explicit re-placement always settles, then floats again
             return;
           }
-          markerRef.current = L.marker([nextLat, nextLng], {
-            // 🎨 Rendered from the same lucide icon the old fixed overlay
-            // used, so the pin looks identical — it's just a real marker
-            // tied to a coordinate now, not viewport-center chrome.
+          const marker = L.marker([nextLat, nextLng], {
+            // 🎨 A hand-drawn teardrop pin (gradient body, glossy
+            // highlight, navy-ringed "eye") instead of a stock icon —
+            // `data-pin-shadow`/`data-pin-body` are separate siblings, not
+            // nested, so the shadow can shrink/fade independently of the
+            // body lifting/wobbling above it.
             icon: L.divIcon({
               html: renderToStaticMarkup(
-                <MapPinned
-                  strokeWidth={1.75}
-                  className="text-navy fill-gold size-9 drop-shadow-[0_10px_10px_rgba(4,20,39,0.4)] dark:text-gold-light dark:fill-navy"
-                />,
+                <span className="relative block" style={{ width: 34, height: 34 }}>
+                  <span
+                    data-pin-shadow
+                    className="bg-navy-deep/45 absolute rounded-full blur-[1.5px] transition-[transform,opacity] duration-200 ease-out"
+                    style={{
+                      left: "50%",
+                      bottom: 1,
+                      width: 14,
+                      height: 5,
+                      transform: "translateX(-50%)",
+                    }}
+                  />
+                  <span
+                    data-pin-body
+                    className="animate-marker-drop absolute inset-0"
+                    style={{ transformOrigin: "50% 100%" }}
+                  >
+                    <svg
+                      width="34"
+                      height="34"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="drop-shadow-[0_6px_8px_rgba(4,20,39,0.45)]"
+                    >
+                      <defs>
+                        <linearGradient
+                          id="malliPinBody"
+                          x1="4"
+                          y1="1"
+                          x2="20"
+                          y2="22"
+                          gradientUnits="userSpaceOnUse"
+                        >
+                          <stop offset="0%" stopColor="#f0c878" />
+                          <stop offset="55%" stopColor="#c19357" />
+                          <stop offset="100%" stopColor="#b8893f" />
+                        </linearGradient>
+                        <radialGradient
+                          id="malliPinShine"
+                          cx="35%"
+                          cy="22%"
+                          r="45%"
+                        >
+                          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.6" />
+                          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                        </radialGradient>
+                      </defs>
+                      <path
+                        d="M12 0C7.31 0 3.5 3.81 3.5 8.5c0 6.5 8.5 15.5 8.5 15.5s8.5-9 8.5-15.5C20.5 3.81 16.69 0 12 0z"
+                        fill="url(#malliPinBody)"
+                        stroke="#0e2a47"
+                        strokeWidth="1"
+                      />
+                      <path
+                        d="M12 0C7.31 0 3.5 3.81 3.5 8.5c0 6.5 8.5 15.5 8.5 15.5s8.5-9 8.5-15.5C20.5 3.81 16.69 0 12 0z"
+                        fill="url(#malliPinShine)"
+                      />
+                      <circle
+                        cx="12"
+                        cy="8.5"
+                        r="4"
+                        fill="#fff8ec"
+                        stroke="#0e2a47"
+                        strokeWidth="0.9"
+                      />
+                      <circle cx="12" cy="8.5" r="1.8" fill="#0e2a47" />
+                    </svg>
+                  </span>
+                </span>,
               ),
               className: "", // 🧹 drops Leaflet's default white-box marker styling
-              iconSize: [36, 36],
-              iconAnchor: [18, 34],
+              iconSize: [34, 34],
+              iconAnchor: [17, 33],
             }),
+            draggable: true,
             keyboard: false, // the map container itself carries keyboard selection, below
-            interactive: false,
           }).addTo(map);
+
+          marker.on("dragstart", () => setLifted(marker, true));
+          marker.on("dragend", () => {
+            setLifted(marker, false);
+            replayDrop(marker); // small landing bounce, then floating resumes — echoing a click/GPS placement
+            const ll = marker.getLatLng();
+            handlePick(ll.lat, ll.lng);
+          });
+
+          markerRef.current = marker;
+          // 🎈 The static markup above already has `animate-marker-drop`
+          // baked in (plays automatically the instant it's inserted), so
+          // this is the *only* place floating gets scheduled without going
+          // through `replayDrop` — every later settle (click/drag/GPS/
+          // keyboard) reschedules it from there instead.
+          floatTimeoutRef.current = setTimeout(() => {
+            floatTimeoutRef.current = null;
+            setFloating(marker, true);
+          }, FLOAT_START_DELAY_MS);
         }
         placeMarkerRef.current = placeMarker;
-        if (hasExisting) placeMarker(existingLat, existingLng);
+        // 📍 Always shown from the moment the map appears — never withheld
+        // until a click — at the saved location if there is one, the brand
+        // default otherwise. Either way it starts floating once its
+        // drop-in bounce settles; a saved location being a real pick
+        // already (`picked` set above) only means its *coordinates* are
+        // fixed, not that the marker itself stops floating in place.
+        placeMarker(startLat, startLng);
 
         // 🖱️ Click drops (or moves) the marker exactly where clicked and
-        // picks that point — no more "fly the click to center" detour.
+        // picks that point immediately — dragging (above) is for fine-tuning
+        // afterwards, not required for a first placement.
         map.on("click", (e: import("leaflet").LeafletMouseEvent) => {
           placeMarker(e.latlng.lat, e.latlng.lng);
           handlePick(e.latlng.lat, e.latlng.lng);
@@ -289,6 +492,8 @@ export function AddressMapField() {
       cancelled = true;
       if (debounceRef.current) clearTimeout(debounceRef.current);
       stopTyping();
+      if (floatTimeoutRef.current) clearTimeout(floatTimeoutRef.current);
+      floatTimeoutRef.current = null;
       resizeObserverRef.current?.disconnect();
       resizeObserverRef.current = null;
       if (keydownHandlerRef.current) {
@@ -378,7 +583,8 @@ export function AddressMapField() {
           >
             <p className="text-navy/70 dark:text-wheat text-xs leading-6">
               روی نقطهٔ موردنظر روی نقشه کلیک کنید تا نشانگر همان‌جا قرار
-              بگیرد؛ آدرس متنی خودکار پر می‌شود.
+              بگیرد؛ برای تنظیم دقیق‌تر می‌توانید نشانگر را هم بکشید. آدرس
+              متنی خودکار پر می‌شود.
             </p>
 
             <div className="bg-sand relative h-72 w-full overflow-hidden rounded-2xl sm:h-80">
@@ -404,7 +610,7 @@ export function AddressMapField() {
                 <div
                   ref={mapElRef}
                   role="group"
-                  aria-label="نقشه‌ی انتخاب موقعیت — روی نقطهٔ موردنظر کلیک کنید تا نشانگر همان‌جا قرار بگیرد؛ یا با کلیدهای جهت‌دار نقشه را جابه‌جا و با اینتر همان نقطهٔ مرکز را انتخاب کنید. برای واردکردن آدرس با صفحه‌کلید می‌توانید از فیلد «آدرس یافت‌شده» زیر نقشه هم استفاده کنید"
+                  aria-label="نقشه‌ی انتخاب موقعیت — روی نقطهٔ موردنظر کلیک کنید تا نشانگر همان‌جا قرار بگیرد و برای تنظیم دقیق‌تر آن را بکشید؛ یا با کلیدهای جهت‌دار نقشه را جابه‌جا و با اینتر همان نقطهٔ مرکز را انتخاب کنید. برای واردکردن آدرس با صفحه‌کلید می‌توانید از فیلد «آدرس یافت‌شده» زیر نقشه هم استفاده کنید"
                   className="absolute inset-0"
                 />
               </div>
@@ -478,7 +684,8 @@ export function AddressMapField() {
               <div
                 className={cn(
                   "relative overflow-hidden rounded-2xl transition-shadow duration-500",
-                  typing && "ring-gold/40 ring-2",
+                  typing &&
+                    "ring-gold/50 shadow-[0_0_28px_-6px_rgba(193,147,87,0.65)] ring-2",
                 )}
               >
                 <textarea
@@ -493,8 +700,45 @@ export function AddressMapField() {
                   rows={3}
                   maxLength={160}
                   placeholder="پس از انتخاب نقطه روی نقشه، آدرس اینجا نوشته می‌شود…"
-                  className="bg-sand/60 text-navy placeholder:text-navy/70 dark:bg-navy-deep/40 dark:text-ivory dark:placeholder:text-ivory/30 min-h-20 w-full rounded-2xl px-4 py-3 text-sm font-semibold outline-none"
+                  className={cn(
+                    "bg-sand/60 text-navy placeholder:text-navy/70 dark:bg-navy-deep/40 dark:text-ivory dark:placeholder:text-ivory/30 min-h-20 w-full rounded-2xl px-4 py-3 text-sm font-semibold outline-none",
+                    // 🎭 The animated overlay below stands in for the real
+                    // textarea while it reveals — `invisible` (not
+                    // `opacity-0`/`hidden`) keeps this box's own size and
+                    // background driving the layout underneath it, exactly
+                    // where the overlay sits.
+                    typing && "invisible",
+                  )}
                 />
+                {typing ? (
+                  // ✍️ Each *word* (not letter) is its own `<span>` with a
+                  // staggered `animation-delay` (`--animate-letter-in`, see
+                  // theme.css) — fades/rises up from a gold glow into the
+                  // real text color, like it's being inked in. Word-level
+                  // specifically: giving each individual Persian letter its
+                  // own box (needed for the transform) breaks the script's
+                  // cursive joining, rendering isolated letterforms until
+                  // the reveal finishes — splitting on `(\s+)` keeps every
+                  // whitespace run too (as its own tiny chunk), so nothing
+                  // in the original text is lost, only regrouped. Purely
+                  // CSS-driven (no per-tick React state), so it runs
+                  // smoothly on the compositor regardless of length.
+                  <div
+                    aria-hidden
+                    dir="rtl"
+                    className="bg-sand/60 text-navy dark:bg-navy-deep/40 dark:text-ivory pointer-events-none absolute inset-0 min-h-20 w-full overflow-hidden rounded-2xl px-4 py-3 text-sm font-semibold whitespace-pre-wrap"
+                  >
+                    {preview.split(/(\s+)/).map((chunk, i) => (
+                      <span
+                        key={i}
+                        className="animate-letter-in motion-reduce:animate-none inline-block"
+                        style={{ animationDelay: `${i * WORD_STAGGER_MS}ms` }}
+                      >
+                        {chunk}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
                 {geocoding ? (
                   <span className="animate-shimmer via-gold/25 bg-linear-to-r pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 from-transparent to-transparent" />
                 ) : null}
