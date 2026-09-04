@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 
 import { parseProductRouteId, pdpHref } from "@/lib/data/products";
-import { getProductById, getRelatedProducts } from "@/lib/shop/products";
+import { getProductById } from "@/lib/shop/products";
 import { buildMetadata } from "@/lib/seo";
 import { ProductDetailLanding } from "./_components/product-detail-landing";
 
@@ -52,14 +52,5 @@ export default async function ProductPage({
     permanentRedirect(canonicalPath);
   }
 
-  const related = await getRelatedProducts(product.cat, product.id);
-
-  return (
-    <ProductDetailLanding
-      product={product}
-      requestedId={Number.isFinite(productId) ? productId : undefined}
-      canonicalPath={canonicalPath}
-      related={related}
-    />
-  );
+  return <ProductDetailLanding product={product} canonicalPath={canonicalPath} />;
 }

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentProps } from "react";
 import { NavigationMenuLink } from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
 
 export function isActive(path: string, href: string) {
   if (href === "/shop") return path === "/shop" || path.startsWith("/shop");
@@ -32,32 +31,5 @@ export function NavActiveLink({
         {children}
       </Link>
     </NavigationMenuLink>
-  );
-}
-
-export function MobileActiveLink({
-  href,
-  className,
-  activeClassName,
-  children,
-  prefetch = false,
-  ...props
-}: {
-  href: string;
-  activeClassName?: string;
-} & Omit<ComponentProps<typeof Link>, "href">) {
-  const path = usePathname();
-  const active = isActive(path, href);
-
-  return (
-    <Link
-      href={href}
-      prefetch={prefetch}
-      aria-current={active ? "page" : undefined}
-      className={cn(className, active && activeClassName)}
-      {...props}
-    >
-      {children}
-    </Link>
   );
 }

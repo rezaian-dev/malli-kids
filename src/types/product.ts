@@ -18,4 +18,7 @@ export type Product = {
   sold: number;
   season?: Season;
   desc: string;
+  // 🕒 ISO 8601, real DB rows only (undefined for the static seed catalog) —
+  // sitemap's `lastModified` uses it when present instead of "now every time".
+  updatedAt?: string;
 };

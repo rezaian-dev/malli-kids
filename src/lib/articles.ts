@@ -11,6 +11,10 @@ export type JournalArticle = {
   body: string;
   cover?: string;
   date?: string;
+  // 🕒 ISO 8601, for `articleSchema`'s `datePublished`/`dateModified` — schema.org
+  // wants a machine-readable date, not the Jalali display string above.
+  publishedAt: string;
+  updatedAt: string;
 };
 
 // 🔐 Real allowlist sanitizer (was a hand-rolled `script/iframe/on*=` regex
@@ -83,6 +87,8 @@ function toJournalArticle(doc: ArticleDoc): JournalArticle {
     body: sanitizeHtml(doc.body),
     cover: doc.cover,
     date: faDate(doc.createdAt),
+    publishedAt: doc.createdAt.toISOString(),
+    updatedAt: doc.updatedAt.toISOString(),
   };
 }
 

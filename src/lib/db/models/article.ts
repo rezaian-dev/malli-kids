@@ -12,6 +12,7 @@ export type ArticleDoc = {
   cover?: string;
   published: boolean;
   createdAt: Date;
+  updatedAt: Date;
 };
 
 const articleSchema = new Schema<ArticleDoc>(

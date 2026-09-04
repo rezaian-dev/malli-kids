@@ -1,9 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { requireAdmin } from "@/lib/auth/admin";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { FestiveBannerModel } from "@/lib/db/models/festive-banner";
+import { FESTIVE_BANNER_TAG } from "@/lib/shop/banners";
 import type { ActionResult } from "@/lib/action-result";
 import { bannerPatchSchema, type BannerPatch } from "./schemas";
 
@@ -12,9 +13,11 @@ const AUTH_ERROR = "برای این کار باید ادمین وارد شده �
 
 function revalidateBanners() {
   revalidatePath("/admin/banners");
-  // 🎉 The active banner is read once in the root layout for the whole
-  // storefront (see `getActiveBanner()`) — that's the segment to bust.
-  revalidatePath("/", "layout");
+  // 🎉 The storefront's active banner is served from `getActiveBanner()`'s
+  // own `unstable_cache` (tag `FESTIVE_BANNER_TAG`), not from the route's
+  // page/layout cache — this app renders every route dynamically, so
+  // there's no route-level cache entry here for `revalidatePath` to bust.
+  revalidateTag(FESTIVE_BANNER_TAG, "max");
 }
 
 export async function updateBannerAction(

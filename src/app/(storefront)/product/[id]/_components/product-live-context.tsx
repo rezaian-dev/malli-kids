@@ -15,7 +15,6 @@ export function ProductLiveProvider({
   children,
 }: {
   product: Product;
-  requestedId?: number;
   children: ReactNode;
 }) {
   return <LiveCtx.Provider value={product}>{children}</LiveCtx.Provider>;

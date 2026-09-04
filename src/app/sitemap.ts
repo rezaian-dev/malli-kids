@@ -127,14 +127,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
     url: absoluteUrl(pdpHref(product.id)),
-    lastModified: now,
+    // 🕒 The product's real last-write time when we have it (every DB row
+    // does; only the static seed catalog wouldn't) — a sitemap that reports
+    // every URL as "modified right now" on every regeneration is a signal
+    // crawlers learn to discount.
+    lastModified: product.updatedAt ?? now,
     changeFrequency: "weekly",
     priority: 0.75,
   }));
 
   const articleRoutes: MetadataRoute.Sitemap = articles.map((article) => ({
     url: absoluteUrl(`/articles/${article.slug}`),
-    lastModified: now,
+    lastModified: article.updatedAt,
     changeFrequency: "monthly",
     priority: 0.7,
   }));

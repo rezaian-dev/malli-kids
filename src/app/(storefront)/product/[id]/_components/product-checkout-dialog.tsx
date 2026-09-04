@@ -41,7 +41,6 @@ export function ProductCheckoutDialog({
   const [applied, setApplied] = useState<{ code: string; rate: number } | null>(
     null,
   );
-  const [couponMsg, setCouponMsg] = useState("");
   const [couponBad, setCouponBad] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -68,14 +67,12 @@ export function ProductCheckoutDialog({
       if (hit) {
         setApplied(hit);
         setCouponBad(false);
-        setCouponMsg("");
         showToast(
           `کد ${hit.code} اعمال شد — ${toFaDigits(Math.round(hit.rate * 100))}٪ تخفیف 🎉`,
         );
       } else {
         setApplied(null);
         setCouponBad(true);
-        setCouponMsg("");
       }
     });
   }
@@ -246,9 +243,7 @@ export function ProductCheckoutDialog({
               کد {applied.code} فعال است ✓
             </p>
           ) : couponBad ? (
-            <p className="text-rose text-[11px] font-black">
-              {couponMsg || "این کد معتبر نیست."}
-            </p>
+            <p className="text-rose text-[11px] font-black">این کد معتبر نیست.</p>
           ) : null}
         </div>
 

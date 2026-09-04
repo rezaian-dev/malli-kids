@@ -84,10 +84,6 @@ export function faDateTime(input: Date | string | number): string {
   return faDateTimeFormatter.format(new Date(input));
 }
 
-export function faNow(): string {
-  return faDateTime(new Date());
-}
-
 /**
  * 📅 Format a real (Gregorian) timestamp — stored on every document via
  * Mongoose's own `createdAt` — as a Jalali `YYYY/MM/DD` string, Persian

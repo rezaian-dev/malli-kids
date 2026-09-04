@@ -417,7 +417,10 @@ export function productSchema(product: Product) {
 
 // 📰 Article schema covers editorial content pages.
 export function articleSchema(
-  article: Pick<JournalArticle, "slug" | "title" | "excerpt" | "cover">,
+  article: Pick<
+    JournalArticle,
+    "slug" | "title" | "excerpt" | "cover" | "publishedAt" | "updatedAt"
+  >,
 ) {
   const image = article.cover || SEO.defaultImage;
 
@@ -429,6 +432,8 @@ export function articleSchema(
     image: [absoluteUrl(image)],
     mainEntityOfPage: absoluteUrl(`/articles/${article.slug}`),
     inLanguage: "fa-IR",
+    datePublished: article.publishedAt,
+    dateModified: article.updatedAt,
     author: {
       "@type": "Organization",
       name: SEO.siteNameFa,

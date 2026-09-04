@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { Suspense } from "react";
 
-import { ProductCard } from "@/components/product";
 import { JsonLd } from "@/components/shared/json-ld";
+import { Skeleton } from "@/components/ui/skeleton";
 import { breadcrumbSchema, productSchema } from "@/lib/seo";
 import { cn, shell } from "@/lib/utils";
 import { wash } from "@/components/shared/section-wash";
@@ -9,20 +10,30 @@ import type { Product } from "@/types";
 import { ProductBuyPanel } from "./product-buy-panel";
 import { ProductDetailsMount } from "./product-details-mount";
 import { LiveName, ProductLiveProvider } from "./product-live-context";
-import { pdpCard, pdpKicker } from "../_lib/product-chrome";
+import { ProductRelated } from "./product-related";
+import { pdpCard } from "../_lib/product-chrome";
 
 const CRUMB_LINK = "hover:text-gold inline-block py-1.5";
 
+function RelatedFallback() {
+  return (
+    <section className={`${pdpCard} mt-8 p-4 sm:mt-12 sm:p-7`} aria-hidden>
+      <Skeleton className="mb-6 h-5 w-40" />
+      <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] sm:gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="aspect-3/4 w-full rounded-2xl" />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function ProductDetailLanding({
   product,
-  requestedId,
   canonicalPath,
-  related,
 }: {
   product: Product;
-  requestedId: number | undefined;
   canonicalPath: string;
-  related: Product[];
 }) {
   return (
     <>
@@ -34,7 +45,7 @@ export function ProductDetailLanding({
         ])}
       />
       <JsonLd data={productSchema(product)} />
-      <ProductLiveProvider product={product} requestedId={requestedId}>
+      <ProductLiveProvider product={product}>
         <div className={`${wash.silk} pb-2`}>
           <div className={shell}>
             <nav
@@ -73,29 +84,9 @@ export function ProductDetailLanding({
             <ProductBuyPanel product={product} />
             <ProductDetailsMount product={product} />
 
-            {related.length ? (
-              <section
-                className={`${pdpCard} cv-auto mt-8 p-4 sm:mt-12 sm:p-7`}
-                aria-labelledby="related-products-heading"
-              >
-                <p className={pdpKicker}>COMPLETE THE LOOK</p>
-                <h2
-                  id="related-products-heading"
-                  className={cn(
-                    "mt-1 mb-4 text-lg font-black sm:mb-6 sm:text-xl",
-                    "text-navy",
-                    "dark:text-ivory",
-                  )}
-                >
-                  مدل‌های مشابه
-                </h2>
-                <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] sm:gap-4">
-                  {related.map((item) => (
-                    <ProductCard key={item.id} p={item} view="grid" />
-                  ))}
-                </div>
-              </section>
-            ) : null}
+            <Suspense fallback={<RelatedFallback />}>
+              <ProductRelated cat={product.cat} excludeId={product.id} />
+            </Suspense>
           </div>
         </div>
       </ProductLiveProvider>

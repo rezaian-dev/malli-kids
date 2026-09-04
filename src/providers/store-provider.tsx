@@ -183,10 +183,11 @@ export function StoreProvider({
 
   const clearCart = useCallback(() => setCart([]), []);
 
-  const cartCount = useMemo(
-    () => cart.reduce((sum, item) => sum + item.qty, 0),
-    [cart],
-  );
+  // 🧮 A plain reduce over the cart — cheap enough (a handful of line
+  // items) that memoizing it buys nothing; it still keeps `value`'s own
+  // `useMemo` below correctly bailing out, since a primitive number
+  // compares by value regardless of how it was computed.
+  const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
   const showToast = useCallback((text: string) => toast(text), []);
 

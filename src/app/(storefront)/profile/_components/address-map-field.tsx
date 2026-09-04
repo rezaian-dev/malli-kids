@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
 import { CheckCircle2, ChevronUp, Loader2, LocateFixed, MapPin } from "lucide-react";
@@ -66,78 +66,74 @@ export function AddressMapField() {
   const typeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const typeTargetRef = useRef("");
 
-  const stopTyping = useCallback(() => {
+  // 🧊 Plain functions, not `useCallback` — none of these are ever compared
+  // by reference (not a `useEffect`/`useMemo` dependency, not passed to a
+  // memoized child; the map-building effect below intentionally closes over
+  // whatever version of `handlePick` exists when it runs, via its own
+  // `[open]`-only dependency array), so memoizing them buys nothing.
+  function stopTyping() {
     if (typeIntervalRef.current) clearInterval(typeIntervalRef.current);
     typeIntervalRef.current = null;
     setTyping(false);
-  }, []);
+  }
 
-  const startTypewriter = useCallback(
-    (text: string) => {
-      stopTyping();
-      typeTargetRef.current = text;
-      setPreview("");
-      setTyping(true);
-      let shown = 0;
-      typeIntervalRef.current = setInterval(() => {
-        shown += TYPE_CHARS_PER_TICK;
-        setPreview(text.slice(0, shown));
-        if (shown >= text.length) {
-          stopTyping();
-          setDoneTick((n) => n + 1);
-        }
-      }, TYPE_TICK_MS);
-    },
-    [stopTyping],
-  );
+  function startTypewriter(text: string) {
+    stopTyping();
+    typeTargetRef.current = text;
+    setPreview("");
+    setTyping(true);
+    let shown = 0;
+    typeIntervalRef.current = setInterval(() => {
+      shown += TYPE_CHARS_PER_TICK;
+      setPreview(text.slice(0, shown));
+      if (shown >= text.length) {
+        stopTyping();
+        setDoneTick((n) => n + 1);
+      }
+    }, TYPE_TICK_MS);
+  }
 
   // ⏩ Editing the preview mid-animation (or just wanting the full text
   // instantly) should feel responsive, not fight the typewriter.
-  const finishTypingNow = useCallback(() => {
+  function finishTypingNow() {
     if (!typeIntervalRef.current) return;
     stopTyping();
     setPreview(typeTargetRef.current);
     setDoneTick((n) => n + 1);
-  }, [stopTyping]);
+  }
 
-  const runGeocode = useCallback(
-    async (nextLat: number, nextLng: number) => {
-      setGeocoding(true);
-      const result = await reverseGeocodeAction({ lat: nextLat, lng: nextLng });
-      setGeocoding(false);
-      if (!result.ok) {
-        toast.error(result.error);
-        return;
-      }
-      startTypewriter(result.data.address);
-    },
-    [startTypewriter],
-  );
+  async function runGeocode(nextLat: number, nextLng: number) {
+    setGeocoding(true);
+    const result = await reverseGeocodeAction({ lat: nextLat, lng: nextLng });
+    setGeocoding(false);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    startTypewriter(result.data.address);
+  }
 
-  const handlePick = useCallback(
-    (nextLat: number, nextLng: number, recenter = false) => {
-      setPicked({ lat: nextLat, lng: nextLng });
-      if (markerRef.current) {
-        markerRef.current.setLatLng([nextLat, nextLng]);
-        bounceMarker(markerRef.current);
-      }
-      if (recenter && mapRef.current) {
-        mapRef.current.flyTo(
-          [nextLat, nextLng],
-          Math.max(mapRef.current.getZoom(), 16),
-          { duration: 0.9 },
-        );
-      }
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(
-        () => runGeocode(nextLat, nextLng),
-        PICK_DEBOUNCE_MS,
+  function handlePick(nextLat: number, nextLng: number, recenter = false) {
+    setPicked({ lat: nextLat, lng: nextLng });
+    if (markerRef.current) {
+      markerRef.current.setLatLng([nextLat, nextLng]);
+      bounceMarker(markerRef.current);
+    }
+    if (recenter && mapRef.current) {
+      mapRef.current.flyTo(
+        [nextLat, nextLng],
+        Math.max(mapRef.current.getZoom(), 16),
+        { duration: 0.9 },
       );
-    },
-    [runGeocode],
-  );
+    }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(
+      () => runGeocode(nextLat, nextLng),
+      PICK_DEBOUNCE_MS,
+    );
+  }
 
-  const handleLocate = useCallback(() => {
+  function handleLocate() {
     if (!navigator.geolocation) {
       toast.error("مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند.");
       return;
@@ -160,7 +156,7 @@ export function AddressMapField() {
       },
       { enableHighAccuracy: true, timeout: 10_000, maximumAge: 0 },
     );
-  }, [handlePick]);
+  }
 
   // 🗺️ Build a fresh map every time the card opens, tear it down when it
   // closes — simpler and safer than trying to keep one Leaflet instance

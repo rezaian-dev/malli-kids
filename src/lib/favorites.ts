@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "@/providers/store-provider";
 import { toast } from "@/lib/toast";
 import { getMyFavoritesAction, toggleFavoriteAction } from "@/lib/shop/favorites-actions";
@@ -31,25 +31,22 @@ export function useFavorites() {
   // dialog, no list change) or really added/removed an id. A caller like
   // `FavButton` that fires its own "added ❤️" toast unconditionally would
   // show it right alongside the login dialog for a signed-out click.
-  const toggle = useCallback(
-    (id: number) => {
-      if (!user) {
-        toast.warning("برای افزودن به علاقه‌مندی‌ها ابتدا وارد شوید");
-        setAuthOpen(true);
-        return;
-      }
+  function toggle(id: number) {
+    if (!user) {
+      toast.warning("برای افزودن به علاقه‌مندی‌ها ابتدا وارد شوید");
+      setAuthOpen(true);
+      return;
+    }
 
-      const adding = !ids.includes(id);
-      setIds((current) =>
-        adding ? [id, ...current] : current.filter((x) => x !== id),
-      );
-      toast.success(adding ? "به علاقه‌مندی‌ها اضافه شد ❤️" : "از علاقه‌مندی‌ها حذف شد");
-      toggleFavoriteAction(id).then((result) => {
-        if (result.ok) setIds(result.data);
-      });
-    },
-    [user, ids, setAuthOpen],
-  );
+    const adding = !ids.includes(id);
+    setIds((current) =>
+      adding ? [id, ...current] : current.filter((x) => x !== id),
+    );
+    toast.success(adding ? "به علاقه‌مندی‌ها اضافه شد ❤️" : "از علاقه‌مندی‌ها حذف شد");
+    toggleFavoriteAction(id).then((result) => {
+      if (result.ok) setIds(result.data);
+    });
+  }
 
   return { ids, toggle };
 }

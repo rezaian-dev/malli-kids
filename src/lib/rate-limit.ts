@@ -53,13 +53,3 @@ export function rateLimit(
   bucket.count += 1;
   return { ok: true };
 }
-
-/** 🌐 Best-effort caller IP from proxy headers, for rate-limiting requests
- *  that might not have a session yet. Never trust this for authorization —
- *  only for throttling (a spoofed header just makes the limiter useless for
- *  that one bucket, not a security bypass of anything else). */
-export function getClientIp(req: Request): string {
-  const forwarded = req.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]!.trim();
-  return req.headers.get("x-real-ip") || "unknown";
-}

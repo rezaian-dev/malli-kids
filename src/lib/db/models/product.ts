@@ -21,6 +21,7 @@ export type ProductDoc = {
   stock: boolean;
   sold: number;
   desc: string;
+  updatedAt: Date;
 };
 
 const productSchema = new Schema<ProductDoc>(

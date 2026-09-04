@@ -28,6 +28,7 @@ function toProduct(doc: ProductDoc): Product {
     stock: doc.stock,
     sold: doc.sold,
     desc: doc.desc,
+    updatedAt: doc.updatedAt?.toISOString(),
   };
 }
 

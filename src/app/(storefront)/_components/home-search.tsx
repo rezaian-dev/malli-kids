@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Baby,
@@ -38,12 +38,14 @@ export function HomeSearch() {
   const [error, setError] = useState("");
   const q = query.trim();
 
-  const hits = useMemo(() => {
-    if (!q) return [];
-    return CORE_PRODUCTS.filter(
-      (p) => p.name.includes(q) || p.cat.includes(q),
-    ).slice(0, 5);
-  }, [q]);
+  // 🔎 A couple of `.includes()` checks over a small in-memory catalog —
+  // cheap enough every render that memoizing the result isn't worth it.
+  const hits = q
+    ? CORE_PRODUCTS.filter((p) => p.name.includes(q) || p.cat.includes(q)).slice(
+        0,
+        5,
+      )
+    : [];
 
   function goShop(value: string) {
     const next = value.trim();

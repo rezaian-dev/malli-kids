@@ -153,11 +153,6 @@ export function writeCookie(name: string, value: string) {
   document.cookie = `${name}=${value}; path=/; max-age=${COOKIE_AGE}; samesite=lax`;
 }
 
-export function clearCookie(name: string) {
-  if (typeof document === "undefined") return;
-  document.cookie = `${name}=; path=/; max-age=0; samesite=lax`;
-}
-
 export function writeJsonCookie(name: string, value: unknown) {
   writeCookie(name, encodeURIComponent(JSON.stringify(value)));
 }

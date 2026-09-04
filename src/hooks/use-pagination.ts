@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Paged } from "@/types";
 
 /**
@@ -35,10 +35,10 @@ export function usePagination<T>(
 
   const current = Math.min(Math.max(1, page), pageCount);
 
-  const pageItems = useMemo(() => {
-    const start = (current - 1) * pageSize;
-    return items.slice(start, start + pageSize);
-  }, [items, current, pageSize]);
+  // 🍕 A `pageSize`-sized slice (a handful of rows) — cheap enough every
+  // render that memoizing it isn't worth the extra hook.
+  const start = (current - 1) * pageSize;
+  const pageItems = items.slice(start, start + pageSize);
 
   const setPage = (p: number) =>
     setPageRaw(Math.min(Math.max(1, p), pageCount));
