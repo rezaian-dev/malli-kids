@@ -20,7 +20,6 @@ import type { UpdateAccountValues } from "../_lib/schemas";
 import { loadLeaflet } from "./leaflet-loader";
 
 const PICK_DEBOUNCE_MS = 600;
-<<<<<<< HEAD
 // ✍️ The reverse-geocoded address reveals one *word* at a time via a
 // staggered `animation-delay` per chunk (see the "آدرس یافت‌شده" field
 // below) — word-level, not character-level: Persian is a cursive script
@@ -63,36 +62,6 @@ const FLOAT_START_DELAY_MS = 520;
  *  react-hook-form context — those three only ever get committed together
  *  when the user presses "تأیید", and only really saved once "ذخیره حساب"
  *  is submitted like every other account field. */
-=======
-// ✍️ The reverse-geocoded address reveals one letter at a time via a
-// staggered `animation-delay` per character (see the "آدرس یافت‌شده" field
-// below) — `LETTER_ANIM_MS` must track `--animate-letter-in`'s own duration
-// in `theme.css` so the "typing" state clears exactly when the last
-// letter's animation actually finishes, not before or after.
-const LETTER_STAGGER_MS = 9;
-const LETTER_ANIM_MS = 340;
-// 🪁 How long the initial drop-in bounce (`--animate-marker-drop`, also in
-// theme.css) takes before an unselected placeholder marker starts idly
-// floating — kept a hair after that animation's own 500ms so the two never
-// overlap mid-bounce.
-const FLOAT_START_DELAY_MS = 520;
-
-/** 📍 "انتخاب روی نقشه" — an inline (never a dialog/overlay) map card that
- *  expands right below the address field. No marker shows until the user
- *  actually picks a spot — clicking anywhere on the map (or confirming a
- *  GPS fix) drops a real, draggable Leaflet marker exactly there and
- *  reverse-geocodes it into the account form's `address` field (typed in
- *  with a small animation); dragging that marker afterwards fine-tunes the
- *  point without re-clicking, floating/wobbling while held and settling
- *  with a little bounce on release. A previous version instead kept a pin
- *  permanently glued to the map's visual center, picking up whatever was
- *  under it on every pan — dropped in favor of this explicit
- *  click-then-drag model. Reads and writes `lat`/`lng`/`address` straight
- *  off the surrounding `<AppForm>`'s react-hook-form context — those three
- *  only ever get committed together when the user presses "تأیید", and
- *  only really saved once "ذخیره حساب" is submitted like every other
- *  account field. */
->>>>>>> c7512e796b852e17bf9966f9b0063a1fcb914954
 export function AddressMapField() {
   const { watch, setValue, getValues } = useFormContext<UpdateAccountValues>();
   const lat = watch("lat");
@@ -126,18 +95,11 @@ export function AddressMapField() {
   const keydownHandlerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-<<<<<<< HEAD
   // 🪁 Bridges `placeMarker`'s "resume floating after the settle bounce"
   // timeout (scheduled inside the map-building effect's `.then`, every
   // time the marker settles — not just once) to the effect's own cleanup
   // (a sibling scope) and to `setLifted`/`replayDrop` (need to cancel it
   // early if another action lands before it ever fires).
-=======
-  // 🪁 Bridges `placeMarker`'s "start floating after the drop-in bounce"
-  // timeout (set inside the map-building effect's `.then`) to the effect's
-  // own cleanup (a sibling scope) and to `confirmSelection` (needs to
-  // cancel it early if a real pick lands before it ever fires).
->>>>>>> c7512e796b852e17bf9966f9b0063a1fcb914954
   const floatTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 🧊 Plain functions, not `useCallback` — none of these are ever compared
@@ -160,14 +122,10 @@ export function AddressMapField() {
     stopTyping();
     setPreview(text);
     setTyping(true);
-<<<<<<< HEAD
     // 🧮 Same split the JSX below uses to build the animated chunks — the
     // count (not the string content) is all that matters here.
     const chunks = text.split(/(\s+)/).length;
     const total = Math.max(chunks - 1, 0) * WORD_STAGGER_MS + REVEAL_ANIM_MS;
-=======
-    const total = Math.max(text.length - 1, 0) * LETTER_STAGGER_MS + LETTER_ANIM_MS;
->>>>>>> c7512e796b852e17bf9966f9b0063a1fcb914954
     typeTimeoutRef.current = setTimeout(() => {
       typeTimeoutRef.current = null;
       setTyping(false);
@@ -307,7 +265,6 @@ export function AddressMapField() {
               el?.querySelector<HTMLElement>("[data-pin-shadow]") ?? null,
           };
         }
-<<<<<<< HEAD
         // 🎈 The idle float — its own `animate-pin-float` token (see
         // `theme.css`), tuned faster/smaller than the app's generic
         // `animate-floaty` so it actually reads at a glance on a 34px
@@ -316,42 +273,12 @@ export function AddressMapField() {
         // "unconfirmed placeholder" flag. `animate-marker-drop` and
         // `animate-pin-float` both set the same `animation` CSS property,
         // so only one may ever be present at once, or the one later in the
-=======
-        // 🎬 Removing+re-adding the same class doesn't replay a CSS
-        // animation — the browser sees no change. Forcing a reflow
-        // (`offsetWidth`) in between makes the removal "count" first.
-        function replayDrop(marker: LeafletMarker) {
-          const { body } = getPinParts(marker);
-          if (!body) return;
-          body.classList.remove("animate-marker-drop");
-          void body.offsetWidth;
-          body.classList.add("animate-marker-drop");
-        }
-        // 🪁 The lifted state is what sells "held in the air, not glued to
-        // the map": the pin floats/wobbles (`animate-pin-lift`, an
-        // infinite loop — see `theme.css`) while its ground shadow shrinks
-        // and fades, exactly the inverse of a real object moving away from
-        // its shadow's light source.
-        function setLifted(marker: LeafletMarker, lifted: boolean) {
-          const { body, shadow } = getPinParts(marker);
-          if (lifted) body?.classList.remove("animate-marker-drop", "animate-floaty");
-          body?.classList.toggle("animate-pin-lift", lifted);
-          shadow?.classList.toggle("scale-50", lifted);
-          shadow?.classList.toggle("opacity-30", lifted);
-        }
-        // 🎈 The *idle* float — reused from the app's own `animate-floaty`
-        // token, not a bespoke one — for a marker that's just a starting
-        // placeholder, nobody has picked it yet. `animate-marker-drop` and
-        // `animate-floaty` both set the same `animation` CSS property, so
-        // only one may ever be present at once or the later one in the
->>>>>>> c7512e796b852e17bf9966f9b0063a1fcb914954
         // stylesheet silently wins outright (not "both play") — hence the
         // explicit removal here rather than trusting `classList.toggle`.
         function setFloating(marker: LeafletMarker, floating: boolean) {
           const { body } = getPinParts(marker);
           if (!body) return;
           if (floating) body.classList.remove("animate-marker-drop");
-<<<<<<< HEAD
           body.classList.toggle("animate-pin-float", floating);
         }
         // ⏳ Cancels a still-pending "resume floating" timeout — needed
@@ -393,42 +320,16 @@ export function AddressMapField() {
           body?.classList.toggle("animate-pin-lift", lifted);
           shadow?.classList.toggle("scale-50", lifted);
           shadow?.classList.toggle("opacity-30", lifted);
-=======
-          body.classList.toggle("animate-floaty", floating);
-        }
-        // ✅ The single place a placeholder marker turns into a real pick:
-        // cancels any still-pending "start floating" timeout (in case this
-        // fires before that ever gets the chance to), stops floating for
-        // good, and plays the settle bounce.
-        function confirmSelection(marker: LeafletMarker) {
-          if (floatTimeoutRef.current) {
-            clearTimeout(floatTimeoutRef.current);
-            floatTimeoutRef.current = null;
-          }
-          setFloating(marker, false);
-          replayDrop(marker);
->>>>>>> c7512e796b852e17bf9966f9b0063a1fcb914954
         }
 
         // 📍 A real, draggable Leaflet marker — shown immediately when the
         // card opens (never withheld until a click), so there's always
         // something on the map to orient by. `draggable: true` lets the
         // user fine-tune the exact spot after a rough click/GPS placement.
-<<<<<<< HEAD
         function placeMarker(nextLat: number, nextLng: number) {
           if (markerRef.current) {
             markerRef.current.setLatLng([nextLat, nextLng]);
             replayDrop(markerRef.current); // an explicit re-placement always settles, then floats again
-=======
-        function placeMarker(
-          nextLat: number,
-          nextLng: number,
-          opts?: { floating?: boolean },
-        ) {
-          if (markerRef.current) {
-            markerRef.current.setLatLng([nextLat, nextLng]);
-            confirmSelection(markerRef.current); // an explicit re-placement is always a real pick
->>>>>>> c7512e796b852e17bf9966f9b0063a1fcb914954
             return;
           }
           const marker = L.marker([nextLat, nextLng], {
@@ -518,35 +419,15 @@ export function AddressMapField() {
             keyboard: false, // the map container itself carries keyboard selection, below
           }).addTo(map);
 
-<<<<<<< HEAD
           marker.on("dragstart", () => setLifted(marker, true));
           marker.on("dragend", () => {
             setLifted(marker, false);
             replayDrop(marker); // small landing bounce, then floating resumes — echoing a click/GPS placement
-=======
-          marker.on("dragstart", () => {
-            // 🖐️ Dragging *is* a real pick in progress — even straight off
-            // the still-floating placeholder — so it cancels the float
-            // timeout and clears the class itself the same way
-            // `confirmSelection` does, just without the settle bounce
-            // (that plays on release instead, via `dragend` below).
-            if (floatTimeoutRef.current) {
-              clearTimeout(floatTimeoutRef.current);
-              floatTimeoutRef.current = null;
-            }
-            setFloating(marker, false);
-            setLifted(marker, true);
-          });
-          marker.on("dragend", () => {
-            setLifted(marker, false);
-            confirmSelection(marker); // small landing bounce, echoing a click/GPS placement
->>>>>>> c7512e796b852e17bf9966f9b0063a1fcb914954
             const ll = marker.getLatLng();
             handlePick(ll.lat, ll.lng);
           });
 
           markerRef.current = marker;
-<<<<<<< HEAD
           // 🎈 The static markup above already has `animate-marker-drop`
           // baked in (plays automatically the instant it's inserted), so
           // this is the *only* place floating gets scheduled without going
@@ -565,22 +446,6 @@ export function AddressMapField() {
         // already (`picked` set above) only means its *coordinates* are
         // fixed, not that the marker itself stops floating in place.
         placeMarker(startLat, startLng);
-=======
-          if (opts?.floating) {
-            floatTimeoutRef.current = setTimeout(() => {
-              floatTimeoutRef.current = null;
-              setFloating(marker, true);
-            }, FLOAT_START_DELAY_MS);
-          }
-        }
-        placeMarkerRef.current = placeMarker;
-        // 📍 Always shown from the moment the map appears — a saved
-        // location is already a real pick (no float, `picked` set above);
-        // a brand-new user instead gets a floating placeholder sitting at
-        // the default center, settling into a real pick only once they
-        // actually click, drag, GPS, or Enter-select somewhere.
-        placeMarker(startLat, startLng, { floating: !hasExisting });
->>>>>>> c7512e796b852e17bf9966f9b0063a1fcb914954
 
         // 🖱️ Click drops (or moves) the marker exactly where clicked and
         // picks that point immediately — dragging (above) is for fine-tuning
@@ -846,7 +711,6 @@ export function AddressMapField() {
                   )}
                 />
                 {typing ? (
-<<<<<<< HEAD
                   // ✍️ Each *word* (not letter) is its own `<span>` with a
                   // staggered `animation-delay` (`--animate-letter-in`, see
                   // theme.css) — fades/rises up from a gold glow into the
@@ -859,21 +723,11 @@ export function AddressMapField() {
                   // in the original text is lost, only regrouped. Purely
                   // CSS-driven (no per-tick React state), so it runs
                   // smoothly on the compositor regardless of length.
-=======
-                  // ✍️ Each letter is its own `<span>` with a staggered
-                  // `animation-delay` (`--animate-letter-in`, see
-                  // theme.css) — fades/rises up from a gold glow into the
-                  // real text color, like it's being inked in one letter at
-                  // a time. Purely CSS-driven (no per-tick React state), so
-                  // it runs smoothly on the compositor regardless of how
-                  // long `preview` is.
->>>>>>> c7512e796b852e17bf9966f9b0063a1fcb914954
                   <div
                     aria-hidden
                     dir="rtl"
                     className="bg-sand/60 text-navy dark:bg-navy-deep/40 dark:text-ivory pointer-events-none absolute inset-0 min-h-20 w-full overflow-hidden rounded-2xl px-4 py-3 text-sm font-semibold whitespace-pre-wrap"
                   >
-<<<<<<< HEAD
                     {preview.split(/(\s+)/).map((chunk, i) => (
                       <span
                         key={i}
@@ -881,15 +735,6 @@ export function AddressMapField() {
                         style={{ animationDelay: `${i * WORD_STAGGER_MS}ms` }}
                       >
                         {chunk}
-=======
-                    {[...preview].map((ch, i) => (
-                      <span
-                        key={i}
-                        className="animate-letter-in motion-reduce:animate-none inline-block"
-                        style={{ animationDelay: `${i * LETTER_STAGGER_MS}ms` }}
-                      >
-                        {ch === " " ? " " : ch}
->>>>>>> c7512e796b852e17bf9966f9b0063a1fcb914954
                       </span>
                     ))}
                   </div>
