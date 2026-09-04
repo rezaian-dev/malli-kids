@@ -1,6 +1,7 @@
 import { CATS, PRICE_CAP, SORTS } from "@/lib/constants";
 import { SEASONS } from "@/lib/data/products";
 import { applyShopSearchIntent } from "@/lib/shop-query";
+import type { Product } from "@/types";
 
 type SearchValue = string | string[] | undefined;
 
@@ -125,6 +126,31 @@ export function parseShopState(params: Record<string, SearchValue>): ShopState {
     next.q !== parsed.q;
 
   return intentChanged ? { ...next, page: 1 } : next;
+}
+
+/** 🎯 The one facet match used everywhere a product is tested against a
+ *  `ShopState` — the shop grid, its mobile/desktop filter chips, and the
+ *  server-rendered JSON-LD `ItemList` all call this so the structured data
+ *  search engines read never disagrees with what shoppers actually see. */
+export function matchesShopState(product: Product, state: ShopState) {
+  if (state.cat !== "همه" && product.cat !== state.cat) return false;
+  if (state.season !== "همه" && product.season !== state.season) return false;
+  if (state.stock && !product.stock) return false;
+  if (state.disc && !product.disc && !product.old) return false;
+  if (state.hot && product.badge !== "پرفروش") return false;
+  if (state.onlyNew && product.badge !== "جدید") return false;
+  if (product.price < state.min || product.price > state.max) return false;
+  if (!state.q) return true;
+
+  const needle = state.q.toLocaleLowerCase("fa");
+  const haystack = `${product.name} ${product.cat} ${product.season ?? ""}`
+    .toLocaleLowerCase("fa")
+    .trim();
+  return haystack.includes(needle);
+}
+
+export function filterShopProducts(catalog: Product[], state: ShopState) {
+  return catalog.filter((product) => matchesShopState(product, state));
 }
 
 export function toShopHref(state: ShopState) {

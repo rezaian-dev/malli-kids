@@ -12,6 +12,7 @@ import {
 import { ShopExplorer } from "./_components/shop-explorer";
 import {
   defaultShopState,
+  filterShopProducts,
   isShopIndexable,
   parseShopState,
   shopCanonicalHref,
@@ -76,22 +77,7 @@ export default async function ShopPage({
   }
 
   const catalog = await getAllProducts();
-  const items = catalog.filter((product) => {
-    if (state.cat !== "همه" && product.cat !== state.cat) return false;
-    if (state.season !== "همه" && product.season !== state.season) return false;
-    if (state.stock && !product.stock) return false;
-    if (state.disc && !product.disc && !product.old) return false;
-    if (state.hot && product.rate < 4.8) return false;
-    if (state.onlyNew && product.badge !== "جدید") return false;
-    if (product.price < state.min || product.price > state.max) return false;
-    if (!state.q) return true;
-
-    const haystack = `${product.name} ${product.cat} ${product.season ?? ""}`
-      .toLocaleLowerCase("fa")
-      .trim();
-
-    return haystack.includes(state.q.toLocaleLowerCase("fa"));
-  })
+  const items = filterShopProducts(catalog, state)
     .slice(0, 12)
     .map((product) => ({
       name: product.name,

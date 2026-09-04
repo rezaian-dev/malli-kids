@@ -55,8 +55,13 @@ export function ProductCheckoutDialog({
   }, [open]);
 
   const subtotal = unit * qty;
-  const shipping = subtotal >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
+  // 🚚 Shipping is decided by the *post-discount* subtotal, same as the
+  // server (`createOrder` in `lib/shop/orders.ts`) — a coupon big enough to
+  // drop the order back under the free-shipping line must show shipping
+  // here too, or this summary promises a total the server won't charge.
   const discount = applied ? Math.round(subtotal * applied.rate) : 0;
+  const shipping =
+    subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
 
   function applyCoupon() {
     const code = toEnDigits(couponIn).trim().toUpperCase();

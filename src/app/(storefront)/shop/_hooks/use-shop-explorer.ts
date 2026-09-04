@@ -4,7 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PRICE_CAP, SORTS } from "@/lib/constants";
 import { formatToman } from "@/lib/locale/fa";
-import { toShopHref, type ShopState } from "@/lib/shop/shop-state";
+import {
+  filterShopProducts,
+  toShopHref,
+  type ShopState,
+} from "@/lib/shop/shop-state";
 import type { Product } from "@/types";
 
 /** 🧠 All state, derived data, and URL-sync behind the shop page. */
@@ -52,17 +56,7 @@ export function useShopExplorer(
   const typedQ = query.trim();
 
   const filtered = useMemo(() => {
-    const list = catalog.filter((p) => {
-      if (state.cat !== "همه" && p.cat !== state.cat) return false;
-      if (state.season !== "همه" && p.season !== state.season) return false;
-      if (state.q && !p.name.includes(state.q) && !p.cat.includes(state.q))
-        return false;
-      if (state.stock && !p.stock) return false;
-      if (state.disc && !p.disc) return false;
-      if (state.hot && p.badge !== "پرفروش") return false;
-      if (state.onlyNew && p.badge !== "جدید") return false;
-      return p.price >= state.min && p.price <= state.max;
-    });
+    const list = filterShopProducts(catalog, state);
     if (state.sort === "price-asc") list.sort((a, b) => a.price - b.price);
     else if (state.sort === "price-desc")
       list.sort((a, b) => b.price - a.price);
