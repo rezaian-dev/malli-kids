@@ -489,25 +489,37 @@
    deliberately kept bright. So instead: override just the generated *text*
    utility classes, light mode only, to the darker `-ink` siblings above
    (picked to clear 4.5:1 against `--color-atelier`, the darkest surface
-   either sits on) — then revert to the original tokens under `.dark`, where
-   they already pass against the dark navy/dusk surfaces measured there. */
-.text-gold,
-.text-gold-deep {
+   either sits on).
+
+   🐛 This used to also carry a `.dark .text-gold { color: var(--color-gold) }`
+   "revert" rule to put the bright token back under `.dark`. That rule (and
+   this one, previously written with no `.dark`/`:not(.dark)` guard at all)
+   sits outside any `@layer`, so — regardless of source order or selector
+   specificity — it always outranked *every* Tailwind utility, `dark:`
+   variants included: cascade layers are resolved before specificity, and
+   Tailwind's own utilities (`dark:text-navy-deep`, `dark:text-gold-soft`,
+   `dark:text-gold-light`, …) live inside `@layer utilities`. Anywhere a
+   component paired a bare `text-gold`/`text-gold-deep` with a *different*
+   `dark:text-*` — expecting that variant to win in dark mode, e.g. an icon
+   badge whose background also flips to solid gold in dark mode — the
+   unlayered revert silently clobbered it back to plain gold-on-gold, i.e.
+   invisible (this is what made the shop page's filter icon, and the header
+   notification-count badge, disappear in dark mode).
+
+   Fix: scope the correction to `:not(.dark)` and drop the revert entirely.
+   With no rule of ours left active once `.dark` is present, Tailwind's own
+   compiled `.text-gold`/`.text-gold-deep` utilities (still `color:
+   var(--color-gold …)`) apply unmodified in dark mode by default, *and* any
+   `dark:text-*` a component adds explicitly wins the normal Tailwind way —
+   both already pass contrast against the dark navy/dusk surfaces measured
+   here, per the note above. */
+html:not(.dark) .text-gold,
+html:not(.dark) .text-gold-deep {
   color: var(--color-gold-ink);
 }
-.dark .text-gold,
-.dark .text-gold-deep {
-  color: var(--color-gold);
-}
-.text-rose,
-.text-destructive {
+html:not(.dark) .text-rose,
+html:not(.dark) .text-destructive {
   color: var(--color-rose-ink);
-}
-.dark .text-rose {
-  color: var(--color-rose);
-}
-.dark .text-destructive {
-  color: var(--color-destructive);
 }
 
 /* ─────────────────────────── 📦 Custom utilities ──────────────────────── */

@@ -1,6 +1,11 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent, type ClipboardEvent } from "react";
+import {
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ClipboardEvent,
+} from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -105,7 +110,7 @@ function OtpBoxes({
           maxLength={1}
           aria-label={`رقمِ ${toFaDigits(i + 1)}`}
           className={cn(
-            "h-13 w-11 rounded-2xl border-2 text-center text-lg font-black outline-none transition-all duration-200 motion-safe:focus:-translate-y-0.5",
+            "h-13 w-11 rounded-2xl border-2 text-center text-lg font-black transition-all duration-200 outline-none motion-safe:focus:-translate-y-0.5",
             "text-navy bg-white focus:shadow-lg",
             invalid
               ? "border-rose focus:border-rose"
@@ -213,73 +218,83 @@ export function OtpLoginPanel() {
   }
 
   return (
-    <AppForm
-      form={codeForm}
-      onSubmit={verify}
-      ariaLabel="تأییدِ کدِ پیامکی"
-      className="animate-fade-up space-y-4"
-      shakeSignal={shakeSignal}
-    >
-      {demo ? (
-        <p
-          className={cn(
-            "inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold",
-            "bg-gold/12 text-gold-deep",
-            "dark:text-gold-light",
-          )}
-        >
-          <Sparkles className="size-3.5" /> نسخهٔ نمایشی — پیامکِ واقعی به‌زودی
-          وصل می‌شود
+    // 🩹 `animate-fade-up` enters with a `translateY` — transforms count
+    // toward the *ancestor's* scrollable overflow while they're in flight,
+    // and this panel lives inside the auth modal's `overflow-y-auto` body.
+    // Left alone, that 18px of travel briefly makes the modal "taller",
+    // popping a vertical scrollbar in for the animation's ~0.55s then
+    // yanking it back out. This wrapper isn't itself transformed, so it
+    // keeps its rest-state (post-animation) size and clips the transformed
+    // child locally — the overflow never reaches the modal's scroll body.
+    <div className="overflow-hidden">
+      <AppForm
+        form={codeForm}
+        onSubmit={verify}
+        ariaLabel="تأییدِ کدِ پیامکی"
+        className="animate-fade-up space-y-4"
+        shakeSignal={shakeSignal}
+      >
+        {demo ? (
+          <p
+            className={cn(
+              "inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold",
+              "bg-gold/12 text-gold-deep",
+              "dark:text-gold-light",
+            )}
+          >
+            <Sparkles className="size-3.5" /> نسخهٔ نمایشی — پیامکِ واقعی
+            به‌زودی وصل می‌شود
+          </p>
+        ) : null}
+
+        <p className="text-navy/70 dark:text-linen/70 text-[13px] leading-6">
+          کدِ {toFaDigits(OTP_LEN)} رقمیِ ارسال‌شده به{" "}
+          <span dir="ltr" className="text-gold font-black">
+            {phone}
+          </span>{" "}
+          را وارد کنید.
         </p>
-      ) : null}
 
-      <p className="text-navy/70 dark:text-linen/70 text-[13px] leading-6">
-        کدِ {toFaDigits(OTP_LEN)} رقمیِ ارسال‌شده به{" "}
-        <span dir="ltr" className="text-gold font-black">
-          {phone}
-        </span>{" "}
-        را وارد کنید.
-      </p>
+        <Field name="code" label="کدِ تأیید" required noShell>
+          {({ field, invalid }) => (
+            <OtpBoxes
+              value={String(field.value ?? "")}
+              onChange={field.onChange}
+              invalid={invalid}
+              onComplete={() => codeForm.handleSubmit(verify)()}
+            />
+          )}
+        </Field>
 
-      <Field name="code" label="کدِ تأیید" required noShell>
-        {({ field, invalid }) => (
-          <OtpBoxes
-            value={String(field.value ?? "")}
-            onChange={field.onChange}
-            invalid={invalid}
-            onComplete={() => codeForm.handleSubmit(verify)()}
-          />
-        )}
-      </Field>
+        <Button type="submit" className={SUBMIT_NAVY}>
+          تأیید و ورود <KeyRound className="size-4" />
+        </Button>
 
-      <Button type="submit" className={SUBMIT_NAVY}>
-        تأیید و ورود <KeyRound className="size-4" />
-      </Button>
-
-      <div className="flex items-center justify-between text-[11px] font-bold">
-        {cd.sec > 0 ? (
-          <span className="text-navy/70 dark:text-linen/70">
-            ارسالِ دوباره تا {toFaDigits(cd.sec)} ثانیه
-          </span>
-        ) : (
+        <div className="flex items-center justify-between text-[11px] font-bold">
+          {cd.sec > 0 ? (
+            <span className="text-navy/70 dark:text-linen/70">
+              ارسالِ دوباره تا {toFaDigits(cd.sec)} ثانیه
+            </span>
+          ) : (
+            <Button
+              type="button"
+              variant="link"
+              className="text-gold h-auto gap-1 p-0 text-[11px] font-bold"
+              onClick={resend}
+            >
+              <RotateCcw className="size-3.5" /> ارسالِ دوبارهٔ کد
+            </Button>
+          )}
           <Button
             type="button"
             variant="link"
-            className="text-gold h-auto gap-1 p-0 text-[11px] font-bold"
-            onClick={resend}
+            className="text-navy/70 dark:text-linen/70 h-auto p-0 text-[11px] font-bold"
+            onClick={() => setStep("phone")}
           >
-            <RotateCcw className="size-3.5" /> ارسالِ دوبارهٔ کد
+            بازگشت <ArrowRight className="size-3.5" />
           </Button>
-        )}
-        <Button
-          type="button"
-          variant="link"
-          className="text-navy/70 dark:text-linen/70 h-auto p-0 text-[11px] font-bold"
-          onClick={() => setStep("phone")}
-        >
-          بازگشت <ArrowRight className="size-3.5" />
-        </Button>
-      </div>
-    </AppForm>
+        </div>
+      </AppForm>
+    </div>
   );
 }
