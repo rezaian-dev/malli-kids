@@ -1,13 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getSession } from "@/lib/auth/session";
+import { getSession, getSessionUser } from "@/lib/auth/session";
 import { findApplicableCoupon, type AppliedCoupon } from "@/lib/shop/coupons";
 import { createOrder } from "@/lib/shop/orders";
 import { getProductById } from "@/lib/shop/products";
 import { createReview, hasPurchased } from "@/lib/shop/reviews";
 import { getCampaign } from "@/lib/shop/settings";
 import { campaignPrice } from "@/lib/shop/pricing";
+import { getMissingShippingFields } from "@/lib/shop/shipping";
 import { phoneDigits } from "@/lib/digits";
 import { toEnDigits } from "@/lib/locale/fa";
 import type { ActionResult } from "@/lib/action-result";
@@ -17,6 +18,7 @@ import { checkoutSchema, type CheckoutValues } from "./checkout-schema";
 
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 const AUTH_ERROR = "برای این کار باید وارد حساب‌تان باشید.";
+const PROFILE_INCOMPLETE_ERROR = "لطفاً پروفایل خود را تکمیل کنید.";
 
 async function requireSessionUser() {
   const session = await getSession();
@@ -79,6 +81,15 @@ export async function createOrderAction(
 
   const user = await requireSessionUser();
   if (!user) return { ok: false, error: AUTH_ERROR };
+
+  // 🔐 Hard gate, mirrored server-side: an order can't ship without a
+  // complete profile (phone/address/postalCode), so re-check it here even
+  // though the buy panel already nudges/blocks on the client — this is the
+  // one path a checkout can't get past without it.
+  const profile = await getSessionUser();
+  if (!profile || getMissingShippingFields(profile).length) {
+    return { ok: false, error: PROFILE_INCOMPLETE_ERROR };
+  }
 
   try {
     const product = await getProductById(parsed.data.productId);

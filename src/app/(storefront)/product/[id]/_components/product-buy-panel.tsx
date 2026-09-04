@@ -60,17 +60,16 @@ export function ProductBuyPanel({ product }: { product: Product }) {
       return;
     }
 
-    // 📦 A COD order with no phone/address/postal code is undeliverable —
-    // nudge toward the profile *before* the checkout dialog opens, but
-    // don't block it: the dialog itself repeats these fields inline, so
-    // filling them in right there works just as well as visiting the
-    // profile page first.
+    // 📦 A COD order can't ship without phone/address/postal code — the
+    // profile must have these set before checkout opens at all (the server
+    // action re-checks the same thing, so this is a hard gate, not a nudge).
     const missing = getMissingShippingFields(user);
     if (missing.length) {
-      toast.warning(`برای ارسالِ درست و بدون تأخیر، ${missing.join("، ")} را در پروفایل‌تان تکمیل کنید`, {
-        description: "می‌توانید همین‌جا هم در فرمِ سفارش وارد کنید.",
+      toast.error("لطفاً پروفایل خود را تکمیل کنید", {
+        description: `${missing.join("، ")} در پروفایل‌تان ثبت نشده.`,
         action: { label: "تکمیل پروفایل", onClick: () => router.push("/profile") },
       });
+      return;
     }
 
     setCheckout(true);

@@ -2,13 +2,11 @@ import type { User } from "@/types";
 
 type ShippingFields = Pick<User, "phone" | "address" | "postalCode">;
 
-// 📦 The fields an order can't actually be shipped without — used both to
-// nudge someone toward finishing their profile *before* checkout (the
-// account form) and to gently interrupt them right at the "ثبت سفارش" click
-// if they skipped that (`product-buy-panel.tsx`). Checkout's own dialog
-// still lets them fill these in inline as a fallback — this is a nudge, not
-// a hard gate, since a first-time buyer shouldn't have to visit a separate
-// page before they're allowed to complete an order.
+// 📦 The fields an order can't actually be shipped without — a hard gate,
+// checked in two places: client-side at the "ثبت سفارش" click, before the
+// checkout dialog is even allowed to open (`product-buy-panel.tsx`), and
+// again server-side in `createOrderAction` so it can't be bypassed. A buyer
+// missing any of these is sent to `/profile` to complete it first.
 const REQUIRED_SHIPPING_FIELDS: { key: keyof ShippingFields; label: string }[] = [
   { key: "phone", label: "شماره موبایل" },
   { key: "address", label: "آدرس" },
