@@ -121,11 +121,48 @@ export async function getCompleteTheLook(pairIds: number[]): Promise<Product[]> 
     .filter((p): p is Product => Boolean(p?.visible));
 }
 
-/** 🔢 The next auto-assigned public id for a new product — mirrors the
- *  admin form's old client-side `Math.max(999, …) + 1` scheme, just computed
- *  server-side now that creation is a real action. */
+/** 🔢 The next auto-assigned public id for a new product — a durable,
+ *  never-reused counter (own `counters` collection, keyed `"productId"`),
+ *  not "current max + 1" off the live catalog.
+ *
+ *  🐛 That older scheme (`ProductModel.findOne().sort({id:-1}) + 1`) had two
+ *  real bugs, confirmed live (not just in theory): (1) a race — two
+ *  concurrent creates can both read the same "current max" and hand out the
+ *  same id, which `id`'s unique index then rejects for whichever write
+ *  loses; (2) id *reuse* — deleting the highest-id product and creating a
+ *  new one shortly after reassigns that exact same id. (2) is the more
+ *  dangerous one: `getProductById(id)` is `unstable_cache`-tagged by
+ *  `PRODUCTS_TAG` and *should* invalidate on every create/update/delete via
+ *  `revalidateCatalog()`, but a stale per-id cache entry for a reused id was
+ *  reproduced live during Phase 8 QA — a brand-new product's edit page (and
+ *  potentially its public PDP) briefly showing a *previous, deleted*
+ *  product's data at that same numeric id. A `$inc` on a dedicated counter
+ *  document is atomic (fixes the race) and monotonically increasing forever
+ *  (an id is never handed out twice, so that stale-cache shape can't recur
+ *  regardless of how the underlying cache invalidation behaves). Seeded
+ *  from today's real max via `$max` so this drop-in change doesn't collide
+ *  with ids already in the catalog. */
 export async function nextProductId(): Promise<number> {
-  await connectMongoose();
+  const mongoose = await connectMongoose();
+  const counters = mongoose.connection.collection<{ _id: string; seq: number }>(
+    "counters",
+  );
+
   const top = await ProductModel.findOne().sort({ id: -1 }).lean();
-  return Math.max(999, top?.id ?? 0) + 1;
+  const floor = Math.max(999, top?.id ?? 0);
+  // 🌱 One-time (per id ever exceeding the counter's current value)
+  // catch-up — a no-op once the counter has overtaken the live catalog's
+  // own max, which it always will after its very first real use.
+  await counters.updateOne(
+    { _id: "productId" },
+    { $max: { seq: floor } },
+    { upsert: true },
+  );
+
+  const result = await counters.findOneAndUpdate(
+    { _id: "productId" },
+    { $inc: { seq: 1 } },
+    { upsert: true, returnDocument: "after" },
+  );
+  return result!.seq;
 }

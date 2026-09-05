@@ -34,3 +34,10 @@ yarn-error.log*
 # ابزار ممیزی رسپانسیو (محلی)
 /scripts/rwd-*.mjs
 .lh/
+
+# Playwright
+/test-results/
+/playwright-report/
+/e2e-report/
+/blob-report/
+/playwright/.cache/

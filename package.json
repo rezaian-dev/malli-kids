@@ -17,7 +17,8 @@
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@fal-ai/client": "^1.10.1",
