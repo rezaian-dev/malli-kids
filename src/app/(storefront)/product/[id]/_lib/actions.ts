@@ -120,6 +120,7 @@ export async function createOrderAction(
       ],
       couponCode: coupon?.code,
       discountRate: coupon?.rate,
+      idempotencyKey: parsed.data.idempotencyKey,
     });
 
     revalidatePath("/admin/orders");

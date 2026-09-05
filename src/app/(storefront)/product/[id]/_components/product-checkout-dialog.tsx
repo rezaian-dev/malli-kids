@@ -43,6 +43,13 @@ export function ProductCheckoutDialog({
   );
   const [couponBad, setCouponBad] = useState(false);
   const [pending, startTransition] = useTransition();
+  // 🔁 One key per checkout attempt — a double-click or a retried request
+  // while this same dialog is open reuses it, so the server collapses them
+  // into the one order (see `createOrder`); reopening the dialog for a new
+  // purchase gets a fresh key.
+  const [idempotencyKey, setIdempotencyKey] = useState(() =>
+    crypto.randomUUID(),
+  );
 
   // 🔄 Re-sync from the profile every time the dialog opens (same as the old openCheckout()).
   useEffect(() => {
@@ -51,6 +58,7 @@ export function ProductCheckoutDialog({
     setAddress(user?.address || "");
     setPhone(user?.phone || "");
     setPostal(user?.postalCode || "");
+    setIdempotencyKey(crypto.randomUUID());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -102,6 +110,7 @@ export function ProductCheckoutDialog({
         phone: phoneDigits(phone),
         postalCode: postalDigits,
         couponCode: applied?.code,
+        idempotencyKey,
       });
 
       if (!result.ok) {

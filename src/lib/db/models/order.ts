@@ -18,6 +18,12 @@ export type OrderItemDoc = {
 export type OrderDoc = {
   id: string;
   userId: string;
+  // 🔁 The checkout attempt's client-generated key, when it sent one — a
+  // unique+sparse index doubles as the real duplicate-order guard (the
+  // pre-insert lookup in `createOrder` is just the fast path; this index is
+  // what actually holds under a race between two near-simultaneous
+  // requests for the same attempt).
+  idempotencyKey?: string;
   customer: string;
   phone: string;
   city: string;
@@ -51,6 +57,7 @@ const orderSchema = new Schema<OrderDoc>(
   {
     id: { type: String, required: true, unique: true },
     userId: { type: String, required: true },
+    idempotencyKey: { type: String, unique: true, sparse: true },
     customer: { type: String, required: true },
     phone: { type: String, required: true },
     city: { type: String, required: true },

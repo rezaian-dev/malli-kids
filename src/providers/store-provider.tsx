@@ -7,6 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -20,6 +21,8 @@ import {
 } from "@/lib/shop/favorites-actions";
 import {
   NO_CAMPAIGN,
+  cartScopeOf,
+  cartStorageKey,
   sanitizeCart,
   writeCookie,
   writeJsonCookie,
@@ -77,8 +80,21 @@ function readLocalJson<T>(
   }
 }
 
-function readLocalCart(current: CartItem[]) {
-  return readLocalJson(STORAGE.cart, sanitizeCart, current);
+function readLocalCart(scope: string, current: CartItem[]) {
+  return readLocalJson(cartStorageKey(scope), sanitizeCart, current);
+}
+
+// 🧹 Pre-namespacing builds wrote one shared `malli_cart` key regardless of
+// who was signed in — the exact leak this scoping fixes. Sweep it once so a
+// stale copy of someone's cart can't sit in a shared browser's storage
+// forever even though nothing reads that key anymore.
+function clearLegacyCartStorage() {
+  try {
+    window.localStorage.removeItem(STORAGE.cart);
+  } catch {}
+  if (typeof document !== "undefined") {
+    document.cookie = `${STORAGE.cart}=; path=/; max-age=0; samesite=lax`;
+  }
 }
 
 // 🛒 A cart line is identified by product + size together, never id alone.
@@ -119,19 +135,38 @@ export function StoreProvider({
   const campaign: Campaign = boot.campaign;
   const banner: BannerItem | null = boot.banner;
 
+  // 🔐 Which identity's cart is currently loaded — starts at whatever
+  // `readStoreBootstrap` already resolved server-side for `boot.user`, kept
+  // in a ref (not state) purely to compare against on the next scope change
+  // below; it never itself drives a render.
+  const scopeRef = useRef(cartScopeOf(boot.user));
+
   useEffect(() => {
-    setCart((current) => readLocalCart(current));
+    clearLegacyCartStorage();
+    setCart((current) => readLocalCart(scopeRef.current, current));
     setReady(true);
   }, []);
+
+  // 🔐 Login and logout both change *whose* cart this browser should show.
+  // Swap straight to that identity's own saved cart (empty if it has none)
+  // the moment `user` changes — never keep rendering, or persisting under
+  // the new identity's key, whatever the previous identity's cart held.
+  useEffect(() => {
+    const nextScope = cartScopeOf(user);
+    if (nextScope === scopeRef.current) return;
+    scopeRef.current = nextScope;
+    setCart(readLocalCart(nextScope, []));
+  }, [user]);
 
   useEffect(() => {
     if (!ready) return;
 
+    const key = cartStorageKey(scopeRef.current);
     try {
-      window.localStorage.setItem(STORAGE.cart, JSON.stringify(cart));
+      window.localStorage.setItem(key, JSON.stringify(cart));
     } catch {}
 
-    writeJsonCookie(STORAGE.cart, cart);
+    writeJsonCookie(key, cart);
     writeCookie(STORAGE.boot, "1");
   }, [ready, cart]);
 
@@ -153,10 +188,15 @@ export function StoreProvider({
   );
 
   // 🔐 Revokes the real session server-side first, then clears UI state.
+  // `setCart([])` here (on top of the scope-change effect above) means the
+  // outgoing account's cart is out of memory in the very same batch as
+  // `setUser(null)` — no render in between can show it against a "logged
+  // out" header.
   const logout = useCallback(async () => {
     await signOutAction();
     setUser(null);
     setFavorites([]);
+    setCart([]);
   }, []);
 
   // 🔐 A cart is a real order-in-waiting, not a scratch list — same rule as

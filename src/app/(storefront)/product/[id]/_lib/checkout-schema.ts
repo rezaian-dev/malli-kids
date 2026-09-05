@@ -9,6 +9,11 @@ export const checkoutSchema = z.object({
   phone: z.string().regex(/^\d{11}$/),
   postalCode: z.string().regex(/^\d{10}$/),
   couponCode: z.string().trim().max(20).optional(),
+  // 🔁 One key per checkout *attempt* (regenerated whenever the dialog
+  // reopens, not per click) — lets the server collapse a double-submit or a
+  // retried request into the order that already exists instead of creating
+  // a second one. See `createOrder` in `lib/shop/orders.ts`.
+  idempotencyKey: z.string().uuid().optional(),
 });
 
 export type CheckoutValues = z.infer<typeof checkoutSchema>;

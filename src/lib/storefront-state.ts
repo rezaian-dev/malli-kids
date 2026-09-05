@@ -51,6 +51,22 @@ function parseJson<T>(value: string | undefined, fallback: T) {
   }
 }
 
+// 🔐 The identity a cart belongs to on this browser — never a shared,
+// account-agnostic bucket. Keyed by email (the one stable, always-present
+// identifier `User` carries; the real Better Auth id isn't part of this
+// client-facing shape) so two different accounts signed into the same
+// browser, one after another, each get their own storage slot instead of
+// silently inheriting whatever the previous session left behind. `"guest"`
+// is its own slot too, distinct from every account — logging out must never
+// leave a signed-in user's cart reachable as "the" guest cart.
+export function cartScopeOf(user: Pick<User, "email"> | null): string {
+  return user?.email ? user.email.trim().toLowerCase() : "guest";
+}
+
+export function cartStorageKey(scope: string): string {
+  return `${STORAGE.cart}:${scope}`;
+}
+
 export function sanitizeCart(value: unknown): StoredCartItem[] {
   if (!Array.isArray(value)) return [];
 
@@ -141,7 +157,7 @@ export function readStoreBootstrap(
   banner: BannerItem | null,
   favorites: number[],
 ) {
-  const cartCookie = getCookie(STORAGE.cart);
+  const cartCookie = getCookie(cartStorageKey(cartScopeOf(user)));
   const bootCookie = getCookie(STORAGE.boot);
 
   return {
