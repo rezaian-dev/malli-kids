@@ -3,6 +3,7 @@
 import {
   Bell,
   BellOff,
+  BellRing,
   CheckCheck,
   Headphones,
   PackageCheck,
@@ -31,6 +32,7 @@ const KIND_ICON: Record<NotificationKind, typeof Bell> = {
   ticket: Headphones,
   order: PackageCheck,
   system: Sparkles,
+  restock: BellRing,
 };
 
 const POLL_MS = 8_000;

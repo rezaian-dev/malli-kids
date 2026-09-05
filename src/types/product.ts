@@ -33,6 +33,12 @@ export type Product = {
   seoDescription?: string;
   visible: boolean;
   featured: boolean;
+  // 🧵 Admin-curated "complete the look" pairing — other product ids to
+  // suggest as a matching outfit on this product's page (see
+  // `getCompleteTheLook` in `@/lib/shop/products`). Empty/undefined for most
+  // products; deliberately manual, not algorithmic — a dress+cardigan+shoes
+  // set only means something if a human picked it.
+  pairsWith?: number[];
   // 🕒 ISO 8601, real DB rows only (undefined for the static seed catalog) —
   // sitemap's `lastModified` uses it when present instead of "now every time".
   updatedAt?: string;

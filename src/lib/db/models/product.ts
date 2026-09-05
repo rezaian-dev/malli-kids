@@ -48,6 +48,10 @@ export type ProductDoc = {
   seoDescription?: string;
   visible: boolean;
   featured: boolean;
+  // 🧵 Admin-curated "complete the look" pairing — see `@/types`'s `Product`
+  // for the full rationale. Just a list of other product ids; resolved to
+  // real cards by `getCompleteTheLook` (`@/lib/shop/products`).
+  pairsWith?: number[];
   updatedAt: Date;
 };
 
@@ -81,6 +85,7 @@ const productSchema = new Schema<ProductDoc>(
     rate: { type: Number, default: 4.8 },
     stock: { type: Boolean, default: true },
     variants: { type: [productVariantSchema], default: [] },
+    pairsWith: { type: [Number], default: [] },
     sold: { type: Number, default: 0 },
     desc: { type: String, required: true },
     seoTitle: String,

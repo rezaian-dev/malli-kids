@@ -6,11 +6,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getSession } from "@/lib/auth/session";
 import { breadcrumbSchema, productSchema } from "@/lib/seo";
 import { getVisibleReviewsForProduct, hasPurchased } from "@/lib/shop/reviews";
+import { getSubscribedSizes } from "@/lib/shop/back-in-stock";
 import { cn, shell } from "@/lib/utils";
 import { wash } from "@/components/shared/section-wash";
 import type { Product } from "@/types";
 import { ProductBuyPanel } from "./product-buy-panel";
 import { ProductDetailsMount } from "./product-details-mount";
+import { ProductCompleteLook } from "./product-complete-look";
 import { ProductRelated } from "./product-related";
 import { pdpCard } from "../_lib/product-chrome";
 
@@ -43,6 +45,9 @@ export async function ProductDetailLanding({
   const canReview = session?.user
     ? await hasPurchased(session.user.id, product.id)
     : false;
+  const subscribedSizes = session?.user
+    ? await getSubscribedSizes(session.user.id, product.id)
+    : [];
 
   return (
     <>
@@ -89,12 +94,18 @@ export async function ProductDetailLanding({
             </ol>
           </nav>
 
-          <ProductBuyPanel product={product} />
+          <ProductBuyPanel product={product} subscribedSizes={subscribedSizes} />
           <ProductDetailsMount
             product={product}
             reviews={reviews}
             canReview={canReview}
           />
+
+          {product.pairsWith?.length ? (
+            <Suspense fallback={<RelatedFallback />}>
+              <ProductCompleteLook pairsWith={product.pairsWith} />
+            </Suspense>
+          ) : null}
 
           <Suspense fallback={<RelatedFallback />}>
             <ProductRelated cat={product.cat} excludeId={product.id} />

@@ -58,6 +58,7 @@ type ProductFormValues = {
   images: string[];
   stock: boolean;
   variants: VariantRow[];
+  pairsWith: number[];
   seoTitle: string;
   seoDescription: string;
   visible: boolean;
@@ -92,6 +93,7 @@ function getInitialValues(product?: Product): ProductFormValues {
     images: product?.images ?? [],
     stock: product?.stock ?? true,
     variants: toVariantRows(product?.variants ?? []),
+    pairsWith: product?.pairsWith ?? [],
     seoTitle: product?.seoTitle ?? "",
     seoDescription: product?.seoDescription ?? "",
     visible: product?.visible ?? true,
@@ -178,7 +180,13 @@ function validateProductForm(values: ProductFormValues): ProductFormErrors {
   return errors;
 }
 
-export function ProductForm({ product }: { product?: Product }) {
+export function ProductForm({
+  product,
+  allProducts = [],
+}: {
+  product?: Product;
+  allProducts?: Product[];
+}) {
   const router = useRouter();
   const isNew = !product;
   const [values, setValues] = useState<ProductFormValues>(() =>
@@ -216,6 +224,22 @@ export function ProductForm({ product }: { product?: Product }) {
     updateValue(
       "variants",
       values.variants.filter((_, i) => i !== index),
+    );
+  }
+
+  const pairCandidates = allProducts.filter(
+    (p) => p.id !== product?.id && !values.pairsWith.includes(p.id),
+  );
+
+  function addPair(id: number) {
+    if (values.pairsWith.length >= 6) return;
+    updateValue("pairsWith", [...values.pairsWith, id]);
+  }
+
+  function removePair(id: number) {
+    updateValue(
+      "pairsWith",
+      values.pairsWith.filter((pid) => pid !== id),
     );
   }
 
@@ -283,6 +307,7 @@ export function ProductForm({ product }: { product?: Product }) {
         color: row.color.trim() || undefined,
         stock: Number(row.stock),
       })),
+      pairsWith: values.pairsWith,
       seoTitle: values.seoTitle.trim() || undefined,
       seoDescription: values.seoDescription.trim() || undefined,
       visible: values.visible,
@@ -775,6 +800,62 @@ export function ProductForm({ product }: { product?: Product }) {
                 />
               </label>
             )}
+          </div>
+
+          <div className={FORM_SECTION}>
+            <h2 className={SECTION_TITLE}>تکمیل ست (اختیاری)</h2>
+            <p className="text-navy/70 dark:text-wheat text-[11px] font-bold">
+              محصولاتی که با این مورد ست می‌شوند (مثلاً کاردیگان یا کفش
+              مکمل) — در صفحه محصول به‌عنوان «ست را کامل کنید» نمایش داده
+              می‌شود.
+            </p>
+
+            {values.pairsWith.length > 0 ? (
+              <ul className="flex flex-wrap gap-2">
+                {values.pairsWith.map((id) => {
+                  const paired = allProducts.find((p) => p.id === id);
+                  return (
+                    <li
+                      key={id}
+                      className={cn(
+                        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold",
+                        "border-navy/12 text-navy",
+                        "dark:border-gold/25 dark:text-ivory",
+                      )}
+                    >
+                      {paired?.name ?? `#${id}`}
+                      <button
+                        type="button"
+                        onClick={() => removePair(id)}
+                        aria-label={`حذف «${paired?.name ?? id}» از ست`}
+                        className="text-rose"
+                      >
+                        <Trash2 className="size-3.5" />
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : null}
+
+            {values.pairsWith.length < 6 && pairCandidates.length > 0 ? (
+              <Select
+                value=""
+                onValueChange={(value) => addPair(Number(value))}
+                dir="rtl"
+              >
+                <SelectTrigger className={SELECT_TRIGGER}>
+                  <SelectValue placeholder="افزودن محصول به ست…" />
+                </SelectTrigger>
+                <SelectContent align="start">
+                  {pairCandidates.map((p) => (
+                    <SelectItem key={p.id} value={String(p.id)}>
+                      {p.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : null}
           </div>
 
           <div className={cn(FORM_SECTION, "flex flex-col gap-3")}>

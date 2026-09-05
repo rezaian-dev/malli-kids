@@ -22,7 +22,7 @@ export async function ProductRelated({
       className={`${pdpCard} cv-auto mt-8 p-4 sm:mt-12 sm:p-7`}
       aria-labelledby="related-products-heading"
     >
-      <p className={pdpKicker}>COMPLETE THE LOOK</p>
+      <p className={pdpKicker}>MORE LIKE THIS</p>
       <h2
         id="related-products-heading"
         className={cn(

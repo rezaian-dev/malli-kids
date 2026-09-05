@@ -26,11 +26,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { QtyStepper } from "@/components/shared/qty-stepper";
 import { CheckoutMount } from "@/components/product";
-import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
+import { pdpCard, pdpCtaButton, pdpKicker, pdpWell } from "../_lib/product-chrome";
 import { ProductReadMore } from "./product-read-more";
 import { ProductGallery } from "./product-gallery";
 import { ProductSizeTable } from "./product-size-table";
 import { ProductStickyBar } from "./product-sticky-bar";
+import { BackInStockButton } from "./back-in-stock-button";
 import { cn } from "@/lib/utils";
 
 const SIZES = ["۸۰", "۸۶", "۹۲", "۹۸", "۱۰۴", "۱۱۰", "۱۱۶", "۱۲۲"];
@@ -44,8 +45,7 @@ const AVAILABILITY_PILL = {
   in: "rounded-full border-0 px-3 py-1 text-[11px] font-bold bg-emerald-500/12 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-300",
   out: "rounded-full border-0 px-3 py-1 text-[11px] font-bold bg-rose/10 text-rose",
 };
-const CTA_BUTTON =
-  "h-auto min-h-12 w-full rounded-2xl px-3 py-3 text-[13px] leading-5 font-black whitespace-normal sm:text-sm";
+const CTA_BUTTON = pdpCtaButton;
 const SHIP_ITEM =
   "border-navy/8 dark:border-gold/20 px-2 py-3.5 text-center not-last:border-e";
 const SHIP_ICON = "text-gold mx-auto mb-1 size-4";
@@ -70,7 +70,13 @@ function useSizeOptions(product: Product) {
   }, [product.variants]);
 }
 
-export function ProductBuyPanel({ product }: { product: Product }) {
+export function ProductBuyPanel({
+  product,
+  subscribedSizes,
+}: {
+  product: Product;
+  subscribedSizes: string[];
+}) {
   const { addToCart, showToast, user, setAuthOpen, campaign, priceOf } =
     useStore();
   const router = useRouter();
@@ -100,15 +106,22 @@ export function ProductBuyPanel({ product }: { product: Product }) {
   const [qty, setQty] = useState(1);
   const [checkout, setCheckout] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+  // 🔔 Which sizes (or `""` for a legacy/unsized product) this shopper has
+  // already asked to be notified about — seeded server-side (see
+  // `ProductDetailLanding`) so it's correct on first paint, then grown
+  // locally the moment a new subscribe succeeds (no refetch needed).
+  const [subscribed, setSubscribed] = useState(subscribedSizes);
 
   const selectedAvailable =
     sizeOptions.find((option) => option.size === size)?.available ?? true;
   const canOrder = product.stock && selectedAvailable;
+  const sizeKey = product.variants.length ? size : "";
+  const isSubscribed = subscribed.includes(sizeKey);
 
   const unit = priceOf(product.price);
 
   function openCheckout() {
-    if (!canOrder) return showToast("به محض موجود شدن خبرتان می‌کنیم");
+    if (!canOrder) return showToast("این سایز ناموجود است");
     if (!user) {
       setAuthOpen(true);
       showToast("برای ثبت سفارش اول وارد شوید");
@@ -133,7 +146,7 @@ export function ProductBuyPanel({ product }: { product: Product }) {
   // 🛒 Shared by the main CTA and the mobile sticky bar so both add exactly
   // the same line the exact same way.
   function handleAddToCart() {
-    if (!canOrder) return showToast("به محض موجود شدن خبرتان می‌کنیم");
+    if (!canOrder) return showToast("این سایز ناموجود است");
     // 🔐 `addToCart` gates guests itself (login dialog + toast); only
     // celebrate success when it actually added the line.
     if (addToCart(product.id, size, qty))
@@ -309,15 +322,29 @@ export function ProductBuyPanel({ product }: { product: Product }) {
                 : "ناموجود"}
             </Button>
           </div>
-          <Button
-            type="button"
-            variant="gold"
-            disabled={!canOrder}
-            className={cn("mt-2.5", CTA_BUTTON)}
-            onClick={openCheckout}
-          >
-            <BadgeCheck className="size-4" /> ثبت سفارش — پرداخت هنگامِ تحویل
-          </Button>
+          {canOrder ? (
+            <Button
+              type="button"
+              variant="gold"
+              className={cn("mt-2.5", CTA_BUTTON)}
+              onClick={openCheckout}
+            >
+              <BadgeCheck className="size-4" /> ثبت سفارش — پرداخت هنگامِ تحویل
+            </Button>
+          ) : (
+            <div className="mt-2.5">
+              <BackInStockButton
+                productId={product.id}
+                sizeKey={sizeKey}
+                subscribed={isSubscribed}
+                onSubscribed={() =>
+                  setSubscribed((current) =>
+                    current.includes(sizeKey) ? current : [...current, sizeKey],
+                  )
+                }
+              />
+            </div>
+          )}
           <Button
             asChild
             variant="outline"

@@ -49,6 +49,7 @@ function toProduct(doc: ProductDoc): Product {
     seoDescription: doc.seoDescription,
     visible: doc.visible ?? true,
     featured: doc.featured ?? false,
+    pairsWith: doc.pairsWith ?? [],
     updatedAt: doc.updatedAt?.toISOString(),
   };
 }
@@ -105,6 +106,20 @@ export const getRelatedProducts = unstable_cache(
   ["related-products"],
   { tags: [PRODUCTS_TAG], revalidate: 3600 },
 );
+
+/** 🧵 The admin-curated "complete the look" set for a product — resolves
+ *  `pairsWith` ids to real, visible product cards and preserves the admin's
+ *  chosen order (unlike `getProductsByIds`'s `$in` order, which Mongo
+ *  doesn't guarantee). A product with no curated pairing (the common case)
+ *  costs nothing beyond the empty-array check — no query at all. */
+export async function getCompleteTheLook(pairIds: number[]): Promise<Product[]> {
+  if (!pairIds.length) return [];
+  const products = await getProductsByIds(pairIds);
+  const byId = new Map(products.map((p) => [p.id, p]));
+  return pairIds
+    .map((id) => byId.get(id))
+    .filter((p): p is Product => Boolean(p?.visible));
+}
 
 /** 🔢 The next auto-assigned public id for a new product — mirrors the
  *  admin form's old client-side `Math.max(999, …) + 1` scheme, just computed

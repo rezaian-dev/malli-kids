@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireAdminPage } from "@/lib/auth/admin";
-import { getProductById } from "@/lib/shop/products";
+import { getAllProducts, getProductById } from "@/lib/shop/products";
 import { ProductForm } from "@/components/admin/product-form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,10 @@ export default async function EditProductPage({
   const admin = await requireAdminPage();
 
   const { id } = await params;
-  const product = await getProductById(Number(id));
+  const [product, allProducts] = await Promise.all([
+    getProductById(Number(id)),
+    getAllProducts(),
+  ]);
 
   if (!product) {
     return (
@@ -30,5 +33,7 @@ export default async function EditProductPage({
     );
   }
 
-  return <ProductForm key={product.id} product={product} />;
+  return (
+    <ProductForm key={product.id} product={product} allProducts={allProducts} />
+  );
 }

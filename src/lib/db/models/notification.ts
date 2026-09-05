@@ -5,7 +5,7 @@ import { Schema, model, models, type Model } from "mongoose";
 // actually change a customer's ticket/order (see `src/lib/shop/notifications.ts`),
 // never fabricated client-side. Replaces the old `localStorage`-only list,
 // which could never reflect an event that happened in the admin's browser.
-export type NotificationKind = "ticket" | "order" | "system";
+export type NotificationKind = "ticket" | "order" | "system" | "restock";
 
 export type NotificationDoc = {
   userId: string;
@@ -18,7 +18,7 @@ export type NotificationDoc = {
 const notificationSchema = new Schema<NotificationDoc>(
   {
     userId: { type: String, required: true, index: true },
-    kind: { type: String, required: true, enum: ["ticket", "order", "system"] },
+    kind: { type: String, required: true, enum: ["ticket", "order", "system", "restock"] },
     text: { type: String, required: true },
     read: { type: Boolean, default: false },
   },

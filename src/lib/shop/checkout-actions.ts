@@ -1,6 +1,5 @@
 "use server";
 
-import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { getSession, getSessionUser } from "@/lib/auth/session";
 import { findApplicableCoupon, type AppliedCoupon } from "@/lib/shop/coupons";
@@ -11,30 +10,11 @@ import { campaignPrice } from "@/lib/shop/pricing";
 import { getMissingShippingFields } from "@/lib/shop/shipping";
 import { phoneDigits } from "@/lib/digits";
 import { toEnDigits } from "@/lib/locale/fa";
+import { checkoutSchema, type CheckoutValues } from "@/lib/shop/checkout-schema";
 import type { ActionResult } from "@/lib/action-result";
 import type { AdminOrder } from "@/types";
 
-// 🧾 Shared by the product page's single-item "buy now" dialog *and* the
-// cart sheet's per-line checkout — both check out one product/size/qty line
-// at a time, so this schema/action pair moved out of `product/[id]/_lib`
-// (its old, route-local home) once a second route needed it too.
-export const checkoutSchema = z.object({
-  productId: z.number().int(),
-  size: z.string().trim().min(1).max(10),
-  qty: z.number().int().min(1).max(9),
-  city: z.string().trim().min(2).max(60),
-  address: z.string().trim().min(10).max(300),
-  phone: z.string().regex(/^\d{11}$/),
-  postalCode: z.string().regex(/^\d{10}$/),
-  couponCode: z.string().trim().max(20).optional(),
-  // 🔁 One key per checkout *attempt* (regenerated whenever the dialog
-  // reopens, not per click) — lets the server collapse a double-submit or a
-  // retried request into the order that already exists instead of creating
-  // a second one. See `createOrder` below.
-  idempotencyKey: z.string().uuid().optional(),
-});
-
-export type CheckoutValues = z.infer<typeof checkoutSchema>;
+export type { CheckoutValues };
 
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 const AUTH_ERROR = "برای این کار باید وارد حساب‌تان باشید.";

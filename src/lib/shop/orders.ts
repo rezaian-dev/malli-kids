@@ -4,6 +4,7 @@ import { ProductModel } from "@/lib/db/models/product";
 import { incrementCouponUsage } from "@/lib/shop/coupons";
 import { canTransitionOrder } from "@/lib/shop/order-status";
 import { deriveStock } from "@/lib/shop/inventory";
+import { notifyBackInStock } from "@/lib/shop/back-in-stock";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
 import { faDate } from "@/lib/locale/fa";
 import type { AdminOrder, OrderStatus } from "@/types";
@@ -120,6 +121,10 @@ async function restockVariant(productId: number, size: string, qty: number) {
       { id: productId },
       { $set: { stock: deriveStock(updated.variants, updated.stock) } },
     );
+    // 🔔 A return/cancellation (or a failed-order rollback) is a genuine
+    // stock increase same as any admin restock — whoever's waiting on this
+    // size deserves the same notification either way.
+    await notifyBackInStock(productId, size);
   }
 }
 

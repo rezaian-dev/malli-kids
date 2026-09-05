@@ -8,3 +8,8 @@ export const pdpWell =
 export const pdpKicker =
   "text-gold text-[10px] font-bold tracking-[0.18em] sm:text-[11px] sm:tracking-[0.22em]";
 
+// 🔘 Shared by every full-width PDP action button (add-to-cart, checkout,
+// try-on, back-in-stock) so they all wrap/size identically.
+export const pdpCtaButton =
+  "h-auto min-h-12 w-full rounded-2xl px-3 py-3 text-[13px] leading-5 font-black whitespace-normal sm:text-sm";
+

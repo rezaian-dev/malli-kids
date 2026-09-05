@@ -6,6 +6,7 @@ import { connectMongoose } from "@/lib/db/mongoose";
 import { ProductModel } from "@/lib/db/models/product";
 import { nextProductId, PRODUCTS_TAG } from "@/lib/shop/products";
 import { deriveStock, type ProductVariant } from "@/lib/shop/inventory";
+import { notifyBackInStock } from "@/lib/shop/back-in-stock";
 import { logAudit } from "@/lib/admin/audit";
 import { formatToman } from "@/lib/locale/fa";
 import type { ActionResult } from "@/lib/action-result";
@@ -108,6 +109,18 @@ export async function updateProductAction(
 
     revalidateCatalog();
     revalidatePath(`/admin/products/${id}/edit`);
+
+    // 🔔 Best-effort: tell anyone waiting on a size (or the whole legacy
+    // product) that just gained stock in this save. A cheap no-op for the
+    // overwhelmingly common case where nobody's subscribed.
+    if (parsed.data.variants.length) {
+      for (const variant of parsed.data.variants) {
+        if (variant.stock > 0) await notifyBackInStock(id, variant.size);
+      }
+    } else if (parsed.data.stock) {
+      await notifyBackInStock(id);
+    }
+
     return { ok: true };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
@@ -150,6 +163,7 @@ export async function setProductStockAction(
     await connectMongoose();
     await ProductModel.updateOne({ id }, { $set: { stock } });
     revalidateCatalog();
+    if (stock) await notifyBackInStock(id);
     return { ok: true };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
@@ -184,6 +198,7 @@ export async function setVariantStockAction(
     );
 
     revalidateCatalog();
+    if (stock > 0) await notifyBackInStock(id, size);
     return { ok: true };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
@@ -213,6 +228,7 @@ export async function bulkSetVariantStockAction(
           { id },
           { $set: { stock: deriveStock(updated.variants, updated.stock) } },
         );
+        if (stock > 0) await notifyBackInStock(id, size);
       }
     }
     revalidateCatalog();
