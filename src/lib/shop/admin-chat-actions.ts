@@ -77,9 +77,7 @@ export async function sendChatReplyAction(input: {
     });
     if (!sent) return { ok: false, error: "گفتگو پیدا نشد." };
 
-    // 🔕 Deliberately NO header-bell notification — the bell is reserved
-    // for ticket replies and order status; a support reply surfaces as a
-    // badge on the chat bubble itself (see `getMyChatUnreadAction`).
+    // 🔕 Deliberately no header-bell notification — a chat reply surfaces as a badge on the chat bubble instead.
 
     return {
       ok: true,

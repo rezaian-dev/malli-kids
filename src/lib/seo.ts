@@ -372,14 +372,8 @@ export function contactPageSchema() {
   };
 }
 
-// 🛍️ Product schema powers rich product snippets. `reviews` are the same
-// real, visible `AdminReview[]` the page already fetches (`getVisibleReviewsForProduct`)
-// to render its on-page review list — never `product.rate`/`product.sold`
-// (a default-4.8 marketing field and a units-sold counter, neither of which
-// is a real review), so `aggregateRating` is only emitted when genuine
-// reviews back it. Google disallows self-serving ratings; an unreviewed
-// product simply gets no `aggregateRating` at all, matching what's visibly
-// on the page.
+// 🛍️ aggregateRating is only emitted from real visible reviews, never product.rate/sold —
+// Google disallows self-serving ratings, so an unreviewed product gets none.
 export function productSchema(
   product: Product,
   reviews: { rate: number }[] = [],
@@ -454,8 +448,7 @@ export function articleSchema(
     inLanguage: "fa-IR",
     datePublished: article.publishedAt,
     dateModified: article.updatedAt,
-    // 🏷️ Real content taxonomy, not padded — schema.org's own "keywords"
-    // property, distinct from the page's meta-keywords tag.
+    // 🏷️ Real content taxonomy, not padded — distinct from the page's meta-keywords tag.
     ...(article.tags.length
       ? { keywords: article.tags.map((t) => t.name).join(", ") }
       : {}),

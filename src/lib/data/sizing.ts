@@ -1,8 +1,4 @@
-// 📏 The one canonical child-sizing table for the whole storefront. Every
-// place that used to hardcode its own size↔height↔age↔chest numbers —
-// `/size-guide` and the PDP's "راهنمای سایز" tab — reads from here instead, so they can never drift
-// out of sync with each other again (they used to: three slightly
-// different tables, three slightly different height cutoffs).
+// 📏 Single source of truth for size↔height↔age↔chest — /size-guide and the PDP tab both read this.
 export type SizeRow = {
   size: string;
   heightMin: number;

@@ -1,5 +1,4 @@
-// ✉️ The one email template auth sends today. A single function per
-// template keeps `sendEmail` itself template-agnostic (see `@/lib/email`).
+// ✉️ One function per template keeps sendEmail itself template-agnostic.
 export function resetPasswordEmail(name: string, url: string) {
   return {
     subject: "بازنشانی رمز عبور — ملی‌کیدز",

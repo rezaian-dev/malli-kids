@@ -7,20 +7,10 @@ import { CouponModel } from "./models/coupon";
 import { CORE_PRODUCTS } from "@/lib/data/products";
 import { seedBanners } from "@/lib/festive/occasions";
 
-// 🌱 One-time content seed: the catalog copy, magazine articles and occasion
-// banners are real, hand-written content worth keeping as the app's initial
-// data — not fabricated activity. Deliberately excludes orders, reviews,
-// tickets and collab requests: those represent real customer activity, so a
-// fresh install starts them honestly empty instead of pre-loaded with
-// fictional people.
-//
-// The promo codes referenced by the seeded banners' own copy ("۲۰٪ با کد
-// NOWRUZ20"…) are seeded as real coupons too — otherwise the site would be
-// advertising codes that don't work, which is a correctness bug, not fake
-// data.
-// 📰 Magazine seed content — only ever read here, so it's inlined rather
-// than living in a shared `lib/data` file (see `SEED_COUPONS` below for
-// the same reasoning).
+// 🌱 One-time content seed for catalog/articles/banners; orders, reviews, tickets,
+// and collab requests stay empty since those represent real customer activity.
+// Seeded coupons match the codes the banner copy advertises, so none are dead.
+// 📰 Only ever read here, so it's inlined rather than a shared lib/data file.
 const ARTICLES = [
   {
     slug: "size",
@@ -65,13 +55,7 @@ const SEED_COUPONS = [
 async function seedIfEmpty() {
   const mongoose = await connectMongoose();
 
-  // 🔒 A real database-level lock, not just the in-process cache below —
-  // every MongoDB collection already has a unique index on `_id` for free,
-  // so whoever's `insertOne` wins this race actually seeds; every other
-  // caller (a second server instance starting cold at the same moment,
-  // e.g. serverless) gets a duplicate-key error and skips. Without this,
-  // two processes can both read "0 documents" a moment apart and both
-  // insert — real double-seeded data, not a hypothetical.
+  // 🔒 Real database-level lock via the _id unique index — prevents two cold-starting processes from both seeding.
   try {
     await mongoose.connection.collection("_seed_lock").insertOne({
       _id: "content-seed-v1" as unknown as never,
@@ -83,15 +67,11 @@ async function seedIfEmpty() {
   await Promise.all([
     ProductModel.insertMany(CORE_PRODUCTS),
     ArticleModel.insertMany(ARTICLES),
-    // 🪶 `seedBanners()`'s `id` isn't in `FestiveBannerModel`'s schema —
-    // Mongoose's default strict mode drops unknown fields on insert.
+    // 🪶 seedBanners()'s id isn't in the schema — Mongoose's strict mode drops it on insert.
     FestiveBannerModel.insertMany(seedBanners()),
     CouponModel.insertMany(SEED_COUPONS),
   ]);
 }
 
-/** 🚪 Call once from the root layout. Memoized per process via the same
- *  `cached()` helper `connectMongoose()` uses — cheap on every later
- *  request in a process that already seeded; the lock above is what makes
- *  it safe across processes too. */
+// 🚪 Call once from the root layout; memoized per process, and the lock above makes it safe across processes.
 export const ensureSeeded = cached("_seeded", seedIfEmpty);

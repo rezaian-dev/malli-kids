@@ -2,10 +2,7 @@ import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 import type { OrderStatus, PayStatus } from "@/types";
 
-// 📦 The one real order collection — replaces both the admin's fake
-// `AdminOrder` seed and the storefront's separate `lib/orders.ts`
-// localStorage list. `id` is a short human-facing code ("MK-XXXXX", same
-// shape customers already see); `userId` is the real Better Auth user id.
+// 📦 id is a short human-facing code ("MK-XXXXX"); userId is the real Better Auth user id.
 export type OrderItemDoc = {
   id: number;
   name: string;
@@ -18,11 +15,7 @@ export type OrderItemDoc = {
 export type OrderDoc = {
   id: string;
   userId: string;
-  // 🔁 The checkout attempt's client-generated key, when it sent one — a
-  // unique+sparse index doubles as the real duplicate-order guard (the
-  // pre-insert lookup in `createOrder` is just the fast path; this index is
-  // what actually holds under a race between two near-simultaneous
-  // requests for the same attempt).
+  // 🔁 Client-generated key; the unique+sparse index is the real guard against duplicate concurrent orders.
   idempotencyKey?: string;
   customer: string;
   phone: string;

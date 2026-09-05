@@ -3,18 +3,13 @@ import { BackInStockModel } from "@/lib/db/models/back-in-stock";
 import { ProductModel } from "@/lib/db/models/product";
 import { createNotification } from "@/lib/shop/notifications";
 
-// 🔔 Real back-in-stock subscriptions — replaces the old PDP toast that just
-// *said* "به محض موجود شدن خبرتان می‌کنیم" without ever storing that promise
-// anywhere. `size` is normalized to `""` for a legacy/unsized product (the
-// whole product, not one variant) — see `BackInStockDoc`.
+// 🔔 size is normalized to "" for a legacy/unsized product (the whole product, not one variant).
 
 function normalizeSize(size?: string): string {
   return size ?? "";
 }
 
-/** 📋 Every size (or `""` for "the whole product") this user already has a
- *  pending request for — the PDP uses this to render "🔔 مشترک شدید" instead
- *  of offering to subscribe twice. */
+// 📋 Lets the PDP render "🔔 مشترک شدید" instead of offering to subscribe twice.
 export async function getSubscribedSizes(
   userId: string,
   productId: number,
@@ -26,9 +21,7 @@ export async function getSubscribedSizes(
   return docs.map((d) => d.size);
 }
 
-/** 🙋 Upsert-style subscribe — resubmitting the same (user, product, size)
- *  is a harmless no-op, not a duplicate-key error, thanks to the unique
- *  index doubling as the real dedupe guard. */
+// 🙋 Upsert: resubmitting the same (user, product, size) is a no-op, not a duplicate-key error.
 export async function requestBackInStock(
   userId: string,
   productId: number,
@@ -42,17 +35,8 @@ export async function requestBackInStock(
   );
 }
 
-/** 📣 The fulfillment half — called from every admin/order path that can
- *  raise a product's (or one variant's) stock above zero. Cheap no-op when
- *  nobody is waiting (the common case): one indexed query, nothing else.
- *  One-shot by design — a matched request is deleted once notified, so a
- *  shopper who wants to hear about the *next* time it sells out has to ask
- *  again, same as most retail "notify me" features.
- *
- *  🤐 Fire-and-forget on purpose, same as `logAudit` — this is a side
- *  effect of a stock change, not the change itself. A thrown error here
- *  (a bad connection, a schema mismatch) must never turn an otherwise-
- *  successful product save/restock into a reported failure. */
+// 📣 One-shot: a matched request is deleted once notified, so shoppers must ask again next time.
+// 🤐 Fire-and-forget — a failure here must never turn a successful restock into a reported failure.
 export async function notifyBackInStock(
   productId: number,
   size?: string,
@@ -84,6 +68,6 @@ export async function notifyBackInStock(
 
     await BackInStockModel.deleteMany({ productId, size: normalizedSize });
   } catch {
-    // 🤐 See the doc comment above — never let this fail the real mutation.
+    // 🤐 Never let this fail the real stock mutation.
   }
 }

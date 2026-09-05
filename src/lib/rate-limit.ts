@@ -1,23 +1,14 @@
 import "server-only";
 
-// 🚦 Small in-memory fixed-window rate limiter for Route Handlers and Server
-// Actions that Better Auth's own `rateLimit.customRules` (see
-// `src/lib/auth/auth.ts`) doesn't cover — e.g. the invoice PDF route
-// (expensive render per call) and `reverseGeocodeAction` (Nominatim rate policy).
-//
-// Deliberately simple: a `Map` keyed by caller-supplied string, single
-// process. Good enough for this app's current one-instance deployment; if it
-// ever runs behind multiple instances/a load balancer, this would need a
-// shared store (Redis/Upstash) instead — each instance would otherwise
-// enforce its own independent limit.
+// 🚦 In-memory fixed-window limiter for routes Better Auth's own rateLimit doesn't cover.
+// 🎯 Single-process by design; a multi-instance deployment would need a shared store instead.
 
 type Bucket = { count: number; resetAt: number };
 
 const buckets = new Map<string, Bucket>();
 let lastSweep = Date.now();
 
-// 🧹 Piggy-back a cleanup of expired buckets onto normal traffic instead of
-// running a separate timer — avoids the whole map growing forever.
+// 🧹 Piggybacks cleanup on normal traffic instead of running a separate timer.
 function sweepExpired(now: number) {
   if (now - lastSweep < 60_000) return;
   lastSweep = now;
@@ -29,9 +20,7 @@ function sweepExpired(now: number) {
 export type RateLimitResult =
   { ok: true } | { ok: false; retryAfterSec: number };
 
-/** `key` should already identify the caller *and* the route (e.g.
- *  `` `invoice:${userId}` ``) — one shared bucket per raw user/IP would let
- *  different endpoints exhaust each other's quota. */
+// key should identify both caller and route (e.g. invoice:${userId}) so endpoints don't share a quota.
 export function rateLimit(
   key: string,
   { windowMs, max }: { windowMs: number; max: number },

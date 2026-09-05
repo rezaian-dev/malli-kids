@@ -3,7 +3,6 @@ import { Schema, model, models, type Model } from "mongoose";
 import { COLLAB_KINDS } from "@/lib/constants";
 
 // 🤝 Partnership/business leads submitted from the storefront collab form.
-// Replaces `lib/collab.ts`'s localStorage list.
 export type CollabStatus = "در انتظار بررسی" | "تماس گرفته شد";
 
 export type CollabRequestDoc = {

@@ -6,36 +6,10 @@ import type { OrderDoc } from "@/lib/db/models/order";
 import { BRAND } from "@/lib/constants";
 import { faDate, formatToman, toFaDigits } from "@/lib/locale/fa";
 
-// 🧾 Renders a paid order's real, already-stored data into a premium,
-// Persian/RTL invoice PDF — server-side only (`server-only` guards this
-// from ever landing in a client bundle; Playwright itself needs Node APIs
-// a browser doesn't have anyway).
-//
-// 🕰️ Historical snapshot, not a live lookup: every value below comes
-// straight off the `OrderDoc` passed in (`items[].price`, `subtotal`,
-// `discount`, `shipping`, `total`) — the exact numbers `createOrder` wrote
-// the moment the order was placed. This module never imports
-// `@/lib/shop/products` and never re-prices anything, so a product's price
-// changing later can't retroactively change an old invoice: the order
-// document already *is* the historical record.
-//
-// 🖨️ Why a headless browser (Playwright, already a project dependency —
-// see the audit/testing use elsewhere) instead of a dedicated PDF-drawing
-// library (pdfkit, @react-pdf/renderer, pdfmake, …): every one of those
-// builds its own text layout from scratch and — verified, not assumed —
-// none of them run real Arabic/Persian glyph shaping (the letter-joining
-// this app's own `address-map-field.tsx` comments already flag as a
-// recurring pitfall), so Persian text comes out as isolated, unconnected
-// letterforms instead of properly joined script. A real browser engine
-// already shapes and lays out this exact font/script correctly — it's
-// what renders every Persian page on this site — so reusing it via
-// `page.pdf()` is the one approach that's *actually* premium/elegant
-// Persian typography instead of merely printable Persian text. The
-// trade-off is honest: a browser launch is heavier per-request than a
-// pure library call, which is why the route calling this rate-limits it
-// (see `src/app/api/orders/[id]/invoice/route.ts`) — an on-demand,
-// low-frequency "download my invoice" click can afford it; a hot path
-// couldn't.
+// 🧾 Historical snapshot — every value comes off the OrderDoc as createOrder wrote it; never re-prices.
+// 🖨️ Uses a headless browser (Playwright) instead of a PDF library because those don't shape
+// Persian/Arabic glyphs correctly; a real browser engine already does. The route rate-limits this
+// since a browser launch is heavier than a library call.
 
 const FONT_PATH = path.join(
   process.cwd(),
@@ -43,13 +17,7 @@ const FONT_PATH = path.join(
 );
 const LOGO_PATH = path.join(process.cwd(), "public/brand/logo-white.png");
 
-// ♻️ Read + base64-encode once per server process, not once per invoice —
-// both files are small (a couple hundred KB together) and never change
-// without a redeploy. Embedding them as data: URIs (rather than pointing
-// the HTML at an http(s) URL) makes the rendered page fully self-contained:
-// no dependency on this server being reachable *from itself* over the
-// network, no localhost/port/base-URL guessing, and identical output
-// whether this runs on a dev machine, behind a proxy, or in a container.
+// ♻️ Cached once per process; embedded as data: URIs so the page never depends on this server reaching itself.
 let fontDataUri: string | null = null;
 function getFontDataUri(): string {
   if (!fontDataUri) {
@@ -98,12 +66,7 @@ function itemRow(item: OrderDoc["items"][number], index: number): string {
     </tr>`;
 }
 
-/** 🧾 The invoice number is just the order's own permanent `id` (e.g.
- *  "MK-ABCDE") — already unique, already immutable, already what the
- *  customer knows this order as. Deriving a second counter/id for
- *  "invoice number" would be one more thing to keep in sync for zero real
- *  benefit; this way it's stable by construction (same input, same output,
- *  every time — including across repeated downloads/refreshes). */
+// 🧾 The invoice number is just the order's own permanent id — no second counter to keep in sync.
 function renderInvoiceHtml(order: OrderDoc & { createdAt: Date }): string {
   const font = getFontDataUri();
   const logo = getLogoDataUri();
@@ -361,13 +324,7 @@ function renderInvoiceHtml(order: OrderDoc & { createdAt: Date }): string {
 </html>`;
 }
 
-/** 🖨️ HTML → PDF via a real (headless) browser engine — see the module
- *  comment above for why. A fresh browser per call, not a kept-alive
- *  singleton: simpler lifecycle (nothing to recover if a prior render
- *  crashed the process, nothing running idle between the rare requests
- *  this route actually gets), at the cost of a real ~1s launch overhead
- *  per invoice — an accepted trade for an on-demand download button, not
- *  a hot path. */
+// 🖨️ Fresh browser per call, not a kept-alive singleton — simpler lifecycle at the cost of ~1s launch overhead.
 export async function generateInvoicePdf(
   order: OrderDoc & { createdAt: Date },
 ): Promise<Buffer> {

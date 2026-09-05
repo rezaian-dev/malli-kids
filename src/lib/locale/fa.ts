@@ -1,9 +1,4 @@
-// 🇮🇷 Centralized fa-IR locale layer — the single source for Persian digit
-// conversion, price parsing/formatting, and date display across the app.
-// No external i18n/number library: everything here rides native Intl.
-//
-// Layering: digit normalization → parsing → presentation formatting.
-// Keep numeric business data as plain numbers until it reaches this module.
+// 🇮🇷 Single source for Persian digit conversion, price formatting, and date display; rides native Intl.
 
 const FA_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
 const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
@@ -21,13 +16,7 @@ const faDateFormatter = new Intl.DateTimeFormat("fa-IR", {
   day: "2-digit",
 });
 
-/**
- * 🔢 Convert ASCII digits (0-9) to Persian digits (۰-۹).
- *
- * String input keeps its original structure (only the `0-9` characters are
- * swapped); numeric input is routed through `Intl.NumberFormat` so it comes
- * out exactly as fa-IR expects.
- */
+// 🔢 Converts 0-9 to ۰-۹; numeric input routes through Intl.NumberFormat for exact fa-IR output.
 export function toFaDigits(value: string | number | null | undefined): string {
   if (value == null || value === "") return "";
 
@@ -36,10 +25,7 @@ export function toFaDigits(value: string | number | null | undefined): string {
   return value.replace(/[0-9]/g, (digit) => FA_DIGITS[Number(digit)]);
 }
 
-/**
- * 🔡 Convert Persian (۰-۹) and Arabic-Indic (٠-٩) digits to plain ASCII
- * digits, preserving every non-digit character untouched.
- */
+// 🔡 Converts Persian/Arabic-Indic digits to ASCII, leaving other characters untouched.
 export function toEnDigits(value: string | number | null | undefined): string {
   if (value == null || value === "") return "";
 
@@ -48,34 +34,17 @@ export function toEnDigits(value: string | number | null | undefined): string {
     .replace(/[٠-٩]/g, (digit) => String(AR_DIGITS.indexOf(digit)));
 }
 
-/**
- * 💰 Format a Toman amount as a grouped fa-IR string, rounded to the nearest
- * integer. Presentation only — internal prices must stay plain numbers.
- */
+// 💰 Presentation only — internal prices must stay plain numbers.
 export function formatToman(amount: number): string {
   return tomanFormatter.format(Math.round(amount));
 }
 
-/**
- * 🕒 Format "now" as a medium-length fa-IR date + short time string
- * (Jalali calendar, Persian digits) — e.g. "۲ خرداد ۱۴۰۴، ۱۴:۰۵".
- */
-/**
- * 🕒 Format any real timestamp as a medium-length fa-IR date + short time
- * string (Jalali calendar, Persian digits) — e.g. "۲ خرداد ۱۴۰۴، ۱۴:۰۵".
- */
+// 🕒 fa-IR date + time, Jalali calendar, Persian digits — e.g. "۲ خرداد ۱۴۰۴، ۱۴:۰۵".
 export function faDateTime(input: Date | string | number): string {
   return faDateTimeFormatter.format(new Date(input));
 }
 
-/**
- * 📅 Format a real (Gregorian) timestamp — stored on every document via
- * Mongoose's own `createdAt` — as a Jalali `YYYY/MM/DD` string, Persian
- * digits (e.g. "۱۴۰۵/۰۶/۰۱"). The one place raw `Date`s become the display
- * strings the rest of the app already expects; call this at the server
- * boundary (data-access functions, action return values), never store its
- * output back in the database.
- */
+// 📅 Jalali YYYY/MM/DD, Persian digits — call at the server boundary; never store the output back in the database.
 export function faDate(input: Date | string | number): string {
   return faDateFormatter.format(new Date(input));
 }

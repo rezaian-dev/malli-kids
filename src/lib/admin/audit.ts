@@ -16,9 +16,7 @@ export type AuditAction =
   | "product.remove"
   | "review.remove";
 
-/** 📝 Fire-and-forget on purpose: a logging failure must never block the
- *  real mutation it's describing — callers `await` this for ordering, but a
- *  thrown error here is swallowed, not surfaced as the action's own error. */
+// 📝 Fire-and-forget: a logging failure must never block the mutation it describes.
 export async function logAudit(entry: {
   actor: User;
   action: AuditAction;

@@ -3,18 +3,12 @@ import { REVALIDATE } from "@/lib/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { TagModel } from "@/lib/db/models/tag";
 
-// 🧊 Small, site-wide, rarely-changing list — cached the same way as the
-// product catalog/articles (`@/lib/shop/products`, `@/lib/articles`).
-// Admin tag mutations (`admin/articles/_lib/actions.ts`) revalidate this tag.
+// 🧊 Cached like the product catalog/articles; admin tag mutations revalidate this tag.
 export const TAGS_TAG = "tags";
 
 export type ContentTag = { name: string; slug: string };
 
-/** 🔤 A clean, Persian-friendly slug — same shape as `ArticleModel.slug`'s
- *  own generator (`admin/articles/_lib/actions.ts#uniqueSlug`), minus the
- *  numeric-suffix de-duplication loop: two tags typed close enough to
- *  collide on their slug (e.g. "تابستان" / "تابستان‌") are meant to resolve
- *  to the *same* canonical tag, not spawn a second near-duplicate one. */
+// 🔤 No de-dup suffix loop — near-duplicate tags are meant to collide onto the same canonical slug.
 export function slugifyTag(name: string): string {
   return (
     name
@@ -24,8 +18,7 @@ export function slugifyTag(name: string): string {
   );
 }
 
-/** 📚 Every tag in the taxonomy, alphabetical — the admin picker's full
- *  list and the lookup table article read-paths resolve slugs against. */
+// 📚 Alphabetical — feeds the admin picker and the slug lookup table.
 export const getAllTags = unstable_cache(
   async (): Promise<ContentTag[]> => {
     await connectMongoose();

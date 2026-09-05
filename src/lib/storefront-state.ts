@@ -31,8 +31,7 @@ function decode(value?: string) {
   }
 }
 
-// 🍪 An optional field from cookie/localStorage JSON: keep it only if it's
-// actually a (trimmed) string — used by every sanitize* below.
+// 🍪 Keeps an optional cookie/JSON field only if it's a trimmed string.
 function str(value: unknown): string | undefined {
   return typeof value === "string" ? value.trim() : undefined;
 }
@@ -48,14 +47,7 @@ function parseJson<T>(value: string | undefined, fallback: T) {
   }
 }
 
-// 🔐 The identity a cart belongs to on this browser — never a shared,
-// account-agnostic bucket. Keyed by email (the one stable, always-present
-// identifier `User` carries; the real Better Auth id isn't part of this
-// client-facing shape) so two different accounts signed into the same
-// browser, one after another, each get their own storage slot instead of
-// silently inheriting whatever the previous session left behind. `"guest"`
-// is its own slot too, distinct from every account — logging out must never
-// leave a signed-in user's cart reachable as "the" guest cart.
+// 🔐 Keyed by email so different accounts on one browser never inherit each other's cart; "guest" is its own slot.
 export function cartScopeOf(user: Pick<User, "email"> | null): string {
   return user?.email ? user.email.trim().toLowerCase() : "guest";
 }
@@ -136,15 +128,7 @@ function sanitizeBanner(value: unknown): BannerItem | null {
   };
 }
 
-// 👤 `user` isn't read from a cookie here — the real session lives in
-// Better Auth's httpOnly cookie, only readable server-side via
-// `getSessionUser()`. Likewise `campaign`/`banner` are real, freshly-read DB
-// values (`@/lib/shop/settings`, `@/lib/shop/banners`) computed on every
-// request — the caller (`app/layout.tsx`) passes them in directly instead of
-// this module trying to resync them from a client-side source. `cart` is the
-// one genuinely client-only piece (no backend), so it's still bootstrapped
-// from its cookie (`user` only decides *which* identity's cart cookie to
-// read — see `cartScopeOf`).
+// 👤 user/campaign/banner are real server-fetched values passed in by the caller; only cart is bootstrapped from its cookie.
 export function readStoreBootstrap(
   getCookie: (name: string) => string | undefined,
   user: User | null,

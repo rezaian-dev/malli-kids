@@ -1,11 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 📈 One row per distinct search phrase actually submitted through the home
-// search box — `count` is bumped on every real search, never reset, so the
-// home page's "پرطرفدار" list can rank by genuine popularity instead of a
-// hand-picked static array. `term` is pre-normalized (trimmed, collapsed
-// whitespace) by `@/lib/shop/search-terms` before it ever reaches this model.
+// 📈 count is bumped on every real search so "پرطرفدار" ranks by genuine popularity, not a static list.
 export type SearchTermDoc = {
   term: string;
   count: number;

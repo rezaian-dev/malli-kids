@@ -135,9 +135,7 @@ const PRODUCT_SLUGS = [
   "minimal-summer-romper",
 ] as const;
 
-/** 🪶 Cosmetic only — `parseProductRouteId` resolves the real product from
- *  the leading number in the URL, so a wrapped/reused word here can never
- *  cause two products to collide on the same route. */
+// 🪶 Cosmetic only — the route resolves products by the leading number, not this word.
 function productSlug(id: number) {
   const i =
     ((id % PRODUCT_SLUGS.length) + PRODUCT_SLUGS.length) % PRODUCT_SLUGS.length;

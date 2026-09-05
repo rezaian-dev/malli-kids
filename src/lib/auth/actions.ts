@@ -26,9 +26,7 @@ import {
 
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 
-// 🈯 Better Auth's own error codes → the one Farsi sentence each deserves.
-// Anything not listed here (including rate limits) falls back to a generic
-// message, so we never leak internals to the client.
+// 🈯 Better Auth error codes mapped to Farsi; unlisted codes fall back to a generic message.
 const ERROR_MESSAGES: Record<string, string> = {
   INVALID_EMAIL_OR_PASSWORD: "ایمیل یا رمز عبور اشتباه است.",
   USER_ALREADY_EXISTS: "حسابی با این ایمیل قبلاً ساخته شده — وارد شوید.",
@@ -65,11 +63,7 @@ export async function signInAction(
   }
 }
 
-/** 🔒 Same real sign-in as `signInAction`, plus a server-side admin check —
- *  the login form on `/admin/login` calls this, never `signInAction`. A
- *  successfully-authenticated non-admin is immediately signed back out
- *  (never left holding a session from an admin-login attempt) and gets the
- *  same rejection an unauthenticated visitor would. */
+// 🔒 Same as signInAction, plus an admin check; non-admins are signed back out immediately.
 export async function adminSignInAction(
   values: SignInValues,
 ): Promise<ActionResult<User>> {
@@ -104,10 +98,7 @@ export async function signUpAction(
       body: parsed.data,
       headers: await headers(),
     });
-    // 🆕 A brand-new signup never has a `Profile` doc yet, but going through
-    // `buildUser` anyway (not a plain identity-only object) keeps this
-    // action's return shape identical to `signInAction`'s and to
-    // `getSessionUser()` — one shape, one place that builds it.
+    // 🆕 Routes through buildUser anyway to keep the return shape identical everywhere.
     return { ok: true, data: await buildUser(user) };
   } catch (error) {
     return actionError(error);
@@ -140,16 +131,10 @@ export async function forgotPasswordAction(
   return { ok: true };
 }
 
-// 📱 OTP sign-in — the UI (`AuthModal` → `OtpLoginPanel`) is fully built, but
-// no SMS panel has been purchased yet. Flip this once one is wired up (and
-// fill in the real `send()` below); nothing in the client needs to change —
-// it already only trusts `demo` to decide whether to show the preview note.
+// 📱 UI is fully built; flip once an SMS provider is purchased and wired up.
 const SMS_PROVIDER_CONFIGURED = false;
 
-/** 📨 Requests an OTP code for `phone`. With no SMS provider configured this
- *  never actually sends anything — it answers `{ demo: true }` so the client
- *  can still walk through the real code-entry screen as a labeled preview
- *  instead of a dead button. */
+// 📨 With no SMS provider, answers { demo: true } so the UI still previews.
 export async function requestOtpAction(
   values: OtpRequestValues,
 ): Promise<ActionResult<{ demo: boolean }>> {
@@ -157,8 +142,7 @@ export async function requestOtpAction(
   if (!parsed.success) return { ok: false, error: FALLBACK_ERROR };
 
   const phone = phoneDigits(parsed.data.phone);
-  // 🚦 One request per phone per cooldown window — same rhythm as the
-  // resend timer the client shows (`useCooldown`'s default 90s).
+  // 🚦 Matches the client's resend cooldown (90s).
   const limited = rateLimit(`otp-request:${phone}`, {
     windowMs: 90_000,
     max: 1,
@@ -172,9 +156,7 @@ export async function requestOtpAction(
   return { ok: true, data: { demo: false } };
 }
 
-/** 🔐 Verifies an OTP code and signs the user in. No SMS provider means no
- *  code was ever really sent, so this must never fake a successful
- *  sign-in — it always explains that plainly instead. */
+// 🔐 No SMS provider means no code was sent — never fake a successful sign-in.
 export async function verifyOtpAction(
   values: OtpVerifyValues,
 ): Promise<ActionResult<User>> {

@@ -1,6 +1,4 @@
-/** 💬 Client-safe canned-reply vocabulary — the fallback set lives here
- *  (not in `lib/shop/canned-responses`, which is server-only) so client
- *  composers can import it without dragging mongoose into the browser. */
+// 💬 Lives here (not in the server-only lib/shop/canned-responses) so client composers can import it freely.
 
 export type CannedResponse = {
   id: string;
@@ -8,9 +6,7 @@ export type CannedResponse = {
   body: string;
 };
 
-/** 📦 The fallback set — shown when the collection is empty so composers
- *  are never bare (the manager encourages replacing these with the
- *  team's own voice). */
+// 📦 Shown only when the collection is empty, so composers are never bare.
 export const DEFAULT_CANNED_RESPONSES: CannedResponse[] = [
   {
     id: "default-greeting",

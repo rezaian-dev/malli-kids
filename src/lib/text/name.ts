@@ -1,19 +1,13 @@
-// 👤 Person-name helpers — kept separate from locale/number formatting
-// (see `@/lib/locale/fa`) since names aren't a locale-formatting concern.
+// 👤 Person-name helpers, kept separate from locale/number formatting.
 
-/**
- * 🙋 The first word of a name, defaulting to a friendly fallback when empty.
- */
+// 🙋 First word of a name; falls back to a friendly default when empty.
 export function givenName(name: string | null | undefined): string {
   const trimmed = (name ?? "").trim();
   if (!trimmed) return "کاربر";
   return trimmed.split(/\s+/)[0];
 }
 
-/**
- * 🪪 Join first + last name; falls back to just the given name when the
- * last name is missing, and to the friendly default when both are.
- */
+// 🪪 Falls back to just the given name, then to the friendly default, as parts go missing.
 export function fullName(
   first?: string | null,
   last?: string | null,

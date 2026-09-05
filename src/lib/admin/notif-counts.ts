@@ -12,9 +12,7 @@ export type AdminNotifCounts = {
   pendingReviews: number;
 };
 
-/** 🔔 The four counts the admin header bell + sidebar badges show —
- *  computed once in `admin/layout.tsx` and threaded down as props instead
- *  of each component reading a client-side store. */
+// 🔔 Computed once in admin/layout.tsx and passed down as props.
 export const getAdminNotifCounts = cache(async (): Promise<AdminNotifCounts> => {
   await connectMongoose();
   const [freshOrders, openTickets, openChats, pendingReviews] =

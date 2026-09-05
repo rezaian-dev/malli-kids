@@ -1,12 +1,7 @@
 import "server-only";
 import { createTransport } from "nodemailer";
 
-/**
- * 📧 Sends transactional email over SMTP (`SMTP_HOST`/`PORT`/`USER`/`PASS` —
- * any provider: Gmail, a company mail server, ...). Without `SMTP_HOST` set,
- * the message is logged to the server console instead, so local/dev flows
- * (like "forgot password") stay testable without real credentials.
- */
+// 📧 Without SMTP_HOST set, logs to console instead — dev flows stay testable without real credentials.
 export async function sendEmail({
   to,
   subject,

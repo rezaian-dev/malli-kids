@@ -38,13 +38,11 @@ export type ChatMessage = {
   at: string;
 };
 
-/** ✂️ Server-side ceiling for a chat message — the client mirrors it with
- *  a `maxLength` attribute (see `chat-window.tsx`), this is the real one. */
+// ✂️ The real ceiling; the client's maxLength attribute just mirrors it.
 export const CHAT_MESSAGE_MAX_LEN = 1000;
 
 const PREVIEW_LEN = 80;
-// 🧊 Threads stay small; a hard cap keeps one runaway conversation from
-// ever turning a 4-second poll into a heavyweight query.
+// 🧊 Hard cap keeps a runaway conversation from turning the 4s poll into a heavyweight query.
 const MESSAGE_LIMIT = 200;
 const CONVERSATION_LIMIT = 100;
 
@@ -59,9 +57,7 @@ type MessageLean = ChatMessageDoc & {
   createdAt: Date;
 };
 
-// ⌨️ A typing stamp counts as "writing now" for 6 seconds — comfortably
-// longer than the 4s thread poll, short enough that a closed tab stops
-// showing almost immediately.
+// ⌨️ 6s window — longer than the 4s poll, short enough that a closed tab clears almost immediately.
 const TYPING_WINDOW_MS = 6_000;
 
 function isTyping(at?: Date): boolean {
@@ -106,8 +102,7 @@ function isDuplicateKey(error: unknown) {
   );
 }
 
-/** 🧵 A customer's one live thread (`open`/`active`), if any — opening the
- *  chat window never creates a row by itself; the first message does. */
+// 🧵 Opening the chat window never creates a row by itself; the first message does.
 export async function getOpenConversationForCustomer(
   customerId: string,
 ): Promise<ChatConversation | null> {
@@ -133,9 +128,7 @@ export async function getChatMessages(
   return docs.map(toMessage);
 }
 
-/** ✉️ Customer send — finds the live thread or creates it (closed threads
- *  stay closed; a new message after a close starts a fresh thread), then
- *  persists the message and flags it unread for the admin side. */
+// ✉️ Finds the live thread or creates one; a message after a close starts a fresh thread.
 export async function customerSendMessage(input: {
   customerId: string;
   customerName: string;
@@ -159,9 +152,7 @@ export async function customerSendMessage(input: {
         status: "open",
       });
     } catch (error) {
-      // 🏁 Lost a same-millisecond race with another tab — re-read the
-      // winner instead of failing (the partial unique index in
-      // `models/chat.ts` is what makes this safe).
+      // 🏁 Lost a same-millisecond race — re-read the winner instead of failing.
       if (!isDuplicateKey(error)) throw error;
       doc = await ChatConversationModel.findOne({
         customerId: input.customerId,
@@ -199,8 +190,7 @@ export async function customerSendMessage(input: {
       message: toMessage(created.toObject() as MessageLean),
     };
   } catch (error) {
-    // 🔁 Same `clientId` as an already-stored message — a retry, not a new
-    // message. Hand the original back without touching unread counters.
+    // 🔁 Same clientId as a stored message — a retry; return the original without touching unread counts.
     if (!isDuplicateKey(error)) throw error;
     const existing = await ChatMessageModel.findOne({
       conversationId: doc._id.toString(),
@@ -218,9 +208,7 @@ export async function customerSendMessage(input: {
   }
 }
 
-/** 🛎️ Admin reply — persists under the admin's own id, flags it unread for
- *  the customer, and auto-claims an unassigned thread. Replying to a
- *  `closed` thread reopens it as `active`. */
+// 🛎️ Auto-claims an unassigned thread; replying to a closed thread reopens it as active.
 export async function adminSendMessage(input: {
   conversationId: string;
   adminId: string;
@@ -280,8 +268,7 @@ export async function adminSendMessage(input: {
   }
 }
 
-/** 👀 Customer actually saw the thread — clears their unread (ownership is
- *  part of the filter, so a forged id clears nothing). */
+// 👀 Ownership is part of the filter, so a forged id clears nothing.
 export async function markChatReadAsCustomer(
   conversationId: string,
   customerId: string,
@@ -361,9 +348,7 @@ export async function setChatStatus(
   return updated.matchedCount > 0;
 }
 
-/** ⌨️ Typing heartbeat — one tiny timestamp write, throttled client-side
- *  to ~one per 3s while typing. Ownership is part of the customer
- *  filter, so a forged id stamps nothing. */
+// ⌨️ Ownership is part of the filter, so a forged id stamps nothing.
 export async function setTypingAsCustomer(
   conversationId: string,
   customerId: string,
@@ -385,8 +370,7 @@ export async function setTypingAsAdmin(conversationId: string): Promise<void> {
   );
 }
 
-/** ⭐ Customer rates the thread (1–5 + optional note) — re-rating
- *  overwrites, so the latest sentiment wins. */
+// ⭐ Re-rating overwrites, so the latest sentiment wins.
 export async function submitChatRating(
   conversationId: string,
   customerId: string,
@@ -423,9 +407,7 @@ export async function setChatAssignee(
   return updated.matchedCount > 0;
 }
 
-/** 🎫 Escalate a chat into a ticket — transcript attached, linked both
- *  ways. Idempotent: re-escalating returns the original ticket instead
- *  of forking a second one. */
+// 🎫 Idempotent — re-escalating returns the original ticket instead of forking a second one.
 export async function escalateChatToTicket(
   conversationId: string,
   customerId: string,

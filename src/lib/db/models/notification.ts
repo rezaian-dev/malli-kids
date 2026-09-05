@@ -1,10 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🔔 Real, per-user notifications — created server-side by the actions that
-// actually change a customer's ticket/order (see `src/lib/shop/notifications.ts`),
-// never fabricated client-side. Replaces the old `localStorage`-only list,
-// which could never reflect an event that happened in the admin's browser.
+// 🔔 Created server-side by the actions that change a customer's ticket/order — never fabricated client-side.
 export type NotificationKind = "ticket" | "order" | "system" | "restock";
 
 export type NotificationDoc = {

@@ -7,9 +7,7 @@ export async function getFavoriteIds(userId: string): Promise<number[]> {
   return doc?.favorites ?? [];
 }
 
-/** 💛 Adds/removes `id` from the signed-in user's real wishlist and returns
- *  the updated list — the account-backed replacement for the old
- *  `localStorage` toggle. */
+// 💛 Adds/removes id from the wishlist and returns the updated list.
 export async function toggleFavorite(userId: string, id: number): Promise<number[]> {
   await connectMongoose();
   const current = await getFavoriteIds(userId);

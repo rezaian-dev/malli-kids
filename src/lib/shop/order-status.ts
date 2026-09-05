@@ -1,9 +1,6 @@
 import type { OrderStatus } from "@/types";
 
-// 🧭 Pure order-status helpers — no database import, so client components
-// (order tables, status badges, the delivery-stage tracker) can use them
-// directly without pulling Mongoose into the browser bundle. `@/lib/shop/orders`
-// is the data-access counterpart (real reads/writes), server-only.
+// 🧭 Pure, no DB import — client components share this without pulling Mongoose into the bundle.
 export const ORDER_FLOW: OrderStatus[] = [
   "جدید",
   "در حال آماده‌سازی",
@@ -19,13 +16,7 @@ export const ORDER_STAGES = [
   "تحویل",
 ] as const;
 
-/** 🔒 The real order state machine. Forward-one-step only, plus "drop to
- *  مرجوعی" (cancel/return) reachable from any non-terminal state — blocks
- *  both skipping ahead (جدید → تحویل‌شده) and going backward
- *  (تحویل‌شده → جدید). `مرجوعی` is terminal: nothing transitions out of it.
- *  `setOrderStatus` (`@/lib/shop/orders`) is the real enforcement boundary;
- *  the admin order-detail sheet uses this same table to only ever *offer*
- *  a legal next status. */
+// 🔒 The real order state machine: forward one step only, or drop to مرجوعی (terminal) from any non-terminal state.
 export const ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   جدید: ["در حال آماده‌سازی", "مرجوعی"],
   "در حال آماده‌سازی": ["ارسال‌شده", "مرجوعی"],

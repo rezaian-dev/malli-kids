@@ -1,11 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🏷️ Canonical content taxonomy for articles — a real entity (not a
-// free-text CSV string on the article row) so the same tag is one row
-// reused everywhere it applies, renaming it once updates every article, and
-// two admins can't accidentally create "تابستان" and "تابستانی" as if
-// they're different tags without at least colliding on the same slug.
+// 🏷️ A real entity, not a free-text string — renaming a tag updates every article that uses it.
 export type TagDoc = {
   name: string;
   slug: string;

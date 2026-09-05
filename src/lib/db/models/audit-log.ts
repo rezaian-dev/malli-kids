@@ -1,12 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🧾 A small, targeted audit trail — only for the sensitive operations
-// section 16 of the ops spec actually names (role changes, price changes,
-// campaign publication, order state changes, destructive deletes). Not a
-// generic enterprise event log: no schema for "every mutation ever", no
-// retention policy, no export — just enough to answer "who did this, and
-// when" for the handful of actions where that actually matters.
+// 🧾 Targeted audit trail for sensitive ops only (role/price/campaign/order changes) — not a generic event log.
 export type AuditLogDoc = {
   actorEmail: string;
   actorName: string;

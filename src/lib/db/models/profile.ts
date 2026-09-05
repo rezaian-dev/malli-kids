@@ -10,9 +10,7 @@ export type ProfileDoc = {
   postalCode?: string;
   city?: string;
   address?: string;
-  // 🗺️ Set together with `address` from the profile's Leaflet/OpenStreetMap map
-  // picker (see `@/app/(storefront)/profile/_components/address-map-field`)
-  // — optional, a plain-text address with no pin is still valid.
+  // 🗺️ Set together with address from the map picker; a plain-text address with no pin is still valid.
   lat?: number;
   lng?: number;
   childName?: string;
@@ -41,8 +39,6 @@ const profileSchema = new Schema<ProfileDoc>(
   { timestamps: true },
 );
 
-// 🔁 `models.Profile` survives Next's dev-mode HMR; without this guard,
-// re-importing this module would try (and fail) to redefine the model.
 export const Profile: Model<ProfileDoc> =
   (models.Profile as Model<ProfileDoc>) ||
   model<ProfileDoc>("Profile", profileSchema);

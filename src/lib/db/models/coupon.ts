@@ -23,9 +23,7 @@ const couponSchema = new Schema<CouponDoc>(
     cap: { type: Number, required: true },
     active: { type: Boolean, default: true },
     min: { type: Number, default: 0 },
-    // 🗓️ Jalali "YYYY/MM/DD", validated with `jalaliParts`/`isJalaliFuture`
-    // (see `@/lib/locale/jalali`) — a hand-typed business date, not an event
-    // timestamp, so it stays a plain string like the rest of the app's dates.
+    // 🗓️ Jalali "YYYY/MM/DD" — a business date, not an event timestamp, so it stays a plain string.
     until: { type: String, required: true },
   },
   { timestamps: true },

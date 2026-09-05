@@ -19,10 +19,7 @@ const counterSchema = new Schema<CounterDoc>(
 const CounterModel: Model<CounterDoc> =
   models.Counter ?? model<CounterDoc>("Counter", counterSchema);
 
-/** 🔢 Atomic serial allocator — `$inc` is single-document-atomic in
- *  MongoDB, so concurrent callers never receive the same number.
- *  `start` only clamps the very first allocation for a key (ticket
- *  numbers begin at 1001); later calls keep incrementing. */
+// 🔢 Atomic serial allocator; start only clamps the first allocation for a key (e.g. tickets begin at 1001).
 export async function getNextSequence(key: string, start = 1): Promise<number> {
   await connectMongoose();
   const first = await CounterModel.findOneAndUpdate(
@@ -32,8 +29,7 @@ export async function getNextSequence(key: string, start = 1): Promise<number> {
   ).lean<CounterDoc>();
   if (!first || first.seq >= start) return first?.seq ?? start;
 
-  // First allocation for this key (or a legacy counter below `start`):
-  // clamp it up to `start` exactly once; a concurrent loser re-increments.
+  // Clamps a fresh/legacy counter up to start exactly once; a concurrent loser re-increments.
   const clamped = await CounterModel.findOneAndUpdate(
     { _id: key, seq: { $lt: start } },
     { $set: { seq: start } },

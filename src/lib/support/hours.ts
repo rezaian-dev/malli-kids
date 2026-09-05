@@ -1,7 +1,4 @@
-/** 🕘 Client-safe support-hours check — Tehran-local hour against the
- *  store's configured window (see `/admin/settings`). Wrap-around windows
- *  (e.g. 20 → 2) count as overnight shifts. Pure + tiny so both the chat
- *  window and any future surface can share it. */
+// 🕘 Tehran-local hour against the configured window; wrap-around windows (e.g. 20→2) count as overnight.
 export function isWithinSupportHours(
   now: Date,
   startHour: number,

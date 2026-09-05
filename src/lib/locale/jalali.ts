@@ -20,11 +20,7 @@ export function jalaliParts(
   return { y, m, d };
 }
 
-/** 📆 Convert a Gregorian `Date` (default: right now) to its Jalali calendar
- *  parts, via `Intl`'s built-in Persian calendar — the one place this app
- *  does a Gregorian→Jalali conversion; never hand-roll the arithmetic
- *  elsewhere (`@/lib/admin/sales`, `@/lib/festive/occasions` both build on
- *  this instead of keeping their own copies). */
+// 📆 The one place this app converts Gregorian→Jalali via Intl; other modules build on this.
 export function toJalali(d: Date = new Date()): { jy: number; jm: number; jd: number } {
   try {
     const parts = new Intl.DateTimeFormat("en-u-ca-persian", {
@@ -57,10 +53,7 @@ export function isJalaliFuture(input: string): boolean {
   return target > current;
 }
 
-/** 🗓️ Inclusive "is this Jalali business date already over" check — the
- *  counterpart `findApplicableCoupon` enforces a coupon's `until` with. A
- *  missing/malformed date fails closed (counts as past): money-affecting
- *  logic must never treat garbage as "no expiry". */
+// 🗓️ Fails closed (counts as past) on a malformed date — money-affecting logic must never treat garbage as "no expiry".
 export function isJalaliPast(input: string): boolean {
   const value = jalaliParts(input);
   if (!value) return true;

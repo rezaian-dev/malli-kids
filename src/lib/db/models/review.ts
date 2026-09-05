@@ -1,9 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// ⭐ Real customer reviews (`visible: true` only are shown). Written by a
-// signed-in buyer after a real purchase check (product page → `submitReviewAction`
-// → `createReview`), held for admin moderation until approved from `/admin`.
+// ⭐ Only visible: true reviews are shown; held for admin moderation until approved.
 export type ReviewDoc = {
   product: string;
   author: string;

@@ -29,20 +29,8 @@ export function toFestiveBanner(
   };
 }
 
-/** 🎉 Today's applicable occasion banner (pinned, or the one whose Jalali
- *  `from`/`to` range covers today) — real replacement for the client-only
- *  `readBannerFromAdminDb()` that used to poll the admin's own localStorage.
- *
- *  🧊 Cached: this runs on every single request (root layout reads it for
- *  the whole storefront). Two independent triggers keep it correct —
- *  `updateBannerAction` tags itself onto `FESTIVE_BANNER_TAG` and calls
- *  `revalidateTag` for admin edits, and the merch `revalidate` window
- *  covers `pickBanner`'s own date-range math (a banner's `from`/`to`
- *  window turning over at day boundaries, with nobody having edited
- *  anything). (Not `"use cache"`/Cache Components — this app doesn't opt
- *  into that model; `unstable_cache` is the tag-and-time-invalidated
- *  caching primitive that works under the classic/default rendering mode
- *  this app uses.) */
+// 🎉 Today's applicable banner (pinned, or whose Jalali range covers today).
+// 🧊 Read on every request; revalidateTag covers admin edits, the merch window covers day-boundary rollover.
 export const getActiveBanner = unstable_cache(
   async (): Promise<FestiveBanner | null> => {
     await connectMongoose();

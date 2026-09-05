@@ -6,9 +6,7 @@ import { ArticleModel, type ArticleDoc } from "@/lib/db/models/article";
 import { faDate } from "@/lib/locale/fa";
 import { getAllTags, type ContentTag } from "@/lib/tags";
 
-// 🧊 Published articles are public and shared — cached the same way as the
-// product catalog (`@/lib/shop/products`), not queried fresh per request.
-// Admin writes (`admin/articles/_lib/actions.ts`) revalidate this tag.
+// 🧊 Cached like the product catalog; admin writes revalidate this tag.
 export const ARTICLES_TAG = "articles";
 
 export type JournalArticle = {
@@ -19,22 +17,14 @@ export type JournalArticle = {
   body: string;
   cover?: string;
   date?: string;
-  // 🏷️ Resolved from `ArticleDoc.tags` (slugs) against the small cached
-  // `getAllTags()` list — a slug an article still carries after its `Tag`
-  // was deleted just silently drops out here instead of rendering a blank.
+  // 🏷️ A deleted tag's slug silently drops out instead of rendering blank.
   tags: ContentTag[];
-  // 🕒 ISO 8601, for `articleSchema`'s `datePublished`/`dateModified` — schema.org
-  // wants a machine-readable date, not the Jalali display string above.
+  // 🕒 ISO 8601 for schema.org, not the Jalali display string above.
   publishedAt: string;
   updatedAt: string;
 };
 
-// 🔐 Real allowlist sanitizer (was a hand-rolled `script/iframe/on*=` regex
-// strip — bypassable via `formaction`, entity-encoded `javascript:`, `<meta
-// refresh>`, etc.). Only the tags/attributes the admin rich editor
-// (`@/components/admin/rich-editor.tsx`'s TipTap `StarterKit` + `Image` +
-// `TextAlign`) can actually produce are allowed — everything else, this
-// body is rendered with `dangerouslySetInnerHTML` to every site visitor.
+// 🔐 Allowlist sanitizer: this HTML renders via dangerouslySetInnerHTML.
 const ARTICLE_SANITIZE_OPTIONS: sanitizeHtmlLib.IOptions = {
   allowedTags: [
     "p",
@@ -65,8 +55,7 @@ const ARTICLE_SANITIZE_OPTIONS: sanitizeHtmlLib.IOptions = {
     img: ["src", "alt", "title"],
     "*": ["style"],
   },
-  // ✍️ `TextAlign` only ever sets this one style property — nothing else
-  // gets through, so no CSS-injection surface (background/expression/...).
+  // ✍️ Only text-align passes — no CSS-injection surface.
   allowedStyles: {
     "*": { "text-align": [/^(left|right|center|justify)$/] },
   },
@@ -76,8 +65,7 @@ const ARTICLE_SANITIZE_OPTIONS: sanitizeHtmlLib.IOptions = {
     img: ["http", "https", "data"],
   },
   transformTags: {
-    // 🔗 Every link forced to `noopener noreferrer` regardless of what was
-    // stored — closes reverse-tabnabbing even for old/pre-fix rows.
+    // 🔗 Forces noopener noreferrer on every link — closes reverse-tabnabbing.
     a: sanitizeHtmlLib.simpleTransform(
       "a",
       { rel: "noopener noreferrer", target: "_blank" },
@@ -113,9 +101,7 @@ async function tagLookup(): Promise<Map<string, ContentTag>> {
   return new Map(tags.map((t) => [t.slug, t]));
 }
 
-/** 📰 Every published article, newest first — the real replacement for the
- *  old client-only `localStorage` read (which the server side of every page
- *  below silently ignored, always falling back to the static seed). */
+// 📰 Newest first.
 export const loadPublishedArticles = unstable_cache(
   async (): Promise<JournalArticle[]> => {
     await connectMongoose();

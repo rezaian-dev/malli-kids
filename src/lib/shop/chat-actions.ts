@@ -36,10 +36,7 @@ async function requireUser() {
   return { id: session.user.id, name: session.user.name };
 }
 
-/** 💬 One round trip for the whole chat window — the thread plus its
- *  messages, polled while the window is open. Ownership is implicit: the
- *  query is keyed by the session's own user id, so there is no id for a
- *  client to forge. */
+// 💬 One round trip for the whole chat window; keyed by the session's own user id, so nothing to forge.
 export async function getMyChatAction(): Promise<ChatThread> {
   const user = await requireUser();
   if (!user) return { conversation: null, messages: [] };
@@ -51,9 +48,7 @@ export async function getMyChatAction(): Promise<ChatThread> {
   };
 }
 
-/** 🔴 One indexed document read — feeds the unread badge on the chat
- *  bubble while the window is closed (same 8s rhythm as the header
- *  bells). The window's own poll takes over while it's open. */
+// 🔴 Feeds the unread badge while the window is closed; the window's own poll takes over once open.
 export async function getMyChatUnreadAction(): Promise<number> {
   const user = await requireUser();
   if (!user) return 0;
@@ -99,8 +94,7 @@ export async function sendChatMessageAction(input: {
   }
 }
 
-/** 👀 Best-effort "I saw it" — fire-and-forget like the notification
- *  mark-read actions; a failed call just leaves the count for next time. */
+// 👀 Fire-and-forget — a failed call just leaves the count for next time.
 export async function markChatReadAction(
   conversationId: string,
 ): Promise<void> {
@@ -109,8 +103,7 @@ export async function markChatReadAction(
   await markChatReadAsCustomer(conversationId, user.id);
 }
 
-/** ⌨️ Typing heartbeat — fire-and-forget; throttled client-side (~one
- *  per 3s) and rate-limited here as a backstop. */
+// ⌨️ Fire-and-forget; throttled client-side (~1/3s) and rate-limited here as a backstop.
 export async function pingChatTypingAction(
   conversationId: string,
 ): Promise<void> {
@@ -144,8 +137,7 @@ export async function submitChatRatingAction(
   }
 }
 
-/** 🎫 Turn this chat into a ticket (transcript attached) — for when the
- *  customer needs an async, trackable thread instead. */
+// 🎫 Turns the chat into a ticket with the transcript attached.
 export async function escalateChatToTicketAction(
   conversationId: string,
 ): Promise<ActionResult<{ number?: number }>> {
@@ -160,8 +152,7 @@ export async function escalateChatToTicketAction(
   }
 }
 
-/** 🕘 Support hours for the chat window's open/closed notice — cached
- *  like the campaign, editable in `/admin/settings`. */
+// 🕘 Cached like the campaign; editable in /admin/settings.
 export async function getSupportHoursAction(): Promise<SupportHours> {
   const user = await requireUser();
   if (!user) return DEFAULT_SUPPORT_HOURS;

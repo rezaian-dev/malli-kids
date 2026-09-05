@@ -1,10 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🎫 Support tickets — the app's only "contact us" channel (see
-// `/contact`: it points people at `/profile#support` instead of a form).
-// Replaces the storefront's `lib/tickets.ts` localStorage list; shared by
-// the profile "support" tab (owner) and `/admin/messages` (staff).
+// 🎫 The app's only "contact us" channel; shared by the profile support tab and /admin/messages.
 export type TicketStatus = "open" | "pending" | "answered" | "closed";
 export type TicketCategory =
   "order" | "return" | "sizing" | "quality" | "other";
@@ -22,9 +19,7 @@ export type TicketDoc = {
   status: TicketStatus;
   category: TicketCategory;
   priority: TicketPriority;
-  /** 🔢 Human-friendly serial (`#1001`) — assigned once at creation via
-   *  the atomic `Counter` sequence; old rows predate it, so it's optional
-   *  and the UI falls back to a short id for those. */
+  // 🔢 Human-friendly serial (#1001); optional since rows created before this existed predate it.
   number?: number;
   assigneeId?: string;
   assigneeName?: string;
@@ -53,8 +48,7 @@ const ticketSchema = new Schema<TicketDoc>(
       enum: ["open", "pending", "answered", "closed"],
       default: "open",
     },
-    // 🗂️ Optional-with-default (not `required`) so pre-existing rows stay
-    // valid — `toTicket` fills the same defaults when they're missing.
+    // 🗂️ Optional-with-default so pre-existing rows stay valid.
     category: {
       type: String,
       enum: ["order", "return", "sizing", "quality", "other"],
@@ -73,8 +67,7 @@ const ticketSchema = new Schema<TicketDoc>(
   { timestamps: true },
 );
 
-// 🔔 The sidebar badge's `countDocuments({ status: "open" })` + the
-// assignee filter both deserve an index.
+// 🔔 Backs the sidebar badge count and the assignee filter.
 ticketSchema.index({ status: 1 });
 ticketSchema.index({ assigneeId: 1 });
 ticketSchema.index({ number: 1 }, { unique: true, sparse: true });

@@ -1,7 +1,4 @@
-// 📦 Pure variant-stock helpers — no database import (mirrors
-// `@/lib/shop/order-status`'s role), so both the server actions/data layer
-// AND client components (the inventory table's status badges) can use the
-// exact same math without pulling Mongoose into the browser bundle.
+// 📦 Pure, no DB import — client components can share this math without pulling Mongoose into the bundle.
 
 export type ProductVariant = {
   size: string;
@@ -9,20 +6,14 @@ export type ProductVariant = {
   stock: number;
 };
 
-/** 🪶 Below this, a variant is flagged "low stock" (but still sellable) —
- *  one shared threshold so "needs attention" means the same thing on the
- *  inventory table as it does on the dashboard's low-stock count. */
+// 🪶 Shared threshold so "needs attention" means the same thing on the table and the dashboard count.
 const LOW_STOCK_THRESHOLD = 3;
 
 function totalVariantStock(variants: ProductVariant[]): number {
   return variants.reduce((sum, variant) => sum + Math.max(0, variant.stock), 0);
 }
 
-/** 🔁 `Product.stock` stays a plain boolean for every existing consumer
- *  (shop filters, the PDP badge, the product card) — this is the one place
- *  that boolean gets computed from real variant stock instead of hand-set.
- *  A product with no variants yet (legacy, or deliberately unsized — an
- *  accessory) keeps using its own manually-set boolean untouched. */
+// 🔁 The one place stock gets computed from variants; unvaried products keep their manual boolean.
 export function deriveStock(
   variants: ProductVariant[],
   manualStock: boolean,

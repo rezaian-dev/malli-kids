@@ -59,14 +59,8 @@ export function defaultShopState(): ShopState {
   };
 }
 
-// 🔀 Filters/sort/search/view narrow or reorder the result set into a
-// near-duplicate of the plain category view — per Google's faceted
-// navigation guidance these combinations should be kept out of the index
-// (https://developers.google.com/search/docs/crawling-indexing/canonicalization).
-// Plain `page` is deliberately NOT one of these: per Google's ecommerce
-// pagination guidance, a paginated page shows genuinely different products
-// and should be indexed on its own, not folded in with the filter set
-// (https://developers.google.com/search/docs/specialty/ecommerce/pagination-and-incremental-page-loading).
+// 🔀 Filter/sort/search/view combos are kept out of the index as faceted near-duplicates.
+// Plain page is not — a paginated page shows genuinely different products and stays indexable.
 function hasNonPaginationFilters(state: ShopState) {
   return (
     !!state.q ||
@@ -86,12 +80,7 @@ export function isShopIndexable(state: ShopState) {
 }
 
 export function shopCanonicalHref(state: ShopState) {
-  // 🔗 Plain pagination (page 2, 3, ...) with no other filter active is a
-  // real, indexable page in its own right — it must self-canonicalize, never
-  // point back at page 1 (that would tell Google page 2's products don't
-  // exist as their own entities). A filter/sort/search combo still
-  // canonicalizes to the clean cat+season view, since it's a near-duplicate
-  // subset rather than a distinct page of results.
+  // 🔗 Plain pagination self-canonicalizes; a filter/sort/search combo canonicalizes to the clean cat+season view.
   if (isShopIndexable(state)) return toShopHref(state);
   return toShopHref({
     ...defaultShopState(),
@@ -145,10 +134,7 @@ export function parseShopState(params: Record<string, SearchValue>): ShopState {
   return intentChanged ? { ...next, page: 1 } : next;
 }
 
-/** 🎯 The one facet match used everywhere a product is tested against a
- *  `ShopState` — the shop grid, its mobile/desktop filter chips, and the
- *  server-rendered JSON-LD `ItemList` all call this so the structured data
- *  search engines read never disagrees with what shoppers actually see. */
+// 🎯 Used everywhere a product is tested against ShopState, so the JSON-LD ItemList never disagrees with the UI.
 function matchesShopState(product: Product, state: ShopState) {
   if (state.cat !== "همه" && product.cat !== state.cat) return false;
   if (state.season !== "همه" && product.season !== state.season) return false;

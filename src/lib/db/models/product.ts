@@ -5,24 +5,16 @@ import { deriveStock, type ProductVariant } from "@/lib/shop/inventory";
 
 type Gender = "دخترانه" | "پسرانه" | "یونیسکس";
 
-// 🛍️ The real catalog collection behind every admin product/inventory screen
-// and every storefront listing. `id` is a small public numeric id (not
-// Mongo's own `_id`) — the whole app already treats product ids as numbers
-// (cart, wishlist, `/product/[id]`), so this keeps that contract intact
-// instead of rippling a string-id change through the storefront.
+// 🛍️ id is a small public numeric id (not Mongo's _id) — matches the numeric ids used everywhere else.
 export type ProductDoc = {
   id: number;
   images: string[];
   name: string;
   cat: string;
-  // 🆕 Additive, not a replacement for `cat` — `cat` still mixes
-  // category/gender today (see `CATS` in `@/lib/constants`); splitting that
-  // apart would ripple through the storefront's category filter/URLs for no
-  // operational win. `gender` is a separate, optional refinement instead.
+  // 🆕 Additive, not a replacement for cat — cat still mixes category/gender today.
   gender?: Gender;
   ageRange?: string;
-  // 🔗 Auto-generated from `name` on create, editable after — same
-  // uniqueness pattern as `ArticleModel.slug`.
+  // 🔗 Auto-generated from name on create, editable after.
   slug?: string;
   season?: Season;
   price: number;
@@ -30,15 +22,9 @@ export type ProductDoc = {
   disc?: string;
   badge?: string;
   rate: number;
-  // 🧮 Derived from `variants` when any exist (see `deriveStock` in
-  // `@/lib/shop/inventory`) — kept as a real stored boolean, not computed at
-  // read time, so every existing consumer (shop filters, PDP badge, product
-  // card) keeps working untouched for products that never get variants.
+  // 🧮 Derived from variants when any exist; stored (not computed) so unvaried products keep working untouched.
   stock: boolean;
-  // 🆕 Per size(/color) stock — the actual fix for "a boolean can't tell you
-  // which size is out". Empty for legacy/unsized products (accessories,
-  // catalog rows created before this existed): they keep using the plain
-  // `stock` boolean above.
+  // 🆕 Per size(/color) stock; empty for legacy/unsized products, which keep using the stock boolean above.
   variants: ProductVariant[];
   sold: number;
   desc: string;
@@ -46,9 +32,7 @@ export type ProductDoc = {
   seoDescription?: string;
   visible: boolean;
   featured: boolean;
-  // 🧵 Admin-curated "complete the look" pairing — see `@/types`'s `Product`
-  // for the full rationale. Just a list of other product ids; resolved to
-  // real cards by `getCompleteTheLook` (`@/lib/shop/products`).
+  // 🧵 Admin-curated "complete the look" pairing — a list of other product ids.
   pairsWith?: number[];
   updatedAt: Date;
 };
@@ -94,11 +78,7 @@ const productSchema = new Schema<ProductDoc>(
   { timestamps: true },
 );
 
-// 🔁 Keeps the stored `stock` boolean honest with `variants` on every save
-// path that goes through the Mongoose document (`.save()`, `Model.create`) —
-// the admin actions that use `findOneAndUpdate` instead recompute it
-// themselves before writing (see `admin/products/_lib/actions.ts`), since
-// `pre("findOneAndUpdate")` can't see the merged result cheaply.
+// 🔁 Keeps stock honest with variants on .save()/create; findOneAndUpdate paths recompute it themselves.
 productSchema.pre("save", function () {
   this.stock = deriveStock(this.variants, this.stock);
 });

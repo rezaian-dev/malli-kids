@@ -3,9 +3,7 @@ import "server-only";
 export const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/malli-kids";
 
-/** 🔒 Caches one in-flight/resolved connection promise per `key` on
- *  `globalThis`, so dev-mode HMR and serverless route reuse never open a
- *  second connection. Shared by `mongoose.ts` and `mongo-client.ts`. */
+// 🔒 Caches one connection promise per key on globalThis, so HMR/serverless reuse never opens a second connection.
 export function cached<T>(
   key: string,
   create: () => Promise<T>,

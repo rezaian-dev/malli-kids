@@ -1,10 +1,6 @@
 import "server-only";
 
-// 🪶 The one moving part shared by every "generate a unique slug" admin
-// action (products, articles): keep incrementing a numeric suffix while a
-// candidate slug already exists. The slugify rules themselves (which
-// characters survive, how the suffix is formatted) are domain-specific and
-// stay in each caller — only this loop was truly identical.
+// 🪶 Shared by every "generate a unique slug" action; slugify rules stay in each caller.
 export async function uniqueSlugAgainst(
   model: { exists(filter: { slug: string }): Promise<unknown> },
   base: string,

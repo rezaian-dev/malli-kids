@@ -2,10 +2,7 @@ import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 import type { FestiveTheme } from "@/types";
 
-// 🎉 Occasion banners — `from`/`to` are recurring Jalali "M/D" (no year, see
-// `pickBanner()` in `@/lib/festive/occasions` and `toJalali()` in
-// `@/lib/locale/jalali`), so they stay plain strings; a real `Date` can't
-// express "every year around this day".
+// 🎉 from/to are recurring Jalali "M/D" (no year) — a real Date can't express "every year around this day".
 export type FestiveBannerDoc = {
   occasion: string;
   title: string;

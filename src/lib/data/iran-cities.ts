@@ -1,6 +1,4 @@
-// 🗺️ Every province's county seats and other well-known cities, so the
-// profile combobox never dead-ends on someone's hometown. Sorted with a
-// Persian collator once at module load, not per-render.
+// 🗺️ County seats and well-known cities; sorted once at module load, not per-render.
 const CITIES = [
   // آذربایجان شرقی
   "تبریز", "مراغه", "میانه", "مرند", "اهر", "بناب", "شبستر", "هریس", "سراب",

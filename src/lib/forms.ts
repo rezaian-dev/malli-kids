@@ -2,9 +2,7 @@ import { z } from "zod";
 import { parseFaNumber, phoneDigits } from "./digits";
 import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
 
-// 📧 Exported so any plain (non-zod) input check — e.g. `NewsletterForm`,
-// which validates inline rather than through this module's zod helpers —
-// can reuse the exact same pattern instead of drifting from it.
+// 📧 Exported so non-zod inline checks (e.g. NewsletterForm) reuse the same pattern.
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
 
 const RE = {
@@ -64,9 +62,7 @@ export const email = (label = "ایمیل") =>
 export const postalCode = () =>
   optionalPattern((v) => RE.postalCode.test(toEnDigits(v)), fa.postalCode);
 
-// 📏 Optional, plain numeric text (kept as a string like `childAge` — parsed
-// with `parseFaNumber` at the point of use, e.g. `sizeForHeightCm`) — a
-// child's height in a sane human range, or left blank entirely.
+// 📏 Kept as a string like childAge, parsed at point of use — a sane height range, or blank.
 export const optHeightCm = (min = 40, max = 200) =>
   optionalPattern(
     (v) => {
@@ -110,8 +106,7 @@ const password = (min = 6) =>
     .string({ error: () => fa.required("رمز عبور") })
     .min(min, `رمز باید حداقل ${toFaDigits(min)} نویسه باشد`);
 
-// 🔐 Registration/reset password: length + letter + number, the same bar
-// Better Auth's account creation should hold callers to.
+// 🔐 Registration/reset password: length + letter + number.
 export const strongPassword = (min = 8) =>
   password(min)
     .refine((v) => /[A-Za-z]/.test(v), "رمز باید شامل حداقل یک حرف باشد")

@@ -1,6 +1,4 @@
-// 🛍️ Real product reads — shared by the storefront (shop, PDP, wishlist,
-// sitemap) and the admin catalog/inventory screens. Writes live in
-// `admin/products/_lib/actions.ts`; this module is read-only.
+// 🛍️ Shared reads for storefront and admin; writes live in admin/products/_lib/actions.ts.
 
 import { unstable_cache } from "next/cache";
 import { REVALIDATE } from "@/lib/cache";
@@ -8,17 +6,11 @@ import { connectMongoose } from "@/lib/db/mongoose";
 import { ProductModel, type ProductDoc } from "@/lib/db/models/product";
 import type { Product } from "@/types";
 
-// 🧊 The catalog is public and identical for every visitor, so it's cached
-// (not queried fresh per request) — same `unstable_cache` tag-and-time
-// pattern as `getActiveBanner` (see `@/lib/shop/banners`). Every admin write
-// (`admin/products/_lib/actions.ts`) revalidates this tag on demand; the
-// 60s `revalidate` is a fashion-catalog safety net, not the primary path.
+// 🧊 Cached like getActiveBanner; admin writes revalidate this tag, the 60s window is just a safety net.
 export const PRODUCTS_TAG = "products";
 
 function toProduct(doc: ProductDoc): Product {
-  // 🖼️ `images` (any pre-existing document written before this field
-  // existed still has the old single `img` string on it) — falls back to
-  // that, never to a made-up placeholder.
+  // 🖼️ Falls back to the legacy single img string on old documents, never to a made-up placeholder.
   const legacyImg = (doc as unknown as { img?: string }).img;
   const images = doc.images?.length ? doc.images : legacyImg ? [legacyImg] : [];
 
@@ -38,9 +30,7 @@ function toProduct(doc: ProductDoc): Product {
     badge: doc.badge,
     rate: doc.rate,
     stock: doc.stock,
-    // 🪶 A document written before this field existed simply doesn't have
-    // the key on read — `?? []` treats it as "legacy, unsized" rather than
-    // crashing every consumer that does `product.variants.map(...)`.
+    // 🪶 ?? [] treats a pre-existing document (no variants key) as legacy/unsized instead of crashing consumers.
     variants: doc.variants ?? [],
     sold: doc.sold,
     desc: doc.desc,
@@ -53,8 +43,7 @@ function toProduct(doc: ProductDoc): Product {
   };
 }
 
-/** 📚 Every product, newest first — the single source both the shop grid and
- *  the admin catalog/inventory tables filter/sort client-side. */
+// 📚 Single source both the shop grid and admin tables filter/sort client-side.
 export const getAllProducts = unstable_cache(
   async (): Promise<Product[]> => {
     await connectMongoose();
@@ -67,12 +56,7 @@ export const getAllProducts = unstable_cache(
 
 export const getProductById = unstable_cache(
   async (id: number): Promise<Product | null> => {
-    // 🛡️ A malformed route param (`parseProductRouteId` on a URL with no
-    // leading number, e.g. a typo'd/garbage slug) hands this `NaN` — Mongo's
-    // driver throws a `CastError` on that instead of just missing, which
-    // would otherwise crash the page before its own `if (!product)
-    // notFound()` ever runs. Treat it as "not found", same as any other id
-    // with no matching product.
+    // 🛡️ A malformed route param can hand this NaN, which Mongo would throw a CastError on — treat it as not found.
     if (!Number.isFinite(id)) return null;
     await connectMongoose();
     const doc = await ProductModel.findOne({ id }).lean();
@@ -106,11 +90,7 @@ export const getRelatedProducts = unstable_cache(
   { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
 );
 
-/** 🧵 The admin-curated "complete the look" set for a product — resolves
- *  `pairsWith` ids to real, visible product cards and preserves the admin's
- *  chosen order (unlike `getProductsByIds`'s `$in` order, which Mongo
- *  doesn't guarantee). A product with no curated pairing (the common case)
- *  costs nothing beyond the empty-array check — no query at all. */
+// 🧵 Preserves the admin's chosen pairing order, unlike getProductsByIds's unguaranteed $in order.
 export async function getCompleteTheLook(pairIds: number[]): Promise<Product[]> {
   if (!pairIds.length) return [];
   const products = await getProductsByIds(pairIds);
@@ -120,27 +100,10 @@ export async function getCompleteTheLook(pairIds: number[]): Promise<Product[]> 
     .filter((p): p is Product => Boolean(p?.visible));
 }
 
-/** 🔢 The next auto-assigned public id for a new product — a durable,
- *  never-reused counter (own `counters` collection, keyed `"productId"`),
- *  not "current max + 1" off the live catalog.
- *
- *  🐛 That older scheme (`ProductModel.findOne().sort({id:-1}) + 1`) had two
- *  real bugs, confirmed live (not just in theory): (1) a race — two
- *  concurrent creates can both read the same "current max" and hand out the
- *  same id, which `id`'s unique index then rejects for whichever write
- *  loses; (2) id *reuse* — deleting the highest-id product and creating a
- *  new one shortly after reassigns that exact same id. (2) is the more
- *  dangerous one: `getProductById(id)` is `unstable_cache`-tagged by
- *  `PRODUCTS_TAG` and *should* invalidate on every create/update/delete via
- *  `revalidateCatalog()`, but a stale per-id cache entry for a reused id was
- *  reproduced live during Phase 8 QA — a brand-new product's edit page (and
- *  potentially its public PDP) briefly showing a *previous, deleted*
- *  product's data at that same numeric id. A `$inc` on a dedicated counter
- *  document is atomic (fixes the race) and monotonically increasing forever
- *  (an id is never handed out twice, so that stale-cache shape can't recur
- *  regardless of how the underlying cache invalidation behaves). Seeded
- *  from today's real max via `$max` so this drop-in change doesn't collide
- *  with ids already in the catalog. */
+// 🔢 Atomic $inc on a dedicated counter — never "current max + 1" off the live catalog.
+// 🐛 max+1 both races under concurrent creates and reuses ids after a delete, which can
+// briefly serve a deleted product's stale cached data at the reused id. A monotonic
+// counter can't repeat an id, so that can't recur. Seeded from today's real max via $max.
 export async function nextProductId(): Promise<number> {
   const mongoose = await connectMongoose();
   const counters = mongoose.connection.collection<{ _id: string; seq: number }>(
@@ -149,9 +112,7 @@ export async function nextProductId(): Promise<number> {
 
   const top = await ProductModel.findOne().sort({ id: -1 }).lean();
   const floor = Math.max(999, top?.id ?? 0);
-  // 🌱 One-time (per id ever exceeding the counter's current value)
-  // catch-up — a no-op once the counter has overtaken the live catalog's
-  // own max, which it always will after its very first real use.
+  // 🌱 One-time catch-up; a no-op once the counter has overtaken the catalog's own max.
   await counters.updateOne(
     { _id: "productId" },
     { $max: { seq: floor } },

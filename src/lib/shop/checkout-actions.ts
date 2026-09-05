@@ -41,10 +41,7 @@ export async function checkCouponAction(
   return findApplicableCoupon(code, subtotal);
 }
 
-/** 🧾 The one real place a "buy now" checkout becomes an order. Product
- *  name/image/price and the coupon rate are all re-read server-side — the
- *  client only ever supplies a reference (product id, coupon code) plus its
- *  own delivery details, never the numbers that decide the total. */
+// 🧾 Product name/price/coupon rate are all re-read server-side; the client never supplies the numbers.
 export async function createOrderAction(
   values: CheckoutValues,
 ): Promise<ActionResult<AdminOrder>> {
@@ -59,10 +56,7 @@ export async function createOrderAction(
   const user = await requireSessionUser();
   if (!user) return { ok: false, error: AUTH_ERROR };
 
-  // 🔐 Hard gate, mirrored server-side: an order can't ship without a
-  // complete profile (phone/address/postalCode), so re-check it here even
-  // though the buy panel already nudges/blocks on the client — this is the
-  // one path a checkout can't get past without it.
+  // 🔐 Server-side gate mirrors the client's — an order can't ship without a complete profile.
   const profile = await getSessionUser();
   if (!profile || getMissingShippingFields(profile).length) {
     return { ok: false, error: PROFILE_INCOMPLETE_ERROR };
@@ -70,8 +64,7 @@ export async function createOrderAction(
 
   try {
     const product = await getProductById(parsed.data.productId);
-    // 🙈 An admin-hidden product 404s on its PDP — it must not stay
-    // purchasable through a stale "buy now" either.
+    // 🙈 An admin-hidden product 404s on its PDP — it must not stay purchasable here either.
     if (!product || !product.visible)
       return { ok: false, error: "این محصول دیگر موجود نیست." };
 
@@ -121,11 +114,7 @@ export async function createOrderAction(
   }
 }
 
-/** 🛒 The standard "checkout" every other cart on the internet has: every
- *  line in the cart becomes *one* order, submitted together — not one
- *  order per line. Same server-side-authoritative shape as
- *  `createOrderAction` (price/name/image re-read here, never trusted from
- *  the client) with `items` widened to the whole cart. */
+// 🛒 Every cart line becomes one order, submitted together — same server-authoritative shape as createOrderAction.
 export async function createCartOrderAction(
   values: CartCheckoutValues,
 ): Promise<ActionResult<AdminOrder>> {
@@ -152,8 +141,7 @@ export async function createCartOrderAction(
 
     for (const line of parsed.data.items) {
       const product = await getProductById(line.productId);
-      // 🙈 Same as the buy-now path above: admin-hidden must not stay
-      // purchasable through a stale cart either.
+      // 🙈 Same as the buy-now path — admin-hidden must not stay purchasable through a stale cart.
       if (!product || !product.visible) {
         return {
           ok: false,

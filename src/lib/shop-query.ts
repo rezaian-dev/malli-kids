@@ -1,9 +1,7 @@
 import { CATS } from "@/lib/constants";
 import { SEASONS } from "@/lib/data/products";
 
-// 🎯 If a search is (or contains) a category/season, keep it as a filter —
-// never as a `query=` parameter. Faceted URLs are clean, canonical and
-// indexable; free-text `query=` results are thin and get `noindex`.
+// 🎯 Category/season matches become filters, never a query= param — faceted URLs stay indexable.
 
 const TYPE_CATS = new Set(["سیسمونی", "لباس مشاغل", "اکسسوری", "دستدوز"]);
 
@@ -11,10 +9,7 @@ const CAT_ALIASES: Record<string, string> = {
   "دستدوز خاص": "دستدوز",
 };
 
-// 🧠 Product-style keywords. These are NOT categories by themselves, so a
-// lone "پالتو" stays a real search. But in a compound intent like
-// "پالتو دخترانه" they let us drop the keyword and keep the clean facet
-// (category=دخترانه). Explicit category tokens always win.
+// 🧠 Product keywords, not categories — only combine into a facet with a category token.
 const KEYWORD_CATS: Record<string, string> = {
   پالتو: "دخترانه",
   پیراهن: "دخترانه",
@@ -66,8 +61,7 @@ function resolveShopSearchIntent(raw: string): {
   // ✅ Exact season → pure season filter.
   if ((SEASONS as readonly string[]).includes(q)) return { season: q, q: "" };
 
-  // 🧩 Compound intent: tokens may mix a category, a season and/or a product
-  // keyword. An explicit category token wins → clean facet URL.
+  // 🧩 Compound intent: an explicit category token always wins.
   const tokens = q.split(" ");
   if (tokens.length > 1) {
     const cats = tokens.map(matchShopCategory);
@@ -86,8 +80,7 @@ function resolveShopSearchIntent(raw: string): {
     const isUnresolvedToken = (index: number) =>
       !cats[index] && !seasons[index] && !keywords[index];
 
-    // ✅ Every token maps to a known facet/synonym — treat the whole phrase as a
-    // filtered collection, not a free-text search.
+    // ✅ Every token maps to a known facet — treat the phrase as a filtered collection, not free text.
     if (tokens.every((_, index) => !isUnresolvedToken(index))) {
       const hasCategoryToken = cats.some(Boolean) || keywords.some(Boolean);
 
@@ -100,8 +93,7 @@ function resolveShopSearchIntent(raw: string): {
         };
       }
 
-      // 🔍 Only seasons + synonyms (e.g. "پالتو زمستانه"): keep the keyword as
-      // the search text but lift the season into a facet.
+      // 🔍 Only seasons + synonyms — keep the keyword as search text, lift the season into a facet.
       const rest = tokens.filter((_, index) => keywords[index]);
       return { season: firstSeason, q: rest.join(" ") };
     }

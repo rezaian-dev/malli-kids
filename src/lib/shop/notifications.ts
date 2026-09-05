@@ -27,11 +27,7 @@ function toNotice(doc: NotificationDoc & { _id: { toString(): string }; createdA
 
 export async function getNotificationsForUser(userId: string): Promise<Notice[]> {
   await connectMongoose();
-  // 🔔 The bell is ticket/order/system/restock only — legacy `chat` rows
-  // (from before chat moved to its own bubble) stay out of the menu and
-  // its unread count instead of crashing it.
-  // (The cast is the point: "chat" is deliberately *not* in the live
-  // union anymore — this only matches rows written before the split.)
+  // 🔔 Excludes legacy "chat" rows (pre-dating the chat bubble) from the bell's list and unread count.
   const docs = await NotificationModel.find({
     userId,
     kind: { $ne: "chat" as NotificationKind },

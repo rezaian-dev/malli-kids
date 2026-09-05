@@ -1,13 +1,8 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🔔 One row per "خبرم کن وقتی موجود شد" click — real, persisted intent to
-// buy, unlike the old fake toast that promised a notification and never
-// stored anything. `size` is the specific variant size the shopper wants
-// ("" is the legacy/unsized-product sentinel — the whole product, not one
-// size). Fulfilled and deleted in one step by `notifyBackInStock`
-// (`@/lib/shop/back-in-stock`), called from every admin/order path that can
-// increase stock — so a doc existing here always means "still waiting".
+// 🔔 One row per back-in-stock subscription; "" size means the whole (unsized) product.
+// Deleted once notifyBackInStock fires, so a doc existing here always means "still waiting".
 export type BackInStockDoc = {
   userId: string;
   productId: number;
@@ -24,8 +19,7 @@ const backInStockSchema = new Schema<BackInStockDoc>(
   { timestamps: { createdAt: true, updatedAt: false } },
 );
 
-// 🔒 One pending request per (user, product, size) — resubmitting the same
-// subscription is a harmless no-op, not a duplicate row.
+// 🔒 One pending request per (user, product, size) — resubmitting is a no-op.
 backInStockSchema.index({ userId: 1, productId: 1, size: 1 }, { unique: true });
 
 export const BackInStockModel: Model<BackInStockDoc> =

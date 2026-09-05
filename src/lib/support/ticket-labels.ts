@@ -4,11 +4,7 @@ import type {
   TicketStatus,
 } from "@/lib/shop/tickets";
 
-/** 🏷️ Client-safe ticket meta vocabulary — shared by the admin ticket
- *  cards and the customer's profile panel so both sides name the same
- *  state the same way. (The canonical value lists live in
- *  `lib/shop/tickets.ts`, which is server-only, so labels are mirrored
- *  here instead of imported.) */
+// 🏷️ Mirrors the server-only lib/shop/tickets.ts value lists so client code can import labels directly.
 
 export const TICKET_STATUS_META: Record<
   TicketStatus,

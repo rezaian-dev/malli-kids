@@ -20,9 +20,7 @@ export const forgotPasswordSchema = z.object({ email: email() });
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 export const forgotPasswordDefaults: ForgotPasswordValues = { email: "" };
 
-// 📱 OTP sign-in — phone step, then the 5-digit code step. The SMS panel
-// itself isn't wired up yet (see `requestOtpAction`/`verifyOtpAction`), but
-// the shapes are real so the UI can be built and validated end-to-end now.
+// 📱 SMS provider isn't wired up yet, but the shapes are real for UI validation.
 export const otpRequestSchema = z.object({ phone: mobile() });
 export type OtpRequestValues = z.infer<typeof otpRequestSchema>;
 export const otpRequestDefaults: OtpRequestValues = { phone: "" };

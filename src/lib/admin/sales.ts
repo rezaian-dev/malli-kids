@@ -19,8 +19,7 @@ const FA_MONTHS = [
 
 type Parsed = { y: number; m: number; d: number; key: string };
 
-// 🗓️ Reuses the app's one Jalali-string parser/validator (`@/lib/locale/jalali`)
-// instead of re-parsing "YYYY/MM/DD" here — only the grouping `key` is local.
+// 🗓️ Reuses the shared Jalali parser; only the grouping key is local.
 function parseJalali(date: string): Parsed | null {
   const parts = jalaliParts(date);
   if (!parts) return null;

@@ -3,24 +3,14 @@ import { connectMongoose } from "@/lib/db/mongoose";
 import { Profile } from "@/lib/db/models/profile";
 import type { User } from "@/types";
 
-/** 👤 Splits Better Auth's single `name` field into the `firstName`/
- *  `lastName` shape the app displays. */
+// 👤 Splits Better Auth's single name field into firstName/lastName.
 export function splitName(name: string) {
   const [firstName, ...rest] = name.trim().split(/\s+/);
   return { firstName: firstName || "کاربر", lastName: rest.join(" ") || undefined };
 }
 
-/** 🧩 Builds the complete `User` (identity + persisted `Profile` extras) for
- *  a Better Auth identity. Shared by `getSessionUser()` (from the session
- *  cookie) and the sign-in/sign-up actions (from their direct API response)
- *  so both paths — a fresh page load *and* logging in without one — return
- *  the exact same, complete shape.
- *
- *  🧊 `cache()`-wrapped: `getSessionUser()` and every `/admin/**` page's
- *  `requireAdmin()` call this with the *same* `session.user` object
- *  reference within one request (since `getSession()` in `./session` is
- *  itself cached), so this collapses back down to one `Profile.findOne()`
- *  Mongo query per request instead of one per call site. */
+// 🧩 Merges identity + persisted Profile into the app's User shape.
+// 🧊 cache()-wrapped so repeat calls in one request share a single Profile query.
 export const buildUser = cache(async (identity: {
   id: string;
   name: string;
