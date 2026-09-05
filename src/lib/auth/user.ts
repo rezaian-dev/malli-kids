@@ -37,6 +37,8 @@ export const buildUser = cache(async (identity: {
     postalCode: profile?.postalCode,
     city: profile?.city,
     address: profile?.address,
+    lat: profile?.lat,
+    lng: profile?.lng,
     childName: profile?.childName,
     childAge: profile?.childAge,
     childGender: profile?.childGender,

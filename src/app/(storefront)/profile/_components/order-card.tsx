@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Home, Package, Truck, Wallet } from "lucide-react";
+import { FileDown, Home, Package, Truck, Wallet } from "lucide-react";
 import type { AdminOrder, OrderStatus } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { ORDER_STAGES, stageIndex } from "@/lib/shop/order-status";
@@ -54,6 +54,20 @@ export function OrderCard({ order }: { order: AdminOrder }) {
         <span className="text-gold text-sm font-black">
           {formatToman(order.total)} تومان
         </span>
+        {order.pay === "پرداخت‌شده" ? (
+          <a
+            href={`/api/orders/${order.id}/invoice`}
+            target="_blank"
+            rel="noreferrer"
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-black transition",
+              "bg-navy/5 text-navy hover:bg-navy/10",
+              "dark:bg-white/8 dark:text-ivory dark:hover:bg-white/12",
+            )}
+          >
+            <FileDown className="size-3.5" /> دانلود فاکتور
+          </a>
+        ) : null}
       </div>
 
       <ul className="space-y-2 px-4 py-3">

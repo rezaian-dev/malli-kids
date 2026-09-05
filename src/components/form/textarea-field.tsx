@@ -21,6 +21,7 @@ export function TextareaField({
   skin = "admin",
   className,
   placeholder,
+  autoComplete,
   maxLength,
   required,
   rows,
@@ -43,6 +44,7 @@ export function TextareaField({
             rows={rows}
             maxLength={maxLength}
             placeholder={placeholder}
+            autoComplete={autoComplete}
             required={required}
             aria-required={required || undefined}
             aria-invalid={invalid || undefined}

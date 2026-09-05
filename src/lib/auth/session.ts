@@ -12,15 +12,16 @@ import type { User } from "@/types";
  *  through this same cached call within one request instead of each hitting
  *  Better Auth's session lookup independently.
  *
- *  🚫 Also the one place a banned user's session is handled: Better Auth's
- *  `admin()` plugin hooks `/get-session` to *throw* (`BANNED_USER`) once
- *  `user.banned` is true, rather than just returning no session — without
- *  this `catch`, that throw would bubble out of here into the root layout's
- *  render on their very next request and crash the page instead of quietly
- *  treating them as signed out (which is exactly right: every cart/
- *  favorite/checkout action already requires a session). Only that specific
- *  code is swallowed — anything else (a real DB hiccup, say) rethrows, so
- *  this never quietly masks an unrelated failure as "logged out". */
+ *  🚫 Also where a `BANNED_USER` throw is swallowed rather than left to
+ *  crash the root layout's render. In the installed Better Auth version
+ *  this only ever fires from the `admin()` plugin's session-*creation*
+ *  hook — banning someone doesn't retroactively flag their already-issued
+ *  session; see the `cookieCache` comment in `./auth` for how (and how
+ *  quickly) a ban actually reaches an existing session. Kept here as
+ *  defense in depth for whichever path does throw it (e.g. trying to sign
+ *  in again while banned). Only that specific code is swallowed — anything
+ *  else (a real DB hiccup, say) rethrows, so this never quietly masks an
+ *  unrelated failure as "logged out". */
 export const getSession = cache(async () => {
   try {
     return await auth.api.getSession({ headers: await headers() });

@@ -186,6 +186,7 @@ export function ProductCheckoutDialog({
             onChange={(e) => setPhone(e.target.value)}
             placeholder="0912…"
             inputMode="tel"
+            autoComplete="tel-national"
             className="h-11 rounded-xl text-right"
             aria-label="موبایل"
           />
@@ -193,6 +194,7 @@ export function ProductCheckoutDialog({
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="شهر"
+            autoComplete="address-level2"
             className="h-11 rounded-xl"
             aria-label="شهر"
           />
@@ -200,6 +202,7 @@ export function ProductCheckoutDialog({
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             placeholder="آدرس کامل"
+            autoComplete="street-address"
             className="h-11 rounded-xl"
             aria-label="آدرس"
           />
@@ -209,6 +212,7 @@ export function ProductCheckoutDialog({
             onChange={(e) => setPostal(e.target.value)}
             placeholder="کد پستی (۱۰ رقم)"
             inputMode="numeric"
+            autoComplete="postal-code"
             maxLength={10}
             className="h-11 rounded-xl text-right"
             aria-label="کد پستی"

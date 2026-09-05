@@ -7,9 +7,8 @@
 // panel, so the import rides along on that same on-demand chunk.
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import { useFormContext } from "react-hook-form";
-import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
+import type { Map as LeafletMap } from "leaflet";
 import { CheckCircle2, ChevronUp, LocateFixed, MapPin } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
@@ -20,6 +19,10 @@ import type { UpdateAccountValues } from "../_lib/schemas";
 import { loadLeaflet } from "./leaflet-loader";
 
 const PICK_DEBOUNCE_MS = 600;
+// 🎬 How long the settle bounce (`--animate-marker-drop` in theme.css)
+// plays before the indicator resumes its idle float — kept a hair after
+// that animation's own 500ms so the two never overlap mid-bounce.
+const SETTLE_BOUNCE_MS = 520;
 // ✍️ The reverse-geocoded address reveals one *word* at a time via a
 // staggered `animation-delay` per chunk (see the "آدرس یافت‌شده" field
 // below) — word-level, not character-level: Persian is a cursive script
@@ -34,34 +37,31 @@ const PICK_DEBOUNCE_MS = 600;
 // last chunk's animation actually finishes, not before or after.
 const WORD_STAGGER_MS = 45;
 const REVEAL_ANIM_MS = 340;
-// 🪁 How long the settle bounce (`--animate-marker-drop`, also in
-// theme.css) takes before the marker resumes its idle float — kept a hair
-// after that animation's own 500ms so the two never overlap mid-bounce.
-// Applies every time the marker settles, not just its very first drop-in:
-// floating is the marker's permanent resting state (only suspended while
-// actually being dragged), not a one-time "unconfirmed" flag — a location
-// already being saved doesn't make the *marker* stop floating in place,
-// only its picked coordinates stop moving.
-const FLOAT_START_DELAY_MS = 520;
 
 /** 📍 "انتخاب روی نقشه" — an inline (never a dialog/overlay) map card that
- *  expands right below the address field. A real, draggable Leaflet marker
- *  shows the instant the card opens — at the saved location if there is
- *  one, a brand default otherwise — gently floating in place whenever it's
- *  not actively being touched, so there's always something on the map to
- *  orient by instead of a blank canvas waiting for a first click. Clicking
- *  anywhere on the map (or confirming a GPS fix) drops that marker exactly
- *  there and reverse-geocodes it into the account form's `address` field
- *  (revealed with a small per-word animation); dragging it afterwards
- *  fine-tunes the point without re-clicking, lifting/wobbling higher while
- *  held and settling with a little bounce — then resuming its idle float —
- *  on release. A previous version instead kept a pin permanently glued to
- *  the map's visual center, picking up whatever was under it on every pan
- *  — dropped in favor of this explicit click-then-drag model. Reads and
- *  writes `lat`/`lng`/`address` straight off the surrounding `<AppForm>`'s
- *  react-hook-form context — those three only ever get committed together
- *  when the user presses "تأیید", and only really saved once "ذخیره حساب"
- *  is submitted like every other account field. */
+ *  expands right below the address field.
+ *
+ *  🎯 The location indicator is a **fixed overlay pinned to the exact
+ *  center of the map's viewport** — plain React/CSS, not a Leaflet marker.
+ *  It never moves on screen; instead the user drags/pans the *map itself*
+ *  underneath it, exactly like Google Maps' or Airbnb's "drop a pin"
+ *  picker. Whatever geographic point ends up under that fixed tip when
+ *  panning stops becomes the candidate location — read straight off
+ *  `map.getCenter()`, never off a marker's own coordinates. Clicking
+ *  anywhere on the map, confirming a GPS fix, or panning with the
+ *  keyboard all funnel through the same `moveend` handler, so there is
+ *  exactly one place that turns "the map settled somewhere" into a
+ *  candidate + a debounced reverse-geocode. A real *draggable* marker was
+ *  deliberately not used here: this app's map previously tried gluing a
+ *  pin to the visual center by re-reading it on every `move` tick, which
+ *  fought the browser's own compositor-driven pan and read as laggy; a
+ *  plain centered overlay that only *reacts* to `movestart`/`moveend`
+ *  (not synced to every intermediate frame) is both simpler and smoother.
+ *
+ *  Reads and writes `lat`/`lng`/`address` straight off the surrounding
+ *  `<AppForm>`'s react-hook-form context — those three only ever get
+ *  committed together when the user presses "تأیید", and only really
+ *  saved once "ذخیره حساب" is submitted like every other account field. */
 export function AddressMapField() {
   const { watch, setValue, getValues } = useFormContext<UpdateAccountValues>();
   const lat = watch("lat");
@@ -78,35 +78,35 @@ export function AddressMapField() {
   // time a new address lands, not just the first.
   const [doneTick, setDoneTick] = useState(0);
   const [preview, setPreview] = useState("");
+  // 📍 The *candidate* location — whatever the map's center settled on
+  // last. Conceptually distinct from the form's saved `lat`/`lng`: this
+  // only becomes real once "تأیید" below copies it into the form, and only
+  // persists once the account form itself is submitted.
   const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(
     null,
   );
+  // 🪁 True from the moment the map starts moving (drag/GPS-flight/
+  // keyboard pan) until it settles — drives the fixed indicator's
+  // lifted-and-wobbling state so it reads as "riding along above the map"
+  // rather than glued to it.
+  const [moving, setMoving] = useState(false);
+  // 🎬 Bumped on every settle so the indicator's drop-bounce replays each
+  // time (via `key`), not just the first.
+  const [settleTick, setSettleTick] = useState(0);
+  const [bouncing, setBouncing] = useState(false);
 
   const mapElRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
-  const markerRef = useRef<LeafletMarker | null>(null);
-  // 🎯 Set once the map's ready, so `handleLocate` (defined outside the
-  // map-building effect, no access to that effect's own `L`/`map` closure)
-  // can still drop/move the marker after a GPS fix.
-  const placeMarkerRef = useRef<((lat: number, lng: number) => void) | null>(
-    null,
-  );
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
-  const keydownHandlerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // 🪁 Bridges `placeMarker`'s "resume floating after the settle bounce"
-  // timeout (scheduled inside the map-building effect's `.then`, every
-  // time the marker settles — not just once) to the effect's own cleanup
-  // (a sibling scope) and to `setLifted`/`replayDrop` (need to cancel it
-  // early if another action lands before it ever fires).
-  const floatTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const bounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 🧊 Plain functions, not `useCallback` — none of these are ever compared
   // by reference (not a `useEffect`/`useMemo` dependency, not passed to a
   // memoized child; the map-building effect below intentionally closes over
-  // whatever version of `handlePick` exists when it runs, via its own
-  // `[open]`-only dependency array), so memoizing them buys nothing.
+  // whatever version of them exists when it runs, via its own `[open]`-only
+  // dependency array), so memoizing them buys nothing.
   function stopTyping() {
     if (typeTimeoutRef.current) clearTimeout(typeTimeoutRef.current);
     typeTimeoutRef.current = null;
@@ -153,13 +153,27 @@ export function AddressMapField() {
     startTypewriter(result.data.address);
   }
 
-  // 📌 Called once per explicit selection — a map click or a confirmed GPS
-  // fix — never from a plain pan/zoom, which no longer picks anything.
-  function handlePick(nextLat: number, nextLng: number) {
-    setPicked({ lat: nextLat, lng: nextLng });
+  // 📌 The map settled somewhere (drag released, a GPS flight finished, a
+  // keyboard pan stopped, a tap-to-recenter pan completed) — read the
+  // *current center*, never a marker's own coordinates, since the
+  // indicator never moves independently of the map. Debounced so a quick
+  // flurry of small settles (e.g. someone flicking the map around) only
+  // ever fires one reverse-geocode request, not one per settle.
+  function handleSettle(map: LeafletMap) {
+    setMoving(false);
+    setSettleTick((n) => n + 1);
+    setBouncing(true);
+    if (bounceTimeoutRef.current) clearTimeout(bounceTimeoutRef.current);
+    bounceTimeoutRef.current = setTimeout(() => {
+      bounceTimeoutRef.current = null;
+      setBouncing(false);
+    }, SETTLE_BOUNCE_MS);
+
+    const center = map.getCenter();
+    setPicked({ lat: center.lat, lng: center.lng });
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(
-      () => runGeocode(nextLat, nextLng),
+      () => runGeocode(center.lat, center.lng),
       PICK_DEBOUNCE_MS,
     );
   }
@@ -169,20 +183,15 @@ export function AddressMapField() {
       toast.error("مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند.");
       return;
     }
+    const map = mapRef.current;
+    if (!map) return;
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocating(false);
-        const map = mapRef.current;
-        if (!map) return;
-        // 🎯 GPS is itself an explicit selection — unlike a plain pan, it
-        // picks the point it flies to. `once` (not `on`) so this doesn't
-        // also fire for whatever the user pans to next.
-        map.once("moveend", () => {
-          const c = map.getCenter();
-          placeMarkerRef.current?.(c.lat, c.lng);
-          handlePick(c.lat, c.lng);
-        });
+        // 🎯 `moveend` (fired once the flight finishes) is what actually
+        // turns this into a candidate + reverse-geocode — same single path
+        // every other kind of settle goes through.
         map.flyTo(
           [pos.coords.latitude, pos.coords.longitude],
           Math.max(map.getZoom(), 16),
@@ -218,9 +227,9 @@ export function AddressMapField() {
     const startLat = existingLat ?? BRAND.map.lat;
     const startLng = existingLng ?? BRAND.map.lng;
     // 📍 A previously-saved location *is* already a selection. Otherwise
-    // nothing's been picked yet — `picked` stays null (the marker still
-    // shows either way, see `placeMarker` below) until the user actually
-    // clicks the map, drags, or uses GPS.
+    // nothing's been picked yet — `picked` stays null until the map's
+    // first `moveend` (fired the moment Leaflet finishes its own initial
+    // layout) sets it from wherever the map actually opened on.
     setPicked(hasExisting ? { lat: existingLat, lng: existingLng } : null);
     setPreview(getValues("address") ?? "");
 
@@ -251,222 +260,21 @@ export function AddressMapField() {
           },
         ).addTo(map);
 
-        // 🩹 Both helpers reach into the marker's *actual* DOM node
-        // (`getElement()`) and toggle plain classes on it — cheaper and
-        // simpler than routing marker visuals through React state, since
-        // this element lives entirely outside React's tree (Leaflet owns
-        // it). `[data-pin-body]`/`[data-pin-shadow]` are the two children
-        // inside the icon markup built below.
-        function getPinParts(marker: LeafletMarker) {
-          const el = marker.getElement();
-          return {
-            body: el?.querySelector<HTMLElement>("[data-pin-body]") ?? null,
-            shadow:
-              el?.querySelector<HTMLElement>("[data-pin-shadow]") ?? null,
-          };
-        }
-        // 🎈 The idle float — its own `animate-pin-float` token (see
-        // `theme.css`), tuned faster/smaller than the app's generic
-        // `animate-floaty` so it actually reads at a glance on a 34px
-        // marker. This is the pin's *permanent* resting state, suspended
-        // only while it's actively being dragged — not a one-time
-        // "unconfirmed placeholder" flag. `animate-marker-drop` and
-        // `animate-pin-float` both set the same `animation` CSS property,
-        // so only one may ever be present at once, or the one later in the
-        // stylesheet silently wins outright (not "both play") — hence the
-        // explicit removal here rather than trusting `classList.toggle`.
-        function setFloating(marker: LeafletMarker, floating: boolean) {
-          const { body } = getPinParts(marker);
-          if (!body) return;
-          if (floating) body.classList.remove("animate-marker-drop");
-          body.classList.toggle("animate-pin-float", floating);
-        }
-        // ⏳ Cancels a still-pending "resume floating" timeout — needed
-        // whenever the marker is about to do something else (settle again,
-        // get lifted) before that timeout ever got the chance to fire.
-        function cancelFloatTimeout() {
-          if (!floatTimeoutRef.current) return;
-          clearTimeout(floatTimeoutRef.current);
-          floatTimeoutRef.current = null;
-        }
-        // 🎬 Removing+re-adding the same class doesn't replay a CSS
-        // animation — the browser sees no change. Forcing a reflow
-        // (`offsetWidth`) in between makes the removal "count" first. Also
-        // schedules the float resuming once this bounce settles — every
-        // settle does, not just the marker's very first drop-in.
-        function replayDrop(marker: LeafletMarker) {
-          const { body } = getPinParts(marker);
-          if (!body) return;
-          cancelFloatTimeout();
-          body.classList.remove("animate-marker-drop", "animate-pin-float");
-          void body.offsetWidth;
-          body.classList.add("animate-marker-drop");
-          floatTimeoutRef.current = setTimeout(() => {
-            floatTimeoutRef.current = null;
-            setFloating(marker, true);
-          }, FLOAT_START_DELAY_MS);
-        }
-        // 🪁 The lifted state is what sells "held in the air, not glued to
-        // the map": the pin floats/wobbles faster and higher
-        // (`animate-pin-lift`, an infinite loop — see `theme.css`) while
-        // its ground shadow shrinks and fades, exactly the inverse of a
-        // real object moving away from its shadow's light source.
-        function setLifted(marker: LeafletMarker, lifted: boolean) {
-          const { body, shadow } = getPinParts(marker);
-          if (lifted) {
-            cancelFloatTimeout();
-            body?.classList.remove("animate-marker-drop", "animate-pin-float");
-          }
-          body?.classList.toggle("animate-pin-lift", lifted);
-          shadow?.classList.toggle("scale-50", lifted);
-          shadow?.classList.toggle("opacity-30", lifted);
-        }
+        // 🎯 One pair of handlers drives every interaction — drag, GPS
+        // flight, keyboard pan (Leaflet's own default arrow-key handling),
+        // and the tap-to-recenter pan below all just move the map, and the
+        // map itself doesn't care which caused it.
+        map.on("movestart", () => setMoving(true));
+        map.on("moveend", () => handleSettle(map));
 
-        // 📍 A real, draggable Leaflet marker — shown immediately when the
-        // card opens (never withheld until a click), so there's always
-        // something on the map to orient by. `draggable: true` lets the
-        // user fine-tune the exact spot after a rough click/GPS placement.
-        function placeMarker(nextLat: number, nextLng: number) {
-          if (markerRef.current) {
-            markerRef.current.setLatLng([nextLat, nextLng]);
-            replayDrop(markerRef.current); // an explicit re-placement always settles, then floats again
-            return;
-          }
-          const marker = L.marker([nextLat, nextLng], {
-            // 🎨 A hand-drawn teardrop pin (gradient body, glossy
-            // highlight, navy-ringed "eye") instead of a stock icon —
-            // `data-pin-shadow`/`data-pin-body` are separate siblings, not
-            // nested, so the shadow can shrink/fade independently of the
-            // body lifting/wobbling above it.
-            icon: L.divIcon({
-              html: renderToStaticMarkup(
-                <span className="relative block" style={{ width: 34, height: 34 }}>
-                  <span
-                    data-pin-shadow
-                    className="bg-navy-deep/45 absolute rounded-full blur-[1.5px] transition-[transform,opacity] duration-200 ease-out"
-                    style={{
-                      left: "50%",
-                      bottom: 1,
-                      width: 14,
-                      height: 5,
-                      transform: "translateX(-50%)",
-                    }}
-                  />
-                  <span
-                    data-pin-body
-                    className="animate-marker-drop absolute inset-0"
-                    style={{ transformOrigin: "50% 100%" }}
-                  >
-                    <svg
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="drop-shadow-[0_6px_8px_rgba(4,20,39,0.45)]"
-                    >
-                      <defs>
-                        <linearGradient
-                          id="malliPinBody"
-                          x1="4"
-                          y1="1"
-                          x2="20"
-                          y2="22"
-                          gradientUnits="userSpaceOnUse"
-                        >
-                          <stop offset="0%" stopColor="#f0c878" />
-                          <stop offset="55%" stopColor="#c19357" />
-                          <stop offset="100%" stopColor="#b8893f" />
-                        </linearGradient>
-                        <radialGradient
-                          id="malliPinShine"
-                          cx="35%"
-                          cy="22%"
-                          r="45%"
-                        >
-                          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.6" />
-                          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-                        </radialGradient>
-                      </defs>
-                      <path
-                        d="M12 0C7.31 0 3.5 3.81 3.5 8.5c0 6.5 8.5 15.5 8.5 15.5s8.5-9 8.5-15.5C20.5 3.81 16.69 0 12 0z"
-                        fill="url(#malliPinBody)"
-                        stroke="#0e2a47"
-                        strokeWidth="1"
-                      />
-                      <path
-                        d="M12 0C7.31 0 3.5 3.81 3.5 8.5c0 6.5 8.5 15.5 8.5 15.5s8.5-9 8.5-15.5C20.5 3.81 16.69 0 12 0z"
-                        fill="url(#malliPinShine)"
-                      />
-                      <circle
-                        cx="12"
-                        cy="8.5"
-                        r="4"
-                        fill="#fff8ec"
-                        stroke="#0e2a47"
-                        strokeWidth="0.9"
-                      />
-                      <circle cx="12" cy="8.5" r="1.8" fill="#0e2a47" />
-                    </svg>
-                  </span>
-                </span>,
-              ),
-              className: "", // 🧹 drops Leaflet's default white-box marker styling
-              iconSize: [34, 34],
-              iconAnchor: [17, 33],
-            }),
-            draggable: true,
-            keyboard: false, // the map container itself carries keyboard selection, below
-          }).addTo(map);
-
-          marker.on("dragstart", () => setLifted(marker, true));
-          marker.on("dragend", () => {
-            setLifted(marker, false);
-            replayDrop(marker); // small landing bounce, then floating resumes — echoing a click/GPS placement
-            const ll = marker.getLatLng();
-            handlePick(ll.lat, ll.lng);
-          });
-
-          markerRef.current = marker;
-          // 🎈 The static markup above already has `animate-marker-drop`
-          // baked in (plays automatically the instant it's inserted), so
-          // this is the *only* place floating gets scheduled without going
-          // through `replayDrop` — every later settle (click/drag/GPS/
-          // keyboard) reschedules it from there instead.
-          floatTimeoutRef.current = setTimeout(() => {
-            floatTimeoutRef.current = null;
-            setFloating(marker, true);
-          }, FLOAT_START_DELAY_MS);
-        }
-        placeMarkerRef.current = placeMarker;
-        // 📍 Always shown from the moment the map appears — never withheld
-        // until a click — at the saved location if there is one, the brand
-        // default otherwise. Either way it starts floating once its
-        // drop-in bounce settles; a saved location being a real pick
-        // already (`picked` set above) only means its *coordinates* are
-        // fixed, not that the marker itself stops floating in place.
-        placeMarker(startLat, startLng);
-
-        // 🖱️ Click drops (or moves) the marker exactly where clicked and
-        // picks that point immediately — dragging (above) is for fine-tuning
-        // afterwards, not required for a first placement.
+        // 🖱️ A tap doesn't drop anything *at* that point — it pans so that
+        // point ends up under the fixed center indicator, then `moveend`
+        // above picks it up like any other settle. Keeps a single mental
+        // model ("the map moves, the pin doesn't") instead of two
+        // different selection gestures.
         map.on("click", (e: import("leaflet").LeafletMouseEvent) => {
-          placeMarker(e.latlng.lat, e.latlng.lng);
-          handlePick(e.latlng.lat, e.latlng.lng);
+          map.panTo(e.latlng, { animate: true });
         });
-
-        // ♿️ Keyboard equivalent of a click: Leaflet already lets a
-        // focused map pan via the arrow keys, so Enter/Space here picks
-        // whatever's currently centered — no mouse required.
-        function onKeyDown(e: KeyboardEvent) {
-          if (e.key !== "Enter" && e.key !== " ") return;
-          e.preventDefault();
-          const c = map.getCenter();
-          placeMarker(c.lat, c.lng);
-          handlePick(c.lat, c.lng);
-        }
-        mapElRef.current.addEventListener("keydown", onKeyDown);
-        keydownHandlerRef.current = onKeyDown;
 
         mapRef.current = map;
         setMapReady(true);
@@ -491,20 +299,10 @@ export function AddressMapField() {
     return () => {
       cancelled = true;
       if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (bounceTimeoutRef.current) clearTimeout(bounceTimeoutRef.current);
       stopTyping();
-      if (floatTimeoutRef.current) clearTimeout(floatTimeoutRef.current);
-      floatTimeoutRef.current = null;
       resizeObserverRef.current?.disconnect();
       resizeObserverRef.current = null;
-      if (keydownHandlerRef.current) {
-        mapElRef.current?.removeEventListener(
-          "keydown",
-          keydownHandlerRef.current,
-        );
-        keydownHandlerRef.current = null;
-      }
-      placeMarkerRef.current = null;
-      markerRef.current = null; // 🗑️ destroyed along with the map below, not separately
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -512,13 +310,13 @@ export function AddressMapField() {
   }, [open]);
 
   function handleConfirm() {
-    // ♿️ `picked` (the last clicked/GPS'd/Enter-selected point) is the
-    // fast path, but lat/lng are optional on the account schema — a
-    // keyboard user who'd rather not touch the map at all can still tab
-    // into this card's textarea below, edit the address text, and confirm
-    // without ever selecting a point.
+    // ♿️ `picked` (the map's last-settled center) is the fast path, but
+    // lat/lng are optional on the account schema — a keyboard user who'd
+    // rather not touch the map at all can still tab into this card's
+    // textarea below, edit the address text, and confirm without ever
+    // moving the map.
     if (!picked && !preview.trim()) {
-      toast.warning("اول روی نقشه کلیک کنید یا آدرس را تایپ کنید.");
+      toast.warning("اول نقشه را جابه‌جا کنید یا آدرس را تایپ کنید.");
       return;
     }
     if (picked) {
@@ -582,9 +380,10 @@ export function AddressMapField() {
             )}
           >
             <p className="text-navy/70 dark:text-wheat text-xs leading-6">
-              روی نقطهٔ موردنظر روی نقشه کلیک کنید تا نشانگر همان‌جا قرار
-              بگیرد؛ برای تنظیم دقیق‌تر می‌توانید نشانگر را هم بکشید. آدرس
-              متنی خودکار پر می‌شود.
+              نقشه را جابه‌جا کنید تا نشانگرِ وسط، روی نقطهٔ موردنظر بیفتد —
+              خودِ نشانگر ثابت می‌ماند و نقشه زیرِ آن حرکت می‌کند. با تایپ
+              روی نقطه‌ای هم می‌توانید نقشه را به همان‌جا برسانید. آدرس متنی
+              خودکار پر می‌شود.
             </p>
 
             <div className="bg-sand relative h-72 w-full overflow-hidden rounded-2xl sm:h-80">
@@ -610,10 +409,111 @@ export function AddressMapField() {
                 <div
                   ref={mapElRef}
                   role="group"
-                  aria-label="نقشه‌ی انتخاب موقعیت — روی نقطهٔ موردنظر کلیک کنید تا نشانگر همان‌جا قرار بگیرد و برای تنظیم دقیق‌تر آن را بکشید؛ یا با کلیدهای جهت‌دار نقشه را جابه‌جا و با اینتر همان نقطهٔ مرکز را انتخاب کنید. برای واردکردن آدرس با صفحه‌کلید می‌توانید از فیلد «آدرس یافت‌شده» زیر نقشه هم استفاده کنید"
-                  className="absolute inset-0"
+                  aria-label="نقشه‌ی انتخاب موقعیت — نقشه را با ماوس یا لمس جابه‌جا کنید تا نشانگرِ ثابتِ وسطِ نقشه روی نقطهٔ موردنظر بیفتد؛ روی نقطه‌ای هم بزنید تا نقشه به همان‌جا برسد. با کلیدهای جهت‌دار هم می‌توانید نقشه را جابه‌جا کنید. برای واردکردن آدرس با صفحه‌کلید می‌توانید از فیلد «آدرس یافت‌شده» زیر نقشه هم استفاده کنید"
+                  className={cn(
+                    "absolute inset-0 outline-none",
+                    // 👁️ Visible, on-brand focus ring on the Leaflet
+                    // container itself (it — not this wrapper — is what
+                    // actually receives keyboard focus, since Leaflet sets
+                    // its own `tabindex="0"` for arrow-key panning).
+                    "focus-visible:ring-gold/50 focus-visible:ring-4 focus-visible:ring-inset",
+                  )}
                 />
               </div>
+
+              {/* 🎯 The fixed center indicator — plain React/CSS pinned to
+                  the exact geometric center of this box, never a Leaflet
+                  marker. `pointer-events-none` so it never intercepts the
+                  drag/click/tap that's meant for the map underneath it. */}
+              {mapReady ? (
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 z-400 flex items-center justify-center"
+                >
+                  <div
+                    key={settleTick}
+                    className={cn(
+                      "relative -translate-y-[calc(50%+2px)]",
+                      moving
+                        ? "animate-pin-lift"
+                        : bouncing
+                          ? "animate-marker-drop"
+                          : "animate-pin-float",
+                    )}
+                    style={{ width: 34, height: 34 }}
+                  >
+                    <span
+                      className={cn(
+                        "bg-navy-deep/45 absolute rounded-full blur-[1.5px] transition-[transform,opacity] duration-200 ease-out",
+                        moving && "scale-50 opacity-30",
+                      )}
+                      style={{
+                        left: "50%",
+                        bottom: 1,
+                        width: 14,
+                        height: 5,
+                        transform: "translateX(-50%)",
+                      }}
+                    />
+                    <span
+                      className="absolute inset-0"
+                      style={{ transformOrigin: "50% 100%" }}
+                    >
+                      <svg
+                        width="34"
+                        height="34"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="drop-shadow-[0_6px_8px_rgba(4,20,39,0.45)]"
+                      >
+                        <defs>
+                          <linearGradient
+                            id="malliPinBody"
+                            x1="4"
+                            y1="1"
+                            x2="20"
+                            y2="22"
+                            gradientUnits="userSpaceOnUse"
+                          >
+                            <stop offset="0%" stopColor="#f0c878" />
+                            <stop offset="55%" stopColor="#c19357" />
+                            <stop offset="100%" stopColor="#b8893f" />
+                          </linearGradient>
+                          <radialGradient
+                            id="malliPinShine"
+                            cx="35%"
+                            cy="22%"
+                            r="45%"
+                          >
+                            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.6" />
+                            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                          </radialGradient>
+                        </defs>
+                        <path
+                          d="M12 0C7.31 0 3.5 3.81 3.5 8.5c0 6.5 8.5 15.5 8.5 15.5s8.5-9 8.5-15.5C20.5 3.81 16.69 0 12 0z"
+                          fill="url(#malliPinBody)"
+                          stroke="#0e2a47"
+                          strokeWidth="1"
+                        />
+                        <path
+                          d="M12 0C7.31 0 3.5 3.81 3.5 8.5c0 6.5 8.5 15.5 8.5 15.5s8.5-9 8.5-15.5C20.5 3.81 16.69 0 12 0z"
+                          fill="url(#malliPinShine)"
+                        />
+                        <circle
+                          cx="12"
+                          cy="8.5"
+                          r="4"
+                          fill="#fff8ec"
+                          stroke="#0e2a47"
+                          strokeWidth="0.9"
+                        />
+                        <circle cx="12" cy="8.5" r="1.8" fill="#0e2a47" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              ) : null}
 
               {!mapReady && !mapError ? (
                 <div
@@ -644,7 +544,7 @@ export function AddressMapField() {
                 onClick={handleLocate}
                 disabled={locating || !mapReady}
                 className={cn(
-                  "absolute inset-e-3 top-3 z-30 gap-1.5 shadow-lg",
+                  "absolute inset-e-3 top-3 z-401 gap-1.5 shadow-lg",
                   locating && "animate-st-pulse",
                 )}
               >
@@ -681,7 +581,14 @@ export function AddressMapField() {
                   />
                 ) : null}
               </div>
+              {/* 🔊 `aria-live` so a screen-reader user hears the address
+                  update as soon as a reverse-geocode lands, without needing
+                  focus already inside this field — the textarea's `value`
+                  changes exactly once per geocode (the letter-by-letter
+                  reveal below is a purely decorative CSS overlay, not a
+                  per-letter DOM/value change), so this never floods. */}
               <div
+                aria-live="polite"
                 className={cn(
                   "relative overflow-hidden rounded-2xl transition-shadow duration-500",
                   typing &&
@@ -699,7 +606,7 @@ export function AddressMapField() {
                   readOnly={typing}
                   rows={3}
                   maxLength={160}
-                  placeholder="پس از انتخاب نقطه روی نقشه، آدرس اینجا نوشته می‌شود…"
+                  placeholder="پس از جابه‌جا کردن نقشه، آدرس اینجا نوشته می‌شود…"
                   className={cn(
                     "bg-sand/60 text-navy placeholder:text-navy/70 dark:bg-navy-deep/40 dark:text-ivory dark:placeholder:text-ivory/30 min-h-20 w-full rounded-2xl px-4 py-3 text-sm font-semibold outline-none",
                     // 🎭 The animated overlay below stands in for the real

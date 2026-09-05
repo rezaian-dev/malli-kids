@@ -39,6 +39,26 @@ export async function getOrdersForUser(userId: string): Promise<AdminOrder[]> {
   return docs.map(toAdminOrder);
 }
 
+/** 🔐 The one place an order is looked up *for a specific requester* — the
+ *  real authorization boundary behind the invoice route (and anywhere else
+ *  that needs "this exact order, if this caller is allowed to see it").
+ *  Returns `null` for "doesn't exist" and "exists but isn't yours" alike
+ *  (never distinguishes the two to an unauthorized caller) unless
+ *  `isAdmin` — an admin can pull up any customer's order, same as every
+ *  other admin order view. Returns the raw doc (with its real `createdAt`),
+ *  not the display-formatted `AdminOrder` — callers that need the
+ *  historical snapshot (the invoice) want the untouched values. */
+export async function getOrderForRequester(
+  orderId: string,
+  requester: { userId: string; isAdmin: boolean },
+): Promise<(OrderDoc & { createdAt: Date }) | null> {
+  await connectMongoose();
+  const doc = await OrderModel.findOne({ id: orderId }).lean();
+  if (!doc) return null;
+  if (!requester.isAdmin && doc.userId !== requester.userId) return null;
+  return doc;
+}
+
 export type CreateOrderInput = {
   userId: string;
   customer: string;

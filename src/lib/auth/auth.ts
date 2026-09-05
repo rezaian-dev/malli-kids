@@ -20,7 +20,25 @@ export const auth = betterAuth({
   // ⚡ The root layout calls getSession() on every single page render (see
   // `@/lib/auth/session`) — a short signed-cookie cache keeps that from
   // hitting Mongo on every navigation.
-  session: { cookieCache: { enabled: true, maxAge: 5 * 60 } },
+  //
+  // 🚫 Trade-off, not a bug to "fully fix" without dropping the cache
+  // entirely: a cache *hit* here returns the session/user payload straight
+  // from the signed cookie, with no DB round-trip — so `admin.banUser()`
+  // deleting the target's DB session (see `setCustomerStatusAction`) has no
+  // way to reach a copy of their session already sitting in their own
+  // browser's cookie. Confirmed live: a freshly-banned user's existing
+  // session kept answering `/api/auth/get-session` with 200 for as long as
+  // this cache stayed warm — `getSession()`'s own `BANNED_USER` handling
+  // (see `@/lib/auth/session`) only ever fires on a cache *miss* (the
+  // request that actually reaches Mongo), since Better Auth's `admin()`
+  // plugin has no `/get-session` hook of its own — only a session-*creation*
+  // check (bans a fresh sign-in, not a session already in progress). 30s
+  // (not 0, which would defeat the cache's whole purpose) keeps the ban →
+  // "actually logged out" gap small enough to be an acceptable trade rather
+  // than the 5-minute one this used to be, while still absorbing a normal
+  // multi-page browsing burst's worth of `getSession()` calls into one
+  // Mongo hit.
+  session: { cookieCache: { enabled: true, maxAge: 30 } },
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,

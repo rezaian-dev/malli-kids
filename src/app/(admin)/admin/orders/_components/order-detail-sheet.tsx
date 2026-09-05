@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { RotateCcw } from "lucide-react";
+import { FileDown, RotateCcw } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -64,6 +64,23 @@ export function OrderDetailSheet({
                 {order.id}
               </SheetDescription>
             </SheetHeader>
+
+            {order.pay === "پرداخت‌شده" ? (
+              <div className="px-4">
+                <a
+                  href={`/api/orders/${order.id}/invoice`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-black transition",
+                    "border-navy/10 text-navy hover:border-gold hover:bg-gold/10",
+                    "dark:border-gold/20 dark:text-ivory",
+                  )}
+                >
+                  <FileDown className="size-3.5" /> دانلود فاکتور
+                </a>
+              </div>
+            ) : null}
 
             <div
               className={cn(
