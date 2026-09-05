@@ -19,6 +19,25 @@ export const ORDER_STAGES = [
   "تحویل",
 ] as const;
 
+/** 🔒 The real order state machine. Forward-one-step only, plus "drop to
+ *  مرجوعی" (cancel/return) reachable from any non-terminal state — blocks
+ *  both skipping ahead (جدید → تحویل‌شده) and going backward
+ *  (تحویل‌شده → جدید). `مرجوعی` is terminal: nothing transitions out of it.
+ *  `setOrderStatus` (`@/lib/shop/orders`) is the real enforcement boundary;
+ *  the admin order-detail sheet uses this same table to only ever *offer*
+ *  a legal next status. */
+export const ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  جدید: ["در حال آماده‌سازی", "مرجوعی"],
+  "در حال آماده‌سازی": ["ارسال‌شده", "مرجوعی"],
+  "ارسال‌شده": ["تحویل‌شده", "مرجوعی"],
+  "تحویل‌شده": ["مرجوعی"],
+  مرجوعی: [],
+};
+
+export function canTransitionOrder(from: OrderStatus, to: OrderStatus): boolean {
+  return from === to || ORDER_TRANSITIONS[from].includes(to);
+}
+
 export function stageIndex(status: OrderStatus): number {
   switch (status) {
     case "جدید":

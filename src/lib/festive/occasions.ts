@@ -240,6 +240,26 @@ export function seedBanners(): FestiveBanner[] {
   ];
 }
 
+export type BannerStatus = "draft" | "scheduled" | "live" | "expired";
+
+/** 🚦 A richer status than the plain `active` boolean — tells the admin
+ *  whether a banner is actually showing right now, coming up, or already
+ *  past its window this cycle. `from`/`to` stay year-less recurring
+ *  Jalali "M/D" strings by design (see the model's own comment), so
+ *  "expired" means "past this year's window", not "will never show
+ *  again" — it recurs automatically next cycle. */
+export function bannerStatus(banner: FestiveBanner, d = new Date()): BannerStatus {
+  if (!banner.active) return "draft";
+
+  const { jm, jd } = toJalali(d);
+  const num = (s: string) => Number(toEnDigits(s));
+  const [fm, fd] = banner.from.split("/").map(num);
+  const [tm, td] = banner.to.split("/").map(num);
+
+  if (inRange(jm, jd, fm, fd, tm, td)) return "live";
+  return jm * 100 + jd < fm * 100 + fd ? "scheduled" : "expired";
+}
+
 export function pickBanner(
   list: FestiveBanner[],
   d = new Date(),

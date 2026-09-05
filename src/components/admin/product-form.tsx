@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useTransition, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ImagePlus, Save, Trash2 } from "lucide-react";
+import { ArrowRight, ImagePlus, Plus, Save, Trash2 } from "lucide-react";
 
 import { AdminPageHeader } from "@/components/admin";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { CATS, SEASONS } from "@/lib/constants";
+import { CATS, GENDERS, SEASONS } from "@/lib/constants";
 import { parseFaNumber } from "@/lib/digits";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
@@ -26,10 +26,12 @@ import {
   createProductAction,
   updateProductAction,
 } from "@/app/(admin)/admin/products/_lib/actions";
-import type { Product } from "@/types";
+import type { Product, ProductVariant } from "@/types";
 
 const MAX_IMAGES = 6;
+const MAX_VARIANTS = 40;
 const CAT_OPTIONS = CATS.filter((item) => item !== "همه");
+const NO_GENDER = "__none__";
 
 const FIELD_LABEL = "text-navy/70 dark:text-wheat text-xs font-black";
 const FIELD_INPUT =
@@ -39,9 +41,14 @@ const FIELD_ERROR = "text-rose text-xs font-bold";
 const FORM_SECTION = cn(adminGlassCard, "space-y-4 p-5 sm:p-6");
 const SECTION_TITLE = "text-gold text-sm font-black";
 
+type VariantRow = { size: string; color: string; stock: string };
+
 type ProductFormValues = {
   name: string;
   cat: string;
+  gender: string;
+  ageRange: string;
+  slug: string;
   season: string;
   price: string;
   old: string;
@@ -50,16 +57,32 @@ type ProductFormValues = {
   desc: string;
   images: string[];
   stock: boolean;
+  variants: VariantRow[];
+  seoTitle: string;
+  seoDescription: string;
+  visible: boolean;
+  featured: boolean;
 };
 
 type ProductFormErrors = Partial<
-  Record<keyof ProductFormValues | "form", string>
+  Record<keyof ProductFormValues | "form" | "variants", string>
 >;
+
+function toVariantRows(variants: ProductVariant[]): VariantRow[] {
+  return variants.map((v) => ({
+    size: v.size,
+    color: v.color ?? "",
+    stock: String(v.stock),
+  }));
+}
 
 function getInitialValues(product?: Product): ProductFormValues {
   return {
     name: product?.name ?? "",
     cat: product?.cat ?? CAT_OPTIONS[0],
+    gender: product?.gender ?? NO_GENDER,
+    ageRange: product?.ageRange ?? "",
+    slug: product?.slug ?? "",
     season: product?.season ?? SEASONS[0],
     price: product ? String(product.price) : "",
     old: product?.old ? String(product.old) : "",
@@ -68,6 +91,11 @@ function getInitialValues(product?: Product): ProductFormValues {
     desc: product?.desc ?? "",
     images: product?.images ?? [],
     stock: product?.stock ?? true,
+    variants: toVariantRows(product?.variants ?? []),
+    seoTitle: product?.seoTitle ?? "",
+    seoDescription: product?.seoDescription ?? "",
+    visible: product?.visible ?? true,
+    featured: product?.featured ?? false,
   };
 }
 
@@ -124,6 +152,29 @@ function validateProductForm(values: ProductFormValues): ProductFormErrors {
     errors.images = "حداقل یک تصویر بارگذاری کنید";
   }
 
+  if (values.slug.trim() && !/^[a-z0-9-]+$/.test(values.slug.trim().toLowerCase())) {
+    errors.slug = "فقط حروف انگلیسی، عدد و خط تیره";
+  }
+
+  const seenSizes = new Set<string>();
+  for (const row of values.variants) {
+    const size = row.size.trim();
+    if (!size) {
+      errors.variants = "برای هر تنوع، سایز را وارد کنید";
+      break;
+    }
+    if (seenSizes.has(size)) {
+      errors.variants = `سایز «${size}» تکراری است`;
+      break;
+    }
+    seenSizes.add(size);
+    const stock = Number(row.stock);
+    if (!Number.isInteger(stock) || stock < 0) {
+      errors.variants = "موجودی هر تنوع باید عدد صحیح و غیرمنفی باشد";
+      break;
+    }
+  }
+
   return errors;
 }
 
@@ -147,6 +198,25 @@ export function ProductForm({ product }: { product?: Product }) {
       [field]: undefined,
       form: undefined,
     }));
+  }
+
+  function updateVariant(index: number, patch: Partial<VariantRow>) {
+    updateValue(
+      "variants",
+      values.variants.map((row, i) => (i === index ? { ...row, ...patch } : row)),
+    );
+  }
+
+  function addVariant() {
+    if (values.variants.length >= MAX_VARIANTS) return;
+    updateValue("variants", [...values.variants, { size: "", color: "", stock: "0" }]);
+  }
+
+  function removeVariant(index: number) {
+    updateValue(
+      "variants",
+      values.variants.filter((_, i) => i !== index),
+    );
   }
 
   async function onImagesChange(event: ChangeEvent<HTMLInputElement>) {
@@ -194,6 +264,12 @@ export function ProductForm({ product }: { product?: Product }) {
     const payload = {
       name: values.name.trim(),
       cat: values.cat,
+      gender:
+        values.gender === NO_GENDER
+          ? undefined
+          : (values.gender as NonNullable<Product["gender"]>),
+      ageRange: values.ageRange.trim() || undefined,
+      slug: values.slug.trim().toLowerCase() || undefined,
       season: values.season as NonNullable<Product["season"]>,
       price: parseFaNumber(values.price),
       old: values.old.trim() ? parseFaNumber(values.old) : undefined,
@@ -202,6 +278,15 @@ export function ProductForm({ product }: { product?: Product }) {
       desc: values.desc.trim(),
       images: values.images,
       stock: values.stock,
+      variants: values.variants.map((row) => ({
+        size: row.size.trim(),
+        color: row.color.trim() || undefined,
+        stock: Number(row.stock),
+      })),
+      seoTitle: values.seoTitle.trim() || undefined,
+      seoDescription: values.seoDescription.trim() || undefined,
+      visible: values.visible,
+      featured: values.featured,
     };
 
     startTransition(async () => {
@@ -327,6 +412,45 @@ export function ProductForm({ product }: { product?: Product }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
+              <label htmlFor="product-gender" className={FIELD_LABEL}>
+                جنسیت (اختیاری)
+              </label>
+              <Select
+                value={values.gender}
+                onValueChange={(value) => updateValue("gender", value)}
+                dir="rtl"
+              >
+                <SelectTrigger id="product-gender" className={SELECT_TRIGGER}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent align="start">
+                  <SelectItem value={NO_GENDER}>تعیین‌نشده</SelectItem>
+                  {GENDERS.map((item) => (
+                    <SelectItem key={item} value={item}>
+                      {item}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="product-age" className={FIELD_LABEL}>
+                رده سنی (اختیاری)
+              </label>
+              <Input
+                id="product-age"
+                value={values.ageRange}
+                onChange={(event) => updateValue("ageRange", event.target.value)}
+                placeholder="مثلاً: ۲ تا ۴ سال"
+                maxLength={40}
+                className={FIELD_INPUT}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
               <label htmlFor="product-price" className={FIELD_LABEL}>
                 قیمت (تومان)
               </label>
@@ -395,6 +519,23 @@ export function ProductForm({ product }: { product?: Product }) {
           </div>
 
           <div className="space-y-1.5">
+            <label htmlFor="product-slug" className={FIELD_LABEL}>
+              اسلاگ (اختیاری)
+            </label>
+            <Input
+              id="product-slug"
+              value={values.slug}
+              onChange={(event) => updateValue("slug", event.target.value)}
+              placeholder="خالی بگذارید تا خودکار ساخته شود"
+              dir="ltr"
+              maxLength={80}
+              aria-invalid={Boolean(errors.slug)}
+              className={FIELD_INPUT}
+            />
+            <FieldNote error={errors.slug} />
+          </div>
+
+          <div className="space-y-1.5">
             <label htmlFor="product-desc" className={FIELD_LABEL}>
               توضیح
             </label>
@@ -410,6 +551,40 @@ export function ProductForm({ product }: { product?: Product }) {
             />
             <FieldNote error={errors.desc} />
           </div>
+
+          <details className="group">
+            <summary className={cn(SECTION_TITLE, "cursor-pointer select-none")}>
+              سئو (اختیاری)
+            </summary>
+            <div className="mt-4 space-y-4">
+              <div className="space-y-1.5">
+                <label htmlFor="product-seo-title" className={FIELD_LABEL}>
+                  عنوان سئو
+                </label>
+                <Input
+                  id="product-seo-title"
+                  value={values.seoTitle}
+                  onChange={(event) => updateValue("seoTitle", event.target.value)}
+                  maxLength={70}
+                  className={FIELD_INPUT}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label htmlFor="product-seo-desc" className={FIELD_LABEL}>
+                  توضیح سئو
+                </label>
+                <Textarea
+                  id="product-seo-desc"
+                  value={values.seoDescription}
+                  onChange={(event) =>
+                    updateValue("seoDescription", event.target.value)
+                  }
+                  maxLength={160}
+                  className="border-navy/12 dark:border-gold/20 min-h-20 rounded-2xl bg-transparent px-4 py-3 text-sm"
+                />
+              </div>
+            </div>
+          </details>
         </section>
 
         <section className="space-y-5">
@@ -504,23 +679,118 @@ export function ProductForm({ product }: { product?: Product }) {
               error={errors.images}
               hint={`حداقل یک تصویر لازم است؛ تصویر اول، تصویر اصلی محصول است (حداکثر ${MAX_IMAGES} تصویر).`}
             />
+          </div>
 
-            <label
-              className={cn(
-                "flex items-center justify-between rounded-2xl border px-4 py-3",
-                "border-navy/8",
-                "dark:border-gold/20",
-              )}
-            >
-              <span className="space-y-1">
-                <span className="block text-sm font-black">موجود در انبار</span>
-                <span className="text-navy/70 dark:text-wheat block text-[11px] font-bold">
-                  در صورت خاموش بودن، «ناموجود» نمایش داده می‌شود.
+          <div className={FORM_SECTION}>
+            <div className="flex items-center justify-between gap-3">
+              <h2 className={SECTION_TITLE}>تنوع‌ها (سایز/رنگ)</h2>
+              {values.variants.length < MAX_VARIANTS ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-9 rounded-xl px-3 text-[11px]"
+                  onClick={addVariant}
+                >
+                  <Plus className="size-3.5" /> افزودن تنوع
+                </Button>
+              ) : null}
+            </div>
+
+            {values.variants.length > 0 ? (
+              <>
+                <div className="space-y-2">
+                  {values.variants.map((row, index) => (
+                    <div
+                      key={index}
+                      className="grid grid-cols-[1fr_1fr_5.5rem_auto] items-end gap-2"
+                    >
+                      <div className="space-y-1">
+                        <label className={FIELD_LABEL}>سایز</label>
+                        <Input
+                          value={row.size}
+                          onChange={(event) =>
+                            updateVariant(index, { size: event.target.value })
+                          }
+                          placeholder="۹۸"
+                          className={FIELD_INPUT}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className={FIELD_LABEL}>رنگ (اختیاری)</label>
+                        <Input
+                          value={row.color}
+                          onChange={(event) =>
+                            updateVariant(index, { color: event.target.value })
+                          }
+                          placeholder="—"
+                          className={FIELD_INPUT}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className={FIELD_LABEL}>موجودی</label>
+                        <Input
+                          value={row.stock}
+                          onChange={(event) =>
+                            updateVariant(index, { stock: event.target.value })
+                          }
+                          inputMode="numeric"
+                          className={FIELD_INPUT}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeVariant(index)}
+                        aria-label="حذف این تنوع"
+                        className="bg-rose/10 text-rose hover:bg-rose/15 grid size-11 shrink-0 place-items-center rounded-xl transition"
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-navy/70 dark:text-wheat text-[11px] font-bold">
+                  با ثبت تنوع، وضعیت «موجود/ناموجود» محصول به‌طور خودکار از
+                  مجموع موجودی تنوع‌ها محاسبه می‌شود.
+                </p>
+                <FieldNote error={errors.variants} />
+              </>
+            ) : (
+              <label
+                className={cn(
+                  "flex items-center justify-between rounded-2xl border px-4 py-3",
+                  "border-navy/8",
+                  "dark:border-gold/20",
+                )}
+              >
+                <span className="space-y-1">
+                  <span className="block text-sm font-black">موجود در انبار</span>
+                  <span className="text-navy/70 dark:text-wheat block text-[11px] font-bold">
+                    این محصول تنوع سایز/رنگ ندارد (مثلاً اکسسوری) — وضعیت انبار
+                    را دستی تعیین کنید.
+                  </span>
                 </span>
-              </span>
+                <Switch
+                  checked={values.stock}
+                  onCheckedChange={(checked) => updateValue("stock", checked)}
+                />
+              </label>
+            )}
+          </div>
+
+          <div className={cn(FORM_SECTION, "flex flex-col gap-3")}>
+            <h2 className={SECTION_TITLE}>انتشار</h2>
+            <label className="flex items-center justify-between gap-3">
+              <span className="text-sm font-black">نمایش در فروشگاه</span>
               <Switch
-                checked={values.stock}
-                onCheckedChange={(checked) => updateValue("stock", checked)}
+                checked={values.visible}
+                onCheckedChange={(checked) => updateValue("visible", checked)}
+              />
+            </label>
+            <label className="flex items-center justify-between gap-3">
+              <span className="text-sm font-black">محصول ویژه</span>
+              <Switch
+                checked={values.featured}
+                onCheckedChange={(checked) => updateValue("featured", checked)}
               />
             </label>
           </div>

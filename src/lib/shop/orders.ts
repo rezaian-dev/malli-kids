@@ -1,6 +1,9 @@
 import { connectMongoose } from "@/lib/db/mongoose";
 import { OrderModel, type OrderDoc } from "@/lib/db/models/order";
+import { ProductModel } from "@/lib/db/models/product";
 import { incrementCouponUsage } from "@/lib/shop/coupons";
+import { canTransitionOrder } from "@/lib/shop/order-status";
+import { deriveStock } from "@/lib/shop/inventory";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
 import { faDate } from "@/lib/locale/fa";
 import type { AdminOrder, OrderStatus } from "@/types";
@@ -84,6 +87,56 @@ function isDuplicateKeyError(error: unknown): boolean {
   );
 }
 
+/** 📦 Atomically checks-and-decrements one variant's stock — the actual
+ *  overselling fix: this only ever succeeds if the size still has enough
+ *  stock at the moment of the write, not at whatever moment the page was
+ *  rendered. Returns `false` (nothing decremented) when it doesn't. */
+async function decrementVariantStock(
+  productId: number,
+  size: string,
+  qty: number,
+): Promise<boolean> {
+  const updated = await ProductModel.findOneAndUpdate(
+    { id: productId, variants: { $elemMatch: { size, stock: { $gte: qty } } } },
+    { $inc: { "variants.$.stock": -qty } },
+    { new: true },
+  );
+  if (!updated) return false;
+  await ProductModel.updateOne(
+    { id: productId },
+    { $set: { stock: deriveStock(updated.variants, updated.stock) } },
+  );
+  return true;
+}
+
+async function restockVariant(productId: number, size: string, qty: number) {
+  const updated = await ProductModel.findOneAndUpdate(
+    { id: productId, "variants.size": size },
+    { $inc: { "variants.$.stock": qty } },
+    { new: true },
+  );
+  if (updated) {
+    await ProductModel.updateOne(
+      { id: productId },
+      { $set: { stock: deriveStock(updated.variants, updated.stock) } },
+    );
+  }
+}
+
+/** ↩️ Puts each item's variant stock back — called when an order lands on
+ *  "مرجوعی" (cancel/return). Legacy/unsized products never had stock
+ *  decremented for them in the first place, so they're skipped here too. */
+async function restockOrderItems(items: OrderDoc["items"]) {
+  for (const item of items) {
+    const product = await ProductModel.findOne({ id: item.id }).lean();
+    if (product?.variants?.length) await restockVariant(item.id, item.size, item.qty);
+  }
+}
+
+export type CreateOrderResult =
+  | { ok: true; order: AdminOrder }
+  | { ok: false; outOfStock: string };
+
 /** 🧾 The one real place an order is created — the checkout dialog's server
  *  action calls this after verifying the session.
  *
@@ -93,15 +146,35 @@ function isDuplicateKeyError(error: unknown): boolean {
  *  creating — and double-charging inventory/coupon usage for — a second
  *  one. The upfront lookup is just the fast path; the model's unique+sparse
  *  index is what actually closes the race if two requests for the same key
- *  land at once. */
-export async function createOrder(input: CreateOrderInput): Promise<AdminOrder> {
+ *  land at once.
+ *
+ *  📦 For any item whose product has real variant tracking (`variants`
+ *  non-empty), the matching size's stock is checked-and-decremented
+ *  atomically before the order is written; a legacy/unsized product keeps
+ *  today's behavior (no decrement). Any decrement already applied for an
+ *  earlier item in the same order is rolled back if a later item is out of
+ *  stock, or if the order document itself fails to write. */
+export async function createOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
   await connectMongoose();
 
   if (input.idempotencyKey) {
     const existing = await OrderModel.findOne({
       idempotencyKey: input.idempotencyKey,
     }).lean();
-    if (existing) return toAdminOrder(existing);
+    if (existing) return { ok: true, order: toAdminOrder(existing) };
+  }
+
+  const applied: { id: number; size: string; qty: number }[] = [];
+  for (const item of input.items) {
+    const product = await ProductModel.findOne({ id: item.id }).lean();
+    if (!product?.variants?.length) continue;
+
+    const decremented = await decrementVariantStock(item.id, item.size, item.qty);
+    if (!decremented) {
+      for (const done of applied) await restockVariant(done.id, done.size, done.qty);
+      return { ok: false, outOfStock: item.name };
+    }
+    applied.push({ id: item.id, size: item.size, qty: item.qty });
   }
 
   const subtotal = input.items.reduce((s, i) => s + i.price * i.qty, 0);
@@ -132,27 +205,49 @@ export async function createOrder(input: CreateOrderInput): Promise<AdminOrder> 
 
     if (input.couponCode) await incrementCouponUsage(input.couponCode);
 
-    return toAdminOrder(doc.toObject());
+    return { ok: true, order: toAdminOrder(doc.toObject()) };
   } catch (error) {
+    for (const done of applied) await restockVariant(done.id, done.size, done.qty);
+
     if (input.idempotencyKey && isDuplicateKeyError(error)) {
       const existing = await OrderModel.findOne({
         idempotencyKey: input.idempotencyKey,
       }).lean();
-      if (existing) return toAdminOrder(existing);
+      if (existing) return { ok: true, order: toAdminOrder(existing) };
     }
     throw error;
   }
 }
 
+export type SetOrderStatusResult =
+  | { ok: true; order: AdminOrder }
+  | { ok: false; error: "not-found" | "invalid-transition" };
+
+/** 🔒 Enforces `ORDER_TRANSITIONS` (`@/lib/shop/order-status`) — the real
+ *  boundary; the admin UI only ever *offers* a legal next status, this is
+ *  what actually refuses an illegal one. Restocks variant stock when the
+ *  order lands on "مرجوعی" from a non-terminal state. */
 export async function setOrderStatus(
   id: string,
   status: OrderStatus,
-): Promise<AdminOrder | null> {
+): Promise<SetOrderStatusResult> {
   await connectMongoose();
+  const current = await OrderModel.findOne({ id }).lean();
+  if (!current) return { ok: false, error: "not-found" };
+  if (!canTransitionOrder(current.status, status)) {
+    return { ok: false, error: "invalid-transition" };
+  }
+
   const doc = await OrderModel.findOneAndUpdate(
     { id },
     { $set: { status } },
     { new: true },
   ).lean();
-  return doc ? toAdminOrder(doc) : null;
+  if (!doc) return { ok: false, error: "not-found" };
+
+  if (status === "مرجوعی" && current.status !== "مرجوعی") {
+    await restockOrderItems(current.items);
+  }
+
+  return { ok: true, order: toAdminOrder(doc) };
 }

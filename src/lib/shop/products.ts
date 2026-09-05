@@ -29,6 +29,9 @@ function toProduct(doc: ProductDoc): Product {
     images,
     name: doc.name,
     cat: doc.cat,
+    gender: doc.gender,
+    ageRange: doc.ageRange,
+    slug: doc.slug,
     season: doc.season,
     price: doc.price,
     old: doc.old,
@@ -36,8 +39,16 @@ function toProduct(doc: ProductDoc): Product {
     badge: doc.badge,
     rate: doc.rate,
     stock: doc.stock,
+    // 🪶 A document written before this field existed simply doesn't have
+    // the key on read — `?? []` treats it as "legacy, unsized" rather than
+    // crashing every consumer that does `product.variants.map(...)`.
+    variants: doc.variants ?? [],
     sold: doc.sold,
     desc: doc.desc,
+    seoTitle: doc.seoTitle,
+    seoDescription: doc.seoDescription,
+    visible: doc.visible ?? true,
+    featured: doc.featured ?? false,
     updatedAt: doc.updatedAt?.toISOString(),
   };
 }

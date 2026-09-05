@@ -108,14 +108,6 @@ export function AdminCustomersLanding({
     });
   }
 
-  function remove(id: string) {
-    startTransition(async () => {
-      const result = await removeCustomerAction(id);
-      if (result.ok) toast.success("کاربر حذف شد");
-      else toast.error(result.error);
-    });
-  }
-
   function promote(customer: AdminCustomer) {
     startTransition(async () => {
       const result = await promoteCustomerAction(customer.id);
@@ -131,7 +123,7 @@ export function AdminCustomersLanding({
 
   const cols = buildCustomerColumns({
     onToggleStatus: toggleStatus,
-    onRemove: remove,
+    onRemove: removeCustomerAction,
     onPromote: promote,
   });
 

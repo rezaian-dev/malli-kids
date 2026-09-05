@@ -4,9 +4,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { AdminFilterSelect } from "@/components/admin";
+import { bannerStatus, type BannerStatus } from "@/lib/festive/occasions";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import type { FestiveBanner, FestiveTheme } from "@/types";
+
+const STATUS_LABEL: Record<BannerStatus, { label: string; className: string }> = {
+  draft: { label: "پیش‌نویس", className: "bg-navy/8 text-navy/70 dark:bg-white/8 dark:text-wheat" },
+  scheduled: {
+    label: "زمان‌بندی‌شده",
+    className: "bg-sky-500/12 text-sky-700 dark:text-sky-300",
+  },
+  live: {
+    label: "در حال نمایش",
+    className: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
+  },
+  expired: { label: "پایان‌یافته", className: "bg-rose/10 text-rose" },
+};
 
 function BannerField({
   label,
@@ -44,6 +58,8 @@ export function BannerCard({
   banner: FestiveBanner;
   onUpdate: (patch: Partial<FestiveBanner>) => void;
 }) {
+  const status = STATUS_LABEL[bannerStatus(banner)];
+
   return (
     <article className={adminGlassCard}>
       <div
@@ -63,6 +79,14 @@ export function BannerCard({
               <Badge className="bg-gold/15 text-gold-deep dark:text-gold-soft rounded-lg border-0">
                 {banner.occasion}
               </Badge>
+              <span
+                className={cn(
+                  "inline-flex items-center rounded-lg px-2 py-1 text-[9px] font-black",
+                  status.className,
+                )}
+              >
+                {status.label}
+              </span>
               {banner.pinned ? (
                 <span
                   className={cn(

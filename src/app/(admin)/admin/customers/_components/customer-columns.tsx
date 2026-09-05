@@ -8,9 +8,10 @@ import {
   Trash2,
   UserRound,
 } from "lucide-react";
-import type { AdminCol } from "@/components/admin";
+import { AdminConfirmDialog, type AdminCol } from "@/components/admin";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
+import type { ActionResult } from "@/lib/action-result";
 import type { AdminCustomer } from "@/types";
 
 /** 🧱 The customer table column set — a plain builder (not a hook) so it
@@ -21,7 +22,7 @@ export function buildCustomerColumns({
   onPromote,
 }: {
   onToggleStatus: (customer: AdminCustomer) => void;
-  onRemove: (id: string) => void;
+  onRemove: (id: string) => Promise<ActionResult>;
   onPromote: (customer: AdminCustomer) => void;
 }): AdminCol<AdminCustomer>[] {
   return [
@@ -222,19 +223,24 @@ export function buildCustomerColumns({
                 ? "مسدودکردن"
                 : "رفع مسدودی"}
             </button>
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                onRemove(customer.id);
-              }}
-              className={cn(
-                "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl px-2 text-[10px] font-black transition",
-                "bg-rose/10 text-rose hover:bg-rose/15",
-              )}
-            >
-              <Trash2 className="size-3.5" /> حذف کاربر
-            </button>
+            <AdminConfirmDialog
+              title="حذف این کاربر؟"
+              description={`حساب «${customer.firstName} ${customer.lastName}» برای همیشه حذف می‌شود. این عمل قابل بازگشت نیست.`}
+              successMessage="کاربر حذف شد"
+              onConfirm={() => onRemove(customer.id)}
+              trigger={
+                <button
+                  type="button"
+                  onClick={(event) => event.stopPropagation()}
+                  className={cn(
+                    "inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-xl px-2 text-[10px] font-black transition",
+                    "bg-rose/10 text-rose hover:bg-rose/15",
+                  )}
+                >
+                  <Trash2 className="size-3.5" /> حذف کاربر
+                </button>
+              }
+            />
           </div>
         ),
       render: (customer) =>
@@ -291,21 +297,26 @@ export function buildCustomerColumns({
                 <CircleCheckBig className="size-4" />
               )}
             </button>
-            <button
-              type="button"
-              title="حذف کاربر"
-              aria-label="حذف کاربر"
-              onClick={(event) => {
-                event.stopPropagation();
-                onRemove(customer.id);
-              }}
-              className={cn(
-                "grid size-9 shrink-0 place-items-center rounded-xl transition",
-                "bg-rose/10 text-rose hover:bg-rose/15",
-              )}
-            >
-              <Trash2 className="size-4" />
-            </button>
+            <AdminConfirmDialog
+              title="حذف این کاربر؟"
+              description={`حساب «${customer.firstName} ${customer.lastName}» برای همیشه حذف می‌شود. این عمل قابل بازگشت نیست.`}
+              successMessage="کاربر حذف شد"
+              onConfirm={() => onRemove(customer.id)}
+              trigger={
+                <button
+                  type="button"
+                  title="حذف کاربر"
+                  aria-label="حذف کاربر"
+                  onClick={(event) => event.stopPropagation()}
+                  className={cn(
+                    "grid size-9 shrink-0 place-items-center rounded-xl transition",
+                    "bg-rose/10 text-rose hover:bg-rose/15",
+                  )}
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              }
+            />
           </div>
         ),
     },

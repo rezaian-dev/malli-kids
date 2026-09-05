@@ -11,7 +11,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { AdminFilterSelect } from "@/components/admin";
-import { ORDER_FLOW } from "@/lib/shop/order-status";
+import { ORDER_TRANSITIONS } from "@/lib/shop/order-status";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import type { AdminOrder, OrderStatus } from "@/types";
@@ -156,19 +156,31 @@ export function OrderDetailSheet({
             </div>
 
             <div className="px-4 pb-5">
-              <AdminFilterSelect
-                label="تغییر وضعیت سفارش"
-                value={order.status}
-                onValueChange={(value) => onStatusChange(value as OrderStatus)}
-                options={ORDER_FLOW.map((item) => ({ value: item, label: item }))}
-                className="w-full xl:w-full"
-              />
               {order.status === "مرجوعی" ? (
-                <p className="text-rose mt-2 flex items-center gap-1.5 text-[10px] font-bold">
+                <p className="text-rose flex items-center gap-1.5 text-[10px] font-bold">
                   <RotateCcw className="size-3" /> این سفارش در وضعیت مرجوعی
-                  قرار دارد.
+                  قرار دارد و دیگر قابل تغییر نیست.
                 </p>
-              ) : null}
+              ) : (
+                <>
+                  <AdminFilterSelect
+                    label="تغییر وضعیت سفارش"
+                    value={order.status}
+                    onValueChange={(value) => onStatusChange(value as OrderStatus)}
+                    options={[
+                      { value: order.status, label: order.status },
+                      ...ORDER_TRANSITIONS[order.status].map((item) => ({
+                        value: item,
+                        label: item,
+                      })),
+                    ]}
+                    className="w-full xl:w-full"
+                  />
+                  <p className="text-navy/60 dark:text-wheat/70 mt-2 text-[10px] font-bold">
+                    فقط وضعیت‌های مجاز از وضعیت فعلی قابل انتخاب‌اند.
+                  </p>
+                </>
+              )}
             </div>
           </>
         ) : null}

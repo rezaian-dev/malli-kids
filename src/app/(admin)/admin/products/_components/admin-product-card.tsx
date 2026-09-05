@@ -1,19 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Pencil, Star, Trash2 } from "lucide-react";
+import { AdminConfirmDialog } from "@/components/admin";
 import { Button } from "@/components/ui/button";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
+import type { ActionResult } from "@/lib/action-result";
 import type { Product } from "@/types";
 
 /** 🛍️ One catalog product — thumbnail, price, stock, edit/delete. */
 export function AdminProductCard({
   product,
+  selected,
+  onToggleSelect,
   onRemove,
 }: {
   product: Product;
-  onRemove: () => void;
+  selected?: boolean;
+  onToggleSelect?: () => void;
+  onRemove: () => Promise<ActionResult>;
 }) {
   return (
     <article className={cn(adminGlassCard, "group")}>
@@ -31,6 +37,15 @@ export function AdminProductCard({
             "dark:bg-navy-deep",
           )}
         >
+          {onToggleSelect ? (
+            <input
+              type="checkbox"
+              checked={Boolean(selected)}
+              onChange={onToggleSelect}
+              aria-label={`انتخاب ${product.name}`}
+              className="accent-gold absolute inset-s-1.5 top-1.5 z-10 size-4"
+            />
+          ) : null}
           <Image
             src={product.img}
             alt={product.name}
@@ -50,6 +65,8 @@ export function AdminProductCard({
             <p className="text-gold truncate text-[9px] font-black">
               {product.cat}
               {product.season ? ` · ${product.season}` : ""}
+              {!product.visible ? " · پنهان" : ""}
+              {product.featured ? " · ویژه" : ""}
             </p>
             <span
               className={cn(
@@ -111,18 +128,25 @@ export function AdminProductCard({
             <Pencil className="size-3.5" /> ویرایش محصول
           </Link>
         </Button>
-        <button
-          type="button"
-          className={cn(
-            "grid size-9 shrink-0 place-items-center rounded-xl transition hover:scale-105",
-            "bg-rose/10 text-rose hover:bg-rose/15",
-          )}
-          onClick={onRemove}
-          aria-label={`حذف ${product.name}`}
-          title="حذف محصول"
-        >
-          <Trash2 className="size-4" />
-        </button>
+        <AdminConfirmDialog
+          title="حذف این محصول؟"
+          description={`«${product.name}» برای همیشه از کاتالوگ حذف می‌شود. این عمل قابل بازگشت نیست.`}
+          successMessage="محصول حذف شد"
+          onConfirm={onRemove}
+          trigger={
+            <button
+              type="button"
+              className={cn(
+                "grid size-9 shrink-0 place-items-center rounded-xl transition hover:scale-105",
+                "bg-rose/10 text-rose hover:bg-rose/15",
+              )}
+              aria-label={`حذف ${product.name}`}
+              title="حذف محصول"
+            >
+              <Trash2 className="size-4" />
+            </button>
+          }
+        />
       </div>
     </article>
   );

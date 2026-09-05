@@ -1,6 +1,6 @@
 import type { Product } from "@/types";
 
-const BASE: Omit<Product, "id" | "images">[] = [
+const BASE: Omit<Product, "id" | "images" | "variants" | "visible" | "featured">[] = [
   {
     img: "/brand/look-party.jpg",
     name: "پیراهن مجلسی الماسِ طلایی",
@@ -110,6 +110,9 @@ export const CORE_PRODUCTS: Product[] = BASE.map((p, i) => ({
   images: [p.img],
   price: Number(p.price),
   season: p.season ?? SEASONS[i % SEASONS.length],
+  variants: [],
+  visible: true,
+  featured: false,
 }));
 
 export function parseProductRouteId(value: string) {

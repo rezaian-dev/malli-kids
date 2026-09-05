@@ -101,7 +101,7 @@ export async function createOrderAction(
       ? await findApplicableCoupon(parsed.data.couponCode, subtotal)
       : null;
 
-    const order = await createOrder({
+    const result = await createOrder({
       userId: user.id,
       customer: user.name,
       phone: parsed.data.phone,
@@ -123,10 +123,17 @@ export async function createOrderAction(
       idempotencyKey: parsed.data.idempotencyKey,
     });
 
+    if (!result.ok) {
+      return {
+        ok: false,
+        error: `متأسفانه سایز انتخابی «${parsed.data.size}» از «${result.outOfStock}» دیگر موجود نیست.`,
+      };
+    }
+
     revalidatePath("/admin/orders");
     revalidatePath("/admin");
     revalidatePath("/profile");
-    return { ok: true, data: order };
+    return { ok: true, data: result.order };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
   }

@@ -8,11 +8,15 @@ const DEFAULT_CAMPAIGN: SettingsCampaign = {
   title: "جشنواره ملی‌کیدز",
 };
 
-/** ⚙️ The site's one real settings doc. No admin UI writes this yet (see
- *  `SettingsModel`'s comment), so there's no tag to invalidate on demand —
- *  just the same time-based `unstable_cache` window as `getActiveBanner`
- *  (`@/lib/shop/banners`), since this too is read on every single request
- *  (root layout) for a value that's identical for every visitor. */
+// 🧊 `/admin/settings` now writes this doc — tagged so that write can
+// `revalidateTag` it on demand, same pattern as `PRODUCTS_TAG`/
+// `FESTIVE_BANNER_TAG`. The 1-hour `revalidate` stays as a safety net, not
+// the primary invalidation path.
+export const SITE_SETTINGS_TAG = "site-settings";
+
+/** ⚙️ The site's one real settings doc — read on every request (root
+ *  layout) for a value that's identical for every visitor, so it's cached
+ *  like `getActiveBanner` (`@/lib/shop/banners`). */
 export const getCampaign = unstable_cache(
   async (): Promise<SettingsCampaign> => {
     await connectMongoose();
@@ -20,5 +24,5 @@ export const getCampaign = unstable_cache(
     return doc?.campaign ?? DEFAULT_CAMPAIGN;
   },
   ["site-campaign"],
-  { revalidate: 3600 },
+  { tags: [SITE_SETTINGS_TAG], revalidate: 3600 },
 );

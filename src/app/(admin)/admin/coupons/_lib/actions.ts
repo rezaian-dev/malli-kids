@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/admin";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { CouponModel } from "@/lib/db/models/coupon";
+import { logAudit } from "@/lib/admin/audit";
 import type { ActionResult } from "@/lib/action-result";
 import { couponSchema, type CouponValues } from "./schemas";
 
@@ -48,6 +49,13 @@ export async function setCouponActiveAction(
     await connectMongoose();
     await CouponModel.updateOne({ code }, { $set: { active } });
     revalidateCoupons();
+    await logAudit({
+      actor: admin,
+      action: "coupon.active",
+      targetType: "coupon",
+      targetId: code,
+      summary: `کد تخفیف «${code}» ${active ? "فعال" : "غیرفعال"} شد`,
+    });
     return { ok: true };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };

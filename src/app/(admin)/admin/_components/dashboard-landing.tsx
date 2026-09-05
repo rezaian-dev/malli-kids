@@ -8,6 +8,7 @@ import { AdminPageHeader, AdminTable } from "@/components/admin";
 import { SalesChart } from "./sales-chart";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { statusTone } from "@/lib/shop/order-status";
+import { variantStockStatus } from "@/lib/shop/inventory";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -30,7 +31,16 @@ export function DashboardLanding({
     .filter((o) => o.pay === "پرداخت‌شده" && o.status !== "مرجوعی")
     .reduce((s, o) => s + o.total, 0);
   const avg = orders.length ? Math.round(sales / orders.length) : 0;
-  const low = products.filter((p) => !p.stock).length;
+  // 🆕 Variant-aware: a product with sized stock counts as needing
+  // attention per size (out-of-stock or low-stock), not just the coarse
+  // boolean — a legacy/unsized product still falls back to that boolean.
+  const low = products.reduce((count, p) => {
+    if (!p.variants.length) return count + (p.stock ? 0 : 1);
+    const needsAttention = p.variants.filter(
+      (v) => variantStockStatus(v.stock) !== "in-stock",
+    ).length;
+    return count + needsAttention;
+  }, 0);
 
   return (
     <div>
@@ -85,9 +95,9 @@ export function DashboardLanding({
             Icon={Users}
           />
           <Stat
-            t="ناموجود"
+            t="کمبود موجودی"
             v={toFaDigits(low)}
-            d="نیازمند تکمیل انبار"
+            d="ناموجود یا موجودی کم"
             Icon={Shirt}
             warn={low > 0}
           />

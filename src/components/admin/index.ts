@@ -8,3 +8,4 @@ export {
 export { AdminStatStrip, type AdminStatItem } from "./admin-stat-strip";
 export { AdminTable } from "./admin-table";
 export type { AdminCol } from "./admin-table";
+export { AdminConfirmDialog } from "./admin-confirm-dialog";

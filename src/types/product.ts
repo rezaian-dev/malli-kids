@@ -2,6 +2,13 @@
 // admin catalog and the data seed.
 
 export type Season = "بهاره" | "تابستانه" | "پاییزه" | "زمستانه";
+export type Gender = "دخترانه" | "پسرانه" | "یونیسکس";
+
+export type ProductVariant = {
+  size: string;
+  color?: string;
+  stock: number;
+};
 
 export type Product = {
   id: number;
@@ -9,15 +16,23 @@ export type Product = {
   images: string[];
   name: string;
   cat: string;
+  gender?: Gender;
+  ageRange?: string;
+  slug?: string;
   price: number;
   old?: number;
   disc?: string;
   rate: number;
   badge?: string;
   stock: boolean;
+  variants: ProductVariant[];
   sold: number;
   season?: Season;
   desc: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  visible: boolean;
+  featured: boolean;
   // 🕒 ISO 8601, real DB rows only (undefined for the static seed catalog) —
   // sitemap's `lastModified` uses it when present instead of "now every time".
   updatedAt?: string;

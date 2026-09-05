@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -42,18 +42,45 @@ const SHIP_ITEM =
   "border-navy/8 dark:border-gold/20 px-2 py-3.5 text-center not-last:border-e";
 const SHIP_ICON = "text-gold mx-auto mb-1 size-4";
 
+/** 📏 A variant-tracked product only ever offers *its own* sizes, each
+ *  disabled once that size's stock hits zero — replaces the one-size-fits-
+ *  all hardcoded list for any product that has real per-size stock. A
+ *  legacy/unsized product keeps the old universal list untouched. */
+function useSizeOptions(product: Product) {
+  return useMemo(() => {
+    if (!product.variants.length) {
+      return SIZES.map((size) => ({ size, available: true }));
+    }
+    const bySize = new Map<string, number>();
+    for (const variant of product.variants) {
+      bySize.set(variant.size, (bySize.get(variant.size) ?? 0) + variant.stock);
+    }
+    return Array.from(bySize.entries()).map(([size, stock]) => ({
+      size,
+      available: stock > 0,
+    }));
+  }, [product.variants]);
+}
+
 export function ProductBuyPanel({ product }: { product: Product }) {
   const { addToCart, showToast, user, setAuthOpen, campaign, priceOf } =
     useStore();
   const router = useRouter();
-  const [size, setSize] = useState("۹۸");
+  const sizeOptions = useSizeOptions(product);
+  const [size, setSize] = useState(
+    () => sizeOptions.find((option) => option.available)?.size ?? sizeOptions[0]?.size ?? "۹۸",
+  );
   const [qty, setQty] = useState(1);
   const [checkout, setCheckout] = useState(false);
+
+  const selectedAvailable =
+    sizeOptions.find((option) => option.size === size)?.available ?? true;
+  const canOrder = product.stock && selectedAvailable;
 
   const unit = priceOf(product.price);
 
   function openCheckout() {
-    if (!product.stock) return showToast("به محض موجود شدن خبرتان می‌کنیم");
+    if (!canOrder) return showToast("به محض موجود شدن خبرتان می‌کنیم");
     if (!user) {
       setAuthOpen(true);
       showToast("برای ثبت سفارش اول وارد شوید");
@@ -165,13 +192,15 @@ export function ProductBuyPanel({ product }: { product: Product }) {
             <Ruler className="text-gold size-4" /> انتخاب سایز
           </p>
           <div className="flex flex-wrap gap-2">
-            {SIZES.map((s) => (
+            {sizeOptions.map(({ size: s, available }) => (
               <button
                 key={s}
                 type="button"
+                disabled={!available}
                 onClick={() => setSize(s)}
                 className={cn(
                   "min-h-10 min-w-10 rounded-xl border-2 px-2.5 py-2 text-[11px] font-bold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95 sm:px-3.5 sm:text-xs",
+                  !available && "cursor-not-allowed opacity-40 line-through",
                   size === s
                     ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep motion-safe:hover:shadow-md"
                     : "border-navy/10 text-navy/70 hover:border-navy/30 dark:border-gold/30 dark:text-ivory dark:hover:border-gold/60",
@@ -217,10 +246,10 @@ export function ProductBuyPanel({ product }: { product: Product }) {
             <Button
               type="button"
               variant="navy"
-              disabled={!product.stock}
+              disabled={!canOrder}
               className={CTA_BUTTON}
               onClick={() => {
-                if (!product.stock)
+                if (!canOrder)
                   return showToast("به محض موجود شدن خبرتان می‌کنیم");
                 // 🔐 `addToCart` gates guests itself (login dialog + toast);
                 // only celebrate success when it actually added the line.
@@ -231,7 +260,7 @@ export function ProductBuyPanel({ product }: { product: Product }) {
               }}
             >
               <ShoppingBag className="size-4" />
-              {product.stock
+              {canOrder
                 ? `افزودن به سبد — سایز ${size} × ${toFaDigits(qty)}`
                 : "ناموجود"}
             </Button>
@@ -239,7 +268,7 @@ export function ProductBuyPanel({ product }: { product: Product }) {
           <Button
             type="button"
             variant="gold"
-            disabled={!product.stock}
+            disabled={!canOrder}
             className={cn("mt-2.5", CTA_BUTTON)}
             onClick={openCheckout}
           >

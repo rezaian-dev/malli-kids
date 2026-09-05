@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { Eye, EyeOff, FilePenLine, LibraryBig, PenLine, Plus, Trash2 } from "lucide-react";
 
 import {
+  AdminConfirmDialog,
   AdminFilterBar,
   AdminFilterSelect,
   AdminStatStrip,
@@ -251,20 +252,21 @@ export function ArticleList({
               >
                 <PenLine className="size-3.5" /> ویرایش
               </Button>
-              <button
-                type="button"
-                onClick={() =>
-                  startTransition(async () => {
-                    const result = await removeArticleAction(article.slug);
-                    if (result.ok) toast.success("مقاله حذف شد");
-                    else toast.error(result.error);
-                  })
+              <AdminConfirmDialog
+                title="حذف این مقاله؟"
+                description={`«${article.title}» برای همیشه حذف می‌شود. این عمل قابل بازگشت نیست.`}
+                successMessage="مقاله حذف شد"
+                onConfirm={() => removeArticleAction(article.slug)}
+                trigger={
+                  <button
+                    type="button"
+                    className="bg-rose/10 text-rose hover:bg-rose/15 grid size-9 shrink-0 place-items-center rounded-xl transition"
+                    aria-label={`حذف ${article.title}`}
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
                 }
-                className="bg-rose/10 text-rose hover:bg-rose/15 grid size-9 shrink-0 place-items-center rounded-xl transition"
-                aria-label={`حذف ${article.title}`}
-              >
-                <Trash2 className="size-4" />
-              </button>
+              />
             </div>
           </article>
         ))}

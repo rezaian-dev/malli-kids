@@ -1,7 +1,9 @@
 import { Check, CircleAlert, EyeOff, Star, Trash2 } from "lucide-react";
+import { AdminConfirmDialog } from "@/components/admin";
 import { cn } from "@/lib/utils";
 import { toFaDigits } from "@/lib/locale/fa";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
+import type { ActionResult } from "@/lib/action-result";
 import type { AdminReview } from "@/types";
 
 const ACTION_BUTTON_BASE =
@@ -10,12 +12,16 @@ const ACTION_BUTTON_BASE =
 /** ⭐ One customer review — publish/unpublish and delete. */
 export function ReviewCard({
   review,
+  selected,
+  onToggleSelect,
   onToggleVisible,
   onRemove,
 }: {
   review: AdminReview;
+  selected?: boolean;
+  onToggleSelect?: () => void;
   onToggleVisible: () => void;
-  onRemove: () => void;
+  onRemove: () => Promise<ActionResult>;
 }) {
   return (
     <article
@@ -33,6 +39,15 @@ export function ReviewCard({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
+              {onToggleSelect ? (
+                <input
+                  type="checkbox"
+                  checked={Boolean(selected)}
+                  onChange={onToggleSelect}
+                  aria-label={`انتخاب نظر ${review.author}`}
+                  className="accent-gold size-4"
+                />
+              ) : null}
               <span
                 className={cn(
                   "inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black",
@@ -127,16 +142,23 @@ export function ReviewCard({
                 </>
               )}
             </button>
-            <button
-              type="button"
-              onClick={onRemove}
-              className={cn(
-                ACTION_BUTTON_BASE,
-                "bg-rose/9 text-rose hover:bg-rose/14",
-              )}
-            >
-              <Trash2 className="size-3.5" /> حذف نظر
-            </button>
+            <AdminConfirmDialog
+              title="حذف این نظر؟"
+              description={`نظر «${review.author}» برای همیشه حذف می‌شود. این عمل قابل بازگشت نیست.`}
+              successMessage="نظر حذف شد"
+              onConfirm={onRemove}
+              trigger={
+                <button
+                  type="button"
+                  className={cn(
+                    ACTION_BUTTON_BASE,
+                    "bg-rose/9 text-rose hover:bg-rose/14",
+                  )}
+                >
+                  <Trash2 className="size-3.5" /> حذف نظر
+                </button>
+              }
+            />
           </div>
         </div>
       </div>

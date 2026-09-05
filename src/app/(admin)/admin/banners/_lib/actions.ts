@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth/admin";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { FestiveBannerModel } from "@/lib/db/models/festive-banner";
 import { FESTIVE_BANNER_TAG } from "@/lib/shop/banners";
+import { logAudit } from "@/lib/admin/audit";
 import type { ActionResult } from "@/lib/action-result";
 import { bannerPatchSchema, type BannerPatch } from "./schemas";
 
@@ -49,6 +50,18 @@ export async function updateBannerAction(
     if (!updated) return { ok: false, error: "بنر پیدا نشد." };
 
     revalidateBanners();
+
+    if ("active" in parsed.data || "pinned" in parsed.data) {
+      await logAudit({
+        actor: admin,
+        action: "banner.publish",
+        targetType: "banner",
+        targetId: id,
+        summary: `بنر «${updated.occasion}» ${
+          parsed.data.active === false ? "غیرفعال شد" : "منتشر/به‌روزرسانی شد"
+        }`,
+      });
+    }
     return { ok: true };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };

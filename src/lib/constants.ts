@@ -26,6 +26,8 @@ export const CATS = [
 
 export { SEASONS } from "@/lib/data/products";
 
+export const GENDERS = ["دخترانه", "پسرانه", "یونیسکس"] as const;
+
 export const SORTS: Record<string, string> = {
   new: "جدیدترین",
   "price-asc": "ارزان‌ترین",

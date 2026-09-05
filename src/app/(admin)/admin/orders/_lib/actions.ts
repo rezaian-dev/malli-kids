@@ -4,11 +4,13 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/admin";
 import { getAllOrders, setOrderStatus } from "@/lib/shop/orders";
 import { createNotification } from "@/lib/shop/notifications";
+import { logAudit } from "@/lib/admin/audit";
 import type { ActionResult } from "@/lib/action-result";
 import type { AdminOrder, OrderStatus } from "@/types";
 
 const AUTH_ERROR = "برای این کار باید ادمین وارد شده باشید.";
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
+const INVALID_TRANSITION_ERROR = "تغییر به این وضعیت از وضعیت فعلی سفارش مجاز نیست.";
 
 /** 🔄 Polled from `AdminOrdersLanding` — a new customer order should show
  *  up in an already-open admin tab without a manual reload. */
@@ -26,13 +28,26 @@ export async function setOrderStatusAction(
   if (!admin) return { ok: false, error: AUTH_ERROR };
 
   try {
-    const order = await setOrderStatus(id, status);
-    if (!order) return { ok: false, error: "سفارش پیدا نشد." };
+    const result = await setOrderStatus(id, status);
+    if (!result.ok) {
+      return {
+        ok: false,
+        error: result.error === "not-found" ? "سفارش پیدا نشد." : INVALID_TRANSITION_ERROR,
+      };
+    }
+    const order = result.order;
 
     await createNotification({
       userId: order.userId,
       kind: "order",
       text: `وضعیت سفارش ${order.id} به «${status}» تغییر کرد`,
+    });
+    await logAudit({
+      actor: admin,
+      action: "order.status",
+      targetType: "order",
+      targetId: order.id,
+      summary: `وضعیت سفارش ${order.id} به «${status}» تغییر کرد`,
     });
 
     revalidatePath("/admin/orders");

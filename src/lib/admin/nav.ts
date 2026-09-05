@@ -2,15 +2,18 @@ import type { ComponentType } from "react";
 import {
   Briefcase,
   Handshake,
+  History,
   Info,
   LayoutGrid,
   Mail,
   Percent,
+  Settings,
   Shirt,
   ShoppingBag,
   Sparkles,
   Star,
   User,
+  UsersRound,
 } from "lucide-react";
 
 export type AdminNavGroupId = "overview" | "commerce" | "content" | "relations";
@@ -60,6 +63,13 @@ export const ADMIN_NAV: AdminNavItem[] = [
     Icon: User,
   },
   {
+    href: "/admin/team",
+    label: "تیم مدیریت",
+    hint: "ادمین‌ها و ارتقا/تنزل",
+    group: "commerce",
+    Icon: UsersRound,
+  },
+  {
     href: "/admin/coupons",
     label: "کد تخفیف",
     hint: "کمپین و نرخ استفاده",
@@ -100,6 +110,20 @@ export const ADMIN_NAV: AdminNavItem[] = [
     hint: "سرنخ‌های تجاری",
     group: "relations",
     Icon: Handshake,
+  },
+  {
+    href: "/admin/audit",
+    label: "تاریخچه عملیات",
+    hint: "رویدادهای حساس",
+    group: "relations",
+    Icon: History,
+  },
+  {
+    href: "/admin/settings",
+    label: "تنظیمات",
+    hint: "کمپین سراسری فروشگاه",
+    group: "relations",
+    Icon: Settings,
   },
 ];
 
