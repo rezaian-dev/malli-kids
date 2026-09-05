@@ -18,10 +18,7 @@ const HomeJournal = dynamic(
   },
 );
 
-// 📚 Defers the embla carousel (below the fold, autoplay) out of the
-// homepage's initial client bundle — the slides themselves stay real,
-// server-rendered content (`HomeJournalSlides`, a DB-backed Server
-// Component) passed in as children by `sections/stories.tsx`.
+// 📚 Defers the embla carousel; slides stay server-rendered children
 export function HomeJournalMount({ children }: { children: ReactNode }) {
   return <HomeJournal>{children}</HomeJournal>;
 }

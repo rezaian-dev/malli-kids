@@ -17,9 +17,7 @@ const SPEC_VALUE = "text-navy dark:text-ivory mt-1 text-sm font-black";
 
 const TRIGGER = "h-auto min-h-9 w-full rounded-full px-1 py-2 text-center text-[10px] leading-4 font-bold whitespace-normal transition-colors min-[360px]:px-2 min-[360px]:text-[11px] sm:min-h-10 sm:w-auto sm:px-5 sm:py-2.5 sm:text-sm sm:whitespace-nowrap text-navy/70 dark:text-wheat data-[state=active]:bg-navy data-[state=active]:font-black data-[state=active]:text-cream dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep";
 
-// 📚 Deferred, client-only product tabs (mounted via `dynamic(ssr:false)` in
-// `product-details-mount.tsx` for bundle-splitting) — `reviews`/`canReview`
-// arrive as server-fetched props, not client fetches.
+// 📚 Deferred client-only tabs; reviews arrive as server-fetched props
 export function ProductDetailsTabs({
   product,
   reviews,

@@ -15,12 +15,7 @@ export type ComboboxProps = {
   emptyText?: string;
   id?: string;
   name?: string;
-  // 🖋️ Defaults to "off" (this is a closed type-ahead list, not free text a
-  // browser should offer to remember) — pass a real token (e.g.
-  // "address-level2" for the city field) to let Chrome's own address
-  // autofill reach this control too. Setting it doesn't touch the custom
-  // filtering/listbox behavior above; it only lets the browser correlate
-  // this field with the rest of a saved address.
+  // 🖋️ "off" by default; a real token (e.g. "address-level2") enables autofill
   autoComplete?: string;
   className?: string;
   invalid?: boolean;
@@ -29,11 +24,8 @@ export type ComboboxProps = {
   "aria-describedby"?: string;
 };
 
-/** ✍️ Type-ahead combobox — the visible field *is* the search box (no
- *  separate popover search input, unlike the old cmdk-style pattern this
- *  replaced): typing filters the suggestion list live, and whatever's
- *  typed is the value whether or not it matches a suggestion — picking one
- *  from the list is a shortcut, never a requirement to submit. */
+// ✍️ Type-ahead combobox — the field is the search box; free text is always
+// a valid value, picking a suggestion is just a shortcut
 export function Combobox({
   value,
   onChange,
@@ -83,8 +75,7 @@ export function Combobox({
         e.preventDefault();
         pick(filtered[active]);
       } else {
-        // ✅ Nothing highlighted (or the list is closed) — Enter just
-        // confirms whatever text is already typed, free-form.
+        // ✅ Nothing highlighted — Enter confirms the typed free-form text
         setOpenState(false);
       }
     } else if (e.key === "Escape") {
@@ -135,10 +126,8 @@ export function Combobox({
           <ChevronDown
             aria-hidden
             onMouseDown={(e) => {
-              // 🖱️ A plain click would blur the input first (closing the
-              // popover via its own onOpenChange) and only then fire this
-              // handler — preventing default keeps focus in the input so
-              // toggling the chevron and toggling by typing feel the same.
+              // 🖱️ preventDefault keeps focus in the input — a plain click
+              // would blur-close the popover first
               e.preventDefault();
               setOpenState(!open);
               inputRef.current?.focus();
@@ -150,10 +139,8 @@ export function Combobox({
 
       <PopoverContent
         align="start"
-        // 🩹 Radix's Popper primitives expose `--radix-popper-anchor-width`
-        // (not `-popover-`) — the wrong name here silently fell through to
-        // `PopoverContent`'s own `w-72`, capping this list at ~288px no
-        // matter how wide the field actually was.
+        // 🩹 Popper (not -popover-) anchor width — the wrong name falls
+        // through to the fixed w-72
         className="w-(--radix-popper-anchor-width) overflow-hidden p-1"
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}

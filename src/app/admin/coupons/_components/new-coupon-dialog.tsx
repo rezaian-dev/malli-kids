@@ -73,11 +73,7 @@ function validateCouponForm(values: CouponFormValues): CouponFormErrors {
   return errors;
 }
 
-/** ➕ The "new coupon" modal form — validates locally, then hands a
- *  ready-to-save `AdminCoupon` up to the caller. Built on the shared Radix
- *  `Dialog` primitive (focus trap, focus return, Escape-to-close, and
- *  `DialogTitle` labelling all come from there — matching every other
- *  dialog/sheet in the app instead of a hand-rolled overlay). */
+// ➕ Validates locally, hands a ready AdminCoupon to the caller
 export function NewCouponDialog({
   open,
   existingCodes,

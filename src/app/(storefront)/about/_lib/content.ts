@@ -1,6 +1,4 @@
-// 📖 About-page copy — used only within this route (page.tsx + its
-// _components/sections), so it lives here instead of the global
-// `lib/data` grab-bag.
+// 📖 About-page copy, route-local
 export const ABOUT = {
   crumb: "درباره ما",
   kicker: "we design happiness ♥",

@@ -23,10 +23,8 @@ export function ShopResults({
   items: Product[];
   activeN: number;
   onReset: () => void;
-  // 🔗 Needed to build each page's real `href` (`toShopHref`) — pagination
-  // must render as crawlable `<a>` links, not JS-only click handlers, or
-  // Googlebot has no way to discover page 2+ at all (see the JavaScript SEO
-  // guidance on link discovery: only `<a href>` is followed).
+  // 🔗 Pagination must be crawlable <a> links — JS-only handlers hide
+  // page 2+ from Googlebot
   state: ShopState;
   page: number;
   pages: number;

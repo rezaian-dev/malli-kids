@@ -1,9 +1,6 @@
 import type { Product } from "@/types";
 
-// 🧱 One row per sellable unit — a variant-tracked product contributes one
-// row per size/color, a legacy (unsized) product contributes a single row
-// that falls back to its plain boolean `stock`. This is what makes the
-// inventory table variant-aware instead of just re-listing products.
+// 🧱 One row per sellable unit — per variant, or one for legacy unsized
 export type InventoryRow = {
   id: string;
   product: Product;

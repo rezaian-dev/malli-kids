@@ -1,7 +1,4 @@
-// 🛠️ Admin-panel domain model (orders, customers, coupons, reviews and
-// articles) — the client-facing shapes every admin server action/data
-// function returns. Real, database-backed reads/writes live in
-// `@/lib/shop/*` and each admin route's own `_lib/`.
+// 🛠️ Admin-panel domain model — shapes returned by admin actions/data
 
 export type OrderStatus =
   "جدید" | "در حال آماده‌سازی" | "ارسال‌شده" | "تحویل‌شده" | "مرجوعی";

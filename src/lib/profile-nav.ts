@@ -1,6 +1,5 @@
-// 🔗 Shared across the header/profile route boundary — see the colocation rule in AGENTS.md.
-// 🩹 Next's <Link> pushState hash nav never fires a native hashchange event, so a same-page
-// hash click wouldn't switch tabs without this custom event.
+// 🔗 Shared across the header/profile boundary (colocation rule in AGENTS.md).
+// 🩹 Link's pushState hash nav never fires hashchange — dispatch it ourselves
 export type ProfileTab = "info" | "orders" | "wishlist" | "support";
 
 export const PROFILE_TAB_EVENT = "profile:tab";

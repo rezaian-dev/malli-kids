@@ -72,11 +72,7 @@ const CHAT_STATUS: Record<ChatStatus, { label: string; cls: string }> = {
 
 type StatusFilter = "all" | ChatStatus;
 
-/** 💬 The live-chat half of the support center — inbox list plus the open
- *  thread, reusing the same polling/chrome/filter vocabulary as tickets.
- *  The list itself is polled once in the parent landing (which also needs
- *  it for the tab badge), so this panel just renders + optimistically
- *  updates the list it's handed. */
+// 💬 Live-chat inbox + open thread; the parent owns the one list poll
 export function AdminChatPanel({
   conversations,
   setConversations,
@@ -324,8 +320,7 @@ function AdminChatThread({
   const conversation = data?.conversation ?? null;
   const messages = useMemo(() => data?.messages ?? [], [data]);
 
-  // 👀 An open thread counts as read — clear the admin unread the moment
-  // customer messages are on screen.
+  // 👀 Open thread counts as read — clear admin unread on screen
   useEffect(() => {
     if (!conversation || conversation.adminUnreadCount === 0) return;
     const last = messages[messages.length - 1];

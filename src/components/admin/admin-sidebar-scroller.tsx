@@ -10,9 +10,7 @@ import {
 } from "react";
 import { cn } from "@/lib/utils";
 
-/** 📜 A slim custom-scrollbar viewport, used for the admin sidebar nav.
- *  The caller wraps this in its own `relative overflow-hidden` box and
- *  draws the top/bottom fade edges there (see `admin-shell.tsx`). */
+// 📜 Slim scrollbar viewport — the caller draws the fade edges
 export function AdminSidebarScroller({
   children,
   className = "",

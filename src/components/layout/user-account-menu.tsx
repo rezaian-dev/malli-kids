@@ -1,10 +1,7 @@
 "use client";
 
-// 🎯 Split out of `user-menu.tsx` so the Radix DropdownMenu + floating-ui
-// code (the two biggest "mostly unused on first load" JS chunks Lighthouse
-// flagged) only ships to signed-in visitors, loaded on demand via
-// `next/dynamic` in the parent — not parsed/evaluated on every guest
-// pageview, which is the majority of storefront traffic. ✨
+// 🎯 Radix DropdownMenu + floating-ui only ship to signed-in visitors,
+// loaded on demand — guests never parse this chunk
 import Link from "next/link";
 import { Heart, Headphones, LogOut, Phone, Truck, User } from "lucide-react";
 import type { User as UserType } from "@/types";

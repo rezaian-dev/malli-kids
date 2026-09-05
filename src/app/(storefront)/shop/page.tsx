@@ -22,8 +22,7 @@ import {
   type ShopPageSearchParams,
 } from "@/lib/shop/shop-state";
 
-// ⚠️ Segment config must be a literal — Turbopack statically extracts this
-// export and rejects a reference (see REVALIDATE.catalog in @/lib/cache).
+// ⚠️ Segment config must be a literal — Turbopack static-extracts it
 export const revalidate = 60;
 
 export async function generateMetadata({
@@ -38,10 +37,7 @@ export async function generateMetadata({
     ...(state.cat !== "همه" ? [state.cat] : []),
     ...(state.season !== "همه" ? [state.season] : []),
   ];
-  // 📄 A self-canonical, indexable page N still needs a title/description
-  // distinct from page 1 — otherwise every page in the sequence reports the
-  // identical <title>, a duplicate-metadata signal Google's guidance warns
-  // against even when the underlying products genuinely differ per page.
+  // 📄 Page N needs its own title — identical titles are a duplicate signal
   const pageSuffix =
     indexable && state.page > 1 ? ` — صفحه ${toFaDigits(state.page)}` : "";
 
@@ -87,8 +83,7 @@ export default async function ShopPage({
     });
   }
 
-  // 🙈 `getAllProducts` is shared with the admin catalog (which needs hidden
-  // rows too) — the storefront is the one consumer that must drop them.
+  // 🙈 getAllProducts serves admin too — only the storefront drops hidden rows
   const catalog = (await getAllProducts()).filter((product) => product.visible);
   const items = filterShopProducts(catalog, state)
     .slice(0, 12)

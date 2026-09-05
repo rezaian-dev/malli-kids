@@ -3,16 +3,8 @@
 import { useEffect, useState } from "react";
 import type { Paged } from "@/types";
 
-/**
- * 📄 Client-side pagination over an in-memory list.
- *
- * The admin data source is a local seeded store, so slicing in memory is the
- * correct scaling strategy here. When this moves to a real API, the same public
- * shape can be backed by server-side range queries without touching call sites.
- *
- * `resetKey` lets a page reset to the first page when its *filter* changes
- * (e.g. search text / active tab) — pass a primitive or a stable stringified key.
- */
+// 📄 Client-side pagination over an in-memory list; resetKey resets to page 1
+// when the filter changes
 export function usePagination<T>(
   items: T[],
   pageSize: number,
@@ -35,8 +27,7 @@ export function usePagination<T>(
 
   const current = Math.min(Math.max(1, page), pageCount);
 
-  // 🍕 A `pageSize`-sized slice (a handful of rows) — cheap enough every
-  // render that memoizing it isn't worth the extra hook.
+  // 🍕 A handful of rows per render — memoizing isn't worth it
   const start = (current - 1) * pageSize;
   const pageItems = items.slice(start, start + pageSize);
 

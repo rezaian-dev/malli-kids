@@ -7,17 +7,11 @@ import { motion, type HTMLMotionProps } from "motion/react";
 
 import { cn } from "@/lib/utils";
 
-// 🪄 `asChild` needs a motion-capable version of Radix's polymorphic Slot —
-// `motion.create()` wraps any ref-forwarding component so it can drive the
-// SAME spring gestures below on whatever element `asChild` renders as
-// (`<Link>`, `<a>`, …), not just a plain `<button>`.
+// 🪄 motion-capable Slot so asChild elements get the same spring gestures
 const MotionSlot = motion.create(Slot.Root);
 
-// 🎬 Interaction is real spring physics now (whileHover/whileTap below), not
-// CSS transitions — a soft rise on hover, a snappy press-down on click, with
-// actual bounce. `prefers-reduced-motion` is handled once, globally, by
-// `MotionProvider` (`reducedMotion="user"` — see components/motion), so no
-// manual motion-safe:/motion-reduce: transform classes are needed here.
+// 🎬 Spring physics, not CSS transitions; MotionProvider handles
+// prefers-reduced-motion globally
 const HOVER_SPRING = { type: "spring", stiffness: 420, damping: 24 } as const;
 const TAP_SPRING = { type: "spring", stiffness: 500, damping: 30 } as const;
 
@@ -75,10 +69,7 @@ function Button({
   }) {
   const Comp = asChild ? MotionSlot : motion.button;
 
-  // 🧭 Dropdown/menu triggers (`aria-haspopup`) skip the press-down — that
-  // gesture reads as "activated", which a trigger only is once its panel
-  // opens; while open (`aria-expanded`) the hover-lift also stays off so the
-  // trigger doesn't float above its own open panel.
+  // 🧭 Triggers skip press-down; while open they skip the hover-lift too
   const isPopupTrigger = props["aria-haspopup"] != null;
   const isExpanded =
     props["aria-expanded"] === true || props["aria-expanded"] === "true";

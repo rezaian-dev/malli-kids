@@ -1,9 +1,7 @@
 import { z } from "zod";
 import { fullName, optHeightCm, optMobile, optText, postalCode } from "@/lib/forms";
 
-// 📍 Set together by the map picker; either both present or both absent —
-// never trusted as-is server-side (`reverseGeocodeAction`/`updateAccountAction`
-// re-validate the range regardless of what the client sends).
+// 📍 Set together by the map picker; re-validated server-side regardless
 const latitude = z.number().min(-90).max(90).optional();
 const longitude = z.number().min(-180).max(180).optional();
 

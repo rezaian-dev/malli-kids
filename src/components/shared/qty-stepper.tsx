@@ -9,9 +9,7 @@ const SIZES = {
   sm: { btn: "size-6.5", icon: "size-3.5", digits: "min-w-5 text-xs" },
 } as const;
 
-/** 🔢 The one qty +/− control — used to be reimplemented once on the PDP
- *  and again in the cart sheet with slightly different sizes/colors/button
- *  order for no real reason. One shape now, two sizes. */
+// 🔢 The one qty +/− control — one shape, two sizes
 export function QtyStepper({
   qty,
   onChange,

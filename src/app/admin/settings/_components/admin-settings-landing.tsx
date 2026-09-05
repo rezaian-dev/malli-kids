@@ -35,12 +35,8 @@ export function AdminSettingsLanding({
   const [supportLabel, setSupportLabel] = useState(support.label);
   const [pending, startTransition] = useTransition();
 
-  // 🔁 `useState(campaign...)` only ever reads its initial value once — a
-  // later render carrying a *changed* `campaign` prop (this page re-rendered
-  // after a navigation, or after this same save's own automatic refresh)
-  // would otherwise leave the form frozen on whatever it showed at first
-  // mount instead of the real current value. Only a real prop change fires
-  // this, so it doesn't fight in-progress typing between renders.
+  // 🔁 Sync the form when the campaign prop changes after mount — useState
+  // never re-reads its initial value
   useEffect(() => {
     setActive(campaign.active);
     setPercent(String(campaign.percent));

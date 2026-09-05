@@ -9,9 +9,7 @@ import { SheetClose } from "@/components/ui/sheet";
 import { QtyStepper } from "@/components/shared/qty-stepper";
 import type { Product } from "@/types";
 
-/** 🛍️ One cart row — thumbnail, qty stepper, remove. Checkout itself is one
- *  action for the whole cart (the sheet's "تکمیل خرید" button), not
- *  per-line — see `CartCheckoutDialog`. */
+// 🛍️ One cart row; checkout is whole-cart, not per-line
 export function CartLineItem({
   item,
   product,
@@ -79,9 +77,7 @@ export function CartLineItem({
           <span className="tabular-nums">
             {formatToman(unitPrice)} تومان
             {originalPrice ? (
-              // ♿ navy/70 (this row's own inherited tone), not `silver` —
-              // silver-on-white is ~2.5:1, below the 4.5:1 minimum; dark
-              // mode keeps `silver`, which already reads fine there.
+              // ♿ navy/70, not silver — silver-on-white fails 4.5:1; dark keeps silver
               <s className="text-navy/70 dark:text-silver ms-1.5 text-[10px]">
                 {formatToman(originalPrice)}
               </s>

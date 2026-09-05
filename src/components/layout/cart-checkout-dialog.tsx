@@ -25,11 +25,7 @@ export type CartCheckoutRow = {
   unitPrice: number;
 };
 
-// 🧾 The one place the *whole cart* becomes a single order — every line
-// submitted together, the way checkout works on every standard storefront.
-// Mirrors `CheckoutDialog`'s single-item layout (same delivery form, coupon
-// field, summary — shared via `useCheckoutDeliveryForm`) with the product
-// card widened into a scrollable line list.
+// 🧾 Whole-cart checkout — mirrors CheckoutDialog via the shared delivery form
 export function CartCheckoutDialog({
   open,
   onOpenChange,

@@ -85,10 +85,8 @@ export function AdminShell({
   counts: initialCounts,
 }: {
   children: ReactNode;
-  /** 🔒 The real, server-verified admin (from `requireAdmin()` in
-   *  `admin/layout.tsx`) — `null` on `/admin/login` itself, where no admin
-   *  session exists yet. Display data only; grants no access by itself —
-   *  every protected page re-checks `requireAdmin()` server-side. */
+  // 🔒 Server-verified admin (null on /admin/login) — display data only;
+  // every page re-checks requireAdmin() itself
   profile: AdminIdentity | null;
   counts: AdminNotifCounts;
 }) {

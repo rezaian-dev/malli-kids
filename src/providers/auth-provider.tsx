@@ -11,13 +11,9 @@ import {
 import { signOutAction } from "@/lib/auth/actions";
 import type { User } from "@/types";
 
-// 🔐 The one client-side mirror of "who's signed in" — seeded from
-// `getSessionUser()` server-side (see `app/layout.tsx`) and only ever
-// updated after a real server action (sign in/up/out, profile edit) already
-// changed the actual session. The server stays the source of truth; this
-// just lets the UI react immediately instead of waiting on a full
-// navigation. `authOpen` (the login/register dialog) rides along here since
-// almost every place that opens it is reacting to `user` being null.
+// 🔐 Client mirror of the session — seeded server-side, only ever updated
+// after a real server action changed the session; the login dialog rides
+// along because openers react to `user` being null
 type Ctx = {
   user: User | null;
   authOpen: boolean;
@@ -39,8 +35,7 @@ export function AuthProvider({
   const [user, setUser] = useState(initialUser);
   const [authOpen, setAuthOpen] = useState(false);
 
-  // 🔐 Called after a server action (sign in/up) already created the real,
-  // httpOnly-cookie-backed session — this only mirrors it into UI state.
+  // 🔐 Mirrors an already-created server session into UI state
   const login = useCallback((nextUser: User) => {
     setUser(nextUser);
     setAuthOpen(false);
@@ -52,7 +47,7 @@ export function AuthProvider({
     [],
   );
 
-  // 🔐 Revokes the real session server-side first, then clears UI state.
+  // 🔐 Revokes the server session first, then clears UI state
   const logout = useCallback(async () => {
     await signOutAction();
     setUser(null);

@@ -3,9 +3,7 @@ import { connectMongoose } from "@/lib/db/mongoose";
 import { Profile } from "@/lib/db/models/profile";
 import type { User } from "@/types";
 
-// 🧩 Shared by every profile action file — kept here (not "use server") so
-// each domain file (account/child/avatar/orders/tickets) can import just the
-// helpers it needs without duplicating the session/persistence boilerplate.
+// 🧩 Shared helpers for the profile action files
 
 export const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 export const AUTH_ERROR = "برای این کار باید وارد حساب‌تان باشید.";

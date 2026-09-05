@@ -1,8 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-/** 🦴 Loading placeholder for `ProductCardGrid` — same rounded-3xl shell,
- *  same `pt-[125%]` image aspect box, same content padding/rows as the real
- *  card, so the grid never shifts once products replace these. */
+// 🦴 Same shell/aspect/padding as the real card — the grid never shifts
 export function ProductCardGridSkeleton() {
   return (
     <div

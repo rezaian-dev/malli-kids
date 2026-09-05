@@ -18,9 +18,7 @@ function sameLine(item: CartItem, id: number, size: string) {
   return item.id === id && item.size === size;
 }
 
-// 🪶 Pure cart math only — no auth gating (see `useAddToCart`) and no
-// localStorage/cookie IO (see `CartStoreProvider`, which owns persistence
-// and is the only place this factory is called).
+// 🪶 Pure cart math — no auth gating, no persistence IO
 export function createCartStore(initialCart: CartItem[]) {
   return createStore<CartState>()((set) => ({
     cart: initialCart,

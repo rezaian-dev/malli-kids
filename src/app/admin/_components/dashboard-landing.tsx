@@ -41,9 +41,7 @@ export function DashboardLanding({
     .filter((o) => o.pay === "پرداخت‌شده" && o.status !== "مرجوعی")
     .reduce((s, o) => s + o.total, 0);
   const avg = orders.length ? Math.round(sales / orders.length) : 0;
-  // 🆕 Variant-aware: a product with sized stock counts as needing
-  // attention per size (out-of-stock or low-stock), not just the coarse
-  // boolean — a legacy/unsized product still falls back to that boolean.
+  // 🆕 Variant-aware attention: per-size stock, boolean fallback for legacy
   const low = products.reduce((count, p) => {
     if (!p.variants.length) return count + (p.stock ? 0 : 1);
     const needsAttention = p.variants.filter(

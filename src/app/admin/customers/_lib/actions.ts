@@ -10,8 +10,7 @@ import type { ActionResult } from "@/lib/action-result";
 import type { AdminCustomer } from "@/types";
 import { getAllCustomers } from "./data";
 
-/** 🔄 Polled from the customers + team landings — signups, blocks, and
- *  role changes show up without a manual reload. */
+// 🔄 Polled by the customers + team landings
 export async function getAllCustomersAction(): Promise<AdminCustomer[]> {
   const admin = await requireAdmin();
   if (!admin) return [];
@@ -66,14 +65,8 @@ export async function setCustomerStatusAction(
   }
 }
 
-/** 👑 Promotes a real customer to admin (`role: "admin"`, via Better Auth's
- *  `admin()` plugin) — the missing half of `guardTarget`'s protection below:
- *  that function only ever *shields* an existing admin from being banned/
- *  removed, nothing in this file could ever create one before this action.
- *  The reverse (demote) lives in `demoteAdminAction` below, guarded by the
- *  minimum-admin-count check instead of this function's own blanket
- *  protection — promote/demote are the one pair of admin-role changes the
- *  ops spec explicitly asks for. */
+// 👑 Promotes a customer to admin (Better Auth admin plugin); demote lives
+// in demoteAdminAction behind the minimum-admin-count check
 export async function promoteCustomerAction(userId: string): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
@@ -131,9 +124,7 @@ export async function removeCustomerAction(userId: string): Promise<ActionResult
   }
 }
 
-/** 🔢 The real `minimum_admin_count >= 1` check behind `demoteAdminAction` —
- *  counts durable admins server-side (never derived from whatever the admin
- *  roster page happens to have loaded on the client). */
+// 🔢 Counts durable admins server-side — never from client-loaded state
 async function countAdmins(): Promise<number> {
   const result = await auth.api.listUsers({
     headers: await headers(),
@@ -142,24 +133,13 @@ async function countAdmins(): Promise<number> {
   return result.users.length;
 }
 
-/** 👇 The other half of `promoteCustomerAction` — demotes an existing admin
- *  back to a regular customer, refusing when it would leave the store with
- *  zero admins. That count check is the actual safeguard; nothing about it
- *  is inferred from what the UI happens to be showing. */
+// 👇 Demotes an admin; refuses when it would leave zero admins
 export async function demoteAdminAction(userId: string): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
 
-  // 🔐 Every admin here is equally privileged (this app's model is flat —
-  // `user`/`admin`, no `super_admin` tier), which is what lets *any* admin
-  // demote *any other* admin as long as one stays behind. Without this
-  // check, that same rule would let an admin demote themselves — not a
-  // vertical-privilege-escalation path (they'd only ever lose access,
-  // never gain it), but a real self-lockout footgun, and exactly the kind
-  // of "can an admin change their own authorization" case a fail-secure
-  // review has to close explicitly rather than leave implicit. `requireAdmin()`
-  // returns the mapped `User` shape (no id), so the real Better Auth id
-  // comes from the session directly — already request-memoized, free here.
+  // 🔐 Flat admin model (no super_admin) lets any admin demote any other —
+  // this check is what stops a self-lockout
   const session = await getSession();
   if (session?.user.id === userId) {
     return { ok: false, error: SELF_DEMOTE_ERROR };

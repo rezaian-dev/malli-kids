@@ -81,7 +81,7 @@ export const fullName = (opts: { required?: boolean } = {}) => {
     .min(required ? 3 : 0, fa.min(3, "نام"))
     .max(60, fa.max(60, "نام و نام خانوادگی"))
     .refine(
-      // ‌ (U+200C, نیم‌فاصله) در نام‌های ترکیبی فارسی خیلی رایج است، مثل «احمدی‌نژاد».
+      // ✍️ U+200C (ZWNJ) is common in compound Persian names like «احمدی‌نژاد»
       (v) => v === "" || /^[\p{L}][\p{L}\s'’.‌-]+$/u.test(v),
       "فقط حروف و فاصله مجاز است",
     )

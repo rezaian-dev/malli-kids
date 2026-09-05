@@ -1,5 +1,4 @@
-// 🛍️ Storefront catalog domain model. Shared across product cards, PDP, shop,
-// admin catalog and the data seed.
+// 🛍️ Storefront catalog domain model
 import type { ProductVariant } from "@/lib/shop/inventory";
 
 export type Season = "بهاره" | "تابستانه" | "پاییزه" | "زمستانه";
@@ -30,13 +29,8 @@ export type Product = {
   seoDescription?: string;
   visible: boolean;
   featured: boolean;
-  // 🧵 Admin-curated "complete the look" pairing — other product ids to
-  // suggest as a matching outfit on this product's page (see
-  // `getCompleteTheLook` in `@/lib/shop/products`). Empty/undefined for most
-  // products; deliberately manual, not algorithmic — a dress+cardigan+shoes
-  // set only means something if a human picked it.
+  // 🧵 Admin-curated "complete the look" ids — manual, not algorithmic
   pairsWith?: number[];
-  // 🕒 ISO 8601, real DB rows only (undefined for the static seed catalog) —
-  // sitemap's `lastModified` uses it when present instead of "now every time".
+  // 🕒 Real DB rows only — sitemap's lastModified uses it when present
   updatedAt?: string;
 };

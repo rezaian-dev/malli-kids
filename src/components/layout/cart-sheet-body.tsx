@@ -35,9 +35,7 @@ import { CartSummary } from "./cart-summary";
 import { CartEmptyState } from "./cart-empty-state";
 import { CartCheckoutMount } from "./cart-checkout-mount";
 
-/** 🛍️ Everything inside the cart sheet panel — lazy-loaded by `CartSheet`
- *  and mounted only while the sheet is open, so the product lookup below
- *  runs on open (fresh prices every time) instead of on every page load. */
+// 🛍️ Lazy-loaded sheet body — prices refresh on every open, not every page
 export function CartSheetBody({
   cart,
   cartCount,
@@ -63,8 +61,7 @@ export function CartSheetBody({
   const [products, setProducts] = useState<Product[]>([]);
   const idsKey = cart.map((item) => item.id).join(",");
 
-  // 🛒 Mounts with the open sheet (Radix unmounts closed content), so this
-  // fetch is pay-per-open — and re-runs if the cart changes mid-open.
+  // 🛒 Pay-per-open fetch — re-runs if the cart changes mid-open
   useEffect(() => {
     let active = true;
     getProductsByIdsAction(cart.map((item) => item.id)).then((list) => {

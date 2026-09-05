@@ -3,7 +3,7 @@ import { ComingSoon } from "./_components/try-on-coming-soon";
 
 export const dynamic = "force-static";
 
-// Pure coming-soon teaser. No studio, API, or client JS.
+// 🧪 Pure coming-soon teaser — no studio, API, or client JS
 export const metadata = buildMetadata({
   title: "پرو مجازی (به‌زودی)",
   description:

@@ -54,9 +54,7 @@ export default async function ProductPage({
   const productId = parseProductRouteId(id);
   const product = await getProductById(productId);
 
-  // 🙈 An admin-hidden product is 404 to every customer/crawler, same as a
-  // product that doesn't exist at all — `visible` has no other enforcement
-  // point between here and the DB read.
+  // 🙈 A hidden product 404s for customers and crawlers alike
   if (!product || !product.visible) notFound();
 
   const canonicalPath = pdpHref(product.id);

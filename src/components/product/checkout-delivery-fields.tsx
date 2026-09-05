@@ -1,10 +1,7 @@
 import { TextField } from "@/components/form";
 
-// ♿ The city/address/phone/postal quartet `CheckoutDialog` (single item)
-// and `CartCheckoutDialog` (whole cart) both render inside the
-// `useCheckoutDeliveryForm` `<AppForm>` — plain `<TextField>`s reading that
-// shared react-hook-form context, same label/inline-error chrome every other
-// form in the app already gets from `<Field>` for free.
+// ♿ The delivery quartet shared by both checkout dialogs, reading the same
+// useCheckoutDeliveryForm context
 export function DeliveryFields() {
   return (
     <>

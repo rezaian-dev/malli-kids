@@ -34,9 +34,7 @@ function toValues(user: User): UpdateAccountValues {
   };
 }
 
-/** 👤 The account-details half of the profile info panel. Seeded straight
- *  from `user` via react-hook-form's `defaultValues` (not a post-mount
- *  `useEffect`) so it's never blank-then-filled on the first render. */
+// 👤 Seeded via defaultValues, not an effect — never blank-then-filled
 export function AccountForm() {
   const { user, updateUser } = useAuth();
   const form = useAppForm({

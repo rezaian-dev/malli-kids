@@ -53,7 +53,7 @@ export function isJalaliFuture(input: string): boolean {
   return target > current;
 }
 
-// 🗓️ Fails closed (counts as past) on a malformed date — money-affecting logic must never treat garbage as "no expiry".
+// 🗓️ Fails closed on malformed dates — money logic must never see garbage as "no expiry"
 export function isJalaliPast(input: string): boolean {
   const value = jalaliParts(input);
   if (!value) return true;

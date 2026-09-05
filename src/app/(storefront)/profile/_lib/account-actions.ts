@@ -34,10 +34,7 @@ export async function updateAccountAction(
   }
 }
 
-// 📐 Biggest → smallest. A level's first present key wins; `essential`
-// levels are never dropped for length (state/city/road/house number are
-// the whole point of the address), the rest go first when trimming, finest
-// (`neighbourhood`) before coarsest (`county`) — see `formatAddress`.
+// 📐 Biggest → smallest; essential levels never drop, finest trims first
 const ADDRESS_LEVELS = [
   { keys: ["state"], essential: true },
   { keys: ["county"], essential: false },
@@ -49,26 +46,13 @@ const ADDRESS_LEVELS = [
   { keys: ["house_number"], essential: true },
 ] as const satisfies readonly { keys: readonly string[]; essential: boolean }[];
 
-// 🏷️ Nominatim's Iranian data prefixes `state`/`county` with their own
-// scope word — "استان تهران" (state), "شهرستان تهران" (county) — while
-// `city` for the same point comes back as plain "تهران". Three different
-// strings, same place, so a plain `Set` of raw values never catches the
-// repeat; stripping this leading word first gets both down to the same
-// "تهران" core for comparison (the raw, prefixed value is still what gets
-// displayed — only the *comparison* is normalized).
+// 🏷️ Nominatim prefixes scope words («استان/شهرستان») — strip them for
+// dedup comparison, keep the raw value for display
 const ADMIN_SCOPE_PREFIX = /^(استان|شهرستان|بخش|دهستان)\s+/;
 const addressCore = (value: string) => value.replace(ADMIN_SCOPE_PREFIX, "");
 
-/** 🧭 Nominatim's own `display_name` reads smallest → biggest (street first,
- *  country last), tacks the postal code on as its own segment, and — for a
- *  point inside a capital like Tehran — repeats the same city name once per
- *  administrative level (`state`/`county`/`city` all boil down to "تهران"),
- *  which blew well past the address field's 160-char cap and read like a
- *  stutter. This instead builds the text from the structured `address`
- *  fields (`addressdetails=1`), province → … → house number: a value whose
- *  core name repeats one already used higher up is folded out, and if it's
- *  still too long the most granular optional levels (neighbourhood/suburb/
- *  district) are dropped first, before falling back to a hard cut. */
+// 🧭 Builds from structured address fields, not Nominatim's display_name —
+// that repeats city names per admin level and blows the 160-char cap
 function formatAddress(
   displayName: string,
   address: Record<string, string> | undefined,
@@ -87,8 +71,7 @@ function formatAddress(
 
   const join = (list: typeof parts) => list.map((p) => p.value).join("، ");
 
-  // ✂️ Drop optional parts finest-first (from the tail, since the array is
-  // biggest → smallest) until it fits, but never touch the essential ones.
+  // ✂️ Drop optional parts finest-first; essential ones stay
   let trimmed = parts;
   while (join(trimmed).length > ADDRESS_MAX_LEN) {
     const i = trimmed.map((p) => p.essential).lastIndexOf(false);
@@ -100,11 +83,8 @@ function formatAddress(
   return text.length > ADDRESS_MAX_LEN ? text.slice(0, ADDRESS_MAX_LEN) : text;
 }
 
-/** 🗺️ Turns a map pin into a text address — called by `AddressMapField`
- *  after the user places/drags the marker or uses GPS. Backed by OSM's free
- *  Nominatim reverse-geocoder: no API key, nothing to configure, unlike the
- *  paid Neshan API this replaced (see git history) — the trade-off is
- *  coarser/less-Persian address text than a paid Iranian provider would give. */
+// 🗺️ Pin → text address via OSM Nominatim: keyless, but coarser and less
+// Persian than a paid Iranian provider would give
 export async function reverseGeocodeAction(
   values: ReverseGeocodeValues,
 ): Promise<ActionResult<{ address: string }>> {
@@ -114,10 +94,7 @@ export async function reverseGeocodeAction(
   const userId = await requireUserId();
   if (!userId) return { ok: false, error: AUTH_ERROR };
 
-  // 🚦 Nominatim's usage policy caps free reverse-geocoding around ~1
-  // req/sec — this per-user throttle (paired with the map's own 600ms
-  // pick-debounce) keeps normal use well inside that even without a shared
-  // global limiter (see `rate-limit.ts`'s single-instance caveat).
+  // 🚦 Nominatim caps ~1 req/sec — per-user throttle stays inside the policy
   const limited = rateLimit(`geocode:${userId}`, {
     windowMs: 60_000,
     max: 20,
@@ -131,9 +108,7 @@ export async function reverseGeocodeAction(
     const res = await fetch(
       `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=fa`,
       {
-        // 📛 Nominatim blocks generic/browser-like callers — its usage
-        // policy requires a real identifying User-Agent (no key needed,
-        // just honesty about who's calling).
+        // 📛 Nominatim requires an identifying User-Agent
         headers: { "User-Agent": `MalliKids/1 (${siteUrl})` },
         signal: AbortSignal.timeout(8000),
       },

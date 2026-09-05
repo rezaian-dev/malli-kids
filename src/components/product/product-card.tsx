@@ -18,12 +18,11 @@ export function ProductCard({
   p: Product;
   view: "grid" | "list";
   aboveFold?: boolean;
-  /** 🎬 فقط در حالت `stack` ورودِ متحرک هنگام تعویض فیلتر را کنترل می‌کند؛
-   *  ورودِ اولیه‌ی کارت همیشه بی‌درنگ است تا رفرش فلش نزند. */
+  // 🎬 Only stack mode animates; the first render is instant (no refresh flash)
   animate?: boolean;
-  /** 🃏 موقعیت کارت در گرید فعلی — فقط برای stagger جزئیِ حالت `stack`. */
+  // 🃏 Grid position — only for the slight stack-mode stagger
   index?: number;
-  /** 🃏 حالت «دستهٔ کارت» برای بازچیدمانِ فیلتر (grid view). */
+  // 🃏 Card-deck mode for filter re-layout (grid view)
   stack?: boolean;
 }) {
   const href = pdpHref(p.id);
@@ -57,12 +56,12 @@ export function ProductCard({
     sold,
     price,
     imageProps,
-    // ⚡ کارت‌های بالای خطِ تا (LCP) حتی در حالت stack هم ورودِ متحرک ندارند.
+    // ⚡ Above-the-fold (LCP) cards never animate, even in stack mode
     animate: animate ?? !aboveFold,
   };
 
-  // 🃏 `stack`/`index` فقط برای grid view معنا دارند (بازچیدمانِ فیلترها)؛
-  // برای اینکه شکلِ props بینِ دو کارت یکی نماند، این شاخه صریح نوشته شده.
+  // 🃏 stack/index are grid-view-only; the explicit branch keeps both cards'
+  // props shape identical
   return view === "list" ? (
     <ProductCardList {...cardProps} />
   ) : (

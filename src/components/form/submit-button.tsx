@@ -14,18 +14,8 @@ export type SubmitButtonProps = Omit<ComponentProps<typeof Button>, "type"> &
     pendingLabel?: ReactNode;
   };
 
-/** 🚦 The one place every `<AppForm>`'s submit button reads react-hook-form's
- *  own `formState.isSubmitting` — true for exactly as long as this form's
- *  async `onSubmit` is in flight (react-hook-form flips it around
- *  `handleSubmit`'s callback automatically; nothing here polls or times
- *  anything out, per the "no timeout/polling hacks" rule).
- *
- *  Disables the button and shows a spinner (+ optional `pendingLabel`) the
- *  moment submission starts, so the idle → editing → submitting → success/
- *  error state machine is visible on every `AppForm`-based form and a
- *  double-click can never fire the same submit twice — without each form
- *  wiring its own `useState`. Must render inside a `<AppForm>` (it reads the
- *  same react-hook-form context `<Field>` does). */
+// 🚦 Every AppForm submit button — reads formState.isSubmitting, disables
+// + spins, so no double-click ever refires; must sit inside <AppForm>
 export function SubmitButton({
   children,
   pendingLabel,

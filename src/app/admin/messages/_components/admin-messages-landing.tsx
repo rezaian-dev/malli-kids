@@ -84,8 +84,7 @@ export function AdminMessagesLanding({
     POLL_MS,
     initialTickets,
   );
-  // 📡 The one live-chat list poll — shared by the tab badge below and the
-  // inbox inside `AdminChatPanel`, so the two never disagree.
+  // 📡 One poll shared by the tab badge and the inbox
   const [conversations, setConversations, refreshConversations] = usePolling(
     getChatConversationsAction,
     POLL_MS,
@@ -105,8 +104,7 @@ export function AdminMessagesLanding({
   const [canned, setCanned] = useState<CannedResponse[]>([]);
   const [cannedOpen, setCannedOpen] = useState(false);
 
-  // 🧑‍💼 Staff + snippets change rarely — one load per visit, refreshed
-  // after the manager edits (not polled like the tickets themselves).
+  // 🧑‍💼 Staff + snippets load once per visit, refreshed after edits
   useEffect(() => {
     getSupportStaffAction().then(setStaff);
     getCannedResponsesAction().then(setCanned);
@@ -120,9 +118,7 @@ export function AdminMessagesLanding({
     notifyAdminMutation();
   }
 
-  // #️⃣ Hash-routed tabs (`/admin/messages#chat`) — survives a refresh and
-  // deep-links from the header bell, with no `useSearchParams` Suspense
-  // boundary needed.
+  // #️⃣ Hash-routed tabs — refresh-safe, no useSearchParams Suspense boundary
   useEffect(() => {
     const sync = () =>
       setTab(window.location.hash === "#chat" ? "chat" : "tickets");
@@ -140,9 +136,7 @@ export function AdminMessagesLanding({
     );
   }
 
-  // 🗓️ `tickets` already arrives newest-first (sorted server-side by the
-  // real `updatedAt`) — "oldest" just reverses that; the other sorts are
-  // the real re-sorts.
+  // 🗓️ Tickets arrive newest-first; "oldest" just reverses
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
     const filtered = tickets.filter((ticket) => {
@@ -165,7 +159,7 @@ export function AdminMessagesLanding({
     if (sort === "most-replies") {
       return [...filtered].sort((a, b) => b.replies.length - a.replies.length);
     }
-    // ⏳ Longest-waiting first — the triage order for a busy support desk.
+    // ⏳ Longest-waiting first — support-desk triage order
     if (sort === "waiting") {
       return [...filtered].sort(
         (a, b) => (b.waitingHours ?? -1) - (a.waitingHours ?? -1),
@@ -265,9 +259,7 @@ export function AdminMessagesLanding({
     });
   }
 
-  // ⚡ A reply/close inside the chat thread updates the inbox list item in
-  // the same breath — the stat strip above moves instantly, not on the
-  // next poll tick.
+  // ⚡ Thread replies update the inbox instantly, not on the next poll
   function conversationChanged(next: ChatConversation) {
     setConversations((current) =>
       current.map((conv) => (conv.id === next.id ? next : conv)),

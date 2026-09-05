@@ -5,11 +5,8 @@ import { ShoppingBag } from "lucide-react";
 import { formatToman } from "@/lib/locale/fa";
 import { Button } from "@/components/ui/button";
 
-/** 📱 A slim purchase bar pinned to the bottom of the screen on small
- *  viewports, shown only once the buy panel's own "افزودن به سبد" button
- *  (`observeId`) has scrolled out of view — tracked with an
- *  `IntersectionObserver` (no scroll-position polling). Desktop never sees
- *  it; the full buy panel is already on screen there. */
+// 📱 Bottom purchase bar on small screens, once the buy button scrolls out
+// (IntersectionObserver, no scroll polling)
 export function ProductStickyBar({
   observeId,
   name,

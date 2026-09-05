@@ -9,13 +9,8 @@ import { cn } from "@/lib/utils";
 import { CLUSTER_H } from "./header-styles";
 import { AccountIcon, TRIGGER_SHELL } from "./account-trigger";
 
-// 🎯 Radix DropdownMenu + floating-ui only ship to signed-in visitors — see
-// the comment in `user-account-menu.tsx`. `Suspense` (not `next/dynamic`'s
-// own `loading` option) so the fallback below can be the *real* button
-// (we already know the avatar/name from the server-rendered `user`) instead
-// of a content-free skeleton: nothing visibly moves or blinks while the
-// dropdown's chunk streams in — only its click-ability "wakes up" a moment
-// later.
+// 🎯 Suspense fallback is the real button — nothing moves while the lazy
+// dropdown chunk streams in; only click-ability wakes up
 const UserAccountMenu = lazy(() => import("./user-account-menu"));
 
 export function UserMenu() {

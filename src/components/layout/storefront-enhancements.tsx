@@ -2,11 +2,8 @@
 
 import dynamic from "next/dynamic";
 
-// 🪶 Every enhancement below is interaction-only (scroll progress, back-to-top,
-// auth dialog, support bubble): nothing paints above the fold on load, so each
-// rides in its own deferred client chunk instead of the initial bundle. All
-// mount `position: fixed` (or render null until used), so their late arrival
-// can never shift layout (no CLS).
+// 🪶 Interaction-only widgets, each in its own deferred chunk — all fixed or
+// null until used, so late arrival can't shift layout
 const ClickProgress = dynamic(
   () => import("./click-progress").then((m) => m.ClickProgress),
   { ssr: false },

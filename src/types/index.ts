@@ -1,6 +1,4 @@
-// 📦 Central barrel for the app's shared domain types. Import shared model types
-// from "@/types"; keep component-local UI/state types colocated with their
-// component.
+// 📦 Barrel for shared domain types; component-local types stay colocated
 
 export * from "./product";
 export * from "./user";

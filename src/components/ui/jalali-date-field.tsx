@@ -53,8 +53,7 @@ export function JalaliDateField({
   const pickerRef = useRef<DatePickerRef | null>(null);
   const [open, setOpen] = useState(false);
 
-  // Escape closes the calendar — captured at the document, before Radix's
-  // own bubble-phase listener, so the dialog behind survives.
+  // 🩹 Document-level capture — close before Radix's bubble-phase listener
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
@@ -122,9 +121,8 @@ export function JalaliDateField({
           if (date.weekDay.index === 6) return { className: "malli-weekend" };
           return {};
         }}
-        // NOTE: deliberately *not* `portal` — a body portal lands outside
-        // Radix's modal dialog, where `body{pointer-events:none}` makes it
-        // unclickable. Inline, the popup lives inside the dialog.
+        // 🩹 No portal — body pointer-events:none inside a modal dialog
+        // would make a portaled popup unclickable
         calendarPosition="bottom-center"
         className="malli-jalali"
         containerClassName="malli-jalali-field"

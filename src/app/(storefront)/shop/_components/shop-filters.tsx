@@ -27,16 +27,13 @@ const STATUS: { label: string; key: keyof ShopState; hint: string }[] = [
 
 const PRICE_STEP = 50_000;
 
-// ♿ brown-mid, not gold, in light mode: gold-on-white sidebar text is
-// ~2.2:1, below the 4.5:1 minimum. Dark mode keeps the original gold,
-// which already passes against the dark sidebar background.
+// ♿ brown-mid in light mode — gold-on-white fails 4.5:1; dark keeps gold
 const SECTION_LABEL =
   "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-brown-mid dark:text-gold uppercase";
 
 const FILTER_CHIP = "h-auto rounded-full border px-3.5 py-1.5 text-xs font-black border-navy/12 bg-white text-navy/70 hover:border-gold/50 hover:bg-sand hover:text-navy data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] data-[state=on]:hover:bg-navy data-[state=on]:hover:text-ivory dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50 dark:hover:bg-navy-light dark:hover:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep dark:data-[state=on]:hover:bg-gold dark:data-[state=on]:hover:text-navy-deep";
 
-/** 🎚️ Search, category, season, status, and price filters — shared by
- *  the desktop sidebar and the mobile filter sheet. */
+// 🎚️ Filters shared by the desktop sidebar and the mobile sheet
 export function ShopFilters({
   state,
   query,

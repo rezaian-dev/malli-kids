@@ -37,11 +37,7 @@ import {
 } from "@/lib/auth/schemas";
 import { onlyDigits, SUBMIT_NAVY, useCooldown } from "./auth-shared";
 
-/** 🔢 Five separate digit boxes standing in for one `code` field — its own
- *  local array so a mid-typed value (box 3 filled, box 2 still empty) never
- *  has to be reconstructed from a single concatenated string. `onChange`
- *  still receives the joined digits, which is all the surrounding
- *  react-hook-form field and its zod schema ever see. */
+// 🔢 Five boxes standing in for one code field; onChange gets joined digits
 function OtpBoxes({
   value,
   onChange,
@@ -129,12 +125,8 @@ function OtpBoxes({
   );
 }
 
-/** 📱 "ورود با کدِ پیامکی" — phone number → 5-digit code, same rhythm as
- *  `ForgotPasswordPanel`'s resend cooldown. No SMS panel is purchased yet
- *  (`requestOtpAction`/`verifyOtpAction` are honest stubs — see their
- *  comments), so this always runs as a clearly-labeled preview and never
- *  pretends to actually sign anyone in. Swapping in a real provider later
- *  only touches those two server actions. */
+// 📱 SMS login preview — the OTP actions are honest stubs until a real
+// provider is wired; only those two server actions change then
 export function OtpLoginPanel() {
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [phone, setPhone] = useState("");
@@ -184,9 +176,7 @@ export function OtpLoginPanel() {
       toast.warning(result.error);
       setShakeSignal((n) => n + 1);
     }
-    // ✅ Once a real SMS provider is wired up, `verifyOtpAction` starts
-    // returning `{ ok: true, data: user }` and this becomes the login call
-    // — nothing above this line needs to change.
+    // ✅ Becomes the real login call once verifyOtpAction returns a user
   }
 
   if (step === "phone") {
@@ -223,14 +213,8 @@ export function OtpLoginPanel() {
   }
 
   return (
-    // 🩹 `animate-fade-up` enters with a `translateY` — transforms count
-    // toward the *ancestor's* scrollable overflow while they're in flight,
-    // and this panel lives inside the auth modal's `overflow-y-auto` body.
-    // Left alone, that 18px of travel briefly makes the modal "taller",
-    // popping a vertical scrollbar in for the animation's ~0.55s then
-    // yanking it back out. This wrapper isn't itself transformed, so it
-    // keeps its rest-state (post-animation) size and clips the transformed
-    // child locally — the overflow never reaches the modal's scroll body.
+    // 🩹 Untransformed wrapper clips the enter animation locally — the
+    // modal's scroll body would otherwise pop a scrollbar mid-animation
     <div className="overflow-hidden">
       <AppForm
         form={codeForm}

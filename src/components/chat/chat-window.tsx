@@ -29,19 +29,16 @@ import {
 } from "@/lib/shop/chat-actions";
 import type { SupportHours } from "@/lib/shop/settings";
 
-// 🪞 Mirrors `CHAT_MESSAGE_MAX_LEN` in `lib/shop/chat.ts` (the server
-// constant can't be imported here — that module pulls in `server-only`).
+// 🪞 Mirrors CHAT_MESSAGE_MAX_LEN in lib/shop/chat.ts (server-only module)
 const MESSAGE_MAX_LEN = 1000;
 const POLL_MS = 4_000;
-// ⌨️ At most one typing heartbeat per 3s — comfortably inside the 6s
-// server window, light on the database.
+// ⌨️ One heartbeat per 3s — inside the 6s server window
 const TYPING_PING_MS = 3_000;
 
 type Status = "live" | "retrying" | "offline";
 
-/** 🪟 The customer chat window — lazy-loaded by `ChatWidget`, so this file
- *  (polling, composer, thread) only ships after the first open. Shows only
- *  server-confirmed messages: no fake success, ever. */
+// 🪟 Customer chat window — lazy-loaded by ChatWidget; server-confirmed
+// messages only, no fake success
 export function ChatWindow({ onClose }: { onClose: () => void }) {
   const [online, setOnline] = useState(() =>
     typeof navigator === "undefined" ? true : navigator.onLine,
@@ -56,8 +53,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
   const [ratingNote, setRatingNote] = useState("");
   const [ratingSending, setRatingSending] = useState(false);
   const [escalating, setEscalating] = useState(false);
-  // 🔁 One id per unsent text — retries replay the SAME id so a lost
-  // response can never turn into a duplicate message server-side.
+  // 🔁 Retries reuse the id — a lost response can't duplicate server-side
   const pendingClientId = useRef<string | null>(null);
   const prevRef = useRef<ChatThread | null>(null);
   const lastAdminId = useRef<string | null>(null);
@@ -65,8 +61,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
   const listRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLInputElement>(null);
 
-  // 🌐 Online/offline is the polling switch — no requests (and no failed
-  // ones) while offline, and an instant refetch the moment we're back.
+  // 🌐 Online/offline gates polling; refetches instantly on reconnect
   useEffect(() => {
     const update = () => setOnline(navigator.onLine);
     window.addEventListener("online", update);
@@ -77,16 +72,14 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
     };
   }, []);
 
-  // 🕘 Support hours load once per window open — they change from the
-  // settings page, not mid-conversation.
+  // 🕘 Support hours load once per open
   useEffect(() => {
     getSupportHoursAction()
       .then(setHours)
       .catch(() => {});
   }, []);
 
-  // 🛡️ `usePolling` doesn't catch — this wrapper never rejects, so a dead
-  // network degrades to a status dot instead of console errors.
+  // 🛡️ usePolling doesn't catch — this wrapper must never reject
   const [data, setData] = usePolling<ChatThread | null>(
     async () => {
       try {
@@ -111,8 +104,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
   const openHours =
     !hours || isWithinSupportHours(new Date(), hours.startHour, hours.endHour);
 
-  // 👀 The thread is on screen — clear the customer's unread (and stamp the
-  // admin messages read) the moment new ones arrive.
+  // 👀 Thread is visible — clear unread as admin messages arrive
   useEffect(() => {
     if (!conversation || conversation.customerUnreadCount === 0) return;
     const last = messages[messages.length - 1];
@@ -128,7 +120,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
     );
   }, [conversation, messages, setData]);
 
-  // 🔊 Screen-reader heads-up when a reply lands (visual users see it).
+  // 🔊 Announce new admin replies to screen readers
   useEffect(() => {
     const admins = messages.filter((m) => m.senderRole === "admin");
     const lastId = admins.length ? admins[admins.length - 1].id : null;
@@ -140,24 +132,20 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
     }
   }, [messages]);
 
-  // ⬇️ New arrivals pin to the bottom; length-keyed so a no-op poll tick
-  // never yanks the scroll position.
+  // ⬇️ Pin to bottom; length-keyed so idle polls don't yank scroll
   useEffect(() => {
     const el = listRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages.length, conversation?.adminTyping]);
 
-  // ⌨️ Focus the composer on open — but only where there is a real
-  // keyboard, so mobile doesn't get a keyboard shoved up uninvited.
+  // ♿️ Focus only with a fine pointer — no uninvited mobile keyboard
   useEffect(() => {
     if (window.matchMedia("(pointer: fine)").matches) {
       composerRef.current?.focus();
     }
   }, []);
 
-  // ⎋ Window-level Escape — closing must work even when focus has left the
-  // dialog (e.g. the send button disables mid-send, dropping focus to the
-  // body), not just while focus is inside it.
+  // ⎋ Window-level Escape — works even when focus left the dialog
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -168,8 +156,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
 
   function onDraftChange(value: string) {
     setDraft(value);
-    // ⌨️ Throttled heartbeat — the admin side shows "writing…" while
-    // these stay fresh; sending clears it server-side.
+    // ⌨️ Throttled heartbeat — keeps the admin "writing…" state fresh
     if (!conversation || !value.trim() || !online) return;
     const now = Date.now();
     if (now - lastPingAt.current < TYPING_PING_MS) return;
@@ -223,7 +210,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
         return;
       }
       toast.success("ممنون از امتیاز شما ⭐");
-      // ⚡ Instant local echo — the next poll confirms it from the server.
+      // ⚡ Optimistic local echo; the next poll confirms
       setData((current) =>
         current?.conversation
           ? {
@@ -542,8 +529,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
                 send();
               }}
               onFocus={(event) => {
-                // 📱 Nudges the composer above the software keyboard where
-                // the OS doesn't resize the layout for it (iOS Safari).
+                // 📱 iOS Safari doesn't resize the layout for the keyboard
                 event.target.scrollIntoView({ block: "nearest" });
               }}
               disabled={sending || !online}

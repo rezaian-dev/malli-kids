@@ -32,9 +32,7 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
       )
     : [];
 
-  // 🔎 The one real "a search happened" moment — a submitted query, a
-  // clicked suggestion, or a picked popular term all funnel through here, so
-  // `recordSearchAction` only ever counts genuine searches, never keystrokes.
+  // 🔎 The one real "search happened" moment — never keystrokes
   function runSearch(value: string) {
     const next = value.trim();
 

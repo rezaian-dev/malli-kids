@@ -7,13 +7,8 @@ import { PRODUCT_GRID } from "@/components/product/card-styles";
 const FILTER_ICON_BADGE =
   "bg-navy text-gold-soft dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl";
 
-/** 🦴 Server-rendered skeleton for the `/shop` route segment — Next's own
- *  `loading.tsx` boundary shows this the instant navigation starts, no
- *  client JS or spinner involved. Mirrors `ShopExplorer`'s real shell
- *  (breadcrumb, sidebar, toolbar, grid) at the same widths/paddings so
- *  nothing shifts once the actual products stream in; the grid always
- *  renders as the default `grid` view (searchParams aren't available here,
- *  and grid is the shop's default). */
+// 🦴 Route-segment skeleton mirroring ShopExplorer's shell — no client JS;
+// always the default grid view (searchParams aren't available here)
 export default function ShopLoading() {
   return (
     <div

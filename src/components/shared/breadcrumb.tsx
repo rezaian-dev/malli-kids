@@ -4,9 +4,8 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { breadcrumbSchema } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
-// Shared breadcrumb: jewel-box pill visuals, auto BreadcrumbList JSON-LD,
-// nav/ol/a11y semantics. Last item renders as current; schema needs paths
-// on every item (schema={false} when the server already emitted it).
+// Shared breadcrumb with auto BreadcrumbList JSON-LD; schema={false} when
+// the server already emitted it
 
 export type CrumbItem = { name: string; path?: string };
 

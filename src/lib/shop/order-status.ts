@@ -16,7 +16,7 @@ export const ORDER_STAGES = [
   "تحویل",
 ] as const;
 
-// 🔒 The real order state machine: forward one step only, or drop to مرجوعی (terminal) from any non-terminal state.
+// 🔒 Forward one step only, or drop to مرجوعی (terminal) from any non-terminal state
 export const ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   جدید: ["در حال آماده‌سازی", "مرجوعی"],
   "در حال آماده‌سازی": ["ارسال‌شده", "مرجوعی"],

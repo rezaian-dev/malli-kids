@@ -60,13 +60,8 @@ export function ProfileHeader({ user }: { user: User }) {
         toast.error(result.error);
         return;
       }
-      // 🩹 Not `updateUser(result.data)` — a Server Action's return value
-      // doesn't reliably carry an explicit `avatar: undefined` back across
-      // the server/client boundary (it arrives with the key simply absent,
-      // which `{...current, ...patch}` then merges as a no-op, leaving the
-      // old picture on screen despite the delete having actually succeeded
-      // server-side). We already know locally what "removed" means, so set
-      // it directly instead of trusting the round-tripped value for it.
+      // 🩹 Set the removed avatar locally — the action's return drops
+      // explicit undefined keys, so a merge would no-op the delete
       updateUser({ avatar: undefined });
       toast.success("عکس پروفایل حذف شد ✅");
     } finally {

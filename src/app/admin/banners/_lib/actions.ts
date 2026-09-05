@@ -24,10 +24,7 @@ const AUTH_ERROR = "برای این کار باید ادمین وارد شده �
 
 function revalidateBanners() {
   revalidatePath("/admin/banners");
-  // 🎉 The storefront's active banner is served from `getActiveBanner()`'s
-  // own `unstable_cache` (tag `FESTIVE_BANNER_TAG`), not from the route's
-  // page/layout cache — this app renders every route dynamically, so
-  // there's no route-level cache entry here for `revalidatePath` to bust.
+  // 🎉 Bust FESTIVE_BANNER_TAG — routes render dynamically, no route cache
   revalidateTag(FESTIVE_BANNER_TAG, "max");
 }
 
@@ -44,9 +41,7 @@ export async function updateBannerAction(
   try {
     await connectMongoose();
 
-    // 📌 Only one banner can be pinned at a time — pinning this one unpins
-    // every other, atomically, on the real collection instead of a full
-    // client-side rewrite of the whole list.
+    // 📌 Pinning unpins every other, atomically on the collection
     if (parsed.data.pinned) {
       await FestiveBannerModel.updateMany(
         { _id: { $ne: id } },

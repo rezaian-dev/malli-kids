@@ -106,9 +106,7 @@ export async function setTicketStatusAction(
   }
 }
 
-/** 🗂️ Category / priority / assignee upkeep — enums re-checked here (the
- *  client only sends ids), and the assignee name is resolved server-side
- *  from the real staff list, never trusted from the client. */
+// 🗂️ Enums re-checked here; assignee name resolved server-side
 export async function updateTicketMetaAction(
   id: string,
   patch: {
@@ -154,9 +152,8 @@ export async function updateTicketMetaAction(
   }
 }
 
-/** 🧑‍💼 Assignable support staff — admins only, id + display name. */
-/** 🧑‍💼 Manual chat assignment — the assignee name resolves from the
- *  staff list wherever it's displayed; only the id is stored. */
+// 🧑‍💼 Assignable staff: admins only, id + display name. Manual chat
+// assignment stores only the id
 export async function setChatAssigneeAction(
   conversationId: string,
   assigneeId: string | null,

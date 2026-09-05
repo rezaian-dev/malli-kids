@@ -11,11 +11,7 @@ import { getMyFavoritesAction } from "@/lib/shop/favorites-actions";
 
 const FavoritesStoreCtx = createContext<FavoritesStore | null>(null);
 
-// 💛 Seeded server-side (see `app/layout.tsx`) so a returning signed-in
-// user's hearts are already filled on first paint. From then on this only
-// reacts to an actual client-side sign-in/sign-out (never on mount, since
-// the seed already matches whoever `initialFavorites` was fetched for):
-// signing in fetches that account's real favorites, signing out clears them.
+// 💛 Server-seeded; swaps only on real client-side sign-in/out
 export function FavoritesStoreProvider({
   children,
   initialFavorites,

@@ -100,10 +100,8 @@ export async function getCompleteTheLook(pairIds: number[]): Promise<Product[]> 
     .filter((p): p is Product => Boolean(p?.visible));
 }
 
-// 🔢 Atomic $inc on a dedicated counter — never "current max + 1" off the live catalog.
-// 🐛 max+1 both races under concurrent creates and reuses ids after a delete, which can
-// briefly serve a deleted product's stale cached data at the reused id. A monotonic
-// counter can't repeat an id, so that can't recur. Seeded from today's real max via $max.
+// 🔢 Atomic $inc on a monotonic counter — max+1 races and reuses ids after
+// deletes, which can serve a deleted product's stale cache
 export async function nextProductId(): Promise<number> {
   const mongoose = await connectMongoose();
   const counters = mongoose.connection.collection<{ _id: string; seq: number }>(

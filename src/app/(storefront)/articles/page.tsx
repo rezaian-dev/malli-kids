@@ -7,14 +7,8 @@ import { buildMetadata, itemListSchema } from "@/lib/seo";
 import { Badge } from "@/components/ui/badge";
 import { ArticlesList } from "./_components/articles-list";
 
-// 🔎 `?tag=<slug>` filters the same list in place — no separate `/articles/
-// tag/[slug]` route. `buildMetadata`'s `path` below stays the fixed
-// `"/articles"` regardless of the query string, so every filtered view
-// canonicalizes back to the one indexable list page instead of search
-// engines treating each tag combination as its own page to crawl/index.
-//
-// ⚠️ Segment config must be a literal — Turbopack statically extracts this
-// export and rejects a reference (see REVALIDATE.editorial in @/lib/cache).
+// 🔎 ?tag= filters in place; canonical stays "/articles" for every view.
+// ⚠️ Segment config must be a literal — Turbopack static-extracts it
 export const revalidate = 3600;
 
 export const metadata = buildMetadata({

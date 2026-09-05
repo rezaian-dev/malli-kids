@@ -52,8 +52,7 @@ export type ArticleDraft = {
   body: string;
   cover: string;
   published: boolean;
-  // 🏷️ `Tag.slug` references — the content taxonomy, distinct from `tag`
-  // (the single fixed editorial category above).
+  // 🏷️ Tag.slug refs — distinct from the fixed editorial category
   tags: string[];
   date?: string;
 };
@@ -73,8 +72,7 @@ const TAG_CHIP = "inline-flex items-center gap-1.5 rounded-full border px-3 py-1
 const TAG_CHIP_SELECTED =
   "bg-navy text-ivory border-navy dark:bg-gold dark:text-navy-deep dark:border-gold";
 
-/** ✍️ Create/edit view — owns its own draft state and saves through the
- *  real article actions, then hands control back via `onDone`. */
+// ✍️ Create/edit view — own draft state, saves via real actions
 export function ArticleEditor({
   initial,
   allTags,

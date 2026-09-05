@@ -35,9 +35,7 @@ function SentCard({ email }: { email: string }) {
   );
 }
 
-/** 🔁 Forgot-password step, swapped into the modal in place of the login
- *  tab: email → "check your inbox" with a resend cooldown, same rhythm as
- *  the rest of the auth flows. */
+// 🔁 Forgot-password step: email → inbox check, with resend cooldown
 export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
   const [sentTo, setSentTo] = useState("");
   const cd = useCooldown();

@@ -12,13 +12,8 @@ type FilterTab = (typeof TABS)[number];
 
 const TRIGGER = "inline-flex min-h-9 items-center justify-center whitespace-nowrap rounded-full px-2.5 text-[11px] font-extrabold text-navy/70 transition-colors min-[360px]:px-4 min-[360px]:text-xs sm:min-h-10 sm:px-5 sm:text-sm dark:text-khaki data-[state=active]:bg-navy data-[state=active]:text-ivory data-[state=active]:shadow-md dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep";
 
-/** 🃏 فیلترِ «استایل‌های منتخب». برخلافِ نسخهٔ قبلی (یک TabsContent جدا به‌ازای
- *  هر تب)، اینجا فقط یک TabsContent وجود دارد که مقدارش همیشه برابرِ تبِ فعال
- *  است — پس Radix هیچ‌وقت آن را unmount نمی‌کند. با تعویضِ فیلتر فقط زیرمجموعهٔ
- *  همان یک گرید عوض می‌شود، برای همین کارت‌های مشترک بین دو تب واقعاً به
- *  موقعیتِ جدیدشان حرکت می‌کنند (layout)، نه اینکه یک لیستِ تازه جایگزینِ قبلی
- *  شود. ترتیب/ورود/خروجِ کارت‌ها خودِ `ProductCardGrid` (حالتِ `stack`) هندل
- *  می‌کند؛ این کامپوننت فقط state و فیلتر است. */
+// 🃏 One TabsContent holding the active tab's subset — shared cards animate
+// to their new positions instead of remounting
 export function StylesFilter({ catalog }: { catalog: Product[] }) {
   const [tab, setTab] = useState<FilterTab>("همه");
   const items = tab === "همه" ? catalog : catalog.filter((p) => p.cat === tab);

@@ -6,10 +6,8 @@ import type { OrderDoc } from "@/lib/db/models/order";
 import { BRAND } from "@/lib/constants";
 import { faDate, formatToman, toFaDigits } from "@/lib/locale/fa";
 
-// 🧾 Historical snapshot — every value comes off the OrderDoc as createOrder wrote it; never re-prices.
-// 🖨️ Uses a headless browser (Playwright) instead of a PDF library because those don't shape
-// Persian/Arabic glyphs correctly; a real browser engine already does. The route rate-limits this
-// since a browser launch is heavier than a library call.
+// 🧾 Historical snapshot — every value off the OrderDoc; never re-prices.
+// 🖨️ Playwright, not a PDF lib — only a real engine shapes Persian glyphs
 
 const FONT_PATH = path.join(
   process.cwd(),

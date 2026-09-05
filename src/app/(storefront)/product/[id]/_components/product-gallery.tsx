@@ -8,8 +8,7 @@ import { EASE_OUT } from "@/components/motion";
 import { cn } from "@/lib/utils";
 import { pdpCard } from "../_lib/product-chrome";
 
-// 🎬 جهتِ ورود/خروجِ اسلاید: از راست وارد می‌شود وقتی رو به جلو می‌رویم،
-// از چپ وقتی رو به عقب.
+// 🎬 Slides enter from the right going forward, from the left going back
 const slideVariants = {
   enter: (dir: number) => ({ x: dir >= 0 ? "100%" : "-100%", opacity: 0 }),
   center: { x: 0, opacity: 1 },

@@ -15,9 +15,7 @@ export const auth = betterAuth({
   database: mongodbAdapter(db),
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL,
-  // ⚡ Avoids hitting Mongo on every getSession() call. Trade-off: a banned
-  // user's cached cookie can still authenticate for up to 30s — intentional,
-  // not a bug to fully close.
+  // ⚡ Skips Mongo per getSession(); a banned user lingers ≤30s — accepted
   session: { cookieCache: { enabled: true, maxAge: 30 } },
   emailAndPassword: {
     enabled: true,

@@ -1,25 +1,16 @@
 import type * as React from "react";
 
-// 🪶 Zero-JS reveal helpers — plain `<div>`s with NO `"use client"` and NO
-// `motion/react` import, so server components that only need the (inert)
-// `Reveal`/`FadeIn`/`Stagger` API ship zero hydration JavaScript for them.
-// Import interactive springs (`TiltCard`, `MagneticGlow`, `MotionProvider`)
-// from `@/components/motion` (→ `./primitives`) instead.
-//
-// ⚡ انیمیشن‌های «ورود» (fades/slideهای گِیت‌شده با هایدریشن و اسکرول) عمداً
-// حذف شده‌اند: چون استایلِ اولیه‌ی `opacity: 0` داخل HTML سرور هم رندر
-// می‌شد، با هر رفرش/ناوبری صفحه اول خالی/کم‌رنگ دیده می‌شد و بعد محتوا
-// تکه‌تکه «پاپ» می‌کرد (فلش و پرش). این کامپوننت‌ها فقط یک div ساده‌اند
-// تا همه‌چیز از همان اولِ پینت کامل و بی‌درنگ دیده شود و ناوبری حسِ SPA
-// داشته باشد.
+// 🪶 Zero-JS reveal helpers — plain `<div>`s, no "use client", no
+// motion/react; interactive springs live in `@/components/motion`.
+// ⚡ Entrance animations are gone on purpose: opacity:0 in server HTML
+// made every navigation flash before content popped in.
 type StaticProps = React.HTMLAttributes<HTMLDivElement> & {
-  /** نگه‌داشته شده برای سازگاری با فراخوانی‌های قبلی — نادیده گرفته می‌شود. */
+  // 🩹 Kept for call-site compatibility — ignored
   delay?: number;
-  /** نگه‌داشته شده برای سازگاری با فراخوانی‌های قبلی — نادیده گرفته می‌شود. */
   y?: number;
 };
 
-/** 🪶 رندرِ بی‌درنگِ محتوا (قبلاً: ورودِ «محو + بالا آمدن» هنگام اسکرول). */
+// 🪶 Renders content instantly
 export function Reveal({
   children,
   className,
@@ -36,7 +27,7 @@ export function Reveal({
   );
 }
 
-/** 👁️ رندرِ بی‌درنگِ محتوا (قبلاً: محو شدن هنگام رسیدن به دید کاربر). */
+// 👁️ Renders content instantly
 export function FadeIn({ children, className, delay, ...rest }: StaticProps) {
   void delay;
   return (
@@ -46,7 +37,7 @@ export function FadeIn({ children, className, delay, ...rest }: StaticProps) {
   );
 }
 
-/** 🎼 آبشاری (stagger): پدر با `Stagger` و هر فرزند با `StaggerItem` بسته می‌شود. */
+// 🎼 Stagger API kept as plain divs
 export function Stagger({
   children,
   className,
@@ -71,9 +62,7 @@ export function StaggerItem({
   );
 }
 
-/** 🧭 رندرِ بی‌درنگِ محتوای هر صفحه — بدون فیدِ route-change تا تعویض مسیر
- *  فلش نزند و حسِ SPA حفظ شود (قبلاً کل صفحه با `key={pathname}` ری‌ماونت و
- *  از `opacity: 0` فید می‌شد). */
+// 🧭 Instant page content — no route-change fade, SPA feel
 export function PageReveal({
   children,
   className,
@@ -84,8 +73,7 @@ export function PageReveal({
   return <div className={className}>{children}</div>;
 }
 
-/** 🧢 سربرگ بی‌درنگ و کامل رندر می‌شود (قبلاً هنگام بارگذاری از بالا سُر
- *  می‌خورد پایین و با PageReveal ترکیب می‌شد تا کل صفحه چشمک بزند). */
+// 🧢 Header renders instantly, fully visible
 export function HeaderEnter({
   children,
   className,

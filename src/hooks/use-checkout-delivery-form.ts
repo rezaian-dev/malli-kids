@@ -10,17 +10,9 @@ import { checkCouponAction } from "@/lib/shop/checkout-actions";
 import type { AppliedCoupon } from "@/lib/shop/coupons";
 import type { User } from "@/types";
 
-/** 🧾 The delivery-form + coupon state shared by `CheckoutDialog` (single
- *  item) and `CartCheckoutDialog` (whole cart) — both dialogs mirror each
- *  other's city/address/phone/postal fields, coupon flow, and
- *  idempotency-key handling. What stays in each dialog instead: the actual
- *  submit call (different action + payload shape per dialog) and the
- *  item-summary markup (single product card vs a scrollable row list).
- *
- *  Field validation goes through the app's usual react-hook-form + zod combo
- *  (`useAppForm`) instead of a hand-rolled checker — `<DeliveryFields>` is
- *  just `<TextField>`s reading this `form`, same as every other form in the
- *  app. */
+// 🧾 Delivery-form + coupon state shared by both checkout dialogs; each
+// keeps only its own submit call and item markup. Validation is the usual
+// react-hook-form + zod combo
 export const deliverySchema = z.object({
   city: z.string().trim().min(2, "شهر را بنویسید").max(60),
   address: z.string().trim().min(10, "آدرس کامل را بنویسید").max(300),
@@ -64,10 +56,7 @@ export function useCheckoutDeliveryForm({
   const [applied, setApplied] = useState<AppliedCoupon | null>(null);
   const [couponBad, setCouponBad] = useState(false);
   const [couponPending, startCouponTransition] = useTransition();
-  // 🔁 One key per checkout attempt — a double-click or a retried request
-  // while this same dialog is open reuses it, so the server collapses them
-  // into the one order; reopening the dialog for a new purchase gets a
-  // fresh key.
+  // 🔁 One idempotency key per attempt while this dialog is open
   const [idempotencyKey, setIdempotencyKey] = useState(() =>
     crypto.randomUUID(),
   );

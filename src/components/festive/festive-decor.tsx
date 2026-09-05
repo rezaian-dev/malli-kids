@@ -12,11 +12,7 @@ const STARS = [
   { top: "66%", left: "91%", size: "size-1.5", delay: ".45s" },
 ];
 
-/** ✨ Layered premium decor for the festival strip — a static texture plus
- *  slow ambient motion only (everything is `motion-reduce`-gated and
- *  absolutely positioned inside an `overflow-hidden` frame, so it can never
- *  shift layout). `tone` matches the branch background: gold campaign strips
- *  get light decor, navy/night strips get gold decor. */
+// ✨ Ambient festival-strip decor — reduced-motion-gated, never shifts layout
 export function FestiveDecor({ tone = "dark" }: { tone?: "dark" | "light" }) {
   const light = tone === "light";
   return (

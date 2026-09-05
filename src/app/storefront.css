@@ -1,26 +1,12 @@
-/* 🛍️ Tailwind entry for the storefront route group only — see `admin.css`
-   for the counterpart. Each route group gets its own Tailwind compilation
-   (rather than one project-wide `globals.css`) so a storefront page's CSS
-   doesn't carry the admin dashboard's tables/charts/rich-editor utility
-   classes, and vice versa — that shared-bundle CSS was ~330KB of mostly
-   unused-per-page rules (see the `@source not` below), enough to be a
-   render-blocking Lighthouse Performance hit on every single page. Imported
-   from `(storefront)/layout.tsx` (and the root `not-found.tsx`, which is
-   customer-styled) — never import this from an admin file. */
+/* 🛍️ Storefront-only Tailwind entry — per-route-group compilation keeps
+   admin CSS out (see admin.css); never import from an admin file */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./theme.css";
 
-/* 👤 Account/user menu (`UserAccountMenu`'s `DropdownMenuContent`) — a
-   deliberate, standalone entrance/exit in place of the shared
-   `DropdownMenuContent` default (a plain 100ms zoom/fade), scoped to this
-   one instance via its own class rather than changing every dropdown in the
-   app. `!important` is intentional here, not sloppiness: it's the only way
-   to reliably win over the base component's own hardcoded animate-in/out
-   utility classes regardless of Tailwind's class-merge ordering. Radix's
-   `Presence` already measures the real animation duration before unmounting
-   the closed panel, so the exit keyframe is guaranteed to finish playing —
-   no timer/`setTimeout` needed. */
+/* 👤 Standalone entrance/exit for this one dropdown — !important is the
+   only reliable win over the base animate utilities; Radix Presence waits
+   for the exit before unmounting, no timer needed */
 .account-menu-panel[data-state="open"] {
   animation: userMenuIn 0.22s cubic-bezier(0.22, 1, 0.32, 1) both !important;
 }
@@ -34,13 +20,7 @@
   }
 }
 
-/* 🚫 `src/app/admin/**` and the admin-only component tree are never
-   imported from storefront code (verified: no cross-imports either way) —
-   excluding them from this entry's scan keeps admin-exclusive utility
-   classes (dense data tables, the Tiptap editor, the sales chart, arbitrary
-   `text-[9px]`/`shadow-[...]` values found nowhere else) out of every
-   storefront page's CSS. Everything else (shared `components/ui`, `form`,
-   `layout`, `shared`, `product`, `auth`, all of `lib`) stays on the default
-   full-project scan, so nothing shared silently goes missing. */
+/* 🚫 No admin imports from storefront code — excluding admin keeps its
+   exclusive utilities out of storefront CSS */
 @source not "./admin";
 @source not "../components/admin";

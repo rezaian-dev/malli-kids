@@ -1,10 +1,6 @@
-/** 🧊 How pages render — one place a teammate can read.
- *
- *  SSG   `dynamic = "force-static"`  about, terms, FAQ, policies (HTML at build)
- *  ISR   `revalidate` below          catalog / merch / magazine
- *  SSR   `dynamic = "force-dynamic"`  cart account, admin
- *
- *  Catalog 60s is the usual fashion-shop window (stock + price). */
+// 🧊 How pages render — one place a teammate can read.
+// SSG force-static: about/terms/FAQ/policies · ISR revalidate: catalog/merch/magazine
+// SSR force-dynamic: cart/account/admin. Catalog 60s = stock + price window.
 export const REVALIDATE = {
   catalog: 60,
   merch: 300,

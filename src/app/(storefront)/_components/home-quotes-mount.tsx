@@ -18,9 +18,7 @@ const HomeQuotes = dynamic(
   },
 );
 
-// 📚 Defers the embla carousel (below the fold, autoplay) out of the
-// homepage's initial client bundle — the reviews themselves are real,
-// server-fetched data passed down from `sections/reviews.tsx`.
+// 📚 Defers the embla carousel; reviews arrive as server-fetched children
 export function HomeQuotesMount({ reviews }: { reviews: AdminReview[] }) {
   return <HomeQuotes reviews={reviews} />;
 }

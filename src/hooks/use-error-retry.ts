@@ -3,9 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useTransition } from "react";
 
-/** 🧯 Next.js `reset()` only re-renders the error boundary. Pair it with
- *  `router.refresh()` so RSC data is fetched again — otherwise the button
- *  looks dead. A hard reload is the last resort when the segment is stuck. */
+// 🧯 reset() + router.refresh() — a bare reset leaves RSC data stale
 export function useErrorRetry(reset: () => void) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();

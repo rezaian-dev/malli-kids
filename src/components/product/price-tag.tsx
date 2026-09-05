@@ -17,9 +17,7 @@ export function PriceTag({
   const { campaign } = useCampaign();
   const resolved = resolvePrice({ price, old }, campaign);
 
-  // 🏷️ The one and only discount indicator a card shows — no separate
-  // image-header badge, so there's exactly one render path and it can't
-  // ever end up duplicated or disagreeing with itself.
+  // 🏷️ The card's one discount indicator — single render path, never duplicated
   if (resolved.original && resolved.percent) {
     return (
       <span

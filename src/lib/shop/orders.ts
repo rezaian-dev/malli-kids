@@ -78,19 +78,19 @@ function isDuplicateKeyError(error: unknown): boolean {
   );
 }
 
-// 🆔 Timestamp-based, so same-millisecond checkouts can collide — the retry loop below regenerates instead of 500ing.
+// 🆔 Timestamp-based ids collide within a millisecond — the retry loop regenerates
 function newOrderId(): string {
   return `MK-${Date.now().toString(36).slice(-5).toUpperCase()}`;
 }
 
-// Only an id collision retries with a fresh code — an idempotencyKey collision means this attempt already won.
+// 🆔 Only an id collision retries fresh — an idempotencyKey collision means this attempt already won
 function isOrderIdCollision(error: unknown): boolean {
   if (!isDuplicateKeyError(error)) return false;
   const keyValue = (error as { keyValue?: Record<string, unknown> }).keyValue;
   return !!keyValue && "id" in keyValue && !("idempotencyKey" in keyValue);
 }
 
-// 📦 Atomic check-and-decrement — the actual overselling fix; succeeds only if stock still covers it at write time.
+// 📦 Atomic check-and-decrement — the overselling fix; stock must cover at write time
 async function decrementVariantStock(
   productId: number,
   size: string,
@@ -125,7 +125,7 @@ async function restockVariant(productId: number, size: string, qty: number) {
   }
 }
 
-// ↩️ Puts variant stock back on cancel/return; legacy unsized products never had it decremented, so they're skipped.
+// ↩️ Restocks variant stock on cancel/return; legacy unsized products are skipped
 async function restockOrderItems(items: OrderDoc["items"]) {
   for (const item of items) {
     const product = await ProductModel.findOne({ id: item.id }).lean();
@@ -138,9 +138,8 @@ export type CreateOrderResult =
   | { ok: true; order: AdminOrder }
   | { ok: false; outOfStock: string; couponExhausted?: boolean };
 
-// 🧾 Idempotent via idempotencyKey (unique+sparse index closes the race); atomically
-// decrements variant stock per item, rolling back earlier decrements if a later one fails;
-// reserves coupon usage atomically before insert; retries up to 3x on an order-id collision.
+// 🧾 Idempotent creation: atomic per-item stock decrement with rollback,
+// atomic coupon reservation, id-collision retries
 export async function createOrder(
   input: CreateOrderInput,
 ): Promise<CreateOrderResult> {
@@ -220,7 +219,7 @@ export async function createOrder(
 
       return { ok: true, order: toAdminOrder(doc.toObject()) };
     } catch (error) {
-      // Same-millisecond MK-XXXXX collision — nothing was written; regenerate and retry.
+      // 🔁 Same-millisecond collision — nothing written; regenerate and retry
       if (isOrderIdCollision(error)) continue;
 
       await rollback();
@@ -229,14 +228,14 @@ export async function createOrder(
         const existing = await OrderModel.findOne({
           idempotencyKey: input.idempotencyKey,
         }).lean();
-        // The winner holds the one real reservation — this loser's was already rolled back above.
+        // 🏁 The winner holds the one real reservation; this loser's was rolled back
         if (existing) return { ok: true, order: toAdminOrder(existing) };
       }
       throw error;
     }
   }
 
-  // Three collisions in a row is essentially impossible — roll back and fail loudly instead of looping.
+  // 🛑 Three collisions is essentially impossible — roll back and fail loudly
   await rollback();
   throw new Error("createOrder: order id collision");
 }

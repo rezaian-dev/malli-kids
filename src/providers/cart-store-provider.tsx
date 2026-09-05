@@ -12,10 +12,7 @@ import {
   writeJsonCookie,
 } from "@/lib/storefront-state";
 
-// 📦 Every localStorage read below is "parse this key's JSON, sanitize it,
-// fall back to what we already have if anything goes wrong" — private
-// browsing, a corrupted value, whatever. One generic reader instead of a
-// near-identical try/catch per key.
+// 📦 Generic reader — every key safely falls back on corruption
 function readLocalCart(scope: string, current: CartItem[]): CartItem[] {
   try {
     const raw = window.localStorage.getItem(cartStorageKey(scope));
@@ -25,10 +22,7 @@ function readLocalCart(scope: string, current: CartItem[]): CartItem[] {
   }
 }
 
-// 🧹 Pre-namespacing builds wrote one shared `malli_cart` key regardless of
-// who was signed in — the exact leak this scoping fixes. Sweep it once so a
-// stale copy of someone's cart can't sit in a shared browser's storage
-// forever even though nothing reads that key anymore.
+// 🧹 Sweep the pre-namespacing shared `malli_cart` key once
 function clearLegacyCartStorage() {
   try {
     window.localStorage.removeItem(STORAGE.cart);
@@ -40,11 +34,8 @@ function clearLegacyCartStorage() {
 
 const CartStoreCtx = createContext<CartStore | null>(null);
 
-// 🪶 Owns the one thing `cart-store.ts` deliberately doesn't: persistence.
-// Starts from the server's cookie-bootstrapped snapshot (no empty-cart
-// flash), then on mount lets a real localStorage value (if any) win, and
-// from then on mirrors every change back into both localStorage and a
-// cookie (so the *next* SSR render can bootstrap from it too).
+// 🪶 Owns persistence: SSR cookie snapshot first (no empty-cart flash),
+// localStorage wins on mount, then mirrors to both stores
 export function CartStoreProvider({
   children,
   initialCart,
@@ -57,9 +48,7 @@ export function CartStoreProvider({
   storeRef.current ??= createCartStore(initialCart);
   const store = storeRef.current;
 
-  // 🔐 Which identity's cart is currently loaded — starts at whatever the
-  // server already resolved `initialCart` for, kept in a ref (not state)
-  // purely to compare against on the next scope change below.
+  // 🔐 Loaded identity — compared on the next scope change
   const scopeRef = useRef(cartScopeOf(user));
   const readyRef = useRef(false);
 
@@ -69,10 +58,7 @@ export function CartStoreProvider({
     readyRef.current = true;
   }, [store]);
 
-  // 🔐 Login and logout both change *whose* cart this browser should show.
-  // Swap straight to that identity's own saved cart (empty if it has none)
-  // the moment `user` changes — never keep rendering, or persisting under
-  // the new identity's key, whatever the previous identity's cart held.
+  // 🔐 Login/logout swaps to the new identity's cart immediately
   useEffect(() => {
     const nextScope = cartScopeOf(user);
     if (nextScope === scopeRef.current) return;

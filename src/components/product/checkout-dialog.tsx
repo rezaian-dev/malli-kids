@@ -19,10 +19,7 @@ import {
 import { DeliveryFields } from "./checkout-delivery-fields";
 import { cn } from "@/lib/utils";
 
-// 🧾 The one single-item "buy now" checkout — opened from the product page's
-// buy panel *and* from a cart line's own "ثبت سفارش" action (see
-// `CheckoutMount`), so it lives here in the shared `components/product`
-// tree rather than under either route's own `_components`.
+// 🧾 Single-item checkout — shared by the product page and cart lines
 export function CheckoutDialog({
   open,
   onOpenChange,
@@ -54,10 +51,8 @@ export function CheckoutDialog({
     deliveryPayload,
   } = useCheckoutDeliveryForm({ open, user, subtotal });
 
-  // 🚚 Shipping is decided by the *post-discount* subtotal, same as the
-  // server (`createOrder` in `lib/shop/orders.ts`) — a coupon big enough to
-  // drop the order back under the free-shipping line must show shipping
-  // here too, or this summary promises a total the server won't charge.
+  // 🚚 Shipping keys off the post-discount subtotal, matching the server —
+  // otherwise this summary would promise a total the server won't charge
   const shipping =
     subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
 
@@ -156,9 +151,7 @@ export function CheckoutDialog({
                 setCouponBad(false);
               }}
               onKeyDown={(e) => {
-                // 🚫 The coupon field has its own action (apply, not submit
-                // the order) — stop Enter here before it bubbles to the
-                // form's own submit handler above.
+                // 🚫 Enter applies the coupon; stop it before the form submits
                 if (e.key !== "Enter") return;
                 e.preventDefault();
                 applyCoupon();

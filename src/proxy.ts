@@ -2,17 +2,9 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { parseProductRouteId } from "@/lib/data/products";
 
-// 👀 "Recently viewed" storage — deliberately just a cookie, not a DB
-// collection. It's the same trade-off browsers themselves make for history:
-// per-browser, not per-account, so a guest and a signed-in user on the same
-// browser share one list, but no user's server-side data ever mixes with
-// another's (there IS no server-side data — nothing to leak). Reading it is
-// a zero-query Server Component read (`recently-viewed.tsx`); this is the
-// only place that ever writes it. Runs here (not a page/action) because
-// Next only allows setting cookies from a Proxy/Route Handler/Server
-// Function, never during a Server Component's render (see the `cookies()`
-// docs) — and Proxy is the one of those three that runs on every real page
-// view for free, no client JS or extra round trip involved.
+// 👀 "Recently viewed" — a per-browser cookie, not per-account: no
+// server-side data to leak. Written here because only a Proxy/Route
+// Handler may set cookies, and Proxy runs on every page view for free.
 const COOKIE_NAME = "mk_recent";
 const MAX_ITEMS = 10;
 const MAX_AGE = 60 * 60 * 24 * 180; // ~6 months

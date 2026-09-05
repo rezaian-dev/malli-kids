@@ -134,10 +134,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((product) => product.visible)
     .map((product) => ({
       url: absoluteUrl(pdpHref(product.id)),
-      // 🕒 The product's real last-write time when we have it (every DB row
-      // does; only the static seed catalog wouldn't) — a sitemap that reports
-      // every URL as "modified right now" on every regeneration is a signal
-      // crawlers learn to discount.
+      // 🕒 Real last-write time when available — "always now" teaches
+      // crawlers to discount the sitemap
       lastModified: product.updatedAt ?? now,
       changeFrequency: "weekly",
       priority: 0.75,

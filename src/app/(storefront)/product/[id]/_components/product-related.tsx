@@ -4,10 +4,7 @@ import { cn } from "@/lib/utils";
 import { getRelatedProducts } from "@/lib/shop/products";
 import { pdpCard, pdpKicker } from "../_lib/product-chrome";
 
-// 🧵 Own async Server Component so its `getRelatedProducts` fetch can be
-// wrapped in `<Suspense>` by the caller — the main product panel streams in
-// immediately instead of waiting on this (below-the-fold, non-critical)
-// second database round trip.
+// 🧵 Own async Server Component so the main panel streams in first
 export async function ProductRelated({
   cat,
   excludeId,

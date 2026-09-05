@@ -54,10 +54,8 @@ export type FieldShellProps = {
   }) => ReactNode;
 };
 
-/** 🐚 The label + validation-shell + error/hint chrome every field type
- *  renders inside. `children` is a render-prop that gets the bound
- *  react-hook-form field — the field *types* below never call a hook
- *  themselves, only this shell does. */
+// 🐚 Shared field chrome — the render-prop child gets the bound field, so
+// field types never call hooks themselves
 export function Field({
   name,
   label,

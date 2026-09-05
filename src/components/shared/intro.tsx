@@ -50,11 +50,7 @@ export function Intro({
               />
             </StaggerItem>
             {kicker ? (
-              // ♿ brown-mid, not gold: this kicker sits on the same
-              // white/cream card as the header logo fix, so it fails
-              // contrast the same way (~2.2:1 vs the 4.5:1 minimum).
-              // `Intro` is the shared page-header for most storefront
-              // pages, so this one line covers all of them at once.
+              // ♿ brown-mid, not gold — gold-on-white fails 4.5:1 (shared header)
               <StaggerItem>
                 <p className="text-brown-mid dark:text-gold mt-5 text-[11px] font-black tracking-[0.22em]">
                   {kicker}

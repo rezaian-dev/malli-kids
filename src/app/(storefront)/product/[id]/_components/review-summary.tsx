@@ -13,9 +13,7 @@ function starDistribution(ratings: number[]) {
   });
 }
 
-/** 📊 Average score, real per-star distribution, and the "would recommend"
- *  donut — all computed from the actual reviews passed in, nothing
- *  fabricated. */
+// 📊 All computed from real reviews, nothing fabricated
 export function ReviewSummary({
   avg,
   count,

@@ -19,9 +19,7 @@ import {
   reviewSchema,
 } from "../_lib/product-review-schema";
 
-// ✍️ Review form with lightweight validation. `canReview` (has this session's
-// user actually purchased this product?) is resolved server-side and passed
-// down as a prop — no client round-trip needed to gate the form.
+// ✍️ canReview resolved server-side — no client round-trip to gate the form
 export function ProductReviewForm({
   product,
   canReview,

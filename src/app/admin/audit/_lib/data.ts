@@ -15,9 +15,7 @@ export type AuditEntry = {
 
 const LIMIT = 200;
 
-/** 🧾 Newest-first, capped — this is a small targeted trail (see
- *  `@/lib/admin/audit`), not a paged enterprise log, so one bounded read is
- *  enough. */
+// 🧾 Newest-first, capped — a targeted trail, not a paged log
 export async function getAuditLog(): Promise<AuditEntry[]> {
   await connectMongoose();
   const docs = await AuditLogModel.find()

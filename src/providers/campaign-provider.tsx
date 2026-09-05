@@ -4,12 +4,8 @@ import { createContext, useContext, type ReactNode } from "react";
 import type { StoredCampaign } from "@/lib/storefront-state";
 import type { FestiveBanner as BannerItem } from "@/types";
 
-// 🎉 `campaign`/`banner` are real, server-computed values (see
-// `app/layout.tsx` — `@/lib/shop/settings`, `@/lib/shop/banners`), fresh on
-// every navigation and never mutated client-side. This just hands them down
-// to the client components that need them (`PriceTag`, `ProductBuyPanel`,
-// `FestiveBannerBody`) without threading them through every intermediate
-// component as props — a plain read-only context, no state, no setters.
+// 🎉 Read-only context — hands server-computed campaign/banner values down
+// without prop-threading
 type Ctx = { campaign: StoredCampaign; banner: BannerItem | null };
 
 const CampaignCtx = createContext<Ctx | null>(null);

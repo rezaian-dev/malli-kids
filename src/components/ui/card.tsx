@@ -3,14 +3,7 @@ import { Slot } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 
-// 🗂️ The shared "card" shell — every route used to hand-roll its own
-// `rounded-2xl border ...` div with slightly different radius/padding; this
-// is the one primitive, styled with the same neutral `bg-card`/`border`
-// tokens as `Dialog`/`Sheet`, that every one of those call sites now
-// overrides via `className` the same way they already override Dialog's.
-// `asChild` (same pattern as `Button`/`Badge`) renders the card's classes
-// onto a passed-in element instead — a whole card that's itself a `Link`,
-// same as `<Button asChild><Link/></Button>` elsewhere in this app.
+// 🗂️ The one shared card shell (asChild works like Button's)
 function Card({
   className,
   asChild = false,

@@ -9,8 +9,7 @@ export function Face({
   className,
 }: {
   src?: string;
-  /** Accessible label only now — no picture means a clean person-icon
-   *  silhouette, not a text initial (see `AvatarFallback` below). */
+  // ♿️ Label only — the fallback shows a person-icon, not an initial
   letter: string;
   className?: string;
 }) {
@@ -18,18 +17,11 @@ export function Face({
     <Avatar
       className={cn(
         "ring-gold dark:ring-gold-soft ring-2",
-        // ✨ A quiet, always-on glow (not just on hover) so the avatar reads
-        // as the header's one "premium" accent — cheap (a static box-shadow,
-        // no extra DOM) and, since it's baked into this shared `Face`, it's
-        // identical in the Suspense fallback and the hydrated button: never
-        // something that "turns on" a beat after paint.
+        // ✨ Always-on glow, baked into the shared Face so fallback and
+        // hydrated button stay identical
         "shadow-[0_2px_14px_-6px_rgba(193,147,87,.75)]",
         "dark:shadow-[0_2px_14px_-6px_rgba(232,197,122,.5)]",
-        // 🌀 Hover halo: a ring that expands outward and fades, echoing the
-        // trigger's gold ring instead of scaling the button itself. Only
-        // ever fires nested under `TRIGGER_SHELL`'s `group` (hovering it) —
-        // the larger `Face` rendered inside the open dropdown panel has no
-        // such ancestor, so it stays inert there.
+        // 🌀 Expanding hover halo — inert outside the trigger's `group`
         "before:border-gold before:absolute before:inset-0 before:rounded-full before:border-2 before:opacity-0",
         "motion-safe:group-hover:before:animate-ring-pulse dark:before:border-gold-soft",
         className,
@@ -44,23 +36,10 @@ export function Face({
   );
 }
 
-// 🪪 The account button's shell — shared by the real (interactive) dropdown
-// trigger in `user-account-menu.tsx` and the Suspense placeholder in
-// `user-menu.tsx`, so swapping the lazy-loaded dropdown chunk in never
-// visibly moves anything: only its click-ability "wakes up" a moment later.
-// 🎯 Icon-only by design (no photo, no name, no chevron — see `AccountIcon`
-// below): sized off the same `CLUSTER_H`/`ICON_W` tokens as the header's
-// other icon buttons (cart, notices) so it sits in that same visual rhythm
-// instead of the wider name+chevron pill it used to be.
-// 🖱️ Overrides the base `Button`'s generic `hover:-translate-y-0.5` lift
-// (which — since the cursor is usually still parked on this trigger right
-// where the previous page left it — was the "tick" on every refresh: hover
-// styles apply instantly on load, so the transition animated the button
-// up a frame later) with a static position: the button itself never resizes
-// or shifts. (Its `active:scale` press feedback is already excluded here —
-// it's gated on `not-aria-[haspopup]`, and Radix's `DropdownMenuTrigger`
-// stamps `aria-haspopup` on this button — so nothing needs undoing there.)
-// The hover cue instead lives on `AccountIcon`'s own ring-pulse halo.
+// 🪪 Shell shared by the trigger and its Suspense placeholder — swapping
+// the lazy dropdown in never visibly moves anything.
+// 🖱️ No hover transform: the cursor often sits here right after a page
+// load, so an instant hover-match would animate and "tick".
 export const TRIGGER_SHELL = cn(
   CLUSTER_H,
   ICON_W,
@@ -69,14 +48,7 @@ export const TRIGGER_SHELL = cn(
   "focus-visible:ring-gold/60 focus-visible:ring-2",
 );
 
-// ✨ The trigger's entire content now: a navy medallion behind a plain
-// person-glyph — no avatar photo, no initial, no name, no chevron.
-// 🚫 Deliberately no transform anywhere here (no scale, no icon lift, no
-// halo pulse, no mount-in pop): the cursor is usually still parked on this
-// exact trigger when the page refreshes, and CSS `:hover` matches instantly
-// on load — so any hover transform/expanding-ring + transition would visibly
-// "scale" around the icon a frame after every refresh (the tick). The only
-// hover feedback is a deeper shadow — it never moves anything.
+// 🚫 Shadow-only hover feedback — transforms would "tick" on refresh
 export function AccountIcon() {
   return (
     <span

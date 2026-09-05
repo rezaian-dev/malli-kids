@@ -29,7 +29,7 @@ export async function getNextSequence(key: string, start = 1): Promise<number> {
   ).lean<CounterDoc>();
   if (!first || first.seq >= start) return first?.seq ?? start;
 
-  // Clamps a fresh/legacy counter up to start exactly once; a concurrent loser re-increments.
+  // 🪜 Clamps a legacy counter up to start once; a concurrent loser re-increments
   const clamped = await CounterModel.findOneAndUpdate(
     { _id: key, seq: { $lt: start } },
     { $set: { seq: start } },

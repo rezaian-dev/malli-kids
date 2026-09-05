@@ -32,8 +32,7 @@ function Brand() {
   );
 }
 
-// 💪 A tiny, dependency-free strength read — length + variety, nothing
-// fancier is needed for a "does this look reasonable" nudge.
+// 💪 Length + variety is enough for a reasonableness nudge
 function strengthOf(value: string) {
   let score = 0;
   if (value.length >= 8) score++;
@@ -130,8 +129,7 @@ function SuccessCard() {
   );
 }
 
-/** 🔑 Standalone page (opened from the reset-password email link, not the
- *  auth modal): new password → confirm → done. */
+// 🔑 Standalone reset page from the email link
 export function ResetPasswordView({
   token,
   invalid,

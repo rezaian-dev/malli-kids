@@ -9,12 +9,8 @@ import { cn } from "@/lib/utils";
 import { pdpCtaButton } from "../_lib/product-chrome";
 import { requestBackInStockAction } from "../_lib/back-in-stock-actions";
 
-/** 🔔 Replaces the old "به محض موجود شدن خبرتان می‌کنیم" toast — that
- *  promise was never actually kept anywhere. This one really subscribes:
- *  `notifyBackInStock` (`@/lib/shop/back-in-stock`) fires a real in-app
- *  notification once an admin (or a return) puts stock back on this exact
- *  size. `sizeKey` is `""` for a legacy/unsized product — the whole
- *  product, not one variant. */
+// 🔔 Really subscribes — notifyBackInStock fires on restock; sizeKey ""
+// means the whole legacy product
 export function BackInStockButton({
   productId,
   sizeKey,

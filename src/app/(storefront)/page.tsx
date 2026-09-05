@@ -14,9 +14,7 @@ export const metadata = buildMetadata({
 });
 
 export default async function Page() {
-  // 🧊 Live, cached catalog (same `getAllProducts` the shop grid/sitemap
-  // use) — not the static seed array, so this list and its structured data
-  // stay correct after an admin edits/hides a product.
+  // 🧊 Live cached catalog, not the static seed — correct after admin edits
   const catalog = await getAllProducts();
   const featured = catalog
     .filter((product) => product.visible)

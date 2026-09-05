@@ -9,9 +9,8 @@ import { toFaDigits } from "@/lib/locale/fa";
 import { usePolling } from "@/hooks/use-polling";
 import { getMyChatUnreadAction } from "@/lib/shop/chat-actions";
 
-// 🪶 The window (messages, polling, composer) only downloads when the chat
-// is actually opened — the bubble + invitation below are the whole
-// always-on cost of this feature.
+// 🪶 The heavy window downloads only on first open — the bubble is the
+// whole always-on cost
 const ChatWindow = dynamic(
   () => import("./chat-window").then((m) => m.ChatWindow),
   { ssr: false },
@@ -24,22 +23,18 @@ const UNREAD_POLL_MS = 8_000;
 const DISMISSED_KEY = "mk-chat-invite-dismissed";
 const OPENED_KEY = "mk-chat-opened";
 
-/** 💬 The storefront's floating support entry: an always-there bubble plus
- *  one delayed, dismissible invitation card. Mounted once in
- *  `StorefrontEnhancements`, so it never remounts (or re-invites) on route
- *  changes. Guests are routed to the login dialog — chat itself is
- *  authenticated-only in the MVP (no guest identity infra to secure). */
+// 💬 Floating support bubble + delayed invitation. Mounted once, so it
+// never re-invites on route changes; guests hit the login dialog first —
+// chat is authenticated-only in the MVP
 export function ChatWidget() {
   const { user, setAuthOpen } = useAuth();
   const [open, setOpen] = useState(false);
   const [invite, setInvite] = useState(false);
-  // 🚪 A guest tapped "talk to support" before signing in — open the real
-  // window the moment the login lands instead of making them tap again.
+  // 🚪 Open the window the moment a pending guest login lands
   const pendingOpen = useRef(false);
   const prevUnread = useRef(0);
 
-  // 🔴 Badge count while the window is closed — stops the moment the
-  // window opens (its own poll takes over) or the user signs out.
+  // 🔴 Badge count only while the window is closed and signed in
   const [unread] = usePolling<number>(
     async () => {
       try {
@@ -110,9 +105,7 @@ export function ChatWidget() {
           <MessageCircle className="size-6" />
           {shown > 0 ? (
             <span
-              // 🔑 Replays the pop-in every time the count itself changes —
-              // a new reply re-announces itself without any timer or pulse
-              // loop running in the background.
+              // 🔑 Count-keyed pop-in — new replies re-announce themselves
               key={shown}
               aria-hidden
               className="pointer-events-none absolute -inset-e-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full px-1 bg-rose text-[10px] font-black text-white ring-paper dark:ring-dusk shadow ring-2 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-200"

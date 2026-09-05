@@ -17,10 +17,7 @@ import {
 import { toast } from "@/lib/toast";
 import type { ActionResult } from "@/lib/action-result";
 
-/** ⚠️ The one confirm-before-destroy pattern every admin delete button
- *  should go through — title/description, a pending state on the confirm
- *  button, and a toast on the result, instead of each page hand-rolling its
- *  own "are you sure" (or, until now, no confirmation at all). */
+// ⚠️ The one confirm-before-destroy pattern for admin delete buttons
 export function AdminConfirmDialog({
   trigger,
   title,

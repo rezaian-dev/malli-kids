@@ -2,11 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-/** 🧲 Mounts a lazily-imported dialog only once `active` goes true, and
- *  preloads its chunk on idle beforehand so opening it feels instant —
- *  shared by `CheckoutMount`/`CartCheckoutMount`'s "only pay for this once
- *  it matters" wrappers. `preload` must be a stable reference (defined at
- *  module scope, same as the `dynamic()` loader it pairs with). */
+// 🧲 Mounts a lazy dialog once active; preloads its chunk on idle.
+// preload must be a stable module-scope reference
 export function useIdlePreloadMount(active: boolean, preload: () => unknown) {
   const [mounted, setMounted] = useState(false);
 

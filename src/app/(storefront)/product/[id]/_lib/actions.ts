@@ -46,7 +46,3 @@ export async function submitReviewAction(
     return { ok: false, error: FALLBACK_ERROR };
   }
 }
-
-// 🧾 Checkout (`checkCouponAction`/`createOrderAction`) moved to
-// `@/lib/shop/checkout-actions` once the cart sheet started reusing the same
-// single-item checkout dialog this page opens — see `CheckoutMount`.

@@ -18,10 +18,8 @@ export function isAdminUser(user: { role?: string | null; email: string }) {
   return user.role === "admin" || ADMIN_EMAILS.has(user.email.toLowerCase());
 }
 
-// 🔁 Persists a bootstrap admin's role — Better Auth's own plugin checks role
-// directly, not ADMIN_EMAILS, so its endpoints (listUsers, setRole, banUser)
-// would otherwise reject a bootstrap-only admin. Writes directly since
-// auth.api.setRole itself requires an already-admin session.
+// 🔁 Persists a bootstrap admin's role — the plugin checks role, not
+// ADMIN_EMAILS
 async function syncBootstrapAdminRole(user: {
   id: string;
   email: string;
@@ -38,7 +36,7 @@ async function syncBootstrapAdminRole(user: {
     .updateOne({ _id: new ObjectId(user.id) }, { $set: { role: "admin" } });
 }
 
-// 🔒 Real authorization boundary for /admin; returns null instead of throwing so each caller picks its own rejection.
+// 🔒 Real /admin authorization boundary; null (not throw) so callers pick their rejection
 export async function requireAdmin(): Promise<User | null> {
   const session = await getSession();
   if (!session?.user || !isAdminUser(session.user)) return null;

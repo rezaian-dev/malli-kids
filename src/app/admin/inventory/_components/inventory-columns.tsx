@@ -26,10 +26,7 @@ const STATUS_STYLE = {
   },
 } as const;
 
-/** 🧱 The inventory table column set — a plain builder so it can stay a
- *  Server-Component-clean file; the landing component owns the callbacks.
- *  Rows are per-variant (or per-product for legacy/unsized items) — see
- *  `buildInventoryRows` in `../_lib/rows`. */
+// 🧱 Column builder — keeps this file Server-Component-clean
 export function buildInventoryColumns({
   selected,
   onToggleSelect,

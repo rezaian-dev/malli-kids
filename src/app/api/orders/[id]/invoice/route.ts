@@ -5,8 +5,7 @@ import { getOrderForRequester } from "@/lib/shop/orders";
 import { generateInvoicePdf } from "@/lib/shop/invoice";
 import { rateLimit } from "@/lib/rate-limit";
 
-// 🖨️ Playwright needs real Node APIs (child process, filesystem) — never
-// runs on the Edge runtime.
+// 🖨️ Playwright needs real Node APIs — never the Edge runtime
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
@@ -15,19 +14,10 @@ const NOT_FOUND_ERROR = "سفارش پیدا نشد.";
 const UNPAID_ERROR = "فاکتور فقط برای سفارش‌های پرداخت‌شده صادر می‌شود.";
 const RATE_ERROR = "تعداد درخواست‌های دانلود فاکتور زیاد بوده؛ کمی بعد دوباره تلاش کنید.";
 
-/** 🧾 GET /api/orders/[id]/invoice — the one real download path for an
- *  order's PDF invoice.
- *
- *  🔐 Ownership is enforced *here*, server-side, off the real session —
- *  never off anything the client sends. `getOrderForRequester` returns
- *  `null` for both "no such order" and "exists but isn't this caller's"
- *  so a guessed/shared id can't be used to probe which order ids are real;
- *  an admin session is the one exception (same "see any order" access the
- *  rest of `/admin/orders` already has).
- *
- *  💳 Gated on the order's own `pay` field — never generated for an order
- *  that isn't `"پرداخت‌شده"` yet, regardless of how confident the client is
- *  that it should be. */
+// 🧾 The one PDF invoice download path.
+// 🔐 Ownership off the real session — null for both missing and not-yours,
+// so ids can't be probed; admin is the one exception.
+// 💳 Paid orders only, whatever the client claims.
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -67,9 +57,7 @@ export async function GET(
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `inline; filename="invoice-${order.id}.pdf"`,
-      // 🔒 A signed-in user's own invoice, not a public asset — never let a
-      // shared cache (CDN, proxy) or the browser's disk cache store a copy
-      // some other visitor's request could later be served.
+      // 🔒 Per-user asset — never cacheable by CDN, proxy, or disk
       "Cache-Control": "private, no-store",
     },
   });

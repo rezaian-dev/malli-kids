@@ -50,11 +50,8 @@ function BannerFrame({
   );
 }
 
-// 🎀 Render the festival strip from the shared store snapshot. ✨
-// 🚫 No hover transforms anywhere in here (no scale, no nudges, no sweeps):
-// the cursor often sits parked on this strip at refresh, and CSS `:hover`
-// matches instantly on load — any hover movement would replay as a tick.
-// Hover feedback is brightness/shadow/underline only.
+// 🚫 No hover transforms — the parked cursor would replay them as a tick
+// on every refresh; feedback is brightness/shadow/underline only
 export function FestiveBannerBody() {
   const { campaign, banner } = useCampaign();
 

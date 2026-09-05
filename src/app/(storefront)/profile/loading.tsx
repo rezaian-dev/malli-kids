@@ -2,9 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const TAB_PILL = "h-10 w-24 rounded-xl";
 
-/** 🦴 Mirrors `ProfileHeader` + `ProfileTabs` + one panel card — the same
- *  shape `ProfilePanelFallback` already uses once a panel itself is
- *  hydrating, so the route boundary and the in-page fallback agree. */
+// 🦴 Mirrors ProfileHeader + tabs + one panel card, like the in-page fallback
 export default function ProfileLoading() {
   return (
     <div

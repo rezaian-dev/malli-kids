@@ -4,8 +4,7 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { Stagger, StaggerItem } from "@/components/motion/static";
 import { pageSchema } from "@/lib/seo";
 
-// Coming-soon placeholder for /tryon. Pure Server Component, CSS-only
-// motion. No studio, API, or client JS — just the teaser.
+// 🧪 Coming-soon teaser — pure Server Component, CSS-only motion
 
 const STEPS = [
   {
@@ -235,10 +234,7 @@ export function ComingSoon() {
 
           {/* ── Get-ready note ─────────────────────────── */}
           <StaggerItem>
-            {/* ♿ navy/70, not /60 — at this text-xs size /60 measured under
-                4.5:1 against this section's background (Lighthouse
-                color-contrast). /70 matches the passing step text right
-                above and clears it. */}
+            {/* ♿ /70, not /60 — /60 fails 4.5:1 at this size */}
             <p className="text-navy/70 dark:text-wheat/80 mx-auto mt-6 max-w-xl text-center text-xs leading-6">
               💡 از حالا می‌توانید یک عکس تمام‌قد با نور خوب و پس‌زمینهٔ ساده
               آماده کنید — روز افتتاح، اولین پرو فقط چند ثانیه طول می‌کشد.

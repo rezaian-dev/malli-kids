@@ -47,7 +47,7 @@ function parseJson<T>(value: string | undefined, fallback: T) {
   }
 }
 
-// 🔐 Keyed by email so different accounts on one browser never inherit each other's cart; "guest" is its own slot.
+// 🔐 Keyed by email — accounts never inherit each other's cart; "guest" is its own slot
 export function cartScopeOf(user: Pick<User, "email"> | null): string {
   return user?.email ? user.email.trim().toLowerCase() : "guest";
 }
@@ -128,7 +128,7 @@ function sanitizeBanner(value: unknown): BannerItem | null {
   };
 }
 
-// 👤 user/campaign/banner are real server-fetched values passed in by the caller; only cart is bootstrapped from its cookie.
+// 👤 Server-fetched values from the caller; only cart bootstraps from its cookie
 export function readStoreBootstrap(
   getCookie: (name: string) => string | undefined,
   user: User | null,

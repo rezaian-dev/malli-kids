@@ -7,11 +7,8 @@ import { OrderModel } from "@/lib/db/models/order";
 import { faDate } from "@/lib/locale/fa";
 import type { AdminCustomer } from "@/types";
 
-/** 👥 Real registered customers — Better Auth's own `user` collection (via
- *  the `admin()` plugin) is identity + role + ban status; `Profile` adds
- *  city/child info; a real `Order` aggregation gives order count + spend.
- *  No separate "customers" model — these are the same real users the rest
- *  of the app already authenticates. */
+// 👥 Better Auth users + Profile + order aggregation — no separate
+// customers model
 export async function getAllCustomers(): Promise<AdminCustomer[]> {
   const { users } = await auth.api.listUsers({
     headers: await headers(),

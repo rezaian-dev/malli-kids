@@ -9,19 +9,10 @@ import {
   type SetStateAction,
 } from "react";
 
-/** 🔄 The app's one realtime primitive: refetches `fetcher` immediately and
- *  then every `intervalMs` while the tab is visible (paused while hidden,
- *  refetched once the moment it becomes visible again) — so a change made
- *  by another actor (an admin's reply, a customer's new order/review) shows
- *  up without a manual reload. No websocket/SSE server needed; every "live"
- *  list/count in the app uses this instead of a bespoke fetch loop. Pass
- *  `enabled: false` (e.g. while signed out) to skip fetching entirely.
- *
- *  Returns a `[value, setValue, refresh]` triple, same shape as `useState`
- *  plus a refresh: callers can apply an optimistic local update (e.g. "mark
- *  as read") via `setValue`, or re-read the server truth immediately after
- *  their own mutation via `refresh()` instead of waiting for the next poll
- *  tick — that's what makes the admin console feel instant. */
+// 🔄 The app's one realtime primitive: poll while the tab is visible, pause
+// hidden, refetch on return — no websocket needed.
+// Returns [value, setValue, refresh]: optimistic local updates via setValue,
+// immediate server truth via refresh()
 export function usePolling<T>(
   fetcher: () => Promise<T>,
   intervalMs: number,
@@ -32,8 +23,7 @@ export function usePolling<T>(
   const fetcherRef = useRef(fetcher);
   fetcherRef.current = fetcher;
 
-  // ⚡ Stable by design (only touches refs + setState) — safe to call from
-  // event listeners and mutation handlers without re-subscribing.
+  // ⚡ Stable by design — safe from listeners without re-subscribing
   const refresh = useCallback(() => {
     fetcherRef.current().then((next) => setData(next));
   }, []);

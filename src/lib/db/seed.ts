@@ -7,10 +7,8 @@ import { CouponModel } from "./models/coupon";
 import { CORE_PRODUCTS } from "@/lib/data/products";
 import { seedBanners } from "@/lib/festive/occasions";
 
-// 🌱 One-time content seed for catalog/articles/banners; orders, reviews, tickets,
-// and collab requests stay empty since those represent real customer activity.
-// Seeded coupons match the codes the banner copy advertises, so none are dead.
-// 📰 Only ever read here, so it's inlined rather than a shared lib/data file.
+// 🌱 One-time seed for catalog/articles/banners; customer-activity collections
+// stay empty. Coupons match the banner copy. 📰 Inlined — only read here
 const ARTICLES = [
   {
     slug: "size",

@@ -16,19 +16,16 @@ export type PricedProduct = { price: number; old?: number };
 export type ResolvedPrice = {
   /** The price to charge/display right now. */
   price: number;
-  /** The pre-discount price to show struck through — absent when there's
-   *  nothing to compare against (no discount active at all). */
+  // The struck-through pre-discount price — absent with no discount
   original?: number;
   /** Rounded whole-percent label for a discount badge. */
   percent?: number;
-  /** Which discount (if any) produced this result — lets a caller tell a
-   *  product's own markdown apart from a site-wide festival override. */
+  // Which discount produced this — product markdown vs festival override
   source: "festival" | "product" | "none";
 };
 
-// 🎪 A festival discount always overrides a product's own markdown — never stacks on top of it.
-// product.old is always the true pre-discount price, so a festival's percent is off that, not off
-// an already-discounted price (which would silently compound two discounts into one).
+// 🎪 Festival overrides markdown — never stacks; percent off the true old
+// price, never an already-discounted one
 export function resolvePrice(
   product: PricedProduct,
   campaign: { active: boolean; percent: number },

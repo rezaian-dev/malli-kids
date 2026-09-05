@@ -12,23 +12,9 @@ import {
 
 import { useTheme } from "next-themes";
 
-// 🍞 One brand-consistent toast style for the whole app: a start-edge accent
-// stripe + icon tint + tinted background wash + colored glow per type (same
-// emerald/rose/gold/sky families the admin tables already use for status),
-// everything else — shape, base shadow, type — shared. `!` wins the few
-// properties sonner's own injected stylesheet also sets (padding, gap,
-// alignment, description color); no `!` needed elsewhere.
-// The gold sheen hairline along the top edge echoes the same accent line
-// used on the admin header and brand logo underline.
-// `relative` (not `overflow-hidden`) contains the sheen line — the close
-// button is meant to poke past the border on the corner, so the card can't
-// clip its own overflow.
-//
-// Both the background wash and the glow key off one `--toast-accent` custom
-// property (set per type below) instead of duplicating a gradient per type:
-// unset toasts (default/loading) fall through to the gold/navy-deep fallback
-// baked into these two rules, so only types that want a *different* accent
-// need to set the variable at all.
+// 🍞 One brand toast style — wash + glow key off a single --toast-accent
+// var per type; `!` beats sonner's injected stylesheet where it collides.
+// 🎯 relative (not overflow-hidden) — the close button pokes past the corner
 const TOAST_BASE =
   "items-start! gap-3 rounded-2xl border py-3.5! px-4! relative " +
   "[--normal-bg:linear-gradient(160deg,var(--popover)_0%,color-mix(in_srgb,var(--popover)_80%,var(--toast-accent,var(--color-gold-pale)))_100%)] " +
@@ -96,9 +82,7 @@ export function Toaster(props: ToasterProps) {
       }}
       style={
         {
-          // 🍞 `--normal-bg` is set per-toast in `TOAST_BASE`/`TOAST_ACCENT`
-          // above (it needs to vary by toast type); this only covers the
-          // theme-invariant bits.
+          // 🍞 Per-type bg comes from TOAST_BASE/TOAST_ACCENT; theme bits only
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
           "--border-radius": "var(--radius-2xl)",

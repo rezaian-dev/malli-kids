@@ -4,11 +4,8 @@ import { cn } from "@/lib/utils";
 import { getCompleteTheLook } from "@/lib/shop/products";
 import { pdpCard, pdpKicker } from "../_lib/product-chrome";
 
-// 🧵 The *real* "complete the look" — an admin-curated outfit (dress +
-// cardigan + shoes, say), not just "more stuff in the same category" (that's
-// `ProductRelated`, a separate section below this one). Own async Server
-// Component so its own DB round trip can stream in independently, same
-// pattern as `ProductRelated`.
+// 🧵 Admin-curated outfit (vs ProductRelated's same-category picks);
+// own Suspense-streamed fetch
 export async function ProductCompleteLook({
   pairsWith,
 }: {

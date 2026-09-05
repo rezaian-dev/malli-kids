@@ -62,10 +62,7 @@ export function ProfileView() {
     sync();
     window.addEventListener("hashchange", sync);
 
-    // 🔗 Catches the case `hashchange` can't: the header's account dropdown
-    // linking to `/profile#orders` while already sitting on `/profile` — the
-    // App Router updates the URL via `history.pushState`, which never fires
-    // a native `hashchange` event. See `lib/profile-nav.ts`.
+    // 🔗 pushState never fires hashchange — same-page hash links need this
     function onAnnounce(event: Event) {
       const tab = (event as CustomEvent<ProfileTab>).detail;
       if (tab) setTab(tab);

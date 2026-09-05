@@ -45,9 +45,7 @@ export function AdminArticlesLanding({
     { articles: initialArticles, tags: initialTags },
     !draft,
   );
-  // 🏷️ Local tag edits (created/removed mid-edit) layer over the polled
-  // list and reset once the editor closes — the next edit starts from
-  // fresh server truth again.
+  // 🏷️ Local tag edits layer over the polled list; reset on editor close
   const [tagLayer, setTagLayer] = useState<ContentTag[] | null>(null);
   const tags = tagLayer ?? live.tags;
 
@@ -65,11 +63,7 @@ export function AdminArticlesLanding({
         onTagCreated={(tag) =>
           setTagLayer((current) => {
             const base = current ?? live.tags;
-            // 🔁 `createTagAction` upserts server-side — re-submitting a
-            // name that slugifies to an existing tag returns *that* tag, not
-            // a new one. Without this check, the local list would grow a
-            // second entry for the same slug (two identical chips) even
-            // though the database itself never duplicated anything.
+            // 🔁 createTagAction upserts — skip local duplicates by slug
             return base.some((t) => t.slug === tag.slug)
               ? base
               : [...base, tag];

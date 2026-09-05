@@ -1,10 +1,6 @@
 "use client";
 
-// 🗺️ Leaflet's own stylesheet — scoped to this file (the map's only
-// consumer) instead of the storefront's global CSS entry, so it isn't
-// shipped as render-blocking CSS on every unrelated page. This component
-// only ever mounts inside the profile's already-lazy (`ssr:false`) info
-// panel, so the import rides along on that same on-demand chunk.
+// 🗺️ Scoped here so Leaflet CSS ships only with this lazy chunk
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -19,49 +15,14 @@ import type { UpdateAccountValues } from "../_lib/schemas";
 import { loadLeaflet } from "./leaflet-loader";
 
 const PICK_DEBOUNCE_MS = 600;
-// 🎬 How long the settle bounce (`--animate-marker-drop` in theme.css)
-// plays before the indicator resumes its idle float — kept a hair after
-// that animation's own 500ms so the two never overlap mid-bounce.
+// 🎬 Sits just past the 500ms marker-drop so the two never overlap
 const SETTLE_BOUNCE_MS = 520;
-// ✍️ The reverse-geocoded address reveals one *word* at a time via a
-// staggered `animation-delay` per chunk (see the "آدرس یافت‌شده" field
-// below) — word-level, not character-level: Persian is a cursive script
-// where a letter's glyph shape depends on its neighbors, and giving each
-// character its own box (required for the per-chunk transform) breaks that
-// joining, rendering every letter in its isolated form until the reveal
-// finishes — exactly the "garbled, then fixes itself" look this replaces.
-// A whole word is one unbroken text node, so shaping inside it is
-// untouched; only the (shaping-irrelevant) gaps between words animate in
-// separately. `REVEAL_ANIM_MS` must track `--animate-letter-in`'s own
-// duration in `theme.css` so the "typing" state clears exactly when the
-// last chunk's animation actually finishes, not before or after.
+// ✍️ Reveal timing must track --animate-letter-in in theme.css
 const WORD_STAGGER_MS = 45;
 const REVEAL_ANIM_MS = 340;
 
-/** 📍 "انتخاب روی نقشه" — an inline (never a dialog/overlay) map card that
- *  expands right below the address field.
- *
- *  🎯 The location indicator is a **fixed overlay pinned to the exact
- *  center of the map's viewport** — plain React/CSS, not a Leaflet marker.
- *  It never moves on screen; instead the user drags/pans the *map itself*
- *  underneath it, exactly like Google Maps' or Airbnb's "drop a pin"
- *  picker. Whatever geographic point ends up under that fixed tip when
- *  panning stops becomes the candidate location — read straight off
- *  `map.getCenter()`, never off a marker's own coordinates. Clicking
- *  anywhere on the map, confirming a GPS fix, or panning with the
- *  keyboard all funnel through the same `moveend` handler, so there is
- *  exactly one place that turns "the map settled somewhere" into a
- *  candidate + a debounced reverse-geocode. A real *draggable* marker was
- *  deliberately not used here: this app's map previously tried gluing a
- *  pin to the visual center by re-reading it on every `move` tick, which
- *  fought the browser's own compositor-driven pan and read as laggy; a
- *  plain centered overlay that only *reacts* to `movestart`/`moveend`
- *  (not synced to every intermediate frame) is both simpler and smoother.
- *
- *  Reads and writes `lat`/`lng`/`address` straight off the surrounding
- *  `<AppForm>`'s react-hook-form context — those three only ever get
- *  committed together when the user presses "تأیید", and only really
- *  saved once "ذخیره حساب" is submitted like every other account field. */
+// 📍 Inline map picker — fixed center overlay, not a Leaflet marker; every
+// settle funnels through one `moveend` → candidate + reverse-geocode.
 export function AddressMapField() {
   const { watch, setValue, getValues } = useFormContext<UpdateAccountValues>();
   const lat = watch("lat");
@@ -73,25 +34,15 @@ export function AddressMapField() {
   const [locating, setLocating] = useState(false);
   const [geocoding, setGeocoding] = useState(false);
   const [typing, setTyping] = useState(false);
-  // ✨ Bumped once each time the typewriter finishes a full pass — keyed
-  // onto the success checkmark below so its pop-in animation replays every
-  // time a new address lands, not just the first.
+  // ✨ Rekeys the checkmark so its pop replays per address
   const [doneTick, setDoneTick] = useState(0);
   const [preview, setPreview] = useState("");
-  // 📍 The *candidate* location — whatever the map's center settled on
-  // last. Conceptually distinct from the form's saved `lat`/`lng`: this
-  // only becomes real once "تأیید" below copies it into the form, and only
-  // persists once the account form itself is submitted.
+  // 📍 Candidate center — committed to the form only on confirm
   const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(
     null,
   );
-  // 🪁 True from the moment the map starts moving (drag/GPS-flight/
-  // keyboard pan) until it settles — drives the fixed indicator's
-  // lifted-and-wobbling state so it reads as "riding along above the map"
-  // rather than glued to it.
   const [moving, setMoving] = useState(false);
-  // 🎬 Bumped on every settle so the indicator's drop-bounce replays each
-  // time (via `key`), not just the first.
+  // 🎬 Rekeys the indicator so the drop-bounce replays per settle
   const [settleTick, setSettleTick] = useState(0);
   const [bouncing, setBouncing] = useState(false);
 
@@ -102,28 +53,19 @@ export function AddressMapField() {
   const typeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 🧊 Plain functions, not `useCallback` — none of these are ever compared
-  // by reference (not a `useEffect`/`useMemo` dependency, not passed to a
-  // memoized child; the map-building effect below intentionally closes over
-  // whatever version of them exists when it runs, via its own `[open]`-only
-  // dependency array), so memoizing them buys nothing.
+  // 🧊 No useCallback — nothing compares these by reference
   function stopTyping() {
     if (typeTimeoutRef.current) clearTimeout(typeTimeoutRef.current);
     typeTimeoutRef.current = null;
     setTyping(false);
   }
 
-  // ✍️ Unlike the old JS-driven char-by-char slice, `preview` is set to the
-  // *full* text immediately — the letter-by-letter reveal is now purely a
-  // CSS stagger on already-present `<span>`s (see the JSX below), so this
-  // just needs one `setTimeout` sized to when the last letter's own
-  // animation finishes, not a repeating tick per character.
+  // ✍️ Full text up front — the reveal is a pure CSS stagger
   function startTypewriter(text: string) {
     stopTyping();
     setPreview(text);
     setTyping(true);
-    // 🧮 Same split the JSX below uses to build the animated chunks — the
-    // count (not the string content) is all that matters here.
+    // 🧮 Must mirror the JSX word split for the timing math
     const chunks = text.split(/(\s+)/).length;
     const total = Math.max(chunks - 1, 0) * WORD_STAGGER_MS + REVEAL_ANIM_MS;
     typeTimeoutRef.current = setTimeout(() => {
@@ -133,9 +75,6 @@ export function AddressMapField() {
     }, total);
   }
 
-  // ⏩ Editing the preview mid-animation (or just wanting the full text
-  // instantly) should feel responsive, not fight the reveal — `preview`
-  // already holds the full text, so this just cuts the reveal short.
   function finishTypingNow() {
     if (!typeTimeoutRef.current) return;
     stopTyping();
@@ -153,12 +92,7 @@ export function AddressMapField() {
     startTypewriter(result.data.address);
   }
 
-  // 📌 The map settled somewhere (drag released, a GPS flight finished, a
-  // keyboard pan stopped, a tap-to-recenter pan completed) — read the
-  // *current center*, never a marker's own coordinates, since the
-  // indicator never moves independently of the map. Debounced so a quick
-  // flurry of small settles (e.g. someone flicking the map around) only
-  // ever fires one reverse-geocode request, not one per settle.
+  // 📌 Read the settled center, never marker coords; debounce the geocode
   function handleSettle(map: LeafletMap) {
     setMoving(false);
     setSettleTick((n) => n + 1);
@@ -189,9 +123,7 @@ export function AddressMapField() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocating(false);
-        // 🎯 `moveend` (fired once the flight finishes) is what actually
-        // turns this into a candidate + reverse-geocode — same single path
-        // every other kind of settle goes through.
+        // 🎯 moveend after the flight reuses the single settle path
         map.flyTo(
           [pos.coords.latitude, pos.coords.longitude],
           Math.max(map.getZoom(), 16),
@@ -212,9 +144,7 @@ export function AddressMapField() {
     );
   }
 
-  // 🗺️ Build a fresh map every time the card opens, tear it down when it
-  // closes — simpler and safer than trying to keep one Leaflet instance
-  // alive through a `display:none`/unmount cycle.
+  // 🗺️ Fresh map per open — safer than keeping Leaflet alive through unmount
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
@@ -226,10 +156,7 @@ export function AddressMapField() {
     const hasExisting = existingLat != null && existingLng != null;
     const startLat = existingLat ?? BRAND.map.lat;
     const startLng = existingLng ?? BRAND.map.lng;
-    // 📍 A previously-saved location *is* already a selection. Otherwise
-    // nothing's been picked yet — `picked` stays null until the map's
-    // first `moveend` (fired the moment Leaflet finishes its own initial
-    // layout) sets it from wherever the map actually opened on.
+    // 📍 A saved location already counts as picked
     setPicked(hasExisting ? { lat: existingLat, lng: existingLng } : null);
     setPreview(getValues("address") ?? "");
 
@@ -240,17 +167,7 @@ export function AddressMapField() {
           center: [startLat, startLng],
           zoom: 15,
         });
-        // 🆓 Esri's public "World Street Map" tile service — free, no key,
-        // no signup, same as the OSM tile server this replaced (see git
-        // history). That switch was forced, not stylistic: OSM's own
-        // `tile.openstreetmap.org` enforces a strict, unappealable
-        // automated tile-usage policy and had started silently serving its
-        // "Access blocked" placeholder tile (still HTTP 200, so Leaflet
-        // never saw an error — every tile "loaded" successfully and just
-        // rendered blank) instead of real imagery to this app's traffic —
-        // see https://operations.osmfoundation.org/policies/tiles/. Esri's
-        // tile path is `{z}/{y}/{x}` (y before x — the reverse of the
-        // `{z}/{x}/{y}` every other provider, OSM included, uses).
+        // 🆓 Keyless Esri tiles — note the reversed {z}/{y}/{x} path
         L.tileLayer(
           "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
           {
@@ -260,34 +177,17 @@ export function AddressMapField() {
           },
         ).addTo(map);
 
-        // 🎯 One pair of handlers drives every interaction — drag, GPS
-        // flight, keyboard pan (Leaflet's own default arrow-key handling),
-        // and the tap-to-recenter pan below all just move the map, and the
-        // map itself doesn't care which caused it.
         map.on("movestart", () => setMoving(true));
         map.on("moveend", () => handleSettle(map));
 
-        // 🖱️ A tap doesn't drop anything *at* that point — it pans so that
-        // point ends up under the fixed center indicator, then `moveend`
-        // above picks it up like any other settle. Keeps a single mental
-        // model ("the map moves, the pin doesn't") instead of two
-        // different selection gestures.
+        // 🖱️ Taps pan the point under the fixed pin; moveend picks it up
         map.on("click", (e: import("leaflet").LeafletMouseEvent) => {
           map.panTo(e.latlng, { animate: true });
         });
 
         mapRef.current = map;
         setMapReady(true);
-        // 🩹 Leaflet measures its container once at init; the card is still
-        // mid-expand at that point (`grid-template-rows` animating 0fr→1fr
-        // over 300ms above), so a one-shot `invalidateSize()` timed to any
-        // fixed delay either fires too early (mid-transition size — tiles
-        // load but land in the wrong place, leaving the real viewport
-        // blank) or leaves a visible pop once it *does* fire late. A
-        // `ResizeObserver` instead re-syncs Leaflet's internal size on
-        // every frame of that transition (it also fires once immediately
-        // on `observe()`, and keeps working for any later resize) — no
-        // guessed delay needed.
+        // 🩹 Card still mid-expand at init; ResizeObserver keeps Leaflet sized
         const ro = new ResizeObserver(() => map.invalidateSize());
         ro.observe(mapElRef.current);
         resizeObserverRef.current = ro;
@@ -310,11 +210,7 @@ export function AddressMapField() {
   }, [open]);
 
   function handleConfirm() {
-    // ♿️ `picked` (the map's last-settled center) is the fast path, but
-    // lat/lng are optional on the account schema — a keyboard user who'd
-    // rather not touch the map at all can still tab into this card's
-    // textarea below, edit the address text, and confirm without ever
-    // moving the map.
+    // ♿️ Address-only confirm works without ever touching the map
     if (!picked && !preview.trim()) {
       toast.warning("اول نقشه را جابه‌جا کنید یا آدرس را تایپ کنید.");
       return;
@@ -361,10 +257,7 @@ export function AddressMapField() {
         ) : null}
       </div>
 
-      {/* 📥 Inline expand/collapse, no dialog/overlay/portal — the same
-          `grid-template-rows` 0fr↔1fr trick `Field`'s own error message
-          uses (see `components/form/field.tsx`), so it never needs to know
-          the map card's real height up front. */}
+      {/* 📥 0fr↔1fr grid trick — animates open without a known height */}
       <div
         className={cn(
           "grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(.25,.1,.25,1)]",
@@ -383,19 +276,7 @@ export function AddressMapField() {
             </p>
 
             <div className="bg-sand relative h-72 w-full overflow-hidden rounded-2xl sm:h-80">
-              {/* 🩹 The opacity fade is on this *wrapper*, not on the div
-                  Leaflet mounts onto below. `new L.Map(el)` adds its own
-                  classes (`leaflet-container`, …) straight to `el.className`
-                  outside React's knowledge; if that same element also had a
-                  React-controlled `className` that changes when `mapReady`
-                  flips true (as this used to), React's very next re-render
-                  overwrites `el.className` wholesale and silently wipes
-                  every class Leaflet just added — a race that (depending on
-                  exactly when that re-render lands relative to Leaflet's own
-                  work) could leave the map partially or completely
-                  unstyled. The inner div's `className` below is now a
-                  constant literal, so React never has a reason to touch it
-                  again after the first paint. */}
+              {/* 🩹 Fade the wrapper, not the mount node — React would clobber Leaflet's classes */}
               <div
                 className={cn(
                   "absolute inset-0 opacity-0 transition-opacity duration-500",
@@ -410,10 +291,7 @@ export function AddressMapField() {
                 />
               </div>
 
-              {/* 🎯 The fixed center indicator — plain React/CSS pinned to
-                  the exact geometric center of this box, never a Leaflet
-                  marker. `pointer-events-none` so it never intercepts the
-                  drag/click/tap that's meant for the map underneath it. */}
+              {/* 🎯 Fixed CSS pin; pointer-events pass through to the map */}
               {mapReady ? (
                 <div
                   aria-hidden
@@ -570,12 +448,7 @@ export function AddressMapField() {
                   />
                 ) : null}
               </div>
-              {/* 🔊 `aria-live` so a screen-reader user hears the address
-                  update as soon as a reverse-geocode lands, without needing
-                  focus already inside this field — the textarea's `value`
-                  changes exactly once per geocode (the letter-by-letter
-                  reveal below is a purely decorative CSS overlay, not a
-                  per-letter DOM/value change), so this never floods. */}
+              {/* ♿️ Announce geocoded addresses; value changes once per geocode */}
               <div
                 aria-live="polite"
                 className={cn(
@@ -598,27 +471,12 @@ export function AddressMapField() {
                   placeholder="پس از جابه‌جا کردن نقشه، آدرس اینجا نوشته می‌شود…"
                   className={cn(
                     "bg-sand/60 text-navy placeholder:text-navy/70 dark:bg-navy-deep/40 dark:text-ivory dark:placeholder:text-ivory/30 min-h-20 w-full rounded-2xl px-4 py-3 text-sm font-semibold outline-none",
-                    // 🎭 The animated overlay below stands in for the real
-                    // textarea while it reveals — `invisible` (not
-                    // `opacity-0`/`hidden`) keeps this box's own size and
-                    // background driving the layout underneath it, exactly
-                    // where the overlay sits.
+                    // 🎭 invisible (not opacity-0) keeps this box driving layout
                     typing && "invisible",
                   )}
                 />
                 {typing ? (
-                  // ✍️ Each *word* (not letter) is its own `<span>` with a
-                  // staggered `animation-delay` (`--animate-letter-in`, see
-                  // theme.css) — fades/rises up from a gold glow into the
-                  // real text color, like it's being inked in. Word-level
-                  // specifically: giving each individual Persian letter its
-                  // own box (needed for the transform) breaks the script's
-                  // cursive joining, rendering isolated letterforms until
-                  // the reveal finishes — splitting on `(\s+)` keeps every
-                  // whitespace run too (as its own tiny chunk), so nothing
-                  // in the original text is lost, only regrouped. Purely
-                  // CSS-driven (no per-tick React state), so it runs
-                  // smoothly on the compositor regardless of length.
+                  // ✍️ Word-level spans — per-character boxes break Persian cursive joining
                   <div
                     aria-hidden
                     dir="rtl"

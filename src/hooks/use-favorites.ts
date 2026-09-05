@@ -5,12 +5,8 @@ import { useAuth } from "@/providers/auth-provider";
 import { useFavoritesStore } from "@/providers/favorites-store-provider";
 import { toggleFavoriteAction } from "@/lib/shop/favorites-actions";
 
-// 💛 Real, account-backed wishlist only — a guest (no session) has nothing
-// to persist to, so this sends them to the login dialog instead of silently
-// keeping a local list. Optimistic locally, then reconciled with whatever
-// the server actually ended up storing (kept as its own hook, rather than
-// inlining this at every call site, so `FavButton`/`ProfileWishlistPanel`
-// read as "the favorites hook").
+// 💛 Account-backed only — guests hit the login dialog; optimistic, then
+// server-reconciled
 export function useFavorites() {
   const { user, setAuthOpen } = useAuth();
   const ids = useFavoritesStore((state) => state.ids);

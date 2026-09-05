@@ -5,10 +5,8 @@ type OrnamentProps = {
   style?: CSSProperties;
 };
 
-// 🎁 Hand-crafted 3D ornaments (inline SVG, zero assets): layered gradients,
-// bevel lights and soft shadows give real depth on both dark-navy and gold
-// strip backgrounds. Gradient ids are per-instance (`useId`) so repeated
-// ornaments never clash.
+// 🎁 Hand-crafted 3D SVG ornaments, zero assets — per-instance gradient ids
+// (useId) so repeated ornaments never clash
 
 export function Gift3D({ className, style }: OrnamentProps) {
   const uid = useId().replace(/:/g, "");

@@ -2,8 +2,7 @@ import Link from "next/link";
 import { Newspaper } from "lucide-react";
 import { loadPublishedArticles } from "@/lib/articles";
 
-// 📰 Real, published articles — the latest few, same source
-// `articles/page.tsx` reads. No more static duplicate cards.
+// 📰 Latest published articles — same source as the articles page
 export async function HomeJournalSlides() {
   const articles = (await loadPublishedArticles()).slice(0, 5);
   if (articles.length === 0) return null;

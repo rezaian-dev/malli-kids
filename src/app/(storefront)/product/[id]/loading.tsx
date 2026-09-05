@@ -2,9 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn, shell } from "@/lib/utils";
 import { pdpCard, pdpWell } from "./_lib/product-chrome";
 
-/** 🦴 Mirrors `ProductBuyPanel`'s real layout (gallery + title/price/size
- *  card) instead of a generic spinner — the PDP is content-heavy enough
- *  that a bare `Loader2` left the page blank far longer than it needed to. */
+// 🦴 Mirrors the real buy-panel layout — a bare spinner would blank the PDP
 export default function ProductLoading() {
   return (
     <div

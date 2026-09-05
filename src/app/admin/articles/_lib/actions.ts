@@ -32,18 +32,11 @@ const TAG_NAME_ERROR = "نام برچسب باید بین ۲ تا ۳۰ نویس�
 
 function revalidateArticles() {
   revalidatePath("/admin/articles");
-  // 🧊 The public article list/detail pages read from `loadPublishedArticles`/
-  // `findPublishedArticle`'s own `unstable_cache` (tag `ARTICLES_TAG`), not a
-  // route-level page cache — those routes render dynamically, so there's no
-  // cache entry here for `revalidatePath("/articles")` to bust.
+  // 🧊 Article routes render dynamically — bust ARTICLES_TAG, not a route cache
   revalidateTag(ARTICLES_TAG, "max");
 }
 
-/** 🪶 A clean Persian-friendly slug from the title, de-duplicated against
- *  what's already in the database (moved from the old client-side draft —
- *  uniqueness has to be checked against the real collection now). Shared
- *  loop: `uniqueSlugAgainst` (same pattern as `products/_lib/actions.ts`'s
- *  `uniqueProductSlug`). */
+// 🪶 Persian-friendly slug, de-duplicated (uniqueSlugAgainst)
 async function uniqueSlug(title: string): Promise<string> {
   const base =
     title
@@ -136,13 +129,7 @@ function revalidateTags() {
   revalidateTag(TAGS_TAG, "max");
 }
 
-/** 🏷️ Resolves a typed tag name to a real `Tag` document — reuses the
- *  existing one if the slug already exists (case/whitespace-insensitive
- *  duplicate prevention lives in `slugifyTag`, not here) instead of ever
- *  creating a second near-identical tag. Called from the article editor's
- *  own "create tag" control — there's no separate `/admin/tags` page; a
- *  taxonomy this small doesn't need one, and every tag lives or dies by
- *  whether an article actually uses it. */
+// 🏷️ Resolves a typed name to a real tag — upsert, never a near-duplicate
 export async function createTagAction(
   name: string,
 ): Promise<ActionResult<ContentTag>> {
@@ -167,9 +154,7 @@ export async function createTagAction(
   }
 }
 
-/** 🗑️ Deletes a tag outright and pulls it off every article that had it —
- *  "simple tag management," not a full CRUD screen: renaming isn't
- *  supported (delete + re-add covers it for a taxonomy this size). */
+// 🗑️ Deletes a tag and pulls it off articles — no rename at this taxonomy size
 export async function removeTagAction(slug: string): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };

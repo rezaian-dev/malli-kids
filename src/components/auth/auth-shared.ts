@@ -6,10 +6,8 @@ import { toEnDigits } from "@/lib/locale/fa";
 /** 🔢 Strip everything but digits (Latin) from an OTP code field. */
 export const onlyDigits = (v: string) => toEnDigits(v).replace(/\D/g, "");
 
-/** ⏱️ A simple "restart a countdown, tick every second" timer — shared by
- *  the two auth flows with a resend/retry wait (OTP codes, forgot-password
- *  emails). Lives here rather than in `src/hooks` since both consumers are
- *  this one feature. */
+// ⏱️ Resend/retry countdown shared by the OTP and forgot-password flows;
+// lives here, not hooks/, because both consumers are this feature
 export function useCooldown() {
   const [sec, setSec] = useState(0);
 

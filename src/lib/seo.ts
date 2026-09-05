@@ -372,8 +372,7 @@ export function contactPageSchema() {
   };
 }
 
-// 🛍️ aggregateRating is only emitted from real visible reviews, never product.rate/sold —
-// Google disallows self-serving ratings, so an unreviewed product gets none.
+// 🛍️ Ratings only from real visible reviews — Google disallows self-serving ones
 export function productSchema(
   product: Product,
   reviews: { rate: number }[] = [],

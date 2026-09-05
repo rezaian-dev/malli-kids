@@ -3,9 +3,7 @@ import { ArticleModel } from "@/lib/db/models/article";
 import { faDate } from "@/lib/locale/fa";
 import type { AdminArticle } from "@/types";
 
-/** 📰 Every article — published and draft — for the admin list/editor.
- *  Unlike `@/lib/articles` (storefront, published-only, sanitized), this
- *  keeps the raw body so it can be re-loaded straight back into the editor. */
+// 📰 All articles, raw body kept for the editor (storefront lib sanitizes)
 export async function getAllArticles(): Promise<AdminArticle[]> {
   await connectMongoose();
   const docs = await ArticleModel.find().sort({ createdAt: -1 }).lean();

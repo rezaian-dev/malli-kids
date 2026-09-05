@@ -13,28 +13,19 @@ import {
 } from "motion/react";
 import { cn } from "@/lib/utils";
 
-// 🎬 یک easing واحد در سراسر سایت — همان منحنی نرمِ استایل‌های موجود
-// (cubic-bezier(0.22, 1, 0.32, 1)) تا انیمیشن‌ها با حسِ قبلیِ برند یکی باشند.
+// 🎬 One easing curve site-wide, matching the brand's CSS
 export const EASE_OUT: Easing = [0.22, 1, 0.32, 1];
 
-// 🪶 The inert reveal helpers (`Reveal`, `FadeIn`, `Stagger`, `StaggerItem`,
-// `PageReveal`, `HeaderEnter`) live in `./static` now — same API, but a
-// server module with zero JS, so pages that only wrap sections in them pay
-// no hydration cost for `motion/react`. Only genuinely interactive springs
-// stay in this client module.
-/** ♿ Provider سراسری: همه انیمیشن‌های motion به prefers-reduced-motion
- *  کاربر احترام می‌گذارند. چون layout ریشه سمت سرور است، MotionConfig
- *  باید داخل یک کلاینت‌کامپوننت قرار بگیرد. */
+// 🪶 Inert reveal helpers live in ./static (zero JS); only interactive
+// springs stay in this client module.
+// ♿ MotionConfig must sit in a client component — the root layout is server
 export function MotionProvider({ children }: { children: React.ReactNode }) {
   return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }
 
 const TILT_SPRING = { stiffness: 300, damping: 22, mass: 0.6 } as const;
 
-/** 🪄 کارتی که با موس «سه‌بعدی» کج می‌شود و یک هایلایتِ نوری دنبالِ نشانگر
- *  می‌سُرد — دقیقاً روی مسیر حرکتِ ماوس، نه صرفاً یک فِیدِ ساده. فقط روی
- *  دستگاه‌های ماوس‌دار فعال می‌شود (لمسی/تاچ دست‌نخورده می‌ماند) و به
- *  prefers-reduced-motion هم احترام می‌گذارد. */
+// 🪄 Mouse-driven 3D tilt + tracking glare; pointer-only, reduced-motion safe
 export function TiltCard({
   children,
   className,
@@ -43,14 +34,12 @@ export function TiltCard({
 }: {
   children: React.ReactNode;
   className?: string;
-  /** بیشینه‌ی زاویه‌ی کج‌شدن (درجه). */
   strength?: number;
   glare?: boolean;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
 
-  // 0..1 نسبیِ محل نشانگر روی کارت — نقطه‌ی شروع وسطِ کارت است.
   const px = useMotionValue(0.5);
   const py = useMotionValue(0.5);
 
@@ -114,16 +103,12 @@ function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
 }
 
-/** 🧲 دکمه‌ی «مغناطیسی»: به‌جای اسکیل‌شدنِ ساده، خودِ دکمه کمی به‌سمتِ
- *  نشانگر کشیده می‌شود و یک نورِ نرم دقیقاً زیرِ ماوس می‌سُرد — برای
- *  CTAهای شاخص (هیرو و مانند آن)، نه دکمه‌های معمولی. روی موبایل/لمسی و
- *  prefers-reduced-motion خاموش می‌ماند (فقط CSS hover عادیِ فرزند می‌ماند). */
+// 🧲 Button pulls toward the cursor with a tracking glow — hero CTAs only;
+// inert on touch and reduced-motion
 export function MagneticGlow({
   children,
   className,
-  /** سهمی از فاصله‌ی نشانگر تا مرکز که به جابه‌جاییِ دکمه تبدیل می‌شود. */
   pull = 0.35,
-  /** بیشینه‌ی جابه‌جایی (پیکسل) — دکمه هیچ‌وقت بیش از این دنبال نشانگر نمی‌رود. */
   maxOffset = 14,
   glow = true,
 }: {

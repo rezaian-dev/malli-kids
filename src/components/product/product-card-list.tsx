@@ -33,7 +33,7 @@ export function ProductCardList({
     loading?: "eager";
     fetchPriority?: "high";
   };
-  /** نگه‌داشته شده برای سازگاری — کارت همیشه بی‌درنگ رندر می‌شود. */
+  // 🩹 Kept for compatibility — the card always renders instantly
   animate?: boolean;
 }) {
   void animate;

@@ -19,15 +19,11 @@ import { getCampaign } from "@/lib/shop/settings";
 import { getActiveBanner } from "@/lib/shop/banners";
 import { getFavoriteIds } from "@/lib/shop/favorites";
 import { cn } from "@/lib/utils";
-// 🧱 Shared tokens/base only — no Tailwind utility-class generation here.
-// `(storefront)/layout.tsx` and `admin/layout.tsx` each import their own
-// stylesheet (`storefront.css`/`admin.css`) instead of one `globals.css`.
+// 🧱 Shared tokens/base only — each route group's layout imports its own
+// stylesheet, so no utilities are generated here
 import "./theme.css";
 
-// 🪶 Single variable-font files replace the old per-weight woff2 sets: one
-// download (~108KB) covers the whole 100–900 axis instead of up to six
-// ~50KB static files stacking up on pages that use several weights (the
-// homepage alone was shipping all six — ~300KB of fonts before this).
+// 🪶 Variable fonts — one file covers the whole weight axis
 const vazir = localFont({
   src: "../fonts/Vazirmatn-Variable.woff2",
   weight: "100 900",
@@ -42,9 +38,7 @@ const playfair = localFont({
   display: "swap",
 });
 
-// 🎨 Mirrors the `--background`/`--foreground` tokens in globals.css, inlined
-// in <head> so the shell paints on-theme the instant next-themes' own
-// pre-paint script sets the `.dark` class — no server-resolved theme needed.
+// 🎨 Inline theme colors — paints on-theme the instant .dark is set
 const CRITICAL_CSS =
   "html{background:#ece6dc;color:#0e2a47;color-scheme:light}" +
   "html.dark{background:#041427;color:#fff8ec;color-scheme:dark}" +
@@ -64,9 +58,7 @@ const TOP_LOADER = {
 
 export const metadata = getRootMetadata();
 
-// 🎨 No cookie-driven theme on the server anymore (next-themes owns that
-// client-side), so the browser is told about both variants and picks
-// whichever matches the OS preference until the app's own script runs.
+// 🎨 next-themes owns the theme client-side; the browser picks until then
 export const viewport: Viewport = {
   colorScheme: "light dark",
   themeColor: [
@@ -85,10 +77,7 @@ export default async function RootLayout({
   const pathname = (await headers()).get("x-malli-pathname") ?? "";
   const isAdmin = pathname.startsWith("/admin");
   const user = await getSessionUser();
-  // 🎛️ Admin pages don't render the storefront chrome — skip campaign,
-  // festive banner and favorites so a refresh paints the console in one
-  // shot instead of waiting on extra Mongo round-trips (and flashing a
-  // loading fallback).
+  // 🎛️ Skip storefront chrome for admin — one-shot paint, no extra round-trips
   const [campaign, banner] = isAdmin
     ? [null, null]
     : await Promise.all([getCampaign(), getActiveBanner()]);
@@ -128,8 +117,7 @@ export default async function RootLayout({
         <JsonLd data={websiteSchema()} />
         {isAdmin ? null : <NextTopLoader {...TOP_LOADER} />}
 
-        {/* ♿ reducedMotion="user" => همه انیمیشن‌های motion به
-            prefers-reduced-motion کاربر احترام می‌گذارند. */}
+        {/* ♿ reducedMotion="user" respects prefers-reduced-motion */}
         <MotionProvider>
           <ThemeProvider>
             <AuthProvider initialUser={user}>

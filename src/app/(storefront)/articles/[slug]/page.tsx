@@ -48,9 +48,7 @@ export async function generateMetadata({
     image: article.cover,
     imageAlt: article.title,
     type: "article",
-    // 🏷️ The category (`tag`) plus the article's real content tags — never
-    // padded beyond what the admin actually assigned, so this stays
-    // legitimate topical metadata rather than keyword stuffing.
+    // 🏷️ Real assigned tags only — legitimate metadata, not stuffing
     keywords: [article.tag, ...article.tags.map((t) => t.name)].filter(Boolean),
   });
 }
@@ -64,10 +62,7 @@ export default async function ArticlePage({
   const decoded = decode(slug);
   const article = await findPublishedArticle(decoded);
 
-  // 🚫 A missing/unpublished slug is a real 404, not a 200 with a "not
-  // found" message — `product/[id]/page.tsx` already does this the right
-  // way; this page used to render inline instead, which told crawlers the
-  // page was fine.
+  // 🚫 A missing/unpublished slug is a real 404, not a 200
   if (!article) notFound();
 
   return (

@@ -18,9 +18,7 @@ import type { ActionResult } from "@/lib/action-result";
 import type { Product } from "@/types";
 import { productSchema, type ProductValues } from "./schemas";
 
-/** 🔄 Polled from the products + inventory landings — stock/visibility
- *  edits (from this tab, another admin, or a customer checkout) show up
- *  without a manual reload. */
+// 🔄 Polled by the products + inventory landings
 export async function getAllProductsAction(): Promise<Product[]> {
   const admin = await requireAdmin();
   if (!admin) return [];
@@ -34,18 +32,12 @@ function revalidateCatalog() {
   revalidatePath("/admin/products");
   revalidatePath("/admin/inventory");
   revalidatePath("/admin");
-  // 🧊 The public catalog itself is served from `getAllProducts`/
-  // `getProductById`'s own `unstable_cache` (tag `PRODUCTS_TAG`), not from a
-  // route-level page cache — `/shop` renders dynamically (root layout reads
-  // per-request session/cart state), so there's no route cache entry here
-  // for `revalidatePath("/shop")` to bust.
+  // 🧊 /shop renders dynamically — the catalog cache is the PRODUCTS_TAG,
+  // not a route cache
   revalidateTag(PRODUCTS_TAG, "max");
 }
 
-/** 🪶 A clean, URL-safe slug from the name, de-duplicated against what's
- *  already in the database — same pattern as `articles/_lib/actions.ts`'s
- *  `uniqueSlug` (shared loop: `uniqueSlugAgainst`). Only used when the admin
- *  didn't type their own. */
+// 🪶 URL-safe slug from the name, de-duplicated (admin may type their own)
 async function uniqueProductSlug(name: string): Promise<string> {
   const base =
     name
@@ -58,9 +50,7 @@ async function uniqueProductSlug(name: string): Promise<string> {
   return uniqueSlugAgainst(ProductModel, base);
 }
 
-/** 🧮 `findOneAndUpdate` skips the model's `pre("save")` hook, so the
- *  `stock` boolean has to be derived by hand here to stay honest with
- *  whatever `variants` this write is setting. */
+// 🧮 findOneAndUpdate skips pre("save") — derive the stock boolean by hand
 function withDerivedStock(values: ProductValues) {
   return { ...values, stock: deriveStock(values.variants, values.stock) };
 }
@@ -122,9 +112,7 @@ export async function updateProductAction(
     revalidateCatalog();
     revalidatePath(`/admin/products/${id}/edit`);
 
-    // 🔔 Best-effort: tell anyone waiting on a size (or the whole legacy
-    // product) that just gained stock in this save. A cheap no-op for the
-    // overwhelmingly common case where nobody's subscribed.
+    // 🔔 Best-effort back-in-stock notifies; no-op when nobody's subscribed
     if (parsed.data.variants.length) {
       for (const variant of parsed.data.variants) {
         if (variant.stock > 0) await notifyBackInStock(id, variant.size);
@@ -162,8 +150,7 @@ export async function removeProductAction(id: number): Promise<ActionResult> {
   }
 }
 
-/** 🪶 The legacy boolean toggle — still the whole story for a product that
- *  was never given variants (e.g. an unsized accessory). */
+// 🪶 Legacy boolean toggle — still the whole story for variant-less products
 export async function setProductStockAction(
   id: number,
   stock: boolean,
@@ -182,9 +169,7 @@ export async function setProductStockAction(
   }
 }
 
-/** 📦 Inline stock edit from the inventory table — sets one variant's exact
- *  quantity (not a delta) and keeps the product's `stock` boolean derived
- *  from the result. */
+// 📦 Sets one variant's exact quantity; keeps the stock boolean derived
 export async function setVariantStockAction(
   id: number,
   size: string,
@@ -218,8 +203,7 @@ export async function setVariantStockAction(
   }
 }
 
-/** 📦 Bulk stock update — sets the same quantity on one size across several
- *  products at once (e.g. a fresh shipment landed for size ۹۸ everywhere). */
+// 📦 Same quantity on one size across several products (e.g. a shipment)
 export async function bulkSetVariantStockAction(
   updates: { id: number; size: string; stock: number }[],
 ): Promise<ActionResult> {

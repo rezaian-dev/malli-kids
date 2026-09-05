@@ -22,9 +22,7 @@ const BADGE: Record<string, string> = {
 const GRID_SIZES =
   "(max-width: 479px) calc(100vw - 2.5rem), (max-width: 719px) calc((100vw - 4.5rem) / 2), (max-width: 1023px) calc((100vw - 5.5rem) / 2), (max-width: 1535px) 33vw, 18rem";
 
-// 🃏 Spring "settle" for the `stack` transition (styles filter reorder) —
-// overdamped on purpose (damping > 2·√(stiffness·mass)) so cards arrive
-// crisply with no visible bounce; physical, not a linear CSS tween.
+// 🃏 Overdamped settle — crisp arrival, no visible bounce
 const STACK_SPRING = {
   type: "spring",
   stiffness: 420,
@@ -54,16 +52,13 @@ export function ProductCardGrid({
     fetchPriority?: "high";
   };
   animate?: boolean;
-  /** 🃏 موقعیت کارت در گرید فعلی — فقط برای یک stagger بسیار جزئی در ورودِ حالت `stack`. */
   index?: number;
-  /** 🃏 حالت «دستهٔ کارت»: به‌جای ورودِ اسکرول‌محور (`whileInView`)، ورود/خروج
-   *  synced با AnimatePresence والد اجرا می‌شود — برای بازچیدمانِ فیلتر
-   *  (مثل «استایل‌های منتخب»)، نه برای reveal حین اسکرول. */
+  // 🃏 Stack mode: exit/enter synced with the parent AnimatePresence —
+  // filter re-layout, not scroll reveal
   stack?: boolean;
 }) {
   const badge = p.badge ? BADGE[p.badge] || "bg-navy text-gold-light" : null;
-  // 🃏 جهتِ چرخشِ خیلی جزئیِ هر کارت در حالت stack، برگرفته از id — یک دسته
-  // کارت هیچ‌وقت همه دقیقاً یک‌شکل نمی‌چرخند.
+  // 🃏 id-based tilt direction — a deck never rotates all alike
   const tilt = p.id % 2 === 0 ? 1 : -1;
 
   return (
@@ -72,8 +67,7 @@ export function ProductCardGrid({
       className="h-full min-w-0"
       {...(stack
         ? {
-            // 🃏 خروج: کارت مثل جداشدن از یک دستهٔ کارت به‌سمتِ انتهای خواندن
-            // (چپ، چون RTL) می‌لغزد — لغزشِ افقی کور نیست، جهتش عمداً است.
+            // 🃏 Exit slides toward the reading end (left in RTL)
             exit: {
               opacity: 0,
               scale: 0.94,
@@ -85,8 +79,7 @@ export function ProductCardGrid({
             transition: STACK_SPRING,
             ...(animate
               ? {
-                  // 🃏 ورود: از سمتِ شروعِ خواندن (راست، چون RTL) و کمی از بالا
-                  // می‌آید و با اسپرینگ در جای خودش می‌نشیند.
+                  // 🃏 Enter springs in from the reading start (right in RTL)
                   initial: {
                     opacity: 0,
                     scale: 0.96,
@@ -109,9 +102,8 @@ export function ProductCardGrid({
               : {}),
           }
         : {
-            // ⚡ بدون ورودِ whileInView: کارت بی‌درنگ رندر می‌شود تا با رفرش،
-            // گرید یک‌ضرب و بدون «پاپ» شدنِ تکه‌تکه دیده شود. `layout` و `exit`
-            // می‌مانند تا تعویضِ فیلتر/صفحه همچنان نرم باشد.
+            // ⚡ No whileInView — instant paint on refresh; layout/exit keep
+            // filter swaps smooth
             exit: {
               opacity: 0,
               scale: 0.85,
@@ -215,7 +207,7 @@ export function ProductCardGrid({
                 price
               )}
             </div>
-            {/* 📱 Keep actions visible under the price on narrow screens, pinned to the card's bottom edge. */}
+            {/* 📱 Actions pinned to the bottom edge on narrow screens */}
             <div className="mt-auto grid grid-cols-1 gap-1.5 pt-2.5 pointer-fine:min-[520px]:hidden">
               <Link
                 href={href}
