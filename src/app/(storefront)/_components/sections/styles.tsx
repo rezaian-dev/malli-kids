@@ -1,6 +1,6 @@
-import { CORE_PRODUCTS } from "@/lib/data/products";
 import { ProductCard } from "@/components/product";
 import { OrnStar } from "../home-ornaments";
+import { getAllProducts } from "@/lib/shop/products";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { wash } from "@/components/shared/section-wash";
 import { cn } from "@/lib/utils";
@@ -13,7 +13,11 @@ const TRIGGER = cn(
   "dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep",
 );
 
-export function Styles() {
+export async function Styles() {
+  // 🧊 Live, cached catalog (see `page.tsx`'s own comment) — not the static
+  // seed array, so a hidden/edited product never lingers here.
+  const catalog = (await getAllProducts()).filter((product) => product.visible);
+
   return (
     <section
       id="styles"
@@ -61,9 +65,7 @@ export function Styles() {
 
           {TABS.map((name) => {
             const items =
-              name === "همه"
-                ? CORE_PRODUCTS
-                : CORE_PRODUCTS.filter((p) => p.cat === name);
+              name === "همه" ? catalog : catalog.filter((p) => p.cat === name);
             return (
               <TabsContent key={name} value={name} className="mt-0">
                 {}

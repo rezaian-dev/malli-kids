@@ -76,7 +76,9 @@ export default async function ShopPage({
     });
   }
 
-  const catalog = await getAllProducts();
+  // 🙈 `getAllProducts` is shared with the admin catalog (which needs hidden
+  // rows too) — the storefront is the one consumer that must drop them.
+  const catalog = (await getAllProducts()).filter((product) => product.visible);
   const items = filterShopProducts(catalog, state)
     .slice(0, 12)
     .map((product) => ({

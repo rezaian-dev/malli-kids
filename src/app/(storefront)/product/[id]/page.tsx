@@ -15,7 +15,7 @@ export async function generateMetadata({
   const productId = parseProductRouteId(id);
   const product = await getProductById(productId);
 
-  if (!product) {
+  if (!product || !product.visible) {
     return buildMetadata({
       title: "محصول پیدا نشد",
       description: "این محصول در حال حاضر در دسترس نیست.",
@@ -43,7 +43,10 @@ export default async function ProductPage({
   const productId = parseProductRouteId(id);
   const product = await getProductById(productId);
 
-  if (!product) notFound();
+  // 🙈 An admin-hidden product is 404 to every customer/crawler, same as a
+  // product that doesn't exist at all — `visible` has no other enforcement
+  // point between here and the DB read.
+  if (!product || !product.visible) notFound();
 
   const canonicalPath = pdpHref(product.id);
   const requestedPath = `/product/${id}`;

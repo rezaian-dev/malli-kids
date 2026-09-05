@@ -1,6 +1,7 @@
 import { HomeLanding } from "./_components/home-landing";
 import { JsonLd } from "@/components/shared/json-ld";
-import { CORE_PRODUCTS, pdpHref } from "@/lib/data/products";
+import { pdpHref } from "@/lib/data/products";
+import { getAllProducts } from "@/lib/shop/products";
 import { buildMetadata, itemListSchema, pageSchema } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -8,12 +9,19 @@ export const metadata = buildMetadata({
   path: "/",
 });
 
-export default function Page() {
-  const featured = CORE_PRODUCTS.slice(0, 6).map((product) => ({
-    name: product.name,
-    path: pdpHref(product.id),
-    image: product.img,
-  }));
+export default async function Page() {
+  // 🧊 Live, cached catalog (same `getAllProducts` the shop grid/sitemap
+  // use) — not the static seed array, so this list and its structured data
+  // stay correct after an admin edits/hides a product.
+  const catalog = await getAllProducts();
+  const featured = catalog
+    .filter((product) => product.visible)
+    .slice(0, 6)
+    .map((product) => ({
+      name: product.name,
+      path: pdpHref(product.id),
+      image: product.img,
+    }));
 
   return (
     <>

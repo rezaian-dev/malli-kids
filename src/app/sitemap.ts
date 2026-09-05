@@ -125,16 +125,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     loadPublishedArticles(),
   ]);
 
-  const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
-    url: absoluteUrl(pdpHref(product.id)),
-    // 🕒 The product's real last-write time when we have it (every DB row
-    // does; only the static seed catalog wouldn't) — a sitemap that reports
-    // every URL as "modified right now" on every regeneration is a signal
-    // crawlers learn to discount.
-    lastModified: product.updatedAt ?? now,
-    changeFrequency: "weekly",
-    priority: 0.75,
-  }));
+  // 🙈 A hidden product's PDP now 404s (see `product/[id]/page.tsx`) — never
+  // list a URL here that would 404 for the crawler that follows it.
+  const productRoutes: MetadataRoute.Sitemap = products
+    .filter((product) => product.visible)
+    .map((product) => ({
+      url: absoluteUrl(pdpHref(product.id)),
+      // 🕒 The product's real last-write time when we have it (every DB row
+      // does; only the static seed catalog wouldn't) — a sitemap that reports
+      // every URL as "modified right now" on every regeneration is a signal
+      // crawlers learn to discount.
+      lastModified: product.updatedAt ?? now,
+      changeFrequency: "weekly",
+      priority: 0.75,
+    }));
 
   const articleRoutes: MetadataRoute.Sitemap = articles.map((article) => ({
     url: absoluteUrl(`/articles/${article.slug}`),

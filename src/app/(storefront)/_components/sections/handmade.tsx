@@ -2,10 +2,14 @@ import Link from "next/link";
 import { ArrowLeft, Heart } from "lucide-react";
 import { ProductCard } from "@/components/product";
 import { OrnBow } from "../home-ornaments";
-import { CORE_PRODUCTS } from "@/lib/data/products";
+import { getAllProducts } from "@/lib/shop/products";
 import { cn } from "@/lib/utils";
 
-export function Handmade() {
+export async function Handmade() {
+  // 🧊 Live, cached catalog (see `page.tsx`'s own comment) — not the static
+  // seed array, so a hidden/edited product never lingers here.
+  const products = (await getAllProducts()).filter((product) => product.visible);
+
   return (
     <section
       id="handmade"
@@ -54,7 +58,7 @@ export function Handmade() {
           id="handmadeGrid"
           className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4 transition-all duration-700 ease-out"
         >
-          {CORE_PRODUCTS.slice(0, 8).map((product) => (
+          {products.slice(0, 8).map((product) => (
             <ProductCard key={product.id} p={product} view="grid" />
           ))}
         </div>
