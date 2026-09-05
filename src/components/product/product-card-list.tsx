@@ -4,7 +4,6 @@ import { Eye } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Product } from "@/types";
 import { AddToCartButton } from "./add-to-cart-button";
-import { DiscountBadge } from "./price-tag";
 import { FavButton } from "./fav-button";
 import { CART, VIEW } from "./card-styles";
 import { cn } from "@/lib/utils";
@@ -60,14 +59,6 @@ export function ProductCardList({
           name={p.name}
           className="absolute top-1.5 right-1.5 size-8 shadow"
         />
-        {/* 🏷️ Top-left: the fav button already owns top-right here. */}
-        {!out ? (
-          <DiscountBadge
-            price={p.price}
-            old={p.old}
-            className="absolute top-1.5 left-1.5 z-2"
-          />
-        ) : null}
       </Link>
       <div className="flex min-w-0 flex-1 flex-col gap-2 p-3">
         <div className="flex justify-between gap-2">

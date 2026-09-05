@@ -70,17 +70,6 @@ export function ProductCardGrid({
             {p.badge}
           </span>
         ) : null}
-        {/* 🏷️ Top-center: the one open slot in this header once the fav
-            button claims top-left and the optional category badge claims
-            top-right — keeps the discount tag from ever sharing a corner
-            (and thus overlapping) either of them. */}
-        {!out ? (
-          <DiscountBadge
-            price={p.price}
-            old={p.old}
-            className="absolute inset-x-0 top-2.5 z-2 mx-auto w-fit"
-          />
-        ) : null}
         <FavButton id={p.id} name={p.name} className="absolute top-2.5 left-2.5" />
         {out ? (
           <div className="bg-navy/35 absolute inset-0 z-1 flex items-center justify-center">
