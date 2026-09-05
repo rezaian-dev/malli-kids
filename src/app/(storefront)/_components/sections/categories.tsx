@@ -8,13 +8,13 @@ import { cn } from "@/lib/utils";
 
 const BIG = [
   {
-    href: "/#styles",
+    href: "/shop?category=دخترانه",
     img: "/brand/cat-girl-portrait.jpg",
     t: "دخترانه",
     d: "+۱۴۰ مدل فعال",
   },
   {
-    href: "/#styles",
+    href: "/shop?category=پسرانه",
     img: "/brand/cat-boy-portrait.jpg",
     t: "پسرانه",
     d: "+۱۲۰ مدل فعال",
@@ -23,19 +23,19 @@ const BIG = [
 
 const SMALL = [
   {
-    href: "/#styles",
+    href: "/shop?category=سیسمونی",
     img: "/brand/cat-baby-portrait.jpg",
     t: "سیسمونی",
     d: "۰ تا ۲۴ ماه",
   },
   {
-    href: "/#styles",
+    href: "/shop?category=لباس مشاغل",
     img: "/brand/cat-boy-portrait.jpg",
     t: "لباس مشاغل",
     d: "رویاهای بزرگ",
   },
   {
-    href: "/#styles",
+    href: "/shop?category=اکسسوری",
     img: "/brand/cat-accessories-portrait.jpg",
     t: "اکسسوری",
     d: "تکمیلِ استایل",

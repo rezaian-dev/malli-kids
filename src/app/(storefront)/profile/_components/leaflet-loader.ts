@@ -1,8 +1,7 @@
 "use client";
 
 // 🗺️ Plain Leaflet — free and keyless (Esri tiles, Nominatim geocoding).
-// ⚡ Dynamic import only: Leaflet touches window/document, so it must never
-// run at module scope during SSR.
+// ⚡ Dynamic import only — Leaflet touches window/document, never safe at module scope during SSR.
 let loading: Promise<typeof import("leaflet")> | null = null;
 
 // 🗺️ Loads Leaflet exactly once, wherever it's called from

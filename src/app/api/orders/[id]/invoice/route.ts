@@ -15,8 +15,7 @@ const UNPAID_ERROR = "فاکتور فقط برای سفارش‌های پردا�
 const RATE_ERROR = "تعداد درخواست‌های دانلود فاکتور زیاد بوده؛ کمی بعد دوباره تلاش کنید.";
 
 // 🧾 The one PDF invoice download path.
-// 🔐 Ownership off the real session — null for both missing and not-yours,
-// so ids can't be probed; admin is the one exception.
+// 🔐 Ownership off the real session — null for missing or not-yours; admin is the one exception.
 // 💳 Paid orders only, whatever the client claims.
 export async function GET(
   req: NextRequest,

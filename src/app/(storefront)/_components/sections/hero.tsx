@@ -72,8 +72,7 @@ export function Hero() {
           <div className="mt-8 flex flex-col flex-wrap items-stretch justify-center gap-3 min-[420px]:flex-row min-[420px]:items-center sm:mt-9 sm:gap-4 lg:justify-start">
             <MagneticGlow className="rounded-full">
               <Link
-                href="/#styles"
-                prefetch={false}
+                href="/shop"
                 className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-8 py-3.5 text-sm font-black transition-[box-shadow,color,background-color] duration-500 sm:px-9 sm:py-4 sm:text-base from-navy via-navy-mid to-navy text-cream ring-gold/40 hover:ring-gold bg-linear-to-l shadow-[0_12px_28px_-8px_rgba(14,42,71,.45)] ring-2 hover:shadow-[0_18px_40px_-10px_rgba(193,147,87,.6)]"
               >
                 <span
