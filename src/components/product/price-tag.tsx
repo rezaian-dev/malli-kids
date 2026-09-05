@@ -17,6 +17,9 @@ export function PriceTag({
   const { campaign } = useStore();
   const resolved = resolvePrice({ price, old }, campaign);
 
+  // 🏷️ The one and only discount indicator a card shows — no separate
+  // image-header badge, so there's exactly one render path and it can't
+  // ever end up duplicated or disagreeing with itself.
   if (resolved.original && resolved.percent) {
     return (
       <span
@@ -50,27 +53,5 @@ export function PriceTag({
         تومان
       </span>
     </span>
-  );
-}
-
-/** 🏷️ The small corner "٪N تخفیف" pill product cards show over the image.
- *  Reads the same `resolvePrice` result `PriceTag` does, so a live festival
- *  overriding a product's own discount is reflected here too instead of the
- *  card showing two different, disagreeing discount numbers. */
-export function DiscountBadge({
-  price,
-  old,
-  className,
-}: {
-  price: number;
-  old?: number;
-  className?: string;
-}) {
-  const { campaign } = useStore();
-  const resolved = resolvePrice({ price, old }, campaign);
-  if (!resolved.original || !resolved.percent) return null;
-
-  return (
-    <span className={className}>{toFaDigits(resolved.percent)}٪ تخفیف</span>
   );
 }

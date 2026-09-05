@@ -5,7 +5,6 @@ import type { ReactNode } from "react";
 import type { Product } from "@/types";
 import { toFaDigits } from "@/lib/locale/fa";
 import { AddToCartButton } from "./add-to-cart-button";
-import { DiscountBadge } from "./price-tag";
 import { FavButton } from "./fav-button";
 import { CART, VIEW } from "./card-styles";
 import { cn } from "@/lib/utils";
@@ -70,16 +69,6 @@ export function ProductCardGrid({
           >
             {p.badge}
           </span>
-        ) : null}
-        {!out ? (
-          <DiscountBadge
-            price={p.price}
-            old={p.old}
-            className={cn(
-              "absolute top-2.5 left-14 z-2 rounded-full px-2 py-1 text-[10px] font-black whitespace-nowrap",
-              "bg-rose text-white",
-            )}
-          />
         ) : null}
         <FavButton id={p.id} name={p.name} className="absolute top-2.5 left-2.5" />
         {out ? (
