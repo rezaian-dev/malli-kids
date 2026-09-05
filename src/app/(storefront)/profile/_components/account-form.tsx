@@ -5,11 +5,11 @@ import { useStore } from "@/providers/store-provider";
 import {
   AppForm,
   ComboboxField,
+  SubmitButton,
   TextareaField,
   TextField,
   useAppForm,
 } from "@/components/form";
-import { Button } from "@/components/ui/button";
 import { IRAN_CITIES } from "@/lib/data/iran-cities";
 import type { User } from "@/types";
 import { updateAccountAction } from "../_lib/actions";
@@ -91,6 +91,7 @@ export function AccountForm() {
           label="شهر"
           options={IRAN_CITIES}
           placeholder="نام شهر را تایپ کنید"
+          autoComplete="address-level2"
         />
 
         <TextareaField
@@ -118,9 +119,9 @@ export function AccountForm() {
         />
       </div>
 
-      <Button type="submit" variant="navy" className="h-11 px-7">
+      <SubmitButton variant="navy" className="h-11 px-7" pendingLabel="در حال ذخیره…">
         ذخیره حساب
-      </Button>
+      </SubmitButton>
     </AppForm>
   );
 }

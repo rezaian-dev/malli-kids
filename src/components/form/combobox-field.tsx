@@ -14,6 +14,7 @@ export type ComboboxFieldProps = {
   placeholder?: string;
   emptyText?: string;
   required?: boolean;
+  autoComplete?: string;
 };
 
 export function ComboboxField({
@@ -26,6 +27,7 @@ export function ComboboxField({
   placeholder,
   emptyText,
   required,
+  autoComplete,
 }: ComboboxFieldProps) {
   return (
     <Field
@@ -39,6 +41,8 @@ export function ComboboxField({
       {({ field, invalid, id, describedBy }) => (
         <Combobox
           id={id}
+          name={field.name}
+          autoComplete={autoComplete}
           value={(field.value as string) ?? ""}
           onChange={field.onChange}
           onOpenChange={(o) => !o && field.onBlur()}

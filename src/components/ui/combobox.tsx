@@ -14,6 +14,14 @@ export type ComboboxProps = {
   placeholder?: string;
   emptyText?: string;
   id?: string;
+  name?: string;
+  // 🖋️ Defaults to "off" (this is a closed type-ahead list, not free text a
+  // browser should offer to remember) — pass a real token (e.g.
+  // "address-level2" for the city field) to let Chrome's own address
+  // autofill reach this control too. Setting it doesn't touch the custom
+  // filtering/listbox behavior above; it only lets the browser correlate
+  // this field with the rest of a saved address.
+  autoComplete?: string;
   className?: string;
   invalid?: boolean;
   "aria-required"?: boolean;
@@ -34,6 +42,8 @@ export function Combobox({
   placeholder = "تایپ کنید…",
   emptyText = "نتیجه‌ای یافت نشد — همین متن ثبت می‌شود.",
   id,
+  name,
+  autoComplete = "off",
   className,
   invalid,
   ...aria
@@ -101,6 +111,7 @@ export function Combobox({
           <input
             ref={inputRef}
             id={id}
+            name={name}
             {...aria}
             role="combobox"
             aria-expanded={open}
@@ -118,7 +129,7 @@ export function Combobox({
             onFocus={() => setOpenState(true)}
             onKeyDown={onKeyDown}
             placeholder={placeholder}
-            autoComplete="off"
+            autoComplete={autoComplete}
             className="placeholder:text-navy/70 dark:placeholder:text-wheat/70 h-full w-full min-w-0 bg-transparent text-sm font-bold outline-none"
           />
           <ChevronDown

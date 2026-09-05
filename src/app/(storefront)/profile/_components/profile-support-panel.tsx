@@ -58,6 +58,7 @@ export function ProfileSupportPanel() {
   const [errors, setErrors] = useState<{ subject?: string; message?: string }>(
     {},
   );
+  const [submitting, setSubmitting] = useState(false);
 
   function refresh() {
     getMyTicketsAction().then(setTickets);
@@ -66,6 +67,7 @@ export function ProfileSupportPanel() {
   if (!user) return null;
 
   async function submit() {
+    if (submitting) return;
     const next: { subject?: string; message?: string } = {};
     if (subject.trim().length < 3)
       next.subject = "موضوع باید حداقل ۳ حرف باشد.";
@@ -74,10 +76,12 @@ export function ProfileSupportPanel() {
     setErrors(next);
     if (Object.keys(next).length) return;
 
+    setSubmitting(true);
     const result = await createTicketAction({
       subject: subject.trim(),
       message: message.trim(),
     });
+    setSubmitting(false);
     if (!result.ok) {
       toast.error(result.error);
       return;
@@ -165,14 +169,17 @@ export function ProfileSupportPanel() {
               variant="navy"
               className="h-11 px-6"
               onClick={submit}
+              disabled={submitting}
+              aria-busy={submitting || undefined}
             >
-              ثبت تیکت
+              {submitting ? "در حال ثبت…" : "ثبت تیکت"}
             </Button>
             <Button
               type="button"
               variant="outline"
               className="h-11 px-5"
               onClick={() => setCompose(false)}
+              disabled={submitting}
             >
               انصراف
             </Button>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff, KeyRound, Lock, Mail } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
 import { toast } from "@/lib/toast";
-import { AppForm, InsetField, useAppForm } from "@/components/form";
+import { AppForm, InsetField, SubmitButton, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TrustNote } from "./trust-note";
@@ -143,9 +143,9 @@ function PasswordLoginPanel({ onForgot }: { onForgot: () => void }) {
         فراموشیِ رمز عبور؟
       </Button>
 
-      <Button type="submit" className={SUBMIT_NAVY}>
+      <SubmitButton className={SUBMIT_NAVY} pendingLabel="در حال ورود…">
         ورود به حساب <ArrowLeft className="size-4" />
-      </Button>
+      </SubmitButton>
 
       <TrustNote />
     </AppForm>

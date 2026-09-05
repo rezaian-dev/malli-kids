@@ -17,11 +17,14 @@ export function TicketThread({
   onSent: () => void;
 }) {
   const [reply, setReply] = useState("");
+  const [sending, setSending] = useState(false);
 
   async function send() {
     const text = reply.trim();
-    if (text.length < 2) return;
+    if (text.length < 2 || sending) return;
+    setSending(true);
     const result = await replyTicketAsUserAction(ticket.id, text);
+    setSending(false);
     if (!result.ok) return toast.error(result.error);
     setReply("");
     onSent();
@@ -71,10 +74,11 @@ export function TicketThread({
             event.preventDefault();
             send();
           }}
+          disabled={sending}
           placeholder="پیام پیگیری…"
           aria-label="پیام پیگیری"
           className={cn(
-            "h-10 flex-1 rounded-xl border bg-white px-4 text-sm outline-none",
+            "h-10 flex-1 rounded-xl border bg-white px-4 text-sm outline-none disabled:opacity-60",
             "border-navy/12 text-navy",
             "dark:border-gold/25 dark:bg-navy-mid dark:text-ivory",
           )}
@@ -85,6 +89,7 @@ export function TicketThread({
           size="icon"
           className="size-10 shrink-0 rounded-xl"
           onClick={send}
+          disabled={sending}
           aria-label="ارسال پیام"
         >
           <Send className="size-4" />

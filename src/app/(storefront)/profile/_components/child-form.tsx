@@ -2,8 +2,13 @@
 
 import { toast } from "@/lib/toast";
 import { useStore } from "@/providers/store-provider";
-import { AppForm, SelectField, TextField, useAppForm } from "@/components/form";
-import { Button } from "@/components/ui/button";
+import {
+  AppForm,
+  SelectField,
+  SubmitButton,
+  TextField,
+  useAppForm,
+} from "@/components/form";
 import type { User } from "@/types";
 import { updateChildAction } from "../_lib/actions";
 import {
@@ -76,9 +81,9 @@ export function ChildForm() {
         />
       </div>
 
-      <Button type="submit" variant="gold" className="h-11 px-7">
+      <SubmitButton variant="gold" className="h-11 px-7" pendingLabel="در حال ذخیره…">
         ذخیره اطلاعات کودک
-      </Button>
+      </SubmitButton>
     </AppForm>
   );
 }

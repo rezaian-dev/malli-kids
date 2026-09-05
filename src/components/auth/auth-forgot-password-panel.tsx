@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Mail, MailCheck } from "lucide-react";
 import { useCooldown } from "@/hooks/use-cooldown";
-import { AppForm, InsetField, useAppForm } from "@/components/form";
+import { AppForm, InsetField, SubmitButton, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { forgotPasswordAction } from "@/lib/auth/actions";
@@ -120,9 +120,9 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
         required
       />
 
-      <Button type="submit" className={SUBMIT_GOLD}>
+      <SubmitButton className={SUBMIT_GOLD} pendingLabel="در حال ارسال…">
         ارسالِ لینکِ بازنشانی <ArrowLeft className="size-4" />
-      </Button>
+      </SubmitButton>
 
       <Button
         type="button"

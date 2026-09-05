@@ -188,9 +188,21 @@ export function ProductCheckoutDialog({
           </p>
         </div>
 
-        <div className="space-y-2.5">
+        {/* 📮 A real `<form>` (not a bare stack of `onClick`-driven inputs) —
+            lets Enter submit from any field like every other form in the app,
+            and gives Chrome's address autofill a submit boundary + `name`s
+            to correlate phone/city/address/postal code as one saved profile
+            instead of four unrelated fields. */}
+        <form
+          className="space-y-2.5"
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitOrder();
+          }}
+        >
           <Input
             dir="ltr"
+            name="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="0912…"
@@ -200,6 +212,7 @@ export function ProductCheckoutDialog({
             aria-label="موبایل"
           />
           <Input
+            name="address-level2"
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="شهر"
@@ -208,6 +221,7 @@ export function ProductCheckoutDialog({
             aria-label="شهر"
           />
           <Input
+            name="street-address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             placeholder="آدرس کامل"
@@ -217,6 +231,7 @@ export function ProductCheckoutDialog({
           />
           <Input
             dir="ltr"
+            name="postal-code"
             value={postal}
             onChange={(e) => setPostal(e.target.value)}
             placeholder="کد پستی (۱۰ رقم)"
@@ -229,12 +244,20 @@ export function ProductCheckoutDialog({
           <div className="flex gap-2">
             <Input
               dir="ltr"
+              name="coupon"
               value={couponIn}
               onChange={(e) => {
                 setCouponIn(e.target.value);
                 setCouponBad(false);
               }}
-              onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
+              onKeyDown={(e) => {
+                // 🚫 The coupon field has its own action (apply, not submit
+                // the order) — stop Enter here before it bubbles to the
+                // form's own submit handler above.
+                if (e.key !== "Enter") return;
+                e.preventDefault();
+                applyCoupon();
+              }}
               placeholder="MALLI10"
               aria-label="کد تخفیف"
               className={cn(
@@ -263,17 +286,16 @@ export function ProductCheckoutDialog({
           ) : couponBad ? (
             <p className="text-rose text-[11px] font-black">این کد معتبر نیست.</p>
           ) : null}
-        </div>
 
-        <Button
-          type="button"
-          variant="navy"
-          className="h-12 w-full rounded-2xl font-black"
-          onClick={submitOrder}
-          disabled={pending}
-        >
-          {pending ? "در حال ثبت…" : "تأیید و ثبتِ سفارش"}
-        </Button>
+          <Button
+            type="submit"
+            variant="navy"
+            className="h-12 w-full rounded-2xl font-black"
+            disabled={pending}
+          >
+            {pending ? "در حال ثبت…" : "تأیید و ثبتِ سفارش"}
+          </Button>
+        </form>
         <p
           className={cn(
             "text-center text-[10px] leading-5 font-bold",

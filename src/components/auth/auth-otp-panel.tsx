@@ -17,7 +17,13 @@ import {
 import { toast } from "@/lib/toast";
 import { toFaDigits } from "@/lib/locale/fa";
 import { useCooldown } from "@/hooks/use-cooldown";
-import { AppForm, Field, InsetField, useAppForm } from "@/components/form";
+import {
+  AppForm,
+  Field,
+  InsetField,
+  SubmitButton,
+  useAppForm,
+} from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { requestOtpAction, verifyOtpAction } from "@/lib/auth/actions";
@@ -210,9 +216,9 @@ export function OtpLoginPanel() {
           required
         />
 
-        <Button type="submit" className={SUBMIT_NAVY}>
+        <SubmitButton className={SUBMIT_NAVY} pendingLabel="در حال ارسال…">
           ارسالِ کدِ پیامکی <ArrowLeft className="size-4" />
-        </Button>
+        </SubmitButton>
       </AppForm>
     );
   }
@@ -266,9 +272,9 @@ export function OtpLoginPanel() {
           )}
         </Field>
 
-        <Button type="submit" className={SUBMIT_NAVY}>
+        <SubmitButton className={SUBMIT_NAVY} pendingLabel="در حال بررسیِ کد…">
           تأیید و ورود <KeyRound className="size-4" />
-        </Button>
+        </SubmitButton>
 
         <div className="flex items-center justify-between text-[11px] font-bold">
           {cd.sec > 0 ? (
