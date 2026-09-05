@@ -67,6 +67,13 @@ export const getAllProducts = unstable_cache(
 
 export const getProductById = unstable_cache(
   async (id: number): Promise<Product | null> => {
+    // 🛡️ A malformed route param (`parseProductRouteId` on a URL with no
+    // leading number, e.g. a typo'd/garbage slug) hands this `NaN` — Mongo's
+    // driver throws a `CastError` on that instead of just missing, which
+    // would otherwise crash the page before its own `if (!product)
+    // notFound()` ever runs. Treat it as "not found", same as any other id
+    // with no matching product.
+    if (!Number.isFinite(id)) return null;
     await connectMongoose();
     const doc = await ProductModel.findOne({ id }).lean();
     return doc ? toProduct(doc) : null;

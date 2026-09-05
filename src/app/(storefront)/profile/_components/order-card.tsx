@@ -3,6 +3,8 @@ import { FileDown, Home, Package, Truck, Wallet } from "lucide-react";
 import type { AdminOrder, OrderStatus } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { ORDER_STAGES, stageIndex } from "@/lib/shop/order-status";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const ORDER_TONE: Record<OrderStatus, string> = {
@@ -23,16 +25,18 @@ export function OrderCard({ order }: { order: AdminOrder }) {
   const stage = stageIndex(order.status);
 
   return (
-    <li
+    <Card
+      asChild
       className={cn(
-        "overflow-hidden rounded-2xl border",
+        "gap-0 overflow-hidden rounded-2xl p-0 py-0",
         "border-navy/10",
         "dark:border-gold/25",
       )}
     >
-      <div
+      <li>
+      <CardHeader
         className={cn(
-          "flex flex-wrap items-center gap-2 border-b px-4 py-3",
+          "flex-row flex-wrap items-center gap-2 border-b px-4 py-3",
           "border-navy/8 bg-navy/2",
           "dark:border-gold/15 dark:bg-white/2",
         )}
@@ -40,14 +44,14 @@ export function OrderCard({ order }: { order: AdminOrder }) {
         <p className="text-navy dark:text-ivory text-sm font-black" dir="ltr">
           {order.id}
         </p>
-        <span
+        <Badge
           className={cn(
-            "rounded-full px-3 py-1 text-[10px] font-black",
+            "rounded-full border-0 px-3 py-1 text-[10px] font-black",
             ORDER_TONE[order.status],
           )}
         >
           {order.status}
-        </span>
+        </Badge>
         <span className="text-navy/70 dark:text-wheat ms-auto text-[10px] font-bold">
           {order.date}
         </span>
@@ -68,7 +72,7 @@ export function OrderCard({ order }: { order: AdminOrder }) {
             <FileDown className="size-3.5" /> دانلود فاکتور
           </a>
         ) : null}
-      </div>
+      </CardHeader>
 
       <ul className="space-y-2 px-4 py-3">
         {order.items.map((item) => (
@@ -156,6 +160,7 @@ export function OrderCard({ order }: { order: AdminOrder }) {
           })}
         </ol>
       )}
-    </li>
+      </li>
+    </Card>
   );
 }

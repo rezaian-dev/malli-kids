@@ -8,7 +8,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SIZE_ROWS } from "@/lib/data/pages";
+import { toFaDigits } from "@/lib/locale/fa";
+import { SIZE_TABLE } from "@/lib/data/sizing";
 import { cn } from "@/lib/utils";
 
 export function SizeGuideLanding() {
@@ -47,9 +48,9 @@ export function SizeGuideLanding() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {SIZE_ROWS.map((r, i) => (
+              {SIZE_TABLE.map((row, i) => (
                 <TableRow
-                  key={r[0]}
+                  key={row.size}
                   className={cn(
                     "border-0",
                     i % 2
@@ -57,7 +58,13 @@ export function SizeGuideLanding() {
                       : "dark:bg-slate bg-white",
                   )}
                 >
-                  {r.map((c, j) => (
+                  {[
+                    row.size,
+                    `${toFaDigits(row.heightMin)}–${toFaDigits(row.heightMax)}`,
+                    row.ageLabel,
+                    toFaDigits(row.chestCm),
+                    toFaDigits(row.waistCm),
+                  ].map((c, j) => (
                     <TableCell
                       key={c}
                       className={cn(

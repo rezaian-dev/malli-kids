@@ -147,7 +147,9 @@ export function CartSheet() {
             ) : null}
           </SheetTitle>
           <SheetDescription className="text-gold-soft text-start text-[11px] font-bold">
-            گالری ملی‌کیدز — خرید آنلاین به‌زودی
+            {empty
+              ? "گالری ملی‌کیدز"
+              : "هر مورد را جدا سفارش دهید — «ثبت سفارش این مورد» را بزنید"}
           </SheetDescription>
         </SheetHeader>
 

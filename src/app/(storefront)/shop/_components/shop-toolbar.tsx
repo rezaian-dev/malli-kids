@@ -1,5 +1,6 @@
 import { ArrowUpDown, LayoutGrid, List, SlidersHorizontal } from "lucide-react";
 import { toFaDigits } from "@/lib/locale/fa";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -64,14 +65,14 @@ export function ShopToolbar({
         >
           <SlidersHorizontal className="size-4" /> فیلتر
           {activeN ? (
-            <span
+            <Badge
               className={cn(
-                "grid size-5 place-items-center rounded-full text-[10px] font-black",
+                "size-5 justify-center rounded-full border-0 p-0 text-[10px] font-black",
                 "bg-gold text-navy-deep",
               )}
             >
               {toFaDigits(activeN)}
-            </span>
+            </Badge>
           ) : null}
         </Button>
 

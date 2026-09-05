@@ -18,6 +18,7 @@ export type ProfileDoc = {
   childName?: string;
   childAge?: string;
   childGender?: string;
+  childHeightCm?: string;
   favorites?: number[];
 };
 
@@ -34,6 +35,7 @@ const profileSchema = new Schema<ProfileDoc>(
     childName: String,
     childAge: String,
     childGender: String,
+    childHeightCm: String,
     favorites: { type: [Number], default: [] },
   },
   { timestamps: true },

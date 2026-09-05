@@ -5,8 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   BadgeCheck,
-  Minus,
-  Plus,
+  Info,
   RotateCcw,
   Ruler,
   ShieldCheck,
@@ -17,14 +16,21 @@ import {
 } from "lucide-react";
 import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
+import { parseFaNumber } from "@/lib/digits";
 import { toast } from "@/lib/toast";
 import { getMissingShippingFields } from "@/lib/shop/shipping";
+import { sizeForHeightCm } from "@/lib/data/sizing";
 import { useStore } from "@/providers/store-provider";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { QtyStepper } from "@/components/shared/qty-stepper";
+import { CheckoutMount } from "@/components/product";
 import { pdpCard, pdpKicker, pdpWell } from "../_lib/product-chrome";
 import { ProductReadMore } from "./product-read-more";
-import { ProductCheckoutMount } from "./product-checkout-mount";
 import { ProductGallery } from "./product-gallery";
+import { ProductSizeTable } from "./product-size-table";
+import { ProductStickyBar } from "./product-sticky-bar";
 import { cn } from "@/lib/utils";
 
 const SIZES = ["۸۰", "۸۶", "۹۲", "۹۸", "۱۰۴", "۱۱۰", "۱۱۶", "۱۲۲"];
@@ -34,8 +40,10 @@ const TAG_PILL = cn(
   "border-navy/10 bg-sand/80 text-navy",
   "dark:border-gold/25 dark:bg-night dark:text-ivory",
 );
-const QTY_BTN =
-  "flex size-10 items-center justify-center rounded-full transition-transform duration-150 motion-safe:hover:scale-110 motion-safe:active:scale-90";
+const AVAILABILITY_PILL = {
+  in: "rounded-full border-0 px-3 py-1 text-[11px] font-bold bg-emerald-500/12 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-300",
+  out: "rounded-full border-0 px-3 py-1 text-[11px] font-bold bg-rose/10 text-rose",
+};
 const CTA_BUTTON =
   "h-auto min-h-12 w-full rounded-2xl px-3 py-3 text-[13px] leading-5 font-black whitespace-normal sm:text-sm";
 const SHIP_ITEM =
@@ -67,11 +75,31 @@ export function ProductBuyPanel({ product }: { product: Product }) {
     useStore();
   const router = useRouter();
   const sizeOptions = useSizeOptions(product);
+
+  // 📏 If the shopper's child profile has a height on file, suggest the
+  // size it maps to — as long as this product actually offers it — instead
+  // of just falling back to the first in-stock size. See `sizing.ts`. (The
+  // React Compiler handles memoizing this itself — no manual `useMemo`.)
+  const heightCm = user?.childHeightCm ? parseFaNumber(user.childHeightCm) : NaN;
+  const sizeSuggestion = Number.isFinite(heightCm)
+    ? sizeForHeightCm(heightCm)
+    : null;
+  const recommendedSize =
+    sizeSuggestion &&
+    sizeOptions.some((o) => o.size === sizeSuggestion && o.available)
+      ? sizeSuggestion
+      : null;
+
   const [size, setSize] = useState(
-    () => sizeOptions.find((option) => option.available)?.size ?? sizeOptions[0]?.size ?? "۹۸",
+    () =>
+      recommendedSize ??
+      sizeOptions.find((option) => option.available)?.size ??
+      sizeOptions[0]?.size ??
+      "۹۸",
   );
   const [qty, setQty] = useState(1);
   const [checkout, setCheckout] = useState(false);
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
 
   const selectedAvailable =
     sizeOptions.find((option) => option.size === size)?.available ?? true;
@@ -100,6 +128,16 @@ export function ProductBuyPanel({ product }: { product: Product }) {
     }
 
     setCheckout(true);
+  }
+
+  // 🛒 Shared by the main CTA and the mobile sticky bar so both add exactly
+  // the same line the exact same way.
+  function handleAddToCart() {
+    if (!canOrder) return showToast("به محض موجود شدن خبرتان می‌کنیم");
+    // 🔐 `addToCart` gates guests itself (login dialog + toast); only
+    // celebrate success when it actually added the line.
+    if (addToCart(product.id, size, qty))
+      showToast(`${toFaDigits(qty)} عدد سایز ${size} به سبد اضافه شد`);
   }
 
   return (
@@ -135,14 +173,24 @@ export function ProductBuyPanel({ product }: { product: Product }) {
             امتیاز خریداران تأییدشده
           </span>
         </div>
-        <ul className="mt-4 flex flex-wrap gap-1.5">
-          {product.season ? (
-            <li className={TAG_PILL}>{product.season}</li>
-          ) : null}
-          <li className={TAG_PILL}>
-            {product.stock ? "موجود در آتلیه" : "ناموجود"}
+        <ul className="mt-4 flex flex-wrap items-center gap-1.5">
+          <li>
+            <Badge
+              className={
+                product.stock ? AVAILABILITY_PILL.in : AVAILABILITY_PILL.out
+              }
+            >
+              {product.stock ? "موجود در آتلیه" : "ناموجود"}
+            </Badge>
           </li>
-          <li className={TAG_PILL}>{toFaDigits(product.sold)} فروش</li>
+          {product.season ? (
+            <li>
+              <Badge className={TAG_PILL}>{product.season}</Badge>
+            </li>
+          ) : null}
+          <li>
+            <Badge className={TAG_PILL}>{toFaDigits(product.sold)} فروش</Badge>
+          </li>
         </ul>
         <ProductReadMore
           text={product.desc}
@@ -182,15 +230,40 @@ export function ProductBuyPanel({ product }: { product: Product }) {
               </span>
             ) : null}
           </div>
-          <p
-            className={cn(
-              "mt-6 mb-2.5 flex items-center gap-1.5 text-xs font-black",
-              "text-navy",
-              "dark:text-ivory",
-            )}
-          >
-            <Ruler className="text-gold size-4" /> انتخاب سایز
-          </p>
+          <div className="mt-6 mb-2.5 flex items-center justify-between gap-2">
+            <p
+              className={cn(
+                "flex items-center gap-1.5 text-xs font-black",
+                "text-navy",
+                "dark:text-ivory",
+              )}
+            >
+              <Ruler className="text-gold size-4" /> انتخاب سایز
+            </p>
+            <button
+              type="button"
+              onClick={() => setSizeGuideOpen(true)}
+              className={cn(
+                "flex items-center gap-1 text-[11px] font-bold underline underline-offset-2",
+                "text-navy/70 hover:text-gold",
+                "dark:text-wheat dark:hover:text-gold-light",
+              )}
+            >
+              <Info className="size-3.5" /> راهنمای سایز
+            </button>
+          </div>
+          {recommendedSize ? (
+            <p
+              className={cn(
+                "mb-2.5 rounded-xl px-3 py-2 text-[11px] font-bold",
+                "bg-gold/10 text-gold-deep",
+                "dark:bg-gold/15 dark:text-gold-soft",
+              )}
+            >
+              📏 پیشنهاد سایز برای {user?.childName || "کوچولوی شما"}: سایز{" "}
+              {recommendedSize}
+            </p>
+          ) : null}
           <div className="flex flex-wrap gap-2">
             {sizeOptions.map(({ size: s, available }) => (
               <button
@@ -199,7 +272,7 @@ export function ProductBuyPanel({ product }: { product: Product }) {
                 disabled={!available}
                 onClick={() => setSize(s)}
                 className={cn(
-                  "min-h-10 min-w-10 rounded-xl border-2 px-2.5 py-2 text-[11px] font-bold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95 sm:px-3.5 sm:text-xs",
+                  "relative min-h-10 min-w-10 rounded-xl border-2 px-2.5 py-2 text-[11px] font-bold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95 sm:px-3.5 sm:text-xs",
                   !available && "cursor-not-allowed opacity-40 line-through",
                   size === s
                     ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep motion-safe:hover:shadow-md"
@@ -207,6 +280,12 @@ export function ProductBuyPanel({ product }: { product: Product }) {
                 )}
               >
                 {s}
+                {s === recommendedSize ? (
+                  <span
+                    aria-hidden
+                    className="bg-gold absolute -inset-e-1 -top-1 size-2 rounded-full"
+                  />
+                ) : null}
               </button>
             ))}
           </div>
@@ -214,50 +293,15 @@ export function ProductBuyPanel({ product }: { product: Product }) {
             <p className="text-navy dark:text-ivory text-xs font-black">
               تعداد
             </p>
-            <div
-              className={cn(
-                "inline-flex items-center gap-1 rounded-full border p-1",
-                "border-navy/10 bg-sand",
-                "dark:border-gold/30 dark:bg-night",
-              )}
-            >
-              <button
-                type="button"
-                className={cn(QTY_BTN, "bg-white", "dark:bg-slate")}
-                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                aria-label="کم کردن"
-              >
-                <Minus className="size-4" />
-              </button>
-              <span className="w-10 text-center text-base font-black tabular-nums">
-                {toFaDigits(qty)}
-              </span>
-              <button
-                type="button"
-                className={cn(QTY_BTN, "bg-navy text-cream")}
-                onClick={() => setQty((q) => q + 1)}
-                aria-label="زیاد کردن"
-              >
-                <Plus className="size-4" />
-              </button>
-            </div>
+            <QtyStepper qty={qty} onChange={setQty} />
           </div>
-          <div className="mt-7">
+          <div className="mt-7" id="pdp-add-to-cart">
             <Button
               type="button"
               variant="navy"
               disabled={!canOrder}
               className={CTA_BUTTON}
-              onClick={() => {
-                if (!canOrder)
-                  return showToast("به محض موجود شدن خبرتان می‌کنیم");
-                // 🔐 `addToCart` gates guests itself (login dialog + toast);
-                // only celebrate success when it actually added the line.
-                if (addToCart(product.id, size, qty))
-                  showToast(
-                    `${toFaDigits(qty)} عدد سایز ${size} به سبد اضافه شد`,
-                  );
-              }}
+              onClick={handleAddToCart}
             >
               <ShoppingBag className="size-4" />
               {canOrder
@@ -289,7 +333,7 @@ export function ProductBuyPanel({ product }: { product: Product }) {
           </Button>
         </div>
 
-        <ProductCheckoutMount
+        <CheckoutMount
           open={checkout}
           onOpenChange={setCheckout}
           product={product}
@@ -297,6 +341,26 @@ export function ProductBuyPanel({ product }: { product: Product }) {
           qty={qty}
           unit={unit}
         />
+
+        <Dialog open={sizeGuideOpen} onOpenChange={setSizeGuideOpen}>
+          <DialogContent
+            dir="rtl"
+            showCloseButton
+            className={cn(
+              "max-w-2xl rounded-3xl",
+              "border-gold/40 bg-paper text-navy border",
+              "dark:border-gold/50 dark:bg-dusk dark:text-ivory",
+            )}
+          >
+            <DialogTitle className="flex items-center gap-2 text-base font-black">
+              <Ruler className="text-gold size-5" /> راهنمای سایز
+            </DialogTitle>
+            <ProductSizeTable
+              highlightSize={recommendedSize ?? "۹۸"}
+              highlightLabel={recommendedSize ? "پیشنهادی برای شما" : "پیشنهادی"}
+            />
+          </DialogContent>
+        </Dialog>
 
         <ul
           className={cn(
@@ -316,6 +380,14 @@ export function ProductBuyPanel({ product }: { product: Product }) {
           </li>
         </ul>
       </div>
+
+      <ProductStickyBar
+        observeId="pdp-add-to-cart"
+        name={product.name}
+        unit={unit}
+        canOrder={Boolean(canOrder)}
+        onAddToCart={handleAddToCart}
+      />
     </div>
   );
 }

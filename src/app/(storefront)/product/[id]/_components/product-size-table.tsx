@@ -7,18 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toFaDigits } from "@/lib/locale/fa";
+import { SIZE_TABLE } from "@/lib/data/sizing";
 import { cn } from "@/lib/utils";
-
-const SIZE_TABLE = [
-  ["۸۰", "۷۵–۸۰", "۹–۱۲ ماه", "۴۸"],
-  ["۸۶", "۸۱–۸۶", "۱۲–۱۸ ماه", "۵۰"],
-  ["۹۲", "۸۷–۹۲", "۱۸–۲۴ ماه", "۵۲"],
-  ["۹۸", "۹۳–۹۸", "۲–۳ سال", "۵۴"],
-  ["۱۰۴", "۹۹–۱۰۴", "۳–۴ سال", "۵۶"],
-  ["۱۱۰", "۱۰۵–۱۱۰", "۴–۵ سال", "۵۸"],
-  ["۱۱۶", "۱۱۱–۱۱۶", "۵–۶ سال", "۶۰"],
-  ["۱۲۲", "۱۱۷–۱۲۲", "۶–۷ سال", "۶۲"],
-];
 
 const CELL = "px-2 py-2.5 whitespace-nowrap sm:p-4";
 
@@ -29,7 +20,15 @@ const HEADS = [
   { short: "سینه", full: "دور سینه" },
 ];
 
-export function ProductSizeTable() {
+export function ProductSizeTable({
+  highlightSize = "۹۸",
+  highlightLabel = "پیشنهادی",
+}: {
+  /** 🎯 Which row to call out — the store's most-picked size by default, or
+   *  a size recommended from the shopper's own child profile when known. */
+  highlightSize?: string;
+  highlightLabel?: string;
+}) {
   return (
     <div className="grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_16.5rem] lg:gap-5">
       <div
@@ -57,12 +56,12 @@ export function ProductSizeTable() {
             </TableRow>
           </TableHeader>
           <TableBody className="text-navy/80 dark:text-ivory/90">
-            {SIZE_TABLE.map((r, i) => (
+            {SIZE_TABLE.map((row, i) => (
               <TableRow
-                key={r[0]}
+                key={row.size}
                 className={cn(
                   "border-navy/5 dark:border-gold/15",
-                  r[0] === "۹۸"
+                  row.size === highlightSize
                     ? "bg-gold-pale dark:bg-gold/20"
                     : i % 2
                       ? "bg-sand dark:bg-navy-mid/55"
@@ -77,21 +76,23 @@ export function ProductSizeTable() {
                     "dark:text-ivory",
                   )}
                 >
-                  {r[0]}
-                  {r[0] === "۹۸" ? (
+                  {row.size}
+                  {row.size === highlightSize ? (
                     <Badge
                       className={cn(
                         "ms-1 hidden rounded-full border-0 text-[10px] font-bold min-[380px]:inline-flex",
                         "bg-gold/20 text-gold",
                       )}
                     >
-                      پیشنهادی
+                      {highlightLabel}
                     </Badge>
                   ) : null}
                 </TableCell>
-                <TableCell className={CELL}>{r[1]}</TableCell>
-                <TableCell className={CELL}>{r[2]}</TableCell>
-                <TableCell className={CELL}>{r[3]}</TableCell>
+                <TableCell className={CELL}>
+                  {toFaDigits(row.heightMin)}–{toFaDigits(row.heightMax)}
+                </TableCell>
+                <TableCell className={CELL}>{row.ageLabel}</TableCell>
+                <TableCell className={CELL}>{toFaDigits(row.chestCm)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

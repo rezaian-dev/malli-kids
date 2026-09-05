@@ -25,7 +25,7 @@ export function CartEmptyState() {
         </p>
       </div>
       <Badge className="bg-gold/15 text-gold rounded-full border-0 px-3 py-1 text-[10px] font-bold">
-        <Sparkles className="me-1 size-3" /> نسخهٔ نمایشی
+        <Sparkles className="me-1 size-3" /> پرداخت هنگام تحویل
       </Badge>
     </div>
   );

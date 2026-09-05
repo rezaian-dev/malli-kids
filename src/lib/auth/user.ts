@@ -42,5 +42,6 @@ export const buildUser = cache(async (identity: {
     childName: profile?.childName,
     childAge: profile?.childAge,
     childGender: profile?.childGender,
+    childHeightCm: profile?.childHeightCm,
   };
 });

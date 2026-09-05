@@ -21,18 +21,12 @@ const BODY_HTML = cn(
 );
 
 export function ArticleView({
-  initial,
-  missing,
+  article,
   actions,
 }: {
-  slug: string;
-  initial: JournalArticle | null;
-  missing: ReactNode;
+  article: JournalArticle;
   actions: ReactNode;
 }) {
-  const article = initial;
-  if (!article) return <>{missing}</>;
-
   const isHtml = article.body.trimStart().startsWith("<");
 
   return (

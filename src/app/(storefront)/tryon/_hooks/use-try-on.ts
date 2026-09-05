@@ -3,6 +3,9 @@
 import { useMemo, useRef, useState } from "react";
 import { toast } from "@/lib/toast";
 import { CORE_PRODUCTS } from "@/lib/data/products";
+import { sizeForHeightCm } from "@/lib/data/sizing";
+import { useStore } from "@/providers/store-provider";
+import { parseFaNumber } from "@/lib/digits";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export type TryOnPhase = "idle" | "running" | "done" | "error";
@@ -10,30 +13,25 @@ export type TryOnPhase = "idle" | "running" | "done" | "error";
 // 🧪 Ready-made sample models let parents try the studio instantly.
 export const SAMPLE_MODELS = CORE_PRODUCTS.slice(0, 4).map((p) => p.img);
 
-function sizeForHeight(h: number): string {
-  const table: [number, string][] = [
-    [80, "۸۰"],
-    [86, "۸۶"],
-    [92, "۹۲"],
-    [98, "۹۸"],
-    [104, "۱۰۴"],
-    [110, "۱۱۰"],
-    [116, "۱۱۶"],
-  ];
-  for (const [max, label] of table) if (h < max) return label;
-  return "۱۲۲";
-}
-
 /** 🧠 All state and the AI try-on call behind the studio. */
 export function useTryOn() {
+  const { user, setAuthOpen } = useStore();
   const [person, setPerson] = useState<string | null>(null); // 🪶 Data URL or catalog path.
   const [garment, setGarment] = useState(0);
-  const [height, setHeight] = useState("104");
+  // 📏 Default from the shopper's own child profile (Profile → «اطلاعات
+  // کوچولو») when they've set a height, so the suggestion is already
+  // personalized the first time this studio opens.
+  const [height, setHeight] = useState(
+    () => user?.childHeightCm || "104",
+  );
   const [phase, setPhase] = useState<TryOnPhase>("idle");
   const [result, setResult] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const size = useMemo(() => sizeForHeight(Number(height) || 0), [height]);
+  const size = useMemo(
+    () => sizeForHeightCm(parseFaNumber(height) || 0),
+    [height],
+  );
 
   function pickSample(src: string) {
     setPerson(src);
@@ -55,6 +53,14 @@ export function useTryOn() {
 
   async function runTryOn() {
     if (!person) return toast.warning("اول یک عکس یا مدل نمونه انتخاب کنید");
+    // 🔐 `/api/tryon` 401s an anonymous caller anyway — catching it here
+    // sends a guest to the real login dialog instead of a raw error toast,
+    // matching `product-buy-panel.tsx`'s `openCheckout` gate.
+    if (!user) {
+      setAuthOpen(true);
+      toast.warning("برای پرو مجازی اول وارد حساب‌تان شوید");
+      return;
+    }
     setPhase("running");
     setResult(null);
     try {

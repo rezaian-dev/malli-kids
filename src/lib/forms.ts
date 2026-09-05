@@ -61,6 +61,15 @@ export const email = (label = "ایمیل") =>
 export const postalCode = () =>
   optionalPattern((v) => RE.postalCode.test(toEnDigits(v)), fa.postalCode);
 
+// 📏 Optional, plain numeric text (kept as a string like `childAge` — parsed
+// with `parseFaNumber` at the point of use, e.g. `sizeForHeightCm`) — a
+// child's height in a sane human range, or left blank entirely.
+export const optHeightCm = (min = 40, max = 200) =>
+  optionalPattern((v) => {
+    const n = parseFaNumber(v);
+    return Number.isFinite(n) && n >= min && n <= max;
+  }, fa.range(min, max));
+
 export const amount = (
   label: string,
   opts: { min?: number; max?: number } = {},

@@ -1,15 +1,13 @@
 import { Intro } from "@/components/shared/intro";
 import { buildMetadata } from "@/lib/seo";
-import { TryOnComingSoon } from "./_components/try-on-coming-soon";
+import { Studio } from "./_components/try-on-studio";
 
 export const metadata = buildMetadata({
   title: "پرو مجازی",
   description: "اتاق پرو دیجیتال برای دیدن لباس و پیدا کردن سایز.",
   path: "/tryon",
-  noIndex: true,
 });
 
-// 🚀 Swap the coming-soon view with the live studio when the provider is ready.
 export default function TryOnPage() {
   return (
     <>
@@ -17,10 +15,10 @@ export default function TryOnPage() {
         crumb="پرو مجازی"
         kicker="VIRTUAL FITTING ROOM"
         title="اتاق پرو دیجیتال ملی‌کیدز"
-        lead="لباس‌های کالکشن را روی تن کوچولو ببینید و سایز مناسب را پیدا کنید — این تجربه به‌زودی ارائه می‌شود."
+        lead="یک عکس تمام‌قد بگذارید، لباس کالکشن را انتخاب کنید و سایز پیشنهادی را ببینید."
         path="/tryon"
       />
-      <TryOnComingSoon />
+      <Studio />
     </>
   );
 }

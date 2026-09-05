@@ -12,12 +12,14 @@ import { useStore } from "@/providers/store-provider";
 import { phoneDigits } from "@/lib/digits";
 import { toEnDigits } from "@/lib/locale/fa";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
-import { checkCouponAction, createOrderAction } from "../_lib/actions";
+import { checkCouponAction, createOrderAction } from "@/lib/shop/checkout-actions";
 import { cn } from "@/lib/utils";
 
-// 🧾 Extracted from product-buy-panel.tsx so the checkout form's JS only
-// loads once someone actually opens it (see product-checkout-mount.tsx).
-export function ProductCheckoutDialog({
+// 🧾 The one single-item "buy now" checkout — opened from the product page's
+// buy panel *and* from a cart line's own "ثبت سفارش" action (see
+// `CheckoutMount`), so it lives here in the shared `components/product`
+// tree rather than under either route's own `_components`.
+export function CheckoutDialog({
   open,
   onOpenChange,
   product,

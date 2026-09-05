@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { findPublishedArticle } from "@/lib/articles";
 import { JsonLd } from "@/components/shared/json-ld";
 import { articleSchema, breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { ArticleActions } from "./_components/article-actions";
-import { ArticleMissing } from "./_components/article-missing";
 import { ArticleView } from "./_components/article-view";
 
 function decode(slug: string) {
@@ -50,26 +50,25 @@ export default async function ArticlePage({
 }) {
   const { slug } = await params;
   const decoded = decode(slug);
-  const article = (await findPublishedArticle(decoded)) ?? null;
+  const article = await findPublishedArticle(decoded);
+
+  // 🚫 A missing/unpublished slug is a real 404, not a 200 with a "not
+  // found" message — `product/[id]/page.tsx` already does this the right
+  // way; this page used to render inline instead, which told crawlers the
+  // page was fine.
+  if (!article) notFound();
 
   return (
     <>
-      {article ? (
-        <JsonLd
-          data={breadcrumbSchema([
-            { name: "خانه", path: "/" },
-            { name: "مجله", path: "/articles" },
-            { name: article.title, path: `/articles/${article.slug}` },
-          ])}
-        />
-      ) : null}
-      {article ? <JsonLd data={articleSchema(article)} /> : null}
-      <ArticleView
-        slug={decoded}
-        initial={article}
-        missing={<ArticleMissing />}
-        actions={<ArticleActions />}
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "خانه", path: "/" },
+          { name: "مجله", path: "/articles" },
+          { name: article.title, path: `/articles/${article.slug}` },
+        ])}
       />
+      <JsonLd data={articleSchema(article)} />
+      <ArticleView article={article} actions={<ArticleActions />} />
     </>
   );
 }

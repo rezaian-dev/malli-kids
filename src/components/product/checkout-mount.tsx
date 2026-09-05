@@ -5,13 +5,12 @@ import { useEffect, useState } from "react";
 import type { Product } from "@/types";
 
 // 🧾 Lazy mount the checkout dialog only once it matters. ✨
-const ProductCheckoutDialog = dynamic(
-  () =>
-    import("./product-checkout-dialog").then((m) => m.ProductCheckoutDialog),
+const CheckoutDialog = dynamic(
+  () => import("./checkout-dialog").then((m) => m.CheckoutDialog),
   { ssr: false },
 );
 
-export function ProductCheckoutMount({
+export function CheckoutMount({
   open,
   onOpenChange,
   product,
@@ -35,7 +34,7 @@ export function ProductCheckoutMount({
   useEffect(() => {
     if (mounted) return;
 
-    const preload = () => void import("./product-checkout-dialog");
+    const preload = () => void import("./checkout-dialog");
     const hasIdle = typeof window.requestIdleCallback === "function";
     const id = hasIdle
       ? window.requestIdleCallback(preload, { timeout: 4000 })
@@ -48,7 +47,7 @@ export function ProductCheckoutMount({
   }, [mounted]);
 
   return mounted ? (
-    <ProductCheckoutDialog
+    <CheckoutDialog
       open={open}
       onOpenChange={onOpenChange}
       product={product}

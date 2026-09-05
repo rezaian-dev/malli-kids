@@ -1,12 +1,13 @@
 import { Lock, Share2, UserRound } from "lucide-react";
 import { Intro } from "@/components/shared/intro";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
   {
     Icon: Lock,
     t: "چه چیزی ذخیره می‌شود",
-    d: "نام، ایمیل، موبایل، آدرس و سوابق سفارش روی دستگاه شما (نسخه نمایشی) نگهداری می‌شود. رمز عبور را هرگز در متن ساده ذخیره نمی‌کنیم.",
+    d: "نام، ایمیل، موبایل، آدرس و سوابق سفارش روی سرور ملی‌کیدز نگهداری می‌شود. رمز عبور را هرگز در متن ساده ذخیره نمی‌کنیم.",
   },
   {
     Icon: Share2,
@@ -32,10 +33,10 @@ export function PrivacyLanding() {
       />
       <div className="xs:px-4 container mx-auto w-full max-w-3xl space-y-4 px-3 sm:px-5 lg:px-7">
         {ITEMS.map(({ Icon, t, d }) => (
-          <article
+          <Card
             key={t}
             className={cn(
-              "flex gap-4 rounded-3xl border p-5 sm:p-6",
+              "flex-row gap-4 rounded-3xl p-5 py-5 sm:p-6 sm:py-6",
               "border-navy/8 hover:border-gold/40 bg-white shadow-[0_18px_40px_-26px_rgba(14,42,71,.28)] transition-all duration-500 hover:-translate-y-1 hover:shadow-xl",
               "dark:border-gold/30 dark:bg-slate",
             )}
@@ -54,7 +55,7 @@ export function PrivacyLanding() {
                 {d}
               </p>
             </div>
-          </article>
+          </Card>
         ))}
       </div>
     </>

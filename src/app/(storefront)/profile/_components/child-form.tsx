@@ -27,6 +27,7 @@ function toValues(user: User): UpdateChildValues {
       user.childGender === "دختر" || user.childGender === "پسر"
         ? user.childGender
         : undefined,
+    childHeightCm: user.childHeightCm || "",
   };
 }
 
@@ -61,17 +62,25 @@ export function ChildForm() {
       <div>
         <h2 className={SECTION_TITLE}>اطلاعات کوچولو</h2>
         <p className="text-navy/70 dark:text-wheat mt-2 text-xs">
-          اختیاری است؛ اگر پرش کنید، سایز دقیق‌تری پیشنهاد می‌دهیم.
+          اختیاری است؛ اگر قد را پر کنید، روی صفحه هر محصول سایز پیشنهادی هم
+          می‌بینید.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <TextField name="childName" label="نام کوچولو" placeholder="نیلو" />
         <TextField
           name="childAge"
           label="سن تقریبی"
           placeholder="۳ سال"
           hint="عدد + سال یا ماه کافی است."
+        />
+        <TextField
+          name="childHeightCm"
+          label="قد (سانتی‌متر)"
+          placeholder="۱۰۴"
+          inputMode="numeric"
+          hint="برای پیشنهاد سایز خودکار."
         />
         <SelectField
           name="childGender"

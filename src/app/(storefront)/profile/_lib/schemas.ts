@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { fullName, optMobile, optText, postalCode } from "@/lib/forms";
+import { fullName, optHeightCm, optMobile, optText, postalCode } from "@/lib/forms";
 
 // 📍 Set together by the map picker; either both present or both absent —
 // never trusted as-is server-side (`reverseGeocodeAction`/`updateAccountAction`
@@ -41,12 +41,14 @@ export const updateChildSchema = z.object({
   childName: optText(40, "نام کوچولو"),
   childAge: optText(20, "سن"),
   childGender: z.enum(["دختر", "پسر"]).optional(),
+  childHeightCm: optHeightCm(),
 });
 export type UpdateChildValues = z.infer<typeof updateChildSchema>;
 export const updateChildDefaults: UpdateChildValues = {
   childName: "",
   childAge: "",
   childGender: undefined,
+  childHeightCm: "",
 };
 
 // 🖼️ Upload cap: reject the raw file before it's even compressed.

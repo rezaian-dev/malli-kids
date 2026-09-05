@@ -1,4 +1,5 @@
 import { BadgeCheck, Quote } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { AdminReview } from "@/types";
 import { ReviewStars } from "./review-stars";
@@ -18,17 +19,17 @@ export function FeaturedReview({ review }: { review: AdminReview }) {
         strokeWidth={1.15}
       />
       <div className="relative flex flex-wrap items-center gap-1.5">
-        <span className="bg-gold text-navy-deep rounded-full px-2.5 py-0.5 text-[10px] font-black">
+        <Badge className="bg-gold text-navy-deep rounded-full border-0 px-2.5 py-0.5 text-[10px] font-black">
           نظر منتخب
-        </span>
-        <span
+        </Badge>
+        <Badge
           className={cn(
-            "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold",
+            "rounded-full border px-2 py-0.5 text-[10px] font-bold",
             "text-gold-light border-white/15 bg-white/10",
           )}
         >
           <BadgeCheck className="size-3.5" /> خرید تأییدشده
-        </span>
+        </Badge>
         <ReviewStars n={review.rate} />
       </div>
       <p className="text-ivory mt-4 text-sm leading-7 font-medium sm:text-[15px]">

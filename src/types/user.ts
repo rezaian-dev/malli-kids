@@ -14,4 +14,8 @@ export type User = {
   childName?: string;
   childAge?: string;
   childGender?: string;
+  // 📏 Height in cm, kept as free text like `childAge` — parsed with
+  // `parseFaNumber` wherever it feeds `sizeForHeightCm` (PDP size
+  // recommendation, try-on studio default).
+  childHeightCm?: string;
 };

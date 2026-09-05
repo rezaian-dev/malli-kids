@@ -1,13 +1,22 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { BadgeCheck, Trash2 } from "lucide-react";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { pdpHref } from "@/lib/data/products";
 import { SheetClose } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { QtyStepper } from "@/components/shared/qty-stepper";
+import { CheckoutMount } from "@/components/product";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
-/** 🛍️ One cart row — thumbnail, qty stepper, line total. */
+/** 🛍️ One cart row — thumbnail, qty stepper, and a quick "ثبت سفارش" that
+ *  opens the same single-item checkout the product page uses, scoped to
+ *  this line — the cart itself still doesn't check out multiple items at
+ *  once, but a saved line is never a dead end anymore. */
 export function CartLineItem({
   item,
   product,
@@ -23,6 +32,8 @@ export function CartLineItem({
   onQtyChange: (qty: number) => void;
   onRemove: () => void;
 }) {
+  const [checkout, setCheckout] = useState(false);
+
   return (
     <div
       className={cn(
@@ -108,49 +119,7 @@ export function CartLineItem({
         </div>
 
         <div className="mt-2 flex items-center justify-between gap-2">
-          {}
-          <div
-            className={cn(
-              "flex items-center gap-1 p-0.5",
-              "border-navy/12 bg-sand rounded-full border",
-              "dark:border-gold/25 dark:bg-dusk-soft",
-            )}
-          >
-            <button
-              type="button"
-              aria-label="افزودن تعداد"
-              disabled={item.qty >= 9}
-              onClick={() => onQtyChange(item.qty + 1)}
-              className={cn(
-                "grid size-6.5 place-items-center",
-                "text-navy hover:bg-gold hover:text-navy-deep disabled:hover:text-navy rounded-full bg-white shadow-sm transition disabled:opacity-35 disabled:hover:bg-white motion-safe:hover:scale-110 motion-safe:active:scale-90 disabled:motion-safe:hover:scale-100",
-                "dark:bg-navy dark:text-ivory dark:hover:bg-gold dark:hover:text-navy-deep",
-              )}
-            >
-              <Plus className="size-3.5" />
-            </button>
-            <span
-              className={cn(
-                "min-w-5 text-center",
-                "text-navy text-xs font-black tabular-nums",
-                "dark:text-ivory",
-              )}
-            >
-              {toFaDigits(item.qty)}
-            </span>
-            <button
-              type="button"
-              aria-label="کاهش تعداد"
-              onClick={() => onQtyChange(item.qty - 1)}
-              className={cn(
-                "grid size-6.5 place-items-center",
-                "text-navy hover:bg-rose/10 hover:text-rose rounded-full bg-white shadow-sm transition motion-safe:hover:scale-110 motion-safe:active:scale-90",
-                "dark:bg-navy dark:text-ivory dark:hover:bg-rose/15 dark:hover:text-rose",
-              )}
-            >
-              <Minus className="size-3.5" />
-            </button>
-          </div>
+          <QtyStepper qty={item.qty} onChange={onQtyChange} size="sm" />
           <span
             className={cn(
               "text-gold-deep text-[13px] font-black tabular-nums",
@@ -163,7 +132,30 @@ export function CartLineItem({
             </span>
           </span>
         </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className={cn(
+            "mt-2 h-8 w-full gap-1.5 rounded-xl text-[11px] font-black",
+            "border-gold/50 text-gold-deep",
+            "dark:text-gold-soft",
+          )}
+          onClick={() => setCheckout(true)}
+        >
+          <BadgeCheck className="size-3.5" /> ثبت سفارش این مورد
+        </Button>
       </div>
+
+      <CheckoutMount
+        open={checkout}
+        onOpenChange={setCheckout}
+        product={product}
+        size={item.size}
+        qty={item.qty}
+        unit={unitPrice}
+      />
     </div>
   );
 }
