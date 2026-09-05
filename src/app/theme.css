@@ -128,6 +128,11 @@
   --animate-orn-spin: ornSpin 12s linear infinite;
   --animate-orn-sway: ornSway 3.6s ease-in-out infinite;
   --animate-orn-pulse: ornPulse 2.8s ease-in-out infinite;
+  /* 🪪 Account trigger avatar's hover halo (see `account-trigger.tsx`) — a
+     state-driven loop like `shimmer`/`shake`, not an ambient one, so it's
+     gated by `motion-safe:group-hover:` at the call site instead of the
+     reduced-motion override list below. */
+  --animate-ring-pulse: ringPulse 1.3s ease-out infinite;
   --animate-style-in: styleCardIn 0.7s cubic-bezier(0.22, 1, 0.32, 1) both;
   --animate-gold-draw: goldDraw 1.15s cubic-bezier(0.22, 1, 0.32, 1) 0.2s
     forwards;
@@ -305,6 +310,16 @@
     50% {
       transform: scale(1.12);
       opacity: 0.7;
+    }
+  }
+  @keyframes ringPulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
     }
   }
   @keyframes markerDrop {
