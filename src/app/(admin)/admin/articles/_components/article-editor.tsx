@@ -2,16 +2,22 @@
 
 import dynamic from "next/dynamic";
 import { useRef, useState, useTransition, type ChangeEvent } from "react";
-import { ArrowRight, FilePenLine, ImagePlus, Trash2 } from "lucide-react";
+import { ArrowRight, FilePenLine, ImagePlus, Plus, Trash2, X } from "lucide-react";
 import { toast } from "@/lib/toast";
 
-import { AdminPageHeader } from "@/components/admin";
+import { AdminConfirmDialog, AdminPageHeader } from "@/components/admin";
+import type { ContentTag } from "@/lib/tags";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { createArticleAction, updateArticleAction } from "../_lib/actions";
+import {
+  createArticleAction,
+  createTagAction,
+  removeTagAction,
+  updateArticleAction,
+} from "../_lib/actions";
 
 const RichEditor = dynamic(
   () => import("@/components/admin/rich-editor").then((m) => m.RichEditor),
@@ -49,6 +55,9 @@ export type ArticleDraft = {
   body: string;
   cover: string;
   published: boolean;
+  // 🏷️ `Tag.slug` references — the content taxonomy, distinct from `tag`
+  // (the single fixed editorial category above).
+  tags: string[];
   date?: string;
 };
 
@@ -60,22 +69,64 @@ export const EMPTY_ARTICLE_DRAFT: ArticleDraft = {
   body: "",
   cover: "",
   published: true,
+  tags: [],
 };
+
+const TAG_CHIP = cn(
+  "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold transition",
+  "border-navy/12 text-navy/70 hover:border-gold/50 dark:border-gold/25 dark:text-wheat",
+);
+const TAG_CHIP_SELECTED =
+  "bg-navy text-ivory border-navy dark:bg-gold dark:text-navy-deep dark:border-gold";
 
 /** ✍️ Create/edit view — owns its own draft state and saves through the
  *  real article actions, then hands control back via `onDone`. */
 export function ArticleEditor({
   initial,
+  allTags,
+  onTagCreated,
+  onTagRemoved,
   onDone,
 }: {
   initial: ArticleDraft;
+  allTags: ContentTag[];
+  onTagCreated: (tag: ContentTag) => void;
+  onTagRemoved: (slug: string) => void;
   onDone: () => void;
 }) {
   const [draft, setDraft] = useState(initial);
   const [pending, startTransition] = useTransition();
+  const [newTag, setNewTag] = useState("");
+  const [tagPending, startTagTransition] = useTransition();
   const coverRef = useRef<HTMLInputElement>(null);
   const set = <K extends keyof ArticleDraft>(k: K, v: ArticleDraft[K]) =>
     setDraft((d) => ({ ...d, [k]: v }));
+
+  function toggleTag(slug: string) {
+    set(
+      "tags",
+      draft.tags.includes(slug)
+        ? draft.tags.filter((t) => t !== slug)
+        : [...draft.tags, slug],
+    );
+  }
+
+  function addNewTag() {
+    const name = newTag.trim();
+    if (!name) return;
+    startTagTransition(async () => {
+      const result = await createTagAction(name);
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+      onTagCreated(result.data);
+      if (!draft.tags.includes(result.data.slug)) {
+        set("tags", [...draft.tags, result.data.slug]);
+      }
+      setNewTag("");
+    });
+  }
 
   function onSave() {
     if (!draft.title.trim()) {
@@ -92,6 +143,7 @@ export function ArticleEditor({
       body: draft.body,
       cover: draft.cover || undefined,
       published: draft.published,
+      tags: draft.tags,
     };
 
     startTransition(async () => {
@@ -188,6 +240,82 @@ export function ArticleEditor({
               placeholder="برچسب دلخواه"
               className="h-10 rounded-2xl text-xs"
             />
+          </div>
+          <div className="space-y-1.5">
+            <span className={FIELD_LABEL}>تگ‌های محتوایی (اختیاری)</span>
+            <p className="text-navy/60 dark:text-wheat/70 text-[10px] leading-5">
+              برای دسته‌بندی موضوعی و پیوند به محتوای مرتبط — جدا از برچسبِ
+              بالا.
+            </p>
+            {allTags.length > 0 ? (
+              <ul className="flex flex-wrap gap-1.5">
+                {allTags.map((t) => {
+                  const selected = draft.tags.includes(t.slug);
+                  return (
+                    <li key={t.slug}>
+                      <span
+                        className={cn(TAG_CHIP, selected && TAG_CHIP_SELECTED)}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => toggleTag(t.slug)}
+                          aria-pressed={selected}
+                        >
+                          {t.name}
+                        </button>
+                        <AdminConfirmDialog
+                          title="حذف این تگ؟"
+                          description={`«${t.name}» برای همیشه حذف می‌شود و از هر مقاله‌ای که دارد برداشته می‌شود.`}
+                          successMessage="تگ حذف شد"
+                          onConfirm={async () => {
+                            const result = await removeTagAction(t.slug);
+                            if (result.ok) {
+                              onTagRemoved(t.slug);
+                              if (draft.tags.includes(t.slug)) toggleTag(t.slug);
+                            }
+                            return result;
+                          }}
+                          trigger={
+                            <button
+                              type="button"
+                              aria-label={`حذف تگ ${t.name}`}
+                              className="opacity-60 hover:text-rose hover:opacity-100"
+                            >
+                              <X className="size-3" />
+                            </button>
+                          }
+                        />
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : null}
+            <div className="flex gap-1.5">
+              <Input
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addNewTag();
+                  }
+                }}
+                placeholder="تگ جدید…"
+                className="h-9 rounded-xl text-xs"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="size-9 shrink-0 rounded-xl"
+                disabled={!newTag.trim() || tagPending}
+                onClick={addNewTag}
+                aria-label="افزودن تگ"
+              >
+                <Plus className="size-4" />
+              </Button>
+            </div>
           </div>
           <div className="space-y-1.5">
             <label className={FIELD_LABEL} htmlFor="art-excerpt">

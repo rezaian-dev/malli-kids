@@ -42,7 +42,7 @@ export function ProductCard({
   const price = out ? (
     <span className="text-rose text-xs font-extrabold">ناموجود</span>
   ) : (
-    <PriceTag price={p.price} />
+    <PriceTag price={p.price} old={p.old} />
   );
 
   const Card = view === "list" ? ProductCardList : ProductCardGrid;

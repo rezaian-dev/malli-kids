@@ -11,6 +11,14 @@ export type ArticleDoc = {
   body: string;
   cover?: string;
   published: boolean;
+  // 🏷️ Content taxonomy — a set of `Tag.slug` references (see
+  // `@/lib/db/models/tag`), distinct from `tag` above (that field is a
+  // single fixed editorial *category*, e.g. "راهنمای خرید" — one per
+  // article, chosen from a short hardcoded list; `tags` is the open,
+  // multi-value, admin-managed taxonomy for topical discovery/related
+  // content). Not a Mongoose `ref` — articles resolve slugs against
+  // `getAllTags()`'s small cached list instead of a populate join.
+  tags: string[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -24,6 +32,7 @@ const articleSchema = new Schema<ArticleDoc>(
     body: { type: String, required: true },
     cover: String,
     published: { type: Boolean, default: true },
+    tags: { type: [String], default: [] },
   },
   { timestamps: true },
 );

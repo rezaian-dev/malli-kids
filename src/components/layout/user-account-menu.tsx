@@ -47,7 +47,7 @@ export default function UserAccountMenu({
         align="start"
         sideOffset={12}
         className={cn(
-          "border-gold bg-paper z-80 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border p-0",
+          "account-menu-panel border-gold bg-paper z-80 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border p-0",
           "dark:border-gold/50 dark:bg-dusk",
         )}
       >

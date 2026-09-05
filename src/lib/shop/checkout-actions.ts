@@ -6,7 +6,7 @@ import { findApplicableCoupon, type AppliedCoupon } from "@/lib/shop/coupons";
 import { createOrder } from "@/lib/shop/orders";
 import { getProductById } from "@/lib/shop/products";
 import { getCampaign } from "@/lib/shop/settings";
-import { campaignPrice } from "@/lib/shop/pricing";
+import { resolvePrice } from "@/lib/shop/pricing";
 import { getMissingShippingFields } from "@/lib/shop/shipping";
 import { phoneDigits } from "@/lib/digits";
 import { toEnDigits } from "@/lib/locale/fa";
@@ -63,7 +63,7 @@ export async function createOrderAction(
     const product = await getProductById(parsed.data.productId);
     if (!product) return { ok: false, error: "این محصول دیگر موجود نیست." };
 
-    const unit = campaignPrice(product.price, await getCampaign());
+    const unit = resolvePrice(product, await getCampaign()).price;
     const subtotal = unit * parsed.data.qty;
     const coupon = parsed.data.couponCode
       ? await findApplicableCoupon(parsed.data.couponCode, subtotal)

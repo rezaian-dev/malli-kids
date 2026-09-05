@@ -19,6 +19,7 @@ import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { parseFaNumber } from "@/lib/digits";
 import { toast } from "@/lib/toast";
 import { getMissingShippingFields } from "@/lib/shop/shipping";
+import { resolvePrice } from "@/lib/shop/pricing";
 import { sizeForHeightCm } from "@/lib/data/sizing";
 import { useStore } from "@/providers/store-provider";
 import { Badge } from "@/components/ui/badge";
@@ -77,8 +78,7 @@ export function ProductBuyPanel({
   product: Product;
   subscribedSizes: string[];
 }) {
-  const { addToCart, showToast, user, setAuthOpen, campaign, priceOf } =
-    useStore();
+  const { addToCart, showToast, user, setAuthOpen, campaign } = useStore();
   const router = useRouter();
   const sizeOptions = useSizeOptions(product);
 
@@ -118,7 +118,8 @@ export function ProductBuyPanel({
   const sizeKey = product.variants.length ? size : "";
   const isSubscribed = subscribed.includes(sizeKey);
 
-  const unit = priceOf(product.price);
+  const resolved = resolvePrice(product, campaign);
+  const unit = resolved.price;
 
   function openCheckout() {
     if (!canOrder) return showToast("این سایز ناموجود است");
@@ -158,7 +159,7 @@ export function ProductBuyPanel({
       <ProductGallery
         images={product.images}
         name={product.name}
-        disc={product.disc}
+        disc={resolved.percent ? `${toFaDigits(resolved.percent)}٪` : undefined}
         badge={product.badge}
       />
 
@@ -231,16 +232,16 @@ export function ProductBuyPanel({
               <span className="text-navy/70 dark:text-gold-soft text-sm font-medium">
                 تومان
               </span>
-              {campaign.active && unit < product.price ? (
-                <s className="text-silver me-2 text-sm line-through">
-                  {formatToman(product.price)}
-                </s>
-              ) : null}
             </span>
-            {product.old ? (
+            {resolved.original ? (
               <span className="text-navy/70 pb-0.5 text-sm line-through">
-                {formatToman(product.old)}
+                {formatToman(resolved.original)}
               </span>
+            ) : null}
+            {resolved.percent ? (
+              <Badge className="bg-rose rounded-lg border-0 px-2 py-1 text-[11px] font-black text-white">
+                {toFaDigits(resolved.percent)}٪ تخفیف
+              </Badge>
             ) : null}
           </div>
           <div className="mt-6 mb-2.5 flex items-center justify-between gap-2">

@@ -3,8 +3,9 @@ import Link from "next/link";
 import { Bell, Eye, PackageX, ShoppingBag, Star } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Product } from "@/types";
-import { formatToman, toFaDigits } from "@/lib/locale/fa";
+import { toFaDigits } from "@/lib/locale/fa";
 import { AddToCartButton } from "./add-to-cart-button";
+import { DiscountBadge } from "./price-tag";
 import { FavButton } from "./fav-button";
 import { CART, VIEW } from "./card-styles";
 import { cn } from "@/lib/utils";
@@ -70,15 +71,15 @@ export function ProductCardGrid({
             {p.badge}
           </span>
         ) : null}
-        {p.disc ? (
-          <span
+        {!out ? (
+          <DiscountBadge
+            price={p.price}
+            old={p.old}
             className={cn(
               "absolute top-2.5 left-14 z-2 rounded-full px-2 py-1 text-[10px] font-black whitespace-nowrap",
               "bg-rose text-white",
             )}
-          >
-            {p.disc} تخفیف
-          </span>
+          />
         ) : null}
         <FavButton id={p.id} name={p.name} className="absolute top-2.5 left-2.5" />
         {out ? (
@@ -149,21 +150,7 @@ export function ProductCardGrid({
               به‌زودی موجود می‌شود
             </span>
           ) : (
-            <>
-              {price}
-              {p.old ? (
-                // ♿ silver-on-white is ~2.5:1 here; brown-mid clears 4.5:1
-                // and dark mode's own silver-on-dark contrast is untouched.
-                <span className="text-brown-mid dark:text-silver text-[11px] whitespace-nowrap line-through">
-                  {formatToman(p.old)}
-                </span>
-              ) : null}
-              {p.disc ? (
-                <span className="bg-rose rounded px-1.5 py-0.5 text-[10px] font-black text-white">
-                  {p.disc}
-                </span>
-              ) : null}
-            </>
+            price
           )}
         </div>
         {/* 📱 Keep actions visible under the price on narrow screens, pinned to the card's bottom edge. */}

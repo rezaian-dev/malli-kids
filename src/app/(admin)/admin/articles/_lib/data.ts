@@ -18,6 +18,7 @@ export async function getAllArticles(): Promise<AdminArticle[]> {
     body: doc.body,
     cover: doc.cover,
     published: doc.published,
+    tags: doc.tags ?? [],
     date: faDate(doc.createdAt),
   }));
 }

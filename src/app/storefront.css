@@ -11,6 +11,29 @@
 @import "tw-animate-css";
 @import "./theme.css";
 
+/* 👤 Account/user menu (`UserAccountMenu`'s `DropdownMenuContent`) — a
+   deliberate, standalone entrance/exit in place of the shared
+   `DropdownMenuContent` default (a plain 100ms zoom/fade), scoped to this
+   one instance via its own class rather than changing every dropdown in the
+   app. `!important` is intentional here, not sloppiness: it's the only way
+   to reliably win over the base component's own hardcoded animate-in/out
+   utility classes regardless of Tailwind's class-merge ordering. Radix's
+   `Presence` already measures the real animation duration before unmounting
+   the closed panel, so the exit keyframe is guaranteed to finish playing —
+   no timer/`setTimeout` needed. */
+.account-menu-panel[data-state="open"] {
+  animation: userMenuIn 0.22s cubic-bezier(0.22, 1, 0.32, 1) both !important;
+}
+.account-menu-panel[data-state="closed"] {
+  animation: userMenuOut 0.15s cubic-bezier(0.4, 0, 1, 1) both !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-menu-panel[data-state="open"],
+  .account-menu-panel[data-state="closed"] {
+    animation: none !important;
+  }
+}
+
 /* 🚫 `src/app/(admin)/**` and the admin-only component tree are never
    imported from storefront code (verified: no cross-imports either way) —
    excluding them from this entry's scan keeps admin-exclusive utility

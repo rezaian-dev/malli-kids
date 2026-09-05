@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth/auth";
 import { requireAdmin } from "@/lib/auth/admin";
+import { getSession } from "@/lib/auth/session";
 import { logAudit } from "@/lib/admin/audit";
 import type { ActionResult } from "@/lib/action-result";
 
@@ -11,6 +12,7 @@ const AUTH_ERROR = "برای این کار باید ادمین وارد شده �
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 const PROTECTED_ERROR = "حساب مدیر محافظت‌شده است.";
 const LAST_ADMIN_ERROR = "امکان تنزل آخرین ادمین وجود ندارد؛ حداقل یک ادمین باید بماند.";
+const SELF_DEMOTE_ERROR = "نمی‌توانید سطح دسترسی خودتان را تغییر دهید.";
 
 async function guardTarget(userId: string) {
   const target = await auth.api
@@ -137,6 +139,21 @@ async function countAdmins(): Promise<number> {
 export async function demoteAdminAction(userId: string): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
+
+  // 🔐 Every admin here is equally privileged (this app's model is flat —
+  // `user`/`admin`, no `super_admin` tier), which is what lets *any* admin
+  // demote *any other* admin as long as one stays behind. Without this
+  // check, that same rule would let an admin demote themselves — not a
+  // vertical-privilege-escalation path (they'd only ever lose access,
+  // never gain it), but a real self-lockout footgun, and exactly the kind
+  // of "can an admin change their own authorization" case a fail-secure
+  // review has to close explicitly rather than leave implicit. `requireAdmin()`
+  // returns the mapped `User` shape (no id), so the real Better Auth id
+  // comes from the session directly — already request-memoized, free here.
+  const session = await getSession();
+  if (session?.user.id === userId) {
+    return { ok: false, error: SELF_DEMOTE_ERROR };
+  }
 
   try {
     const target = await auth.api

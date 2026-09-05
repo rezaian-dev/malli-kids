@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ShoppingBag, Trash2, XIcon } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
+import { resolvePrice } from "@/lib/shop/pricing";
 import { toFaDigits } from "@/lib/locale/fa";
 import { getProductsByIdsAction } from "@/lib/shop/products-actions";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
@@ -28,15 +29,8 @@ import { CartSummary } from "./cart-summary";
 import { CartEmptyState } from "./cart-empty-state";
 
 export function CartSheet() {
-  const {
-    cart,
-    cartCount,
-    setCartQty,
-    removeCartItem,
-    clearCart,
-    campaign,
-    priceOf,
-  } = useStore();
+  const { cart, cartCount, setCartQty, removeCartItem, clearCart, campaign } =
+    useStore();
   const empty = cartCount === 0;
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -62,7 +56,8 @@ export function CartSheet() {
     );
 
   const subtotal = rows.reduce(
-    (sum, { item, product }) => sum + priceOf(product.price) * item.qty,
+    (sum, { item, product }) =>
+      sum + resolvePrice(product, campaign).price * item.qty,
     0,
   );
   const freeShip = subtotal >= BRAND.freeShipFrom;
@@ -164,19 +159,20 @@ export function CartSheet() {
             />
 
             <div className="min-h-0 flex-1 scrollbar-thin space-y-2.5 overflow-y-auto px-4 py-4">
-              {rows.map(({ item, product }) => (
-                <CartLineItem
-                  key={`${item.id}-${item.size}`}
-                  item={item}
-                  product={product}
-                  unitPrice={priceOf(product.price)}
-                  showStrike={
-                    campaign.active && priceOf(product.price) < product.price
-                  }
-                  onQtyChange={(qty) => setCartQty(item.id, item.size, qty)}
-                  onRemove={() => removeCartItem(item.id, item.size)}
-                />
-              ))}
+              {rows.map(({ item, product }) => {
+                const resolved = resolvePrice(product, campaign);
+                return (
+                  <CartLineItem
+                    key={`${item.id}-${item.size}`}
+                    item={item}
+                    product={product}
+                    unitPrice={resolved.price}
+                    originalPrice={resolved.original}
+                    onQtyChange={(qty) => setCartQty(item.id, item.size, qty)}
+                    onRemove={() => removeCartItem(item.id, item.size)}
+                  />
+                );
+              })}
             </div>
 
             <CartSummary

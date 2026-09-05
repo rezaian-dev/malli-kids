@@ -3,6 +3,7 @@ import sanitizeHtmlLib from "sanitize-html";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { ArticleModel, type ArticleDoc } from "@/lib/db/models/article";
 import { faDate } from "@/lib/locale/fa";
+import { getAllTags, type ContentTag } from "@/lib/tags";
 
 // 🧊 Published articles are public and shared — cached the same way as the
 // product catalog (`@/lib/shop/products`), not queried fresh per request.
@@ -17,6 +18,10 @@ export type JournalArticle = {
   body: string;
   cover?: string;
   date?: string;
+  // 🏷️ Resolved from `ArticleDoc.tags` (slugs) against the small cached
+  // `getAllTags()` list — a slug an article still carries after its `Tag`
+  // was deleted just silently drops out here instead of rendering a blank.
+  tags: ContentTag[];
   // 🕒 ISO 8601, for `articleSchema`'s `datePublished`/`dateModified` — schema.org
   // wants a machine-readable date, not the Jalali display string above.
   publishedAt: string;
@@ -84,7 +89,10 @@ function sanitizeHtml(html: string): string {
   return sanitizeHtmlLib(html, ARTICLE_SANITIZE_OPTIONS);
 }
 
-function toJournalArticle(doc: ArticleDoc): JournalArticle {
+function toJournalArticle(
+  doc: ArticleDoc,
+  tagsBySlug: Map<string, ContentTag>,
+): JournalArticle {
   return {
     slug: doc.slug,
     tag: doc.tag,
@@ -93,9 +101,15 @@ function toJournalArticle(doc: ArticleDoc): JournalArticle {
     body: sanitizeHtml(doc.body),
     cover: doc.cover,
     date: faDate(doc.createdAt),
+    tags: (doc.tags ?? []).flatMap((slug) => tagsBySlug.get(slug) ?? []),
     publishedAt: doc.createdAt.toISOString(),
     updatedAt: doc.updatedAt.toISOString(),
   };
+}
+
+async function tagLookup(): Promise<Map<string, ContentTag>> {
+  const tags = await getAllTags();
+  return new Map(tags.map((t) => [t.slug, t]));
 }
 
 /** 📰 Every published article, newest first — the real replacement for the
@@ -104,10 +118,11 @@ function toJournalArticle(doc: ArticleDoc): JournalArticle {
 export const loadPublishedArticles = unstable_cache(
   async (): Promise<JournalArticle[]> => {
     await connectMongoose();
-    const docs = await ArticleModel.find({ published: true })
-      .sort({ createdAt: -1 })
-      .lean();
-    return docs.map(toJournalArticle);
+    const [docs, tagsBySlug] = await Promise.all([
+      ArticleModel.find({ published: true }).sort({ createdAt: -1 }).lean(),
+      tagLookup(),
+    ]);
+    return docs.map((doc) => toJournalArticle(doc, tagsBySlug));
   },
   ["published-articles"],
   { tags: [ARTICLES_TAG], revalidate: 3600 },
@@ -116,8 +131,11 @@ export const loadPublishedArticles = unstable_cache(
 export const findPublishedArticle = unstable_cache(
   async (slug: string): Promise<JournalArticle | undefined> => {
     await connectMongoose();
-    const doc = await ArticleModel.findOne({ slug, published: true }).lean();
-    return doc ? toJournalArticle(doc) : undefined;
+    const [doc, tagsBySlug] = await Promise.all([
+      ArticleModel.findOne({ slug, published: true }).lean(),
+      tagLookup(),
+    ]);
+    return doc ? toJournalArticle(doc, tagsBySlug) : undefined;
   },
   ["published-article-by-slug"],
   { tags: [ARTICLES_TAG], revalidate: 3600 },

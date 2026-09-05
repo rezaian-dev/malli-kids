@@ -432,7 +432,7 @@ export function productSchema(product: Product, reviews: { rate: number }[] = []
 export function articleSchema(
   article: Pick<
     JournalArticle,
-    "slug" | "title" | "excerpt" | "cover" | "publishedAt" | "updatedAt"
+    "slug" | "title" | "excerpt" | "cover" | "publishedAt" | "updatedAt" | "tags"
   >,
 ) {
   const image = article.cover || SEO.defaultImage;
@@ -447,6 +447,11 @@ export function articleSchema(
     inLanguage: "fa-IR",
     datePublished: article.publishedAt,
     dateModified: article.updatedAt,
+    // 🏷️ Real content taxonomy, not padded — schema.org's own "keywords"
+    // property, distinct from the page's meta-keywords tag.
+    ...(article.tags.length
+      ? { keywords: article.tags.map((t) => t.name).join(", ") }
+      : {}),
     author: {
       "@type": "Organization",
       name: SEO.siteNameFa,

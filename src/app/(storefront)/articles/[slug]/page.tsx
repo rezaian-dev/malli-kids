@@ -39,7 +39,10 @@ export async function generateMetadata({
     image: article.cover,
     imageAlt: article.title,
     type: "article",
-    keywords: article.tag ? [article.tag] : undefined,
+    // 🏷️ The category (`tag`) plus the article's real content tags — never
+    // padded beyond what the admin actually assigned, so this stays
+    // legitimate topical metadata rather than keyword stuffing.
+    keywords: [article.tag, ...article.tags.map((t) => t.name)].filter(Boolean),
   });
 }
 

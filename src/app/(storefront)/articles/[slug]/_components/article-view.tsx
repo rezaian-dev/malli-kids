@@ -80,6 +80,23 @@ export function ArticleView({
           {article.body}
         </p>
       )}
+      {article.tags.length > 0 ? (
+        <div className="mt-6 flex flex-wrap items-center gap-2">
+          <span className="text-navy/70 dark:text-wheat text-[11px] font-bold">
+            موضوعات مرتبط:
+          </span>
+          {article.tags.map((t) => (
+            <Link key={t.slug} href={`/articles?tag=${t.slug}`}>
+              <Badge
+                variant="secondary"
+                className="hover:bg-gold/20 transition-colors"
+              >
+                {t.name}
+              </Badge>
+            </Link>
+          ))}
+        </div>
+      ) : null}
       {actions}
     </article>
   );

@@ -21,14 +21,16 @@ export function CartLineItem({
   item,
   product,
   unitPrice,
-  showStrike,
+  originalPrice,
   onQtyChange,
   onRemove,
 }: {
   item: { id: number; size: string; qty: number };
   product: Product;
   unitPrice: number;
-  showStrike: boolean;
+  /** Pre-discount price to show struck through — undefined when there's no
+   *  active discount (product-level or festival) to compare against. */
+  originalPrice?: number;
   onQtyChange: (qty: number) => void;
   onRemove: () => void;
 }) {
@@ -110,9 +112,9 @@ export function CartLineItem({
           </span>
           <span className="tabular-nums">
             {formatToman(unitPrice)} تومان
-            {showStrike ? (
+            {originalPrice ? (
               <s className="text-silver ms-1.5 text-[10px]">
-                {formatToman(product.price)}
+                {formatToman(originalPrice)}
               </s>
             ) : null}
           </span>

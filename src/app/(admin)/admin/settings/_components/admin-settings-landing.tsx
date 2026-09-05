@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Save } from "lucide-react";
 
 import { AdminPageHeader } from "@/components/admin";
@@ -22,6 +22,18 @@ export function AdminSettingsLanding({ campaign }: { campaign: SettingsCampaign 
   const [percent, setPercent] = useState(String(campaign.percent));
   const [title, setTitle] = useState(campaign.title);
   const [pending, startTransition] = useTransition();
+
+  // 🔁 `useState(campaign...)` only ever reads its initial value once — a
+  // later render carrying a *changed* `campaign` prop (this page re-rendered
+  // after a navigation, or after this same save's own automatic refresh)
+  // would otherwise leave the form frozen on whatever it showed at first
+  // mount instead of the real current value. Only a real prop change fires
+  // this, so it doesn't fight in-progress typing between renders.
+  useEffect(() => {
+    setActive(campaign.active);
+    setPercent(String(campaign.percent));
+    setTitle(campaign.title);
+  }, [campaign.active, campaign.percent, campaign.title]);
 
   function save() {
     const parsedPercent = Number(percent);

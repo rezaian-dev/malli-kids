@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { AdminArticle } from "@/types";
+import type { ContentTag } from "@/lib/tags";
 import {
   ArticleEditor,
   EMPTY_ARTICLE_DRAFT,
@@ -18,19 +19,47 @@ function draftFromArticle(article: AdminArticle): ArticleDraft {
     body: article.body ?? "",
     cover: article.cover ?? "",
     published: article.published,
+    tags: article.tags,
     date: article.date,
   };
 }
 
 export function AdminArticlesLanding({
   articles,
+  allTags,
 }: {
   articles: AdminArticle[];
+  allTags: ContentTag[];
 }) {
   const [draft, setDraft] = useState<ArticleDraft | null>(null);
+  // 🏷️ Owned here (not inside `ArticleEditor`) so a tag created while
+  // editing one article is already in the picker the next time *any*
+  // article is opened, without a full page reload.
+  const [tags, setTags] = useState(allTags);
 
   if (draft) {
-    return <ArticleEditor initial={draft} onDone={() => setDraft(null)} />;
+    return (
+      <ArticleEditor
+        initial={draft}
+        allTags={tags}
+        onTagCreated={(tag) =>
+          setTags((current) =>
+            // 🔁 `createTagAction` upserts server-side — re-submitting a
+            // name that slugifies to an existing tag returns *that* tag, not
+            // a new one. Without this check, the local list would grow a
+            // second entry for the same slug (two identical chips) even
+            // though the database itself never duplicated anything.
+            current.some((t) => t.slug === tag.slug)
+              ? current
+              : [...current, tag],
+          )
+        }
+        onTagRemoved={(slug) =>
+          setTags((current) => current.filter((t) => t.slug !== slug))
+        }
+        onDone={() => setDraft(null)}
+      />
+    );
   }
 
   return (

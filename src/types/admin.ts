@@ -86,5 +86,7 @@ export type AdminArticle = {
 
   cover?: string;
   published: boolean;
+  // 🏷️ `Tag.slug` references — see `ArticleDoc.tags`.
+  tags: string[];
   date: string;
 };

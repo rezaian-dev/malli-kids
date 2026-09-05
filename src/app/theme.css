@@ -117,7 +117,6 @@
   --radius-sm: calc(var(--radius) - 4px);
 
   /* 🎬 Motion tokens */
-  --animate-user-menu: userMenuIn 0.42s cubic-bezier(0.22, 1, 0.32, 1);
   --animate-st-pulse: stPulse 2.2s ease-in-out infinite;
   --animate-st-bob: stBob 1.8s ease-in-out infinite;
   --animate-marquee: marquee 28s linear infinite;
@@ -185,14 +184,29 @@
       transform: translate3d(18px, 14px, 0) scale(1.08);
     }
   }
+  /* 👤 Account/user menu open+close — see `.account-menu-panel` in
+     `storefront.css`, the one consumer. Kept as a plain named keyframe pair
+     (not a `--animate-*` token) so it can override `DropdownMenuContent`'s
+     own default enter/exit animation on this one instance without fighting
+     Tailwind's class-merging over which "animate-*" utility wins. */
   @keyframes userMenuIn {
     from {
       opacity: 0;
-      transform: translateY(-12px) scale(0.94);
+      transform: translateY(-10px) scale(0.95);
     }
     to {
       opacity: 1;
       transform: none;
+    }
+  }
+  @keyframes userMenuOut {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.97);
     }
   }
   @keyframes stPulse {

@@ -13,7 +13,6 @@ import {
 } from "react";
 import { toast } from "@/lib/toast";
 import { STORAGE } from "@/lib/constants";
-import { campaignPrice } from "@/lib/shop/pricing";
 import { signOutAction } from "@/lib/auth/actions";
 import {
   getMyFavoritesAction,
@@ -58,7 +57,6 @@ type Ctx = {
   clearCart: () => void;
   toggleFavorite: (id: number) => void;
   showToast: (text: string) => void;
-  priceOf: (price: number) => number;
 };
 
 const StoreCtx = createContext<Ctx | null>(null);
@@ -275,11 +273,6 @@ export function StoreProvider({
 
   const showToast = useCallback((text: string) => toast(text), []);
 
-  const priceOf = useCallback(
-    (price: number) => campaignPrice(price, campaign),
-    [campaign],
-  );
-
   const value = useMemo(
     () => ({
       ready,
@@ -300,7 +293,6 @@ export function StoreProvider({
       clearCart,
       toggleFavorite,
       showToast,
-      priceOf,
     }),
     [
       ready,
@@ -320,7 +312,6 @@ export function StoreProvider({
       clearCart,
       toggleFavorite,
       showToast,
-      priceOf,
     ],
   );
 
