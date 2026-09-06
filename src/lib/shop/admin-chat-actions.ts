@@ -1,7 +1,6 @@
 "use server";
 
-import { requireAdmin } from "@/lib/auth/admin";
-import { getSession } from "@/lib/auth/session";
+import { requireAdmin, getAdminSession } from "@/lib/auth/admin";
 import { rateLimit } from "@/lib/rate-limit";
 import type { ActionResult } from "@/lib/action-result";
 import {
@@ -58,7 +57,8 @@ export async function sendChatReplyAction(input: {
 
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: ADMIN_AUTH_ERROR };
-  const session = await getSession();
+  // 🪪 The admin's own id, off the admin session — not the storefront one.
+  const session = await getAdminSession();
   const adminId = session?.user.id;
   if (!adminId) return { ok: false, error: ADMIN_AUTH_ERROR };
 

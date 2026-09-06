@@ -2,9 +2,8 @@
 
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth/auth";
-import { requireAdmin } from "@/lib/auth/admin";
-import { getSession } from "@/lib/auth/session";
+import { adminAuth } from "@/lib/auth/admin-auth";
+import { requireAdmin, getAdminSession } from "@/lib/auth/admin";
 import { logAudit } from "@/lib/admin/audit";
 import type { ActionResult } from "@/lib/action-result";
 import type { AdminCustomer } from "@/types";
@@ -24,7 +23,7 @@ const LAST_ADMIN_ERROR = "امکان تنزل آخرین ادمین وجود ن�
 const SELF_DEMOTE_ERROR = "نمی‌توانید سطح دسترسی خودتان را تغییر دهید.";
 
 async function guardTarget(userId: string) {
-  const target = await auth.api
+  const target = await adminAuth.api
     .listUsers({
       headers: await headers(),
       query: { filterField: "id", filterValue: userId, filterOperator: "eq" },
@@ -46,9 +45,9 @@ export async function setCustomerStatusAction(
 
     const requestHeaders = await headers();
     if (blocked) {
-      await auth.api.banUser({ headers: requestHeaders, body: { userId } });
+      await adminAuth.api.banUser({ headers: requestHeaders, body: { userId } });
     } else {
-      await auth.api.unbanUser({ headers: requestHeaders, body: { userId } });
+      await adminAuth.api.unbanUser({ headers: requestHeaders, body: { userId } });
     }
 
     revalidatePath("/admin/customers");
@@ -72,7 +71,7 @@ export async function promoteCustomerAction(userId: string): Promise<ActionResul
   if (!admin) return { ok: false, error: AUTH_ERROR };
 
   try {
-    const target = await auth.api
+    const target = await adminAuth.api
       .listUsers({
         headers: await headers(),
         query: { filterField: "id", filterValue: userId, filterOperator: "eq" },
@@ -82,7 +81,7 @@ export async function promoteCustomerAction(userId: string): Promise<ActionResul
     if (target.role === "admin")
       return { ok: false, error: "این کاربر همین حالا ادمین است." };
 
-    await auth.api.setRole({
+    await adminAuth.api.setRole({
       headers: await headers(),
       body: { userId, role: "admin" },
     });
@@ -109,7 +108,7 @@ export async function removeCustomerAction(userId: string): Promise<ActionResult
   try {
     if (!(await guardTarget(userId))) return { ok: false, error: PROTECTED_ERROR };
 
-    await auth.api.removeUser({ headers: await headers(), body: { userId } });
+    await adminAuth.api.removeUser({ headers: await headers(), body: { userId } });
     revalidatePath("/admin/customers");
     await logAudit({
       actor: admin,
@@ -126,7 +125,7 @@ export async function removeCustomerAction(userId: string): Promise<ActionResult
 
 // 🔢 Counts durable admins server-side — never from client-loaded state
 async function countAdmins(): Promise<number> {
-  const result = await auth.api.listUsers({
+  const result = await adminAuth.api.listUsers({
     headers: await headers(),
     query: { filterField: "role", filterValue: "admin", filterOperator: "eq" },
   });
@@ -139,14 +138,16 @@ export async function demoteAdminAction(userId: string): Promise<ActionResult> {
   if (!admin) return { ok: false, error: AUTH_ERROR };
 
   // 🔐 Flat admin model (no super_admin) lets any admin demote any other —
-  // this check is what stops a self-lockout
-  const session = await getSession();
+  // this check is what stops a self-lockout. Off the admin session, not the
+  // storefront one — an admin browsing with no storefront login still needs
+  // this guard.
+  const session = await getAdminSession();
   if (session?.user.id === userId) {
     return { ok: false, error: SELF_DEMOTE_ERROR };
   }
 
   try {
-    const target = await auth.api
+    const target = await adminAuth.api
       .listUsers({
         headers: await headers(),
         query: { filterField: "id", filterValue: userId, filterOperator: "eq" },
@@ -158,7 +159,7 @@ export async function demoteAdminAction(userId: string): Promise<ActionResult> {
 
     if ((await countAdmins()) <= 1) return { ok: false, error: LAST_ADMIN_ERROR };
 
-    await auth.api.setRole({
+    await adminAuth.api.setRole({
       headers: await headers(),
       body: { userId, role: "user" },
     });

@@ -6,8 +6,9 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Lock, ShieldCheck, Sparkles, User } from "lucide-react";
 
-import { adminSignInAction } from "@/lib/auth/actions";
+import { adminSignInAction } from "@/lib/auth/admin-actions";
 import { ModeToggle } from "@/components/shared/mode-toggle";
+import { AdminLogoMark } from "@/components/admin/admin-logo-mark";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
@@ -104,25 +105,7 @@ export function AdminLoginLanding() {
           landmark since nothing upstream provides one. */}
       <main className="relative flex flex-col justify-between px-6 py-8 sm:px-10 lg:px-16 lg:py-12">
         <header className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/brand/logo-white.png"
-              alt=""
-              width={44}
-              height={44}
-              className="bg-navy size-11 rounded-2xl object-contain p-1.5 dark:bg-transparent dark:p-0"
-            />
-            <div className="leading-none">
-              <p
-                className="font-display text-sm font-bold tracking-[0.2em] text-navy dark:text-ivory"
-              >
-                MALLI
-              </p>
-              <p className="text-gold mt-1 text-[10px] font-black tracking-[0.32em]">
-                CONSOLE
-              </p>
-            </div>
-          </div>
+          <AdminLogoMark tagline="CONSOLE" />
           <div className="flex items-center gap-3">
             <ModeToggle
               className="size-10 rounded-full border bg-white border-navy/12 text-navy hover:border-gold/50 dark:border-gold/25 dark:bg-navy-mid dark:text-gold-soft"

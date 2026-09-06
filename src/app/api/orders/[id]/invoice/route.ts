@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { isAdminUser } from "@/lib/auth/admin";
+import { getAdminSession, isAdminUser } from "@/lib/auth/admin";
 import { getOrderForRequester } from "@/lib/shop/orders";
 import { generateInvoicePdf } from "@/lib/shop/invoice";
 import { rateLimit } from "@/lib/rate-limit";
@@ -16,6 +16,8 @@ const RATE_ERROR = "تعداد درخواست‌های دانلود فاکتور
 
 // 🧾 The one PDF invoice download path.
 // 🔐 Ownership off the real session — null for missing or not-yours; admin is the one exception.
+// 🛡️ Storefront and admin sessions are checked independently (they're
+// fully separate cookies, see admin-auth.ts) — either one alone is enough.
 // 💳 Paid orders only, whatever the client claims.
 export async function GET(
   req: NextRequest,
@@ -23,12 +25,19 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const session = await getSession();
-  if (!session?.user) {
+  const [session, adminSession] = await Promise.all([
+    getSession(),
+    getAdminSession(),
+  ]);
+  const admin =
+    adminSession?.user && isAdminUser(adminSession.user) ? adminSession.user : null;
+
+  if (!session?.user && !admin) {
     return NextResponse.json({ error: AUTH_ERROR }, { status: 401 });
   }
 
-  const limited = rateLimit(`invoice:${session.user.id}`, {
+  const rateKey = session?.user.id ?? `admin:${admin!.id}`;
+  const limited = rateLimit(`invoice:${rateKey}`, {
     windowMs: 5 * 60_000,
     max: 20,
   });
@@ -40,8 +49,8 @@ export async function GET(
   }
 
   const order = await getOrderForRequester(id, {
-    userId: session.user.id,
-    isAdmin: isAdminUser(session.user),
+    userId: session?.user.id ?? admin!.id,
+    isAdmin: Boolean(admin),
   });
   if (!order) {
     return NextResponse.json({ error: NOT_FOUND_ERROR }, { status: 404 });

@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { cache } from "react";
 import { ObjectId } from "mongodb";
-import { getSession } from "./session";
+import { adminAuth } from "./admin-auth";
 import { buildUser } from "./user";
 import { connectMongoClient } from "@/lib/db/mongo-client";
 import type { User } from "@/types";
@@ -36,20 +38,28 @@ async function syncBootstrapAdminRole(user: {
     .updateOne({ _id: new ObjectId(user.id) }, { $set: { role: "admin" } });
 }
 
+// 🧊 One admin-session lookup per request, off the admin-only cookie
+// (`adminAuth`) — entirely separate from the storefront's getSession() in
+// `session.ts`. A storefront login (or its absence) never affects this.
+export const getAdminSession = cache(async () => {
+  return adminAuth.api.getSession({ headers: await headers() });
+});
+
 // 🔒 Real /admin authorization boundary; null (not throw) so callers pick their rejection
 export async function requireAdmin(): Promise<User | null> {
-  const session = await getSession();
+  const session = await getAdminSession();
   if (!session?.user || !isAdminUser(session.user)) return null;
 
   await syncBootstrapAdminRole(session.user);
   return buildUser(session.user);
 }
 
-// 🚦 Page-level boundary: no session → /admin/login; signed-in non-admin → / (relogging in won't help them).
+// 🚦 Page-level boundary: no admin session, or a signed-in non-admin →
+// /admin/login either way — this cookie has no storefront-side destination
+// to bounce a non-admin back to.
 export async function requireAdminPage(): Promise<User> {
-  const session = await getSession();
-  if (!session?.user) redirect("/admin/login");
-  if (!isAdminUser(session.user)) redirect("/");
+  const session = await getAdminSession();
+  if (!session?.user || !isAdminUser(session.user)) redirect("/admin/login");
 
   await syncBootstrapAdminRole(session.user);
   return buildUser(session.user);

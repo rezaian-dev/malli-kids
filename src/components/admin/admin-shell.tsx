@@ -1,7 +1,6 @@
 "use client";
 
 import "@/lib/zod-config";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
@@ -16,7 +15,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { signOutAction } from "@/lib/auth/actions";
+import { adminSignOutAction } from "@/lib/auth/admin-actions";
 import type { AdminNotifCounts } from "@/lib/admin/notif-counts";
 import { getAdminNotifCountsAction } from "@/lib/admin/notif-counts-actions";
 import { ADMIN_NAV } from "@/lib/admin/nav";
@@ -25,6 +24,7 @@ import { usePolling } from "@/hooks/use-polling";
 import { AdminAccountFooter } from "./admin-account-footer";
 import { AdminHeaderIdentity } from "./admin-header-identity";
 import { AdminHeaderNotifications } from "./admin-header-notifications";
+import { AdminLogoMark } from "./admin-logo-mark";
 import { AdminSidebarNav, routeIsActive } from "./admin-sidebar-nav";
 import { AdminSidebarScroller } from "./admin-sidebar-scroller";
 
@@ -43,34 +43,7 @@ const ORBIT_DOT_A =
 const ORBIT_DOT_B =
   "bg-gold absolute inset-e-[8%] bottom-1/4 size-0.75 rounded-full shadow-[0_0_16px_rgba(193,147,87,0.55)]";
 
-const BRAND = (
-  <div className="flex min-w-0 items-center gap-3">
-    <span
-      className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-2xl ring-1 bg-navy ring-gold/25 shadow-[0_12px_28px_-14px_rgba(4,20,39,.8)] dark:bg-white/8"
-    >
-      <Image
-        src="/brand/logo-white.png"
-        alt="ملی کیدز"
-        width={42}
-        height={42}
-        className="size-10 object-contain p-1.5"
-      />
-      <span
-        className="absolute inset-x-2 bottom-0 h-px via-gold bg-linear-to-r from-transparent to-transparent"
-      />
-    </span>
-    <div className="min-w-0 leading-none">
-      <p
-        className="font-display text-sm font-bold tracking-[0.2em] text-navy dark:text-ivory"
-      >
-        MALLI
-      </p>
-      <p className="text-gold mt-1.5 text-[9px] font-black tracking-[0.29em]">
-        ADMIN CONSOLE
-      </p>
-    </div>
-  </div>
-);
+const BRAND = <AdminLogoMark tagline="ADMIN CONSOLE" />;
 
 const FALLBACK_ADMIN_PROFILE: AdminIdentity = {
   username: "admin",
@@ -115,7 +88,8 @@ export function AdminShell({
   if (path === "/admin/login") return <>{children}</>;
 
   function logout() {
-    void signOutAction().then(() => router.push("/admin/login"));
+    // 🔒 Clears only the admin cookie (`adminAuth`) — never the storefront's.
+    void adminSignOutAction().then(() => router.push("/admin/login"));
   }
 
   return (
@@ -142,7 +116,7 @@ export function AdminShell({
           <span className={ORBIT_DOT_B} />
         </span>
         <span
-          className="animate-admin-orbit absolute -inset-s-40 -bottom-36 block aspect-square w-[min(32vw,24rem)] rounded-full border [animation-direction:reverse] motion-reduce:animate-none max-[639px]:hidden border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)]"
+          className="animate-admin-orbit absolute -inset-s-40 -bottom-36 block aspect-square w-[min(32vw,24rem)] rounded-full border direction-[reverse] motion-reduce:animate-none max-[639px]:hidden border-gold/13 shadow-[inset_0_0_60px_rgba(193,147,87,0.025)]"
         >
           <span className={ORBIT_DOT_A} />
           <span className={ORBIT_DOT_B} />
