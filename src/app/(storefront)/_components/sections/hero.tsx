@@ -5,13 +5,47 @@ import heroDress from "../../../../../public/brand/hero-dress.jpg";
 import { GoldMark, OrnStar } from "../home-ornaments";
 import { MagneticGlow } from "@/components/motion";
 import { wash } from "@/components/shared/section-wash";
+import { getAllProducts } from "@/lib/shop/products";
+import { getHappyCustomerCount } from "@/lib/shop/orders";
+import { getReviewStats } from "@/lib/shop/reviews";
+import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
 const STAT_VALUE = "text-base font-black min-[380px]:text-xl sm:text-3xl text-navy dark:text-ivory";
 
 const STAT_LABEL = "mt-1 text-[10px] leading-4 min-[380px]:text-xs sm:text-sm text-navy/70 dark:text-wheat";
 
-export function Hero() {
+// 🧮 Real, live figures only — never a hand-typed "+12,000". Zero-value
+// stats are dropped instead of shown, so launch day never lies.
+async function heroStats() {
+  const [products, customers, reviews] = await Promise.all([
+    getAllProducts(),
+    getHappyCustomerCount(),
+    getReviewStats(),
+  ]);
+  const modelCount = products.filter((p) => p.visible).length;
+
+  return [
+    customers > 0
+      ? { key: "customers", value: toFaDigits(customers), label: "مادر خوشحال" }
+      : null,
+    modelCount > 0
+      ? { key: "models", value: toFaDigits(modelCount), label: "مدل در فروشگاه" }
+      : null,
+    reviews.count > 0
+      ? {
+          key: "rating",
+          value: toFaDigits(reviews.avg.toFixed(1)),
+          label: "امتیاز خرید",
+          icon: true,
+        }
+      : null,
+  ].filter((s): s is { key: string; value: string; label: string; icon?: boolean } => s !== null);
+}
+
+export async function Hero() {
+  const stats = await heroStats();
+
   return (
     <section
       id="heroSection"
@@ -89,25 +123,33 @@ export function Hero() {
               </Link>
             </MagneticGlow>
           </div>
-          <div className="mx-auto mt-10 grid max-w-md grid-cols-3 gap-2 min-[420px]:gap-6 sm:mt-12 sm:gap-10 lg:mx-0 lg:flex lg:max-w-none lg:items-center lg:justify-start">
-            <div className="min-w-0 text-center lg:text-right">
-              <div className={STAT_VALUE}>+۱۲٬۰۰۰</div>
-              <div className={STAT_LABEL}>مادر خوشحال</div>
+          {stats.length > 0 ? (
+            <div className="mx-auto mt-10 flex max-w-md flex-wrap justify-center gap-x-8 gap-y-4 sm:mt-12 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:justify-start">
+              {stats.map((s) => (
+                <div key={s.key} className="min-w-0 text-center lg:text-right">
+                  <div
+                    className={cn(
+                      STAT_VALUE,
+                      s.icon && "flex items-center justify-center gap-1 lg:justify-start",
+                    )}
+                  >
+                    {s.value}
+                    {s.icon ? (
+                      <Star className="fill-gold text-gold h-3.5 w-3.5 shrink-0 sm:h-5 sm:w-5" />
+                    ) : null}
+                  </div>
+                  <div className={STAT_LABEL}>{s.label}</div>
+                </div>
+              ))}
             </div>
-            <div className="min-w-0 text-center lg:text-right">
-              <div className={STAT_VALUE}>+۳۵۰</div>
-              <div className={STAT_LABEL}>مدل اختصاصی</div>
+          ) : (
+            <div
+              className="mx-auto mt-10 inline-flex max-w-md items-center gap-2 rounded-full border px-4 py-2.5 text-xs font-bold sm:mt-12 sm:text-sm lg:mx-0 border-gold text-navy bg-white shadow-[0_8px_24px_-12px_rgba(193,147,87,.7)] dark:bg-linen dark:text-navy"
+            >
+              <Sparkles className="animate-twinkle text-gold h-4 w-4 shrink-0" />
+              <span>تازه راه‌اندازی شده‌ایم؛ اولین کالکشن به‌زودی</span>
             </div>
-            <div className="min-w-0 text-center lg:text-right">
-              <div
-                className="flex items-center justify-center gap-1 lg:justify-start text-base font-black min-[380px]:text-xl sm:text-3xl text-navy dark:text-ivory"
-              >
-                ۴٫۹
-                <Star className="fill-gold text-gold h-3.5 w-3.5 shrink-0 sm:h-5 sm:w-5" />
-              </div>
-              <div className={STAT_LABEL}>امتیاز خرید</div>
-            </div>
-          </div>
+          )}
         </div>
         {/* ⚡ No entrance fade here — this frame holds the LCP image, and
             animating its opacity in delays when Chrome can score the paint.

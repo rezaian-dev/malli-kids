@@ -2,16 +2,17 @@ import Link from "next/link";
 import { Newspaper } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/shared/empty-state";
 import type { JournalArticle } from "@/lib/articles";
 
 export function ArticlesList({ initial: articles }: { initial: JournalArticle[] }) {
   if (articles.length === 0) {
     return (
-      <p
-        className="rounded-3xl border border-dashed px-5 py-4 text-sm border-navy/15 bg-sand text-navy/70 dark:border-gold/30 dark:bg-dusk-alt dark:text-wheat"
-      >
-        هنوز مقاله‌ای منتشر نشده است.
-      </p>
+      <EmptyState
+        icon={<Newspaper className="size-6" />}
+        title="هنوز مقاله‌ای منتشر نشده است"
+        description="اولین راهنمای مجله ملی‌کیدز به‌زودی همین‌جا منتشر می‌شود."
+      />
     );
   }
 

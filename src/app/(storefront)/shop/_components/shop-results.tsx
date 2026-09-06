@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, ShoppingBag } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import { toFaDigits } from "@/lib/locale/fa";
 import { ProductCard } from "@/components/product";
 import { PRODUCT_GRID } from "@/components/product/card-styles";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/shared/empty-state";
 import { cn } from "@/lib/utils";
 import { toShopHref, type ShopState } from "@/lib/shop/shop-state";
 import type { Product } from "@/types";
@@ -18,6 +19,7 @@ export function ShopResults({
   state,
   page,
   pages,
+  catalogEmpty,
 }: {
   view: "grid" | "list";
   items: Product[];
@@ -28,6 +30,9 @@ export function ShopResults({
   state: ShopState;
   page: number;
   pages: number;
+  // 🌱 The whole catalog is empty (not just this filter) — a different
+  // message than "no match", since there's nothing to reset.
+  catalogEmpty?: boolean;
 }) {
   return (
     <>
@@ -48,7 +53,14 @@ export function ShopResults({
         </AnimatePresence>
       </div>
 
-      {items.length === 0 ? (
+      {items.length === 0 && catalogEmpty ? (
+        <EmptyState
+          icon={<ShoppingBag className="size-6" />}
+          title="هنوز محصولی در فروشگاه ثبت نشده است"
+          description="کالکشن ملی‌کیدز به‌زودی اضافه می‌شود؛ همین حالا برگردید و سر بزنید."
+          className="my-4"
+        />
+      ) : items.length === 0 ? (
         <div className="grid place-items-center py-16 text-center">
           <span
             className="mb-4 grid size-16 place-items-center rounded-full bg-sand text-gold dark:bg-navy-mid"

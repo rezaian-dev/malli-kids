@@ -14,7 +14,6 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { getRootMetadata, organizationSchema, websiteSchema } from "@/lib/seo";
 import { readStoreBootstrap } from "@/lib/storefront-state";
 import { getSession, getSessionUser } from "@/lib/auth/session";
-import { ensureSeeded } from "@/lib/db/seed";
 import { getCampaign } from "@/lib/shop/settings";
 import { getActiveBanner } from "@/lib/shop/banners";
 import { getFavoriteIds } from "@/lib/shop/favorites";
@@ -72,7 +71,6 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  await ensureSeeded();
   const jar = await cookies();
   const pathname = (await headers()).get("x-malli-pathname") ?? "";
   const isAdmin = pathname.startsWith("/admin");

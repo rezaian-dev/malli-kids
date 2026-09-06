@@ -139,6 +139,7 @@ export function ShopExplorer({
             state={state}
             page={shop.page}
             pages={shop.pages}
+            catalogEmpty={products.length === 0}
           />
         </section>
       </div>

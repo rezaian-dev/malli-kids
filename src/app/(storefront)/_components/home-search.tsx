@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Flame, Search as SearchIcon, TrendingUp } from "lucide-react";
-import { CORE_PRODUCTS } from "@/lib/data/products";
+import { Flame, Loader2, Search as SearchIcon, TrendingUp } from "lucide-react";
+import { searchProductsPreviewAction } from "@/lib/shop/products-actions";
 import { shopHrefFromSearch } from "@/lib/shop-query";
 import { recordSearchAction } from "../_lib/search-actions";
 import { FIELD_FOCUS_WITHIN } from "@/lib/field";
@@ -13,7 +13,10 @@ import { formatToman } from "@/lib/locale/fa";
 
 const MIN_QUERY = 2;
 const MAX_QUERY = 60;
+const DEBOUNCE_MS = 250;
 const ERROR_TEXT = "mt-2 text-xs font-bold text-rose-200";
+
+type Hit = Awaited<ReturnType<typeof searchProductsPreviewAction>>[number];
 
 // 🔎 Tiny home search without form-runtime overhead.
 export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
@@ -21,16 +24,34 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
+  const [hits, setHits] = useState<Hit[]>([]);
+  const [loading, setLoading] = useState(false);
   const q = query.trim();
 
-  // 🔎 A couple of `.includes()` checks over a small in-memory catalog —
-  // cheap enough every render that memoizing the result isn't worth it.
-  const hits = q
-    ? CORE_PRODUCTS.filter((p) => p.name.includes(q) || p.cat.includes(q)).slice(
-        0,
-        5,
-      )
-    : [];
+  // 🔎 Real catalog lookup, debounced so every keystroke doesn't hit the DB.
+  useEffect(() => {
+    if (q.length < MIN_QUERY) {
+      setHits([]);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setLoading(true);
+    const timer = window.setTimeout(() => {
+      searchProductsPreviewAction(q).then((results) => {
+        if (!cancelled) {
+          setHits(results);
+          setLoading(false);
+        }
+      });
+    }, DEBOUNCE_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [q]);
 
   // 🔎 The one real "search happened" moment — never keystrokes
   function runSearch(value: string) {
@@ -139,6 +160,10 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
                 ))}
               </div>
             </div>
+          ) : loading ? (
+            <p className="text-navy/70 dark:text-wheat flex items-center justify-center gap-2 px-5 py-6 text-center text-sm font-bold">
+              <Loader2 className="size-4 animate-spin" /> در حال جستجو…
+            </p>
           ) : hits.length === 0 ? (
             <p className="text-navy/70 dark:text-wheat px-5 py-6 text-center text-sm font-bold">
               نتیجه‌ای برای «{q}» نیست

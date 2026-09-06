@@ -1,3 +1,5 @@
+import { unstable_cache } from "next/cache";
+import { REVALIDATE } from "@/lib/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { OrderModel, type OrderDoc } from "@/lib/db/models/order";
 import { ProductModel } from "@/lib/db/models/product";
@@ -269,3 +271,19 @@ export async function setOrderStatus(
 
   return { ok: true, order: toAdminOrder(doc) };
 }
+
+// 🧊 Refreshed every few minutes rather than on every order, like
+// getTopSearchTerms — a vanity stat for the homepage, not a live counter.
+// Distinct customers with a non-returned order — a real "happy customers"
+// figure instead of a hand-typed number.
+export const getHappyCustomerCount = unstable_cache(
+  async (): Promise<number> => {
+    await connectMongoose();
+    const ids = await OrderModel.distinct("userId", {
+      status: { $ne: "مرجوعی" },
+    });
+    return ids.length;
+  },
+  ["happy-customer-count"],
+  { revalidate: REVALIDATE.merch },
+);

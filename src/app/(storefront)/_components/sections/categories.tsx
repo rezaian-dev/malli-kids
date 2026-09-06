@@ -4,22 +4,28 @@ import { ArrowDownLeft } from "lucide-react";
 import { OrnLeaf } from "../home-ornaments";
 import { Stagger, StaggerItem } from "@/components/motion/static";
 import { wash } from "@/components/shared/section-wash";
+import { getAllProducts } from "@/lib/shop/products";
+import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
-const BIG = [
+const BIG_BASE = [
   {
     href: "/shop?category=دخترانه",
     img: "/brand/cat-girl-portrait.jpg",
     t: "دخترانه",
-    d: "+۱۴۰ مدل فعال",
   },
   {
     href: "/shop?category=پسرانه",
     img: "/brand/cat-boy-portrait.jpg",
     t: "پسرانه",
-    d: "+۱۲۰ مدل فعال",
   },
 ];
+
+// 🔢 A live count per category, not a hand-typed number — "به‌زودی" until
+// the catalog actually has something to count.
+function modelCountLabel(n: number) {
+  return n > 0 ? `${toFaDigits(n)} مدل فعال` : "به‌زودی مدل‌های جدید";
+}
 
 const SMALL = [
   {
@@ -51,7 +57,16 @@ const SMALL = [
 
 const SEASON_BADGE = "rounded-full border px-2.5 py-1 text-[10px] font-black whitespace-nowrap sm:px-3 sm:py-1.5 sm:text-xs border-navy/15 bg-paper-warm text-navy";
 
-export function Categories() {
+export async function Categories() {
+  const products = (await getAllProducts()).filter((p) => p.visible);
+  const countByCat = new Map<string, number>();
+  for (const p of products) countByCat.set(p.cat, (countByCat.get(p.cat) ?? 0) + 1);
+
+  const BIG = BIG_BASE.map((card) => ({
+    ...card,
+    d: modelCountLabel(countByCat.get(card.t) ?? 0),
+  }));
+
   return (
     <section
       id="categories"

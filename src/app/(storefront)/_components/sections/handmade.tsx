@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ArrowLeft, Heart } from "lucide-react";
+import { ArrowLeft, Heart, Scissors } from "lucide-react";
 import { ProductCard } from "@/components/product";
 import { OrnBow } from "../home-ornaments";
+import { EmptyState } from "@/components/shared/empty-state";
 import { getAllProducts } from "@/lib/shop/products";
 
 export async function Handmade() {
@@ -44,14 +45,24 @@ export async function Handmade() {
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </div>
-        <div
-          id="handmadeGrid"
-          className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4 transition-all duration-700 ease-out"
-        >
-          {products.slice(0, 8).map((product) => (
-            <ProductCard key={product.id} p={product} view="grid" />
-          ))}
-        </div>
+        {products.length ? (
+          <div
+            id="handmadeGrid"
+            className="grid grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] gap-4 transition-all duration-700 ease-out"
+          >
+            {products.slice(0, 8).map((product) => (
+              <ProductCard key={product.id} p={product} view="grid" />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon={<Scissors className="size-6" />}
+            title="اولین دستدوزهای ملی‌کیدز در راه است"
+            description="کالکشن دست‌ساز به‌زودی اضافه می‌شود؛ همین حالا سری بزنید و باخبر شوید."
+            action={{ href: "/shop", label: "مشاهده فروشگاه" }}
+            tone="dark"
+          />
+        )}
       </div>
     </section>
   );

@@ -100,6 +100,34 @@ export async function getCompleteTheLook(pairIds: number[]): Promise<Product[]> 
     .filter((p): p is Product => Boolean(p?.visible));
 }
 
+// 🔎 Live, tiny lookup for the home search's type-ahead dropdown — a direct
+// query rather than unstable_cache since the term varies on every keystroke.
+export async function searchProductsPreview(
+  query: string,
+  limit = 5,
+): Promise<Pick<Product, "id" | "img" | "name" | "cat" | "price">[]> {
+  const q = query.trim();
+  if (!q) return [];
+
+  await connectMongoose();
+  const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+  const docs = await ProductModel.find({
+    visible: true,
+    $or: [{ name: rx }, { cat: rx }],
+  })
+    .limit(limit)
+    .select("id img images name cat price")
+    .lean();
+
+  return docs.map((doc) => ({
+    id: doc.id,
+    img: doc.images?.[0] ?? (doc as unknown as { img?: string }).img ?? "",
+    name: doc.name,
+    cat: doc.cat,
+    price: doc.price,
+  }));
+}
+
 // 🔢 Atomic $inc on a monotonic counter — max+1 races and reuses ids after
 // deletes, which can serve a deleted product's stale cache
 export async function nextProductId(): Promise<number> {

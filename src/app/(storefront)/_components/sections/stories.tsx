@@ -1,11 +1,18 @@
 import Link from "next/link";
+import { Newspaper } from "lucide-react";
 import { HomeJournalMount } from "../home-journal-mount";
 import { HomeJournalSlides } from "../home-journal-slides";
 import { OrnStitch } from "../home-ornaments";
 import { wash } from "@/components/shared/section-wash";
+import { EmptyState } from "@/components/shared/empty-state";
+import { loadPublishedArticles } from "@/lib/articles";
 import { cn } from "@/lib/utils";
 
-export function Stories() {
+export async function Stories() {
+  // 🧊 Same cached read HomeJournalSlides makes — this just decides which
+  // shell (carousel vs. "no articles yet") wraps it, no extra DB round-trip.
+  const hasArticles = (await loadPublishedArticles()).length > 0;
+
   return (
     <section
       id="articles"
@@ -35,9 +42,17 @@ export function Stories() {
             همه مقالات
           </Link>
         </div>
-        <HomeJournalMount>
-          <HomeJournalSlides />
-        </HomeJournalMount>
+        {hasArticles ? (
+          <HomeJournalMount>
+            <HomeJournalSlides />
+          </HomeJournalMount>
+        ) : (
+          <EmptyState
+            icon={<Newspaper className="size-6" />}
+            title="اولین مقاله مجله به‌زودی منتشر می‌شود"
+            description="راهنمای سایز، نگهداری پارچه و ایده‌های استایل کودک — به‌زودی همین‌جا."
+          />
+        )}
       </div>
     </section>
   );
