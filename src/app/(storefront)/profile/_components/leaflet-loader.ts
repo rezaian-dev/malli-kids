@@ -1,6 +1,6 @@
 "use client";
 
-// 🗺️ Plain Leaflet — free and keyless (Esri tiles, Nominatim geocoding).
+// 🗺️ Plain Leaflet — free and keyless (OSM tiles, Nominatim geocoding).
 // ⚡ Dynamic import only — Leaflet touches window/document, never safe at module scope during SSR.
 let loading: Promise<typeof import("leaflet")> | null = null;
 

@@ -9,7 +9,7 @@ import { Looks } from "./sections/looks";
 import { Marquee } from "./sections/marquee";
 import { Find } from "./sections/find";
 import { RecentlyViewed } from "./sections/recently-viewed";
-import { SiblingSets } from "./sections/sibling-sets";
+import { Styles } from "./sections/styles";
 import { Reviews } from "./sections/reviews";
 import { Collab } from "./sections/collab";
 
@@ -45,7 +45,7 @@ export function HomeLanding() {
         <Handmade />
       </Reveal>
       <Reveal>
-        <SiblingSets />
+        <Styles />
       </Reveal>
       <Reveal>
         <Reviews />

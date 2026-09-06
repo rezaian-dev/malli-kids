@@ -1,15 +1,16 @@
 import type { NextConfig } from "next";
 
 // 🔐 Nonce-free CSP keeps static rendering intact; script/style unsafe-inline
-// is the accepted trade-off. Esri tiles (img-src) power the profile map, the
-// OSM embed iframe (frame-src) the contact map, and worker-src blob: is the
-// avatar uploader's compression worker.
+// is the accepted trade-off. OSM tiles (img-src) power the profile map — not
+// Esri, which geo-blocks sanctioned countries and forced a VPN just to load
+// it — the OSM embed iframe (frame-src) is the contact map, and worker-src
+// blob: is the avatar uploader's compression worker.
 const isDev = process.env.NODE_ENV !== "production";
 const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob: https://server.arcgisonline.com;
+  img-src 'self' data: blob: https://tile.openstreetmap.org;
   font-src 'self' data:;
   connect-src 'self';
   frame-src https://www.openstreetmap.org;

@@ -167,15 +167,14 @@ export function AddressMapField() {
           center: [startLat, startLng],
           zoom: 15,
         });
-        // 🆓 Keyless Esri tiles — note the reversed {z}/{y}/{x} path
-        L.tileLayer(
-          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-          {
-            maxZoom: 19,
-            attribution:
-              'Tiles © <a href="https://www.esri.com" target="_blank" rel="noreferrer">Esri</a> — Source: Esri, HERE, Garmin, © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
-          },
-        ).addTo(map);
+        // 🆓 Keyless OSM tiles — unlike Esri (a US company that geo-blocks
+        // sanctioned countries), OSM's tile server has no country block, so
+        // this loads on an Iranian IP without a VPN.
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution:
+            '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
+        }).addTo(map);
 
         map.on("movestart", () => setMoving(true));
         map.on("moveend", () => handleSettle(map));
