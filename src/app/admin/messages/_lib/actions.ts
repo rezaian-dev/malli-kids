@@ -1,8 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/admin";
-import { getSession } from "@/lib/auth/session";
+import { requireAdmin, getAdminSession } from "@/lib/auth/admin";
 import {
   claimTicketIfUnassigned,
   getAllTickets,
@@ -57,8 +56,9 @@ export async function replyTicketAction(
     if (!ticket) return { ok: false, error: "تیکت پیدا نشد." };
 
     // 🙋 First reply claims the thread, so the assignee filter tells the
-    // truth even when nobody assigned it by hand.
-    const session = await getSession();
+    // truth even when nobody assigned it by hand. Off the admin session
+    // (whoever is actually replying here), not the storefront one.
+    const session = await getAdminSession();
     if (session?.user) {
       await claimTicketIfUnassigned(id, session.user.id, session.user.name);
     }

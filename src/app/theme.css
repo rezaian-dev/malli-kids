@@ -659,6 +659,20 @@ html:not(.dark) .text-destructive {
   .font-display * {
     font-family: var(--font-display), "Playfair Display", Georgia, serif;
   }
+
+  /* 🖱️ Native <button>s default to `cursor: default` in most browsers —
+     every clickable one should read as clickable. In `@layer base` so a
+     component's own `cursor-*` utility (Tailwind's `utilities` layer)
+     still wins over this default. */
+  button:not(:disabled),
+  input:not(:disabled):where([type="button"], [type="submit"], [type="reset"]),
+  ::file-selector-button {
+    cursor: pointer;
+  }
+  button:disabled,
+  input:disabled:where([type="button"], [type="submit"], [type="reset"]) {
+    cursor: not-allowed;
+  }
 }
 
 /* 🖋️ Never set background-color here — delay the UA fill; text stays on-theme */

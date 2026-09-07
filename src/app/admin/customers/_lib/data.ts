@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth/auth";
+import { adminAuth } from "@/lib/auth/admin-auth";
 import { splitName } from "@/lib/auth/user";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { Profile } from "@/lib/db/models/profile";
@@ -10,7 +10,8 @@ import type { AdminCustomer } from "@/types";
 // 👥 Better Auth users + Profile + order aggregation — no separate
 // customers model
 export async function getAllCustomers(): Promise<AdminCustomer[]> {
-  const { users } = await auth.api.listUsers({
+  // 🔑 `adminAuth`, not the storefront `auth` — see admin-auth.ts.
+  const { users } = await adminAuth.api.listUsers({
     headers: await headers(),
     query: { limit: 500, sortBy: "createdAt", sortDirection: "desc" },
   });
