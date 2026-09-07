@@ -68,7 +68,7 @@ export async function sendChatMessageAction(input: {
   const user = await requireUser();
   if (!user) return { ok: false, error: AUTH_ERROR };
 
-  const limited = rateLimit(`chat-send:${user.id}`, {
+  const limited = await rateLimit(`chat-send:${user.id}`, {
     windowMs: 60_000,
     max: 12,
   });
@@ -109,7 +109,7 @@ export async function pingChatTypingAction(
 ): Promise<void> {
   const user = await requireUser();
   if (!user || typeof conversationId !== "string") return;
-  const limited = rateLimit(`chat-typing:${user.id}`, {
+  const limited = await rateLimit(`chat-typing:${user.id}`, {
     windowMs: 60_000,
     max: 30,
   });

@@ -100,7 +100,7 @@ export async function requestOtpAction(
 
   const phone = phoneDigits(parsed.data.phone);
   // 🚦 Matches the client's resend cooldown (90s).
-  const limited = rateLimit(`otp-request:${phone}`, {
+  const limited = await rateLimit(`otp-request:${phone}`, {
     windowMs: 90_000,
     max: 1,
   });

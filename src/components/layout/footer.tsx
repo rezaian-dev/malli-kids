@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { Code2 } from "lucide-react";
 import { cn, shell } from "@/lib/utils";
 import { FadeIn, Reveal } from "@/components/motion/static";
-import { NewsletterForm } from "./newsletter-form";
 import { FooterPerks } from "./footer-perks";
 import { FooterColumns } from "./footer-columns";
 import { FooterTrustBadges } from "./footer-trust-badges";
+
+const DEVELOPER_URL = "https://rezaian-dev.vercel.app";
 
 export function Footer() {
   return (
@@ -15,34 +17,6 @@ export function Footer() {
       />
       <Reveal>
         <FooterPerks />
-      </Reveal>
-
-      <Reveal delay={0.06}>
-        <div className="border-b border-white/10">
-          <div
-            className={cn(
-              shell,
-              "flex flex-wrap items-center justify-between gap-6 py-10 sm:py-12",
-            )}
-          >
-            <div className="min-w-0 flex-1 basis-65">
-              {/* ♿ `h2`, not `h3` — this is the `<footer>` landmark's own
-                top-level heading, not a subsection of whatever's in `<main>`
-                above it. A page whose main content never reaches `h2`
-                itself (e.g. the signed-out `/profile` prompt, which is just
-                an `h1`) would otherwise skip straight from `h1` to `h3`,
-                failing Lighthouse/axe's heading-order check. */}
-              <h2 className="m-0 text-[clamp(18px,2.4vw,24px)] leading-snug font-black text-white">
-                اولین نفری باشید که{" "}
-                <span className="text-gold-light">کالکشن جدید</span> را می‌بیند
-              </h2>
-              <p className="text-taupe mt-2 text-sm">
-                عضو خبرنامه شوید و ۱۰٪ تخفیف اولین خرید بگیرید.
-              </p>
-            </div>
-            <NewsletterForm />
-          </div>
-        </div>
       </Reveal>
 
       <Reveal delay={0.1}>
@@ -70,6 +44,15 @@ export function Footer() {
                 حریم خصوصی
               </Link>
             </span>
+            <a
+              href={DEVELOPER_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="text-cream/45 hover:text-gold-light inline-flex items-center gap-1.5 transition-colors"
+            >
+              <Code2 className="size-3.5" aria-hidden />
+              طراحی و توسعه: رضاییان
+            </a>
             <span className="font-display text-gold/80 tracking-[0.28em]">
               MALLI KIDS
             </span>

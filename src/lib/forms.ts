@@ -2,7 +2,7 @@ import { z } from "zod";
 import { parseFaNumber, phoneDigits } from "./digits";
 import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
 
-// 📧 Exported so non-zod inline checks (e.g. NewsletterForm) reuse the same pattern.
+// 📧 Exported so non-zod inline checks reuse the same pattern.
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
 
 const RE = {
