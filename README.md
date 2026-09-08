@@ -1,20 +1,20 @@
 <p align="center">
-  <img src="public/og.jpg" alt="Malli Kids — children's atelier" width="100%" />
+  <img src="public/og.jpg" alt="ملی‌کیدز — آتلیه پوشاک کودک" width="100%" />
 </p>
 
 <p align="center">
-  <img src="public/brand/logo.png" alt="Malli Kids" height="68" />
+  <img src="public/brand/logo.png" alt="ملی‌کیدز" height="72" />
 </p>
 
-<h1 align="center">Malli Kids</h1>
+<h1 align="center">ملی‌کیدز ✨</h1>
 
 <p align="center">
-  Children’s atelier<br />
-  <em>Storefront · Account · Admin</em>
+  👗 آتلیه پوشاک کودک<br />
+  <em>🛍️ فروشگاه · 👤 حساب مشتری · 🖥️ کنسول مدیریت</em>
 </p>
 
 <p align="center">
-  <img src="public/brand/stack.png" alt="Next.js, React, TypeScript, Tailwind, MongoDB, Zod" width="100%" />
+  <img src="public/brand/stack.png" alt="Next.js، React، TypeScript، Tailwind، MongoDB، Zod" width="100%" />
 </p>
 
 <p align="center">
@@ -28,96 +28,101 @@
 
 ---
 
-## About
+## 📖 دربارهٔ پروژه
 
-Malli Kids is a working children’s atelier — not a theme, not a demo store. A garment here is meant to become a childhood memory, so the product has to feel like a studio: quiet luxury, Persian-first copy, and operations a real team can run every day.
+ملی‌کیدز فروشگاه آنلاین یک **آتلیه پوشاک کودک** است، نه قالب آماده و نه دمو. لباس اینجا قرار است بخشی از خاطرهٔ کودکی شود؛ برای همین رابط فارسی و راست‌چین است، موجودی واقعی است، و کنسول طوری نوشته شده که تیم هر روز با آن کار کند.
 
-This repository is that studio on the web. One **Next.js 16** application holds three surfaces:
+این مخزن همان آتلیه روی وب است: **یک اپ Next.js 16** با سه سطح، یک کاتالوگ، یک نشست و یک زبان بصری.
 
-| Surface | What it does |
+| سطح | چه می‌بینید |
 | --- | --- |
-| **Storefront** | Home, catalog, product, journal, virtual try-on, trust pages |
-| **Account** | Sign-in, profile, children, mapped addresses, orders, wishlist, support |
-| **Admin** | Catalog, inventory, orders, Jalali coupons, banners, TipTap magazine, chat, audit |
+| 🛍️ **ویترین** | خانه، فروشگاه، محصول، مجله، پرو مجازی، صفحات اعتماد |
+| 👤 **حساب** | ورود، پروفایل، فرزند، آدرس روی نقشه، سفارش، فاکتور، علاقه‌مندی، تیکت |
+| 🖥️ **کنسول** | محصول، انبار، سفارش، کوپن جلالی، بنر، مجله، چت، نظرات، ممیزی |
 
-The default is a Server Component. Client components exist only where the interface must move. Static stories are **SSG**; the catalog is **ISR** so price and stock stay honest; anything behind a session is **SSR**.
+پیش‌فرض **Server Component** است؛ کلاینت فقط جایی که باید حرکت کند. متن ثابت **SSG**، کاتالوگ **ISR** (قیمت و موجودی)، حساب و ادمین **SSR**.
 
-Engineering follows the brand: RTL with logical CSS, Persian digits, Jalali **calendar days** (not clock timestamps) for coupon expiry, live inventory locks at checkout, and JSON-LD that matches what the shopper actually sees.
+جزئیات برند در کد هم هست: ارقام فارسی، راست‌چین منطقی، انقضای کوپن روی **روز تقویم جلالی** (نه ساعت)، قفل موجودی هنگام تسویه، و SEO فقط برای چیزی که روی صفحه دیده می‌شود.
 
-> Malli Kids is not only a children’s clothing label. We stay with the small, unforgettable days.
+> 🤍 ملی‌کیدز فقط یک برند لباس کودک نیست؛ همراه لحظه‌های کوچک و فراموش‌نشدنی کودکی است.
 
----
-
-## Features
-
-**Commerce**  
-Filterable shop, product gallery, size chart, complete-the-look, verified reviews, back-in-stock, wishlist, cart, coupons, free-shipping threshold, official Playwright PDF invoices.
-
-**Identity**  
-Better Auth (password, OTP, reset), admin role, rate-limited mail.
-
-**Operations**  
-Sales dashboard, stock matrix, Jalali coupon editor, festive banners, collab intake, live chat + canned replies, review queue, audit log.
-
-**Content & SEO**  
-About, FAQ, shipping, size guide, privacy, terms as SSG. Magazine with TipTap. Metadata, sitemap, robots, Organization / Product / FAQ JSON-LD.
-
-**Try-on**  
-`/tryon` studio with a dedicated API route.
+شروع پیشنهادی: خانه → یک محصول → سبد. کنسول روی `/admin`.
 
 ---
 
-## Rendering
+## 🌟 امکانات
 
-| Routes | Strategy |
-| --- | --- |
-| About, terms, privacy, FAQ, shipping, size guide | **SSG** `force-static` |
-| Home, `/shop`, `/product/*` | **ISR** 60s |
-| Collab, contact | **ISR** 5 min |
-| Journal | **ISR** 1 hour |
-| Profile, try-on, reset, `/admin/*` | **SSR** |
+**🛍️ فروشگاه**  
+فیلتر دسته، جنسیت، فصل و قیمت · مرتب‌سازی · کارت گرید و لیست · گالری · جدول سایز · ست کامل · نظر خریدار · موجودی مجدد · نوار خرید چسبان
 
-Defined in `src/lib/cache.ts`.
+**🧺 خرید**  
+علاقه‌مندی · سبد · کوپن · ارسال رایگان از سقف برند · قفل موجودی در تسویه · فاکتور PDF
+
+**🔐 حساب**  
+Better Auth (رمز، OTP، بازیابی) · پروفایل · فرزند · نقشه · سفارش · تیکت
+
+**🎛️ کنسول**  
+داشبورد فروش · محصول و انبار · سفارش · مشتری و تیم · کوپن با انقضای **روز جلالی** · بنر مناسبتی · مجله TipTap · همکاری · چت و پاسخ آماده · نظرات · ممیزی
+
+**📰 محتوا**  
+درباره، FAQ، ارسال، سایز، حریم و شرایط — SSG · پارچه، الگو، کیت، آموزش · اینماد و ساماندهی
+
+**🪞 پرو مجازی**  
+`/tryon` — عکس یا مدل نمونه، انتخاب لباس، پیشنهاد سایز
 
 ---
 
-## Architecture
+## 🧊 رندر صفحات
+
+| کجا | چگونه | چرا |
+| --- | --- | --- |
+| درباره، قوانین، FAQ، ارسال، سایز | **SSG** | متن برند ثابت است |
+| خانه، فروشگاه، محصول | **ISR** ۶۰ث | قیمت و موجودی |
+| همکاری، تماس | **ISR** ۵دقیقه | نیمه‌پایدار |
+| مجله | **ISR** ۱ساعت | تحریریه |
+| پروفایل، پرو، `/admin` | **SSR** | نشست خصوصی |
+
+نقشه: `src/lib/cache.ts`
+
+---
+
+## 🗂️ نقشهٔ کد
 
 ```
-src/app/(storefront)/   storefront
-src/app/admin/          console
-src/app/api/            auth · invoice · try-on
-src/components/         UI, forms, chat, cart
-src/lib/db/             Mongoose models
-src/lib/shop/           commerce domain
-src/lib/auth/           session & roles
-src/proxy.ts            Next.js 16 proxy
+src/app/(storefront)/     ویترین
+src/app/admin/            کنسول
+src/app/api/              هویت · فاکتور · پرو
+src/components/           رابط مشترک
+src/lib/db/               مدل‌های Mongoose
+src/lib/shop/             دامنهٔ فروش
+src/lib/auth/             نشست و نقش
+src/proxy.ts              گیت Next.js 16
 ```
 
-Layers stay separate: persistence in `lib/db`, domain in `lib/shop` and `lib/auth`, presentation in route groups.
+ماندگاری در `lib/db` · قانون کسب‌وکار در `lib/shop` و `lib/auth` · شکل در route groupها.
 
 ---
 
-## Stack
+## 🧰 پشته
 
-| Layer | Choice |
+| لایه | انتخاب |
 | --- | --- |
-| App | Next.js 16 · React 19 · TypeScript 5.9 |
-| Style | Tailwind CSS v4 · Radix · CVA |
-| Data | MongoDB · Mongoose |
-| Forms | React Hook Form · Zod 4 |
-| Auth | Better Auth · Nodemailer |
-| Editorial | TipTap |
-| Dates | react-multi-date-picker (Jalali) |
-| Maps | Leaflet |
-| Invoices | Playwright |
-| Carousel | Embla |
+| اپ | Next.js 16 · React 19 · TypeScript 5.9 |
+| ظاهر | Tailwind CSS v4 · Radix · CVA |
+| داده | MongoDB · Mongoose |
+| فرم | React Hook Form · Zod 4 |
+| هویت | Better Auth · نامه |
+| تحریریه | TipTap |
+| تاریخ | تقویم جلالی |
+| نقشه | Leaflet |
+| فاکتور | Playwright |
+| کاروسل | Embla |
 
 ---
 
-## Setup
+## 🚀 اجرا
 
-Node 22+ and MongoDB.
+Node ۲۲ و MongoDB.
 
 ```bash
 npm install
@@ -130,11 +135,11 @@ npm run lint
 npm run format:check
 ```
 
-Playwright is used only to print invoice PDFs — there is no e2e suite in this repo.
+Playwright فقط برای چاپ فاکتور PDF است؛ e2e در این ریپو نیست.
 
 ---
 
 <p align="center">
   <img src="public/brand/logo.png" alt="" height="40" /><br />
-  <sub>Malli Kids · All rights reserved</sub>
+  <sub>👗 ملی‌کیدز · تمام حقوق محفوظ است</sub>
 </p>
