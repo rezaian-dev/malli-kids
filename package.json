@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3143",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

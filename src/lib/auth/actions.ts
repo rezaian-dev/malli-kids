@@ -71,6 +71,11 @@ export async function signOutAction(): Promise<ActionResult> {
   }
 }
 
+// 📱 Password reset moved off email onto the SMS panel (better-auth's `phoneNumber`
+// plugin) — no more "never reveal whether the account exists" swallow-all-errors
+// dance, because `requestPasswordResetPhoneNumber` already does that itself
+// server-side (it answers {status:true} even for an unknown phone number, see
+// its route source) — a thrown error here is a real failure worth surfacing.
 export async function forgotPasswordAction(
   values: ForgotPasswordValues,
 ): Promise<ActionResult> {
@@ -78,28 +83,26 @@ export async function forgotPasswordAction(
   if (!parsed.success) return { ok: false, error: FALLBACK_ERROR };
 
   try {
-    await auth.api.requestPasswordReset({
-      body: { email: parsed.data.email, redirectTo: "/reset-password" },
+    await auth.api.requestPasswordResetPhoneNumber({
+      body: { phoneNumber: phoneDigits(parsed.data.phone) },
       headers: await headers(),
     });
-  } catch {
-    // 🤫 Never reveal whether the email exists — always report success.
+    return { ok: true };
+  } catch (error) {
+    return authActionError(error);
   }
-  return { ok: true };
 }
 
-// 📱 UI is fully built; flip once an SMS provider is purchased and wired up.
-const SMS_PROVIDER_CONFIGURED = false;
-
-// 📨 With no SMS provider, answers { demo: true } so the UI still previews.
+// 📨 Real send via the SMS panel (src/lib/sms.ts, wired in auth.ts's `phoneNumber`
+// plugin). The app-level cooldown below matches the client's 90s resend timer and
+// sits in front of Better Auth's own (Redis-backed) per-route limit as a second layer.
 export async function requestOtpAction(
   values: OtpRequestValues,
-): Promise<ActionResult<{ demo: boolean }>> {
+): Promise<ActionResult> {
   const parsed = otpRequestSchema.safeParse(values);
   if (!parsed.success) return { ok: false, error: FALLBACK_ERROR };
 
   const phone = phoneDigits(parsed.data.phone);
-  // 🚦 Matches the client's resend cooldown (90s).
   const limited = await rateLimit(`otp-request:${phone}`, {
     windowMs: 90_000,
     max: 1,
@@ -107,36 +110,51 @@ export async function requestOtpAction(
   if (!limited.ok)
     return { ok: false, error: "کمی صبر کنید و دوباره تلاش کنید." };
 
-  if (!SMS_PROVIDER_CONFIGURED) return { ok: true, data: { demo: true } };
-
-  // TODO: send the real SMS via the configured provider once purchased.
-  return { ok: true, data: { demo: false } };
+  try {
+    await auth.api.sendPhoneNumberOTP({
+      body: { phoneNumber: phone },
+      headers: await headers(),
+    });
+    return { ok: true };
+  } catch (error) {
+    return authActionError(error);
+  }
 }
 
-// 🔐 No SMS provider means no code was sent — never fake a successful sign-in.
+// 🆕🔑 One endpoint, two outcomes: a phone nobody's seen before gets an account
+// on the spot (`signUpOnVerification` in auth.ts), an existing one just signs
+// in — matching the "enter phone, get code, you're in" UX of the login tab.
 export async function verifyOtpAction(
-  values: OtpVerifyValues,
+  values: OtpVerifyValues & { phone: string },
 ): Promise<ActionResult<User>> {
   const parsed = otpVerifySchema.safeParse(values);
   if (!parsed.success) return { ok: false, error: FALLBACK_ERROR };
 
-  return {
-    ok: false,
-    error:
-      "ورود با کدِ پیامکی هنوز فعال نشده — فعلاً از ایمیل و رمز عبور وارد شوید.",
-  };
+  try {
+    const { user } = await auth.api.verifyPhoneNumber({
+      body: { phoneNumber: phoneDigits(values.phone), code: parsed.data.code },
+      headers: await headers(),
+    });
+    return { ok: true, data: await buildUser(user) };
+  } catch (error) {
+    return authActionError(error);
+  }
 }
 
 export async function resetPasswordAction(
-  values: ResetPasswordValues,
+  values: ResetPasswordValues & { phone: string },
 ): Promise<ActionResult> {
   const parsed = resetPasswordSchema.safeParse(values);
   if (!parsed.success)
     return { ok: false, error: parsed.error.issues[0]?.message ?? FALLBACK_ERROR };
 
   try {
-    await auth.api.resetPassword({
-      body: { newPassword: parsed.data.password, token: parsed.data.token },
+    await auth.api.resetPasswordPhoneNumber({
+      body: {
+        phoneNumber: phoneDigits(values.phone),
+        otp: parsed.data.code,
+        newPassword: parsed.data.password,
+      },
       headers: await headers(),
     });
     return { ok: true };

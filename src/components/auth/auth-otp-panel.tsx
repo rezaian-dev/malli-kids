@@ -12,8 +12,8 @@ import {
   KeyRound,
   RotateCcw,
   Smartphone,
-  Sparkles,
 } from "lucide-react";
+import { useAuth } from "@/providers/auth-provider";
 import { toast } from "@/lib/toast";
 import { toFaDigits } from "@/lib/locale/fa";
 import {
@@ -37,8 +37,9 @@ import {
 } from "@/lib/auth/schemas";
 import { onlyDigits, SUBMIT_NAVY, useCooldown } from "./auth-shared";
 
-// 🔢 Five boxes standing in for one code field; onChange gets joined digits
-function OtpBoxes({
+// 🔢 Five boxes standing in for one code field; onChange gets joined digits.
+// Exported — `ForgotPasswordPanel` shares this for its own OTP step.
+export function OtpBoxes({
   value,
   onChange,
   invalid,
@@ -125,12 +126,12 @@ function OtpBoxes({
   );
 }
 
-// 📱 SMS login preview — the OTP actions are honest stubs until a real
-// provider is wired; only those two server actions change then
+// 📱 Real SMS login: enter a phone, get a code, you're in — first time creates
+// the account (`signUpOnVerification` in auth.ts), every time after just signs in.
 export function OtpLoginPanel() {
+  const { login } = useAuth();
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [phone, setPhone] = useState("");
-  const [demo, setDemo] = useState(false);
   const [shakeSignal, setShakeSignal] = useState(0);
   const cd = useCooldown();
 
@@ -150,14 +151,9 @@ export function OtpLoginPanel() {
       return;
     }
     setPhone(values.phone);
-    setDemo(result.data.demo);
     cd.restart();
     setStep("code");
-    toast[result.data.demo ? "info" : "success"](
-      result.data.demo
-        ? "کدِ نمایشی آماده شد — پیامکِ واقعی هنوز وصل نیست"
-        : `کد به ${values.phone} پیامک شد`,
-    );
+    toast.success(`کد به ${values.phone} پیامک شد`);
   }
 
   async function resend() {
@@ -171,12 +167,14 @@ export function OtpLoginPanel() {
   }
 
   async function verify(values: OtpVerifyValues) {
-    const result = await verifyOtpAction(values);
+    const result = await verifyOtpAction({ ...values, phone });
     if (!result.ok) {
       toast.warning(result.error);
       setShakeSignal((n) => n + 1);
+      return;
     }
-    // ✅ Becomes the real login call once verifyOtpAction returns a user
+    login(result.data);
+    toast(`خوش آمدید، ${result.data.firstName} ✨`);
   }
 
   if (step === "phone") {
@@ -223,15 +221,6 @@ export function OtpLoginPanel() {
         className="animate-fade-up space-y-4"
         shakeSignal={shakeSignal}
       >
-        {demo ? (
-          <p
-            className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold bg-gold/12 text-gold-deep dark:text-gold-light"
-          >
-            <Sparkles className="size-3.5" /> نسخهٔ نمایشی — پیامکِ واقعی
-            به‌زودی وصل می‌شود
-          </p>
-        ) : null}
-
         <p className="text-navy/70 dark:text-linen/70 text-[13px] leading-6">
           کدِ {toFaDigits(OTP_LEN)} رقمیِ ارسال‌شده به{" "}
           <span dir="ltr" className="text-gold font-black">
