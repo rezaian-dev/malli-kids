@@ -18,72 +18,28 @@ export const redis = url && token ? new Redis({ url, token }) : null;
 // namespaced so it can never collide with another project's keys on the same DB.
 const KEY_PREFIX = "malli-kids:auth:";
 
-// 🛟 Rate limiting is a defense layer, not core functionality — a wrong URL, a
-// deleted database, or a transient Upstash outage must never take down sign-in
-// or sign-up. Every call below fails OPEN (degrades to "not rate-limited")
-// instead of throwing, so a broken Redis config only weakens throttling, it
-// doesn't 500 every auth request. Errors are logged, but throttled to avoid
-// flooding the log when Redis is down for a while.
-let lastErrorLogAt = 0;
-function logRedisError(op: string, err: unknown) {
-  const now = Date.now();
-  if (now - lastErrorLogAt < 30_000) return;
-  lastErrorLogAt = now;
-  const reason = err instanceof Error ? err.message : String(err);
-  console.error(
-    `[redis] ${op} failed — rate limiting degraded to fail-open until this clears. ${reason}`,
-  );
-}
-
 // 🧮 Feeds Better Auth's own rate limiter (`rateLimit.storage: "secondary-storage"`
 // in `auth.ts`) so the phone-OTP endpoints — the ones that actually cost money per
 // send — are throttled across every serverless instance, not just whichever one
 // happened to handle a given request.
 export const authSecondaryStorage: SecondaryStorage | undefined = redis
   ? {
-      async get(key) {
-        try {
-          return await redis.get(KEY_PREFIX + key);
-        } catch (err) {
-          logRedisError("get", err);
-          return null;
-        }
-      },
-      async getAndDelete(key) {
-        try {
-          return await redis.getdel(KEY_PREFIX + key);
-        } catch (err) {
-          logRedisError("getAndDelete", err);
-          return null;
-        }
-      },
-      async set(key, value, ttl) {
-        try {
-          if (ttl) await redis.set(KEY_PREFIX + key, value, { ex: ttl });
-          else await redis.set(KEY_PREFIX + key, value);
-        } catch (err) {
-          logRedisError("set", err);
-        }
-      },
-      async delete(key) {
-        try {
-          await redis.del(KEY_PREFIX + key);
-        } catch (err) {
-          logRedisError("delete", err);
-        }
+      get: (key) => redis.get(KEY_PREFIX + key),
+      getAndDelete: (key) => redis.getdel(KEY_PREFIX + key),
+      set: (key, value, ttl) =>
+        ttl
+          ? redis.set(KEY_PREFIX + key, value, { ex: ttl })
+          : redis.set(KEY_PREFIX + key, value),
+      delete: async (key) => {
+        await redis.del(KEY_PREFIX + key);
       },
       // ⚛️ Fixed-window counter: TTL is only armed on the key's first hit (INCR
       // returning 1), so later increments never push the window back out —
       // exactly the contract Better Auth's rate limiter documents needing.
       async increment(key, ttl) {
-        try {
-          const value = await redis.incr(KEY_PREFIX + key);
-          if (value === 1) await redis.expire(KEY_PREFIX + key, ttl);
-          return value;
-        } catch (err) {
-          logRedisError("increment", err);
-          return 1; // 🔓 fail-open: looks like a fresh first hit, never blocks
-        }
+        const value = await redis.incr(KEY_PREFIX + key);
+        if (value === 1) await redis.expire(KEY_PREFIX + key, ttl);
+        return value;
       },
     }
   : undefined;
