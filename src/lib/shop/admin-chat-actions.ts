@@ -62,7 +62,7 @@ export async function sendChatReplyAction(input: {
   const adminId = session?.user.id;
   if (!adminId) return { ok: false, error: ADMIN_AUTH_ERROR };
 
-  const limited = rateLimit(`chat-send-admin:${adminId}`, {
+  const limited = await rateLimit(`chat-send-admin:${adminId}`, {
     windowMs: 60_000,
     max: 30,
   });

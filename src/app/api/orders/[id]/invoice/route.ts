@@ -37,7 +37,7 @@ export async function GET(
   }
 
   const rateKey = session?.user.id ?? `admin:${admin!.id}`;
-  const limited = rateLimit(`invoice:${rateKey}`, {
+  const limited = await rateLimit(`invoice:${rateKey}`, {
     windowMs: 5 * 60_000,
     max: 20,
   });

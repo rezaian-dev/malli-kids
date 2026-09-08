@@ -95,7 +95,7 @@ export async function reverseGeocodeAction(
   if (!userId) return { ok: false, error: AUTH_ERROR };
 
   // 🚦 Nominatim caps ~1 req/sec — per-user throttle stays inside the policy
-  const limited = rateLimit(`geocode:${userId}`, {
+  const limited = await rateLimit(`geocode:${userId}`, {
     windowMs: 60_000,
     max: 20,
   });
