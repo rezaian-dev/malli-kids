@@ -65,6 +65,14 @@ export const auth = betterAuth({
       otpLength: OTP_LEN,
       sendOTP: sendPhoneOTP,
       sendPasswordResetOTP: sendPhoneOTP,
+      // 🆕 A phone number nobody's seen before gets an account on the spot —
+      // matches the login tab's UX: enter phone, get code, you're in, whether
+      // this is your first time or your hundredth. Real email/password stays
+      // available too; this email is just a placeholder Better Auth requires.
+      signUpOnVerification: {
+        getTempEmail: (phoneNumber) => `${phoneNumber}@phone.mallikids.local`,
+        getTempName: (phoneNumber) => phoneNumber,
+      },
     }),
     // 🍪 nextCookies() must stay last — it lets server actions set the session cookie directly.
     nextCookies(),
