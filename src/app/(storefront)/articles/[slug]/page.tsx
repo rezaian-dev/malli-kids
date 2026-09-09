@@ -10,9 +10,20 @@ import { ArticleView } from "./_components/article-view";
 // export and rejects a reference (see REVALIDATE.editorial in @/lib/cache).
 export const revalidate = 3600;
 
+// 🛡️ Build-safe: if DB/auth unavailable (Pars build without MONGODB_URI), return no params and let ISR hydrate at runtime.
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  const articles = await loadPublishedArticles();
-  return articles.map((article) => ({ slug: article.slug }));
+  try {
+    const articles = await loadPublishedArticles();
+    return articles.map((article) => ({ slug: article.slug }));
+  } catch (err) {
+    console.warn(
+      "[articles/[slug]] generateStaticParams failed — skipping prerender:",
+      (err as Error).message,
+    );
+    return [];
+  }
 }
 
 function decode(slug: string) {
@@ -29,7 +40,16 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = await findPublishedArticle(decode(slug));
+  let article;
+  try {
+    article = await findPublishedArticle(decode(slug));
+  } catch (err) {
+    console.warn(
+      `[articles/[slug]] generateMetadata("${slug}") failed:`,
+      (err as Error).message,
+    );
+    article = undefined;
+  }
 
   if (!article) {
     return buildMetadata({
@@ -60,7 +80,16 @@ export default async function ArticlePage({
 }) {
   const { slug } = await params;
   const decoded = decode(slug);
-  const article = await findPublishedArticle(decoded);
+  let article;
+  try {
+    article = await findPublishedArticle(decoded);
+  } catch (err) {
+    console.warn(
+      `[articles/[slug]] ArticlePage find failed for "${decoded}":`,
+      (err as Error).message,
+    );
+    article = undefined;
+  }
 
   // 🚫 A missing/unpublished slug is a real 404, not a 200
   if (!article) notFound();

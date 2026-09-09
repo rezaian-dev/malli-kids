@@ -27,9 +27,14 @@ export const DEFAULT_SUPPORT_HOURS: SupportHours = {
 // 🕘 Cached under the same tag as the campaign — one revalidateTag refreshes both.
 export const getSupportHours = unstable_cache(
   async (): Promise<SupportHours> => {
-    await connectMongoose();
-    const doc = await SettingsModel.findOne({ key: "site" }).lean();
-    return doc?.support ?? DEFAULT_SUPPORT_HOURS;
+    try {
+      await connectMongoose();
+      const doc = await SettingsModel.findOne({ key: "site" }).lean();
+      return doc?.support ?? DEFAULT_SUPPORT_HOURS;
+    } catch (err) {
+      console.warn("[settings] getSupportHours failed — returning default:", (err as Error).message);
+      return DEFAULT_SUPPORT_HOURS;
+    }
   },
   ["site-support-hours"],
   { tags: [SITE_SETTINGS_TAG], revalidate: REVALIDATE.merch },
@@ -38,9 +43,14 @@ export const getSupportHours = unstable_cache(
 // ⚙️ Identical for every visitor, so it's cached like getActiveBanner.
 export const getCampaign = unstable_cache(
   async (): Promise<SettingsCampaign> => {
-    await connectMongoose();
-    const doc = await SettingsModel.findOne({ key: "site" }).lean();
-    return doc?.campaign ?? DEFAULT_CAMPAIGN;
+    try {
+      await connectMongoose();
+      const doc = await SettingsModel.findOne({ key: "site" }).lean();
+      return doc?.campaign ?? DEFAULT_CAMPAIGN;
+    } catch (err) {
+      console.warn("[settings] getCampaign failed — returning default:", (err as Error).message);
+      return DEFAULT_CAMPAIGN;
+    }
   },
   ["site-campaign"],
   { tags: [SITE_SETTINGS_TAG], revalidate: REVALIDATE.merch },

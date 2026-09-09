@@ -123,10 +123,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  const [products, articles] = await Promise.all([
+  // 🛡️ Build-safe: if DB unavailable (Pars build without MONGODB_URI/auth), sitemap still builds.
+  const [productsResult, articlesResult] = await Promise.allSettled([
     getAllProducts(),
     loadPublishedArticles(),
   ]);
+
+  if (productsResult.status === "rejected") {
+    console.warn("[sitemap] getAllProducts failed — omitting product routes:", productsResult.reason);
+  }
+  if (articlesResult.status === "rejected") {
+    console.warn("[sitemap] loadPublishedArticles failed — omitting article routes:", articlesResult.reason);
+  }
+
+  const products = productsResult.status === "fulfilled" ? productsResult.value : [];
+  const articles = articlesResult.status === "fulfilled" ? articlesResult.value : [];
 
   // 🙈 A hidden product's PDP now 404s (see `product/[id]/page.tsx`) — never
   // list a URL here that would 404 for the crawler that follows it.

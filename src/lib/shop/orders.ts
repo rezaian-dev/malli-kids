@@ -278,11 +278,16 @@ export async function setOrderStatus(
 // figure instead of a hand-typed number.
 export const getHappyCustomerCount = unstable_cache(
   async (): Promise<number> => {
-    await connectMongoose();
-    const ids = await OrderModel.distinct("userId", {
-      status: { $ne: "مرجوعی" },
-    });
-    return ids.length;
+    try {
+      await connectMongoose();
+      const ids = await OrderModel.distinct("userId", {
+        status: { $ne: "مرجوعی" },
+      });
+      return ids.length;
+    } catch (err) {
+      console.warn("[orders] getHappyCustomerCount failed — returning 0:", (err as Error).message);
+      return 0;
+    }
   },
   ["happy-customer-count"],
   { revalidate: REVALIDATE.merch },

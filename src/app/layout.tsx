@@ -78,7 +78,10 @@ export default async function RootLayout({
   // 🎛️ Skip storefront chrome for admin — one-shot paint, no extra round-trips
   const [campaign, banner] = isAdmin
     ? [null, null]
-    : await Promise.all([getCampaign(), getActiveBanner()]);
+    : await Promise.all([getCampaign(), getActiveBanner()]).catch((err) => {
+        console.warn("[layout] campaign/banner load failed — using defaults:", (err as Error).message);
+        return [null, null] as const;
+      });
   const session = !isAdmin && user ? await getSession() : null;
   const favorites = session ? await getFavoriteIds(session.user.id) : [];
   const initialState = readStoreBootstrap(

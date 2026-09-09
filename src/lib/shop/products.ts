@@ -43,12 +43,20 @@ function toProduct(doc: ProductDoc): Product {
   };
 }
 
-// 📚 Single source both the shop grid and admin tables filter/sort client-side.
+// 📚 Single source both the shop grid and admin tables filter/sort client-side. Build-safe.
 export const getAllProducts = unstable_cache(
   async (): Promise<Product[]> => {
-    await connectMongoose();
-    const docs = await ProductModel.find().sort({ id: -1 }).lean();
-    return docs.map(toProduct);
+    try {
+      await connectMongoose();
+      const docs = await ProductModel.find().sort({ id: -1 }).lean();
+      return docs.map(toProduct);
+    } catch (err) {
+      console.warn(
+        "[products] getAllProducts failed — returning empty (build without DB):",
+        (err as Error).message,
+      );
+      return [];
+    }
   },
   ["all-products"],
   { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
@@ -58,21 +66,37 @@ export const getProductById = unstable_cache(
   async (id: number): Promise<Product | null> => {
     // 🛡️ A malformed route param can hand this NaN, which Mongo would throw a CastError on — treat it as not found.
     if (!Number.isFinite(id)) return null;
-    await connectMongoose();
-    const doc = await ProductModel.findOne({ id }).lean();
-    return doc ? toProduct(doc) : null;
+    try {
+      await connectMongoose();
+      const doc = await ProductModel.findOne({ id }).lean();
+      return doc ? toProduct(doc) : null;
+    } catch (err) {
+      console.warn(
+        `[products] getProductById(${id}) failed — returning null:`,
+        (err as Error).message,
+      );
+      return null;
+    }
   },
   ["product-by-id"],
   { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
 );
 
-/** 💛 Hydrates a locally-stored favorites id list into real product cards. */
+/** 💛 Hydrates a locally-stored favorites id list into real product cards. Build-safe. */
 export const getProductsByIds = unstable_cache(
   async (ids: number[]): Promise<Product[]> => {
     if (!ids.length) return [];
-    await connectMongoose();
-    const docs = await ProductModel.find({ id: { $in: ids } }).lean();
-    return docs.map(toProduct);
+    try {
+      await connectMongoose();
+      const docs = await ProductModel.find({ id: { $in: ids } }).lean();
+      return docs.map(toProduct);
+    } catch (err) {
+      console.warn(
+        "[products] getProductsByIds failed — returning empty:",
+        (err as Error).message,
+      );
+      return [];
+    }
   },
   ["products-by-ids"],
   { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
@@ -80,11 +104,19 @@ export const getProductsByIds = unstable_cache(
 
 export const getRelatedProducts = unstable_cache(
   async (cat: string, excludeId: number, limit = 4): Promise<Product[]> => {
-    await connectMongoose();
-    const docs = await ProductModel.find({ cat, id: { $ne: excludeId } })
-      .limit(limit)
-      .lean();
-    return docs.map(toProduct);
+    try {
+      await connectMongoose();
+      const docs = await ProductModel.find({ cat, id: { $ne: excludeId } })
+        .limit(limit)
+        .lean();
+      return docs.map(toProduct);
+    } catch (err) {
+      console.warn(
+        "[products] getRelatedProducts failed — returning empty:",
+        (err as Error).message,
+      );
+      return [];
+    }
   },
   ["related-products"],
   { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
@@ -109,23 +141,31 @@ export async function searchProductsPreview(
   const q = query.trim();
   if (!q) return [];
 
-  await connectMongoose();
-  const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
-  const docs = await ProductModel.find({
-    visible: true,
-    $or: [{ name: rx }, { cat: rx }],
-  })
-    .limit(limit)
-    .select("id img images name cat price")
-    .lean();
+  try {
+    await connectMongoose();
+    const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+    const docs = await ProductModel.find({
+      visible: true,
+      $or: [{ name: rx }, { cat: rx }],
+    })
+      .limit(limit)
+      .select("id img images name cat price")
+      .lean();
 
-  return docs.map((doc) => ({
-    id: doc.id,
-    img: doc.images?.[0] ?? (doc as unknown as { img?: string }).img ?? "",
-    name: doc.name,
-    cat: doc.cat,
-    price: doc.price,
-  }));
+    return docs.map((doc) => ({
+      id: doc.id,
+      img: doc.images?.[0] ?? (doc as unknown as { img?: string }).img ?? "",
+      name: doc.name,
+      cat: doc.cat,
+      price: doc.price,
+    }));
+  } catch (err) {
+    console.warn(
+      "[products] searchProductsPreview failed — returning empty:",
+      (err as Error).message,
+    );
+    return [];
+  }
 }
 
 // 🔢 Atomic $inc on a monotonic counter — max+1 races and reuses ids after

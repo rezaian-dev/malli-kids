@@ -2,9 +2,14 @@ import { connectMongoose } from "@/lib/db/mongoose";
 import { Profile } from "@/lib/db/models/profile";
 
 export async function getFavoriteIds(userId: string): Promise<number[]> {
-  await connectMongoose();
-  const doc = await Profile.findOne({ userId }).lean();
-  return doc?.favorites ?? [];
+  try {
+    await connectMongoose();
+    const doc = await Profile.findOne({ userId }).lean();
+    return doc?.favorites ?? [];
+  } catch (err) {
+    console.warn("[favorites] getFavoriteIds failed — returning empty:", (err as Error).message);
+    return [];
+  }
 }
 
 // 💛 Adds/removes id from the wishlist and returns the updated list.

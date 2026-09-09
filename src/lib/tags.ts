@@ -18,12 +18,20 @@ export function slugifyTag(name: string): string {
   );
 }
 
-// 📚 Alphabetical — feeds the admin picker and the slug lookup table.
+// 📚 Alphabetical — feeds the admin picker and the slug lookup table. Build-safe.
 export const getAllTags = unstable_cache(
   async (): Promise<ContentTag[]> => {
-    await connectMongoose();
-    const docs = await TagModel.find().sort({ name: 1 }).lean();
-    return docs.map((doc) => ({ name: doc.name, slug: doc.slug }));
+    try {
+      await connectMongoose();
+      const docs = await TagModel.find().sort({ name: 1 }).lean();
+      return docs.map((doc) => ({ name: doc.name, slug: doc.slug }));
+    } catch (err) {
+      console.warn(
+        "[tags] getAllTags failed — returning empty:",
+        (err as Error).message,
+      );
+      return [];
+    }
   },
   ["all-tags"],
   { tags: [TAGS_TAG], revalidate: REVALIDATE.editorial },

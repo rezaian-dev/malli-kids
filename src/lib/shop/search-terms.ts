@@ -37,17 +37,22 @@ export async function recordSearchTerm(raw: string): Promise<void> {
 // 🏆 Refreshed every few minutes rather than on every write; padded with FALLBACK_TERMS until real data fills it.
 export const getTopSearchTerms = unstable_cache(
   async (limit: number = DEFAULT_LIMIT): Promise<string[]> => {
-    await connectMongoose();
-    const docs = await SearchTermModel.find({ count: { $gt: 0 } })
-      .sort({ count: -1, updatedAt: -1 })
-      .limit(limit)
-      .select("term")
-      .lean();
-    const real = docs.map((d) => d.term);
-    if (real.length >= limit) return real;
+    try {
+      await connectMongoose();
+      const docs = await SearchTermModel.find({ count: { $gt: 0 } })
+        .sort({ count: -1, updatedAt: -1 })
+        .limit(limit)
+        .select("term")
+        .lean();
+      const real = docs.map((d) => d.term);
+      if (real.length >= limit) return real;
 
-    const padding = FALLBACK_TERMS.filter((term) => !real.includes(term));
-    return [...real, ...padding].slice(0, limit);
+      const padding = FALLBACK_TERMS.filter((term) => !real.includes(term));
+      return [...real, ...padding].slice(0, limit);
+    } catch (err) {
+      console.warn("[search-terms] getTopSearchTerms failed — returning fallback:", (err as Error).message);
+      return FALLBACK_TERMS.slice(0, limit);
+    }
   },
   ["top-search-terms"],
   { tags: [SEARCH_TERMS_TAG], revalidate: REVALIDATE.merch },

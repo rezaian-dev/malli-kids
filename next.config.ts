@@ -47,8 +47,10 @@ const nextConfig: NextConfig = {
   // 🔐 Allow local and Arena preview origins in dev.
   allowedDevOrigins: ["*.e2b.app", "127.0.0.1", "localhost"],
   // 🎯 Keep admin/storefront CSS split (`cssChunking: "graph"`).
+  // 🖥️ Pars host limits build workers to 2 — match it to avoid OOM and keep `Collecting page data using 2 workers`
   experimental: {
     cssChunking: "graph",
+    cpus: 2,
   },
   images: {
     qualities: [75, 85, 90, 95],

@@ -33,9 +33,14 @@ export function toFestiveBanner(
 // 🧊 Read on every request; revalidateTag covers admin edits, the merch window covers day-boundary rollover.
 export const getActiveBanner = unstable_cache(
   async (): Promise<FestiveBanner | null> => {
-    await connectMongoose();
-    const docs = await FestiveBannerModel.find({ active: true }).lean();
-    return pickBanner(docs.map(toFestiveBanner));
+    try {
+      await connectMongoose();
+      const docs = await FestiveBannerModel.find({ active: true }).lean();
+      return pickBanner(docs.map(toFestiveBanner));
+    } catch (err) {
+      console.warn("[banners] getActiveBanner failed — returning null:", (err as Error).message);
+      return null;
+    }
   },
   ["active-festive-banner"],
   { tags: [FESTIVE_BANNER_TAG], revalidate: REVALIDATE.merch },

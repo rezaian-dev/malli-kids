@@ -10,11 +10,21 @@ import { ProductDetailLanding } from "./_components/product-detail-landing";
 // export and rejects a reference (see REVALIDATE.catalog in @/lib/cache).
 export const revalidate = 60;
 
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  const products = await getAllProducts();
-  return products
-    .filter((product) => product.visible)
-    .map((product) => ({ id: productRouteParam(product.id) }));
+  try {
+    const products = await getAllProducts();
+    return products
+      .filter((product) => product.visible)
+      .map((product) => ({ id: productRouteParam(product.id) }));
+  } catch (err) {
+    console.warn(
+      "[product/[id]] generateStaticParams failed — skipping prerender:",
+      (err as Error).message,
+    );
+    return [];
+  }
 }
 
 export async function generateMetadata({
@@ -24,7 +34,16 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const productId = parseProductRouteId(id);
-  const product = await getProductById(productId);
+  let product;
+  try {
+    product = await getProductById(productId);
+  } catch (err) {
+    console.warn(
+      `[product/[id]] generateMetadata("${id}") failed:`,
+      (err as Error).message,
+    );
+    product = null;
+  }
 
   if (!product || !product.visible) {
     return buildMetadata({
@@ -52,7 +71,16 @@ export default async function ProductPage({
 }) {
   const { id } = await params;
   const productId = parseProductRouteId(id);
-  const product = await getProductById(productId);
+  let product;
+  try {
+    product = await getProductById(productId);
+  } catch (err) {
+    console.warn(
+      `[product/[id]] ProductPage find failed for "${id}":`,
+      (err as Error).message,
+    );
+    product = null;
+  }
 
   // 🙈 A hidden product 404s for customers and crawlers alike
   if (!product || !product.visible) notFound();
