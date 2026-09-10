@@ -1,7 +1,6 @@
 import "server-only";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { chromium } from "playwright";
 import type { OrderDoc } from "@/lib/db/models/order";
 import { BRAND } from "@/lib/constants";
 import { faDate, formatToman, toFaDigits } from "@/lib/locale/fa";
@@ -323,10 +322,19 @@ function renderInvoiceHtml(order: OrderDoc & { createdAt: Date }): string {
 }
 
 // 🖨️ Fresh browser per call, not a kept-alive singleton — simpler lifecycle at the cost of ~1s launch overhead.
+// 🔧 Playwright is now dev-only (host OOM fix for `npm i` Killed). Dynamically imported so `next start` works without it.
 export async function generateInvoicePdf(
   order: OrderDoc & { createdAt: Date },
 ): Promise<Buffer> {
   const html = renderInvoiceHtml(order);
+  let chromium: { launch: () => Promise<{ newPage: () => Promise<{ setContent: (html: string, opts: unknown) => Promise<void>; pdf: (opts: unknown) => Promise<Buffer | Uint8Array> }>; close: () => Promise<void> }> } | null = null;
+  try {
+    const mod = await import("playwright");
+    chromium = mod.chromium;
+  } catch (err) {
+    console.error("[invoice] playwright not installed — install devDeps to enable PDF", (err as Error).message);
+    throw new Error("PDF generation not available on this host (playwright missing). Run npm install with dev deps or set PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0");
+  }
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage();
@@ -336,7 +344,7 @@ export async function generateInvoicePdf(
       printBackground: true,
       margin: { top: "0", bottom: "0", left: "0", right: "0" },
     });
-    return pdf;
+    return Buffer.from(pdf);
   } finally {
     await browser.close();
   }
