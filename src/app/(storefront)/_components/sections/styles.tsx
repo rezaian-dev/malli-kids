@@ -76,7 +76,9 @@ export async function Styles() {
                       className="animate-style-in"
                       style={{ animationDelay: `${i * 72}ms` }}
                     >
-                      <ProductCard p={p} view="grid" />
+                      {/* 🎬 اینجا خودِ CSS استگر (animate-style-in) را دارد،
+                          پس انیمیشن motion کارت را خاموش می‌کنیم. */}
+                      <ProductCard p={p} view="grid" animate={false} />
                     </div>
                   ))}
                 </div>

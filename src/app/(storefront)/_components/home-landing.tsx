@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { Reveal } from "@/components/motion";
 import { Atelier } from "./sections/atelier";
 import { Categories } from "./sections/categories";
 import { Handmade } from "./sections/handmade";
@@ -16,24 +17,50 @@ import { TryOn } from "./sections/try-on";
 export function HomeLanding() {
   return (
     <>
+      {/* ⚡ Hero بدون Reveal: خودش انیمیشن ورودِ CSS دارد و تصویر LCP
+          نباید پشت opacity منتظر بماند. */}
       <Hero />
-      <Marquee />
-      <Find />
-      <Looks />
-      <Categories />
+      <Reveal>
+        <Marquee />
+      </Reveal>
+      <Reveal>
+        <Find />
+      </Reveal>
+      <Reveal>
+        <Looks />
+      </Reveal>
+      <Reveal>
+        <Categories />
+      </Reveal>
       {/* 🧊 Own Suspense boundary: its `cookies()` read + product lookup
           shouldn't hold up the rest of an otherwise-static-shaped homepage,
           and it renders nothing for most first-time visitors anyway. */}
-      <Suspense fallback={null}>
-        <RecentlyViewed />
-      </Suspense>
-      <TryOn />
-      <Atelier />
-      <Handmade />
-      <Styles />
-      <Reviews />
-      <Collab />
-      <Stories />
+      <Reveal>
+        <Suspense fallback={null}>
+          <RecentlyViewed />
+        </Suspense>
+      </Reveal>
+      <Reveal>
+        <TryOn />
+      </Reveal>
+      <Reveal>
+        <Atelier />
+      </Reveal>
+      <Reveal>
+        <Handmade />
+      </Reveal>
+      <Reveal>
+        <Styles />
+      </Reveal>
+      <Reveal>
+        <Reviews />
+      </Reveal>
+      <Reveal>
+        <Collab />
+      </Reveal>
+      <Reveal>
+        <Stories />
+      </Reveal>
     </>
   );
 }

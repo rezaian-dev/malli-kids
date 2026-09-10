@@ -12,10 +12,13 @@ export function ProductCard({
   p,
   view,
   aboveFold = false,
+  animate,
 }: {
   p: Product;
   view: "grid" | "list";
   aboveFold?: boolean;
+  /** 🎬 ورودِ motion کارت؛ وقتی والد خودش انیمیشن دارد (مثل styles) خاموش کنید. */
+  animate?: boolean;
 }) {
   const href = pdpHref(p.id);
   const out = !p.stock;
@@ -47,6 +50,15 @@ export function ProductCard({
 
   const Card = view === "list" ? ProductCardList : ProductCardGrid;
   return (
-    <Card p={p} href={href} out={out} sold={sold} price={price} imageProps={imageProps} />
+    <Card
+      p={p}
+      href={href}
+      out={out}
+      sold={sold}
+      price={price}
+      imageProps={imageProps}
+      // ⚡ کارت‌های بالای خطِ تا (LCP) بدون انیمیشن ورود رندر می‌شوند.
+      animate={animate ?? !aboveFold}
+    />
   );
 }

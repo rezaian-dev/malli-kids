@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Eye } from "lucide-react";
+import { motion } from "motion/react";
 import type { ReactNode } from "react";
 import type { Product } from "@/types";
+import { EASE_OUT } from "@/components/motion";
 import { AddToCartButton } from "./add-to-cart-button";
 import { FavButton } from "./fav-button";
 import { CART, VIEW } from "./card-styles";
@@ -18,6 +22,7 @@ export function ProductCardList({
   sold,
   price,
   imageProps,
+  animate = true,
 }: {
   p: Product;
   href: string;
@@ -28,72 +33,89 @@ export function ProductCardList({
     loading?: "eager";
     fetchPriority?: "high";
   };
+  animate?: boolean;
 }) {
   return (
-    <article
-      className={cn(
-        "group flex min-w-0 flex-row overflow-hidden rounded-[20px] border transition-all duration-500 ease-out",
-        "border-navy/10 hover:border-gold/55 bg-white/94 hover:-translate-y-1 hover:shadow-[0_18px_36px_-16px_rgba(14,42,71,.28)]",
-        "dark:border-gold-soft/35 dark:bg-slate/60",
-      )}
+    <motion.div
+      className="h-full min-w-0"
+      {...(animate
+        ? {
+            initial: { opacity: 0, y: 16 },
+            whileInView: { opacity: 1, y: 0 },
+            viewport: { once: true, margin: "0px 0px -60px 0px" },
+            transition: { duration: 0.45, ease: EASE_OUT },
+          }
+        : {})}
     >
-      <Link
-        href={href}
-        prefetch={false}
-        className="bg-sand relative block h-auto min-h-30 w-26 shrink-0 overflow-hidden"
+      <article
+        className={cn(
+          "group flex min-w-0 flex-row overflow-hidden rounded-[20px] border transition-all duration-500 ease-out",
+          "border-navy/10 hover:border-gold/55 bg-white/94 hover:-translate-y-1 hover:shadow-[0_18px_36px_-16px_rgba(14,42,71,.28)]",
+          "dark:border-gold-soft/35 dark:bg-slate/60",
+        )}
       >
-        <Image
-          src={p.img}
-          alt={p.name}
-          width={600}
-          height={800}
-          sizes={LIST_SIZES}
-          {...imageProps}
-          className={cn(
-            "absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out group-hover:scale-110",
-            out && "opacity-75 grayscale",
-          )}
-        />
-        <FavButton
-          id={p.id}
-          name={p.name}
-          className="absolute inset-e-1.5 top-1.5 size-8 shadow-sm"
-        />
-      </Link>
-      <div className="flex min-w-0 flex-1 flex-col gap-2 p-3">
-        <div className="flex justify-between gap-2">
-          <div className="min-w-0">
-            <p className="text-navy/70 dark:text-khaki m-0 text-[11px]">
-              {p.cat}
-            </p>
-            <h3 className="text-navy dark:text-ivory m-0 text-sm leading-snug font-black">
-              <Link href={href} prefetch={false} className="text-inherit no-underline">
-                {p.name}
+        <Link
+          href={href}
+          prefetch={false}
+          className="bg-sand relative block h-auto min-h-30 w-26 shrink-0 overflow-hidden"
+        >
+          <Image
+            src={p.img}
+            alt={p.name}
+            width={600}
+            height={800}
+            sizes={LIST_SIZES}
+            {...imageProps}
+            className={cn(
+              "absolute inset-0 size-full max-w-none object-cover transition-transform duration-700 ease-out group-hover:scale-110",
+              out && "opacity-75 grayscale",
+            )}
+          />
+          <FavButton
+            id={p.id}
+            name={p.name}
+            className="absolute inset-e-1.5 top-1.5 size-8 shadow-sm"
+          />
+        </Link>
+        <div className="flex min-w-0 flex-1 flex-col gap-2 p-3">
+          <div className="flex justify-between gap-2">
+            <div className="min-w-0">
+              <p className="text-navy/70 dark:text-khaki m-0 text-[11px]">
+                {p.cat}
+              </p>
+              <h3 className="text-navy dark:text-ivory m-0 text-sm leading-snug font-black">
+                <Link
+                  href={href}
+                  prefetch={false}
+                  className="text-inherit no-underline"
+                >
+                  {p.name}
+                </Link>
+              </h3>
+            </div>
+          </div>
+          {sold}
+          <div className="mt-auto flex flex-wrap items-center gap-2">
+            {price}
+            <div className="ms-auto flex gap-1.5">
+              <Link
+                href={href}
+                prefetch={false}
+                className={cn(VIEW, "h-8 px-2.5 text-[11px]")}
+              >
+                <Eye width={14} height={14} /> مشاهده
               </Link>
-            </h3>
+              <AddToCartButton
+                out={out}
+                id={p.id}
+                className={cn(CART, "h-8 px-2.5 text-[11px]")}
+              >
+                {out ? "خبرم کن" : "سبد"}
+              </AddToCartButton>
+            </div>
           </div>
         </div>
-        {sold}
-        <div className="mt-auto flex flex-wrap items-center gap-2">
-          {price}
-          <div className="ms-auto flex gap-1.5">
-            <Link
-              href={href}
-              prefetch={false}
-              className={cn(VIEW, "h-8 px-2.5 text-[11px]")}
-            >
-              <Eye width={14} height={14} /> مشاهده
-            </Link>
-            <AddToCartButton
-              out={out}
-              id={p.id}
-              className={cn(CART, "h-8 px-2.5 text-[11px]")}
-            >
-              {out ? "خبرم کن" : "سبد"}
-            </AddToCartButton>
-          </div>
-        </div>
-      </div>
-    </article>
+      </article>
+    </motion.div>
   );
 }

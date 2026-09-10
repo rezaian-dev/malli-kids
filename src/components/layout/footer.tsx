@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn, shell } from "@/lib/utils";
+import { FadeIn, Reveal } from "@/components/motion";
 import { NewsletterForm } from "./newsletter-form";
 import { FooterPerks } from "./footer-perks";
 import { FooterColumns } from "./footer-columns";
@@ -15,53 +16,63 @@ export function Footer() {
         )}
         aria-hidden
       />
-      <FooterPerks />
+      <Reveal>
+        <FooterPerks />
+      </Reveal>
 
-      <div className="border-b border-white/10">
-        <div
-          className={`${shell} flex flex-wrap items-center justify-between gap-6 py-10 sm:py-12`}
-        >
-          <div className="min-w-0 flex-1 basis-65">
-            {/* ♿ `h2`, not `h3` — this is the `<footer>` landmark's own
+      <Reveal delay={0.06}>
+        <div className="border-b border-white/10">
+          <div
+            className={`${shell} flex flex-wrap items-center justify-between gap-6 py-10 sm:py-12`}
+          >
+            <div className="min-w-0 flex-1 basis-65">
+              {/* ♿ `h2`, not `h3` — this is the `<footer>` landmark's own
                 top-level heading, not a subsection of whatever's in `<main>`
                 above it. A page whose main content never reaches `h2`
                 itself (e.g. the signed-out `/profile` prompt, which is just
                 an `h1`) would otherwise skip straight from `h1` to `h3`,
                 failing Lighthouse/axe's heading-order check. */}
-            <h2 className="m-0 text-[clamp(18px,2.4vw,24px)] leading-snug font-black text-white">
-              اولین نفری باشید که{" "}
-              <span className="text-gold-light">کالکشن جدید</span> را می‌بیند
-            </h2>
-            <p className="text-taupe mt-2 text-sm">
-              عضو خبرنامه شوید و ۱۰٪ تخفیف اولین خرید بگیرید.
-            </p>
+              <h2 className="m-0 text-[clamp(18px,2.4vw,24px)] leading-snug font-black text-white">
+                اولین نفری باشید که{" "}
+                <span className="text-gold-light">کالکشن جدید</span> را می‌بیند
+              </h2>
+              <p className="text-taupe mt-2 text-sm">
+                عضو خبرنامه شوید و ۱۰٪ تخفیف اولین خرید بگیرید.
+              </p>
+            </div>
+            <NewsletterForm />
           </div>
-          <NewsletterForm />
         </div>
-      </div>
+      </Reveal>
 
-      <FooterColumns />
-      <FooterTrustBadges />
+      <Reveal delay={0.1}>
+        <FooterColumns />
+      </Reveal>
+      <Reveal delay={0.15}>
+        <FooterTrustBadges />
+      </Reveal>
 
-      <div className="border-t border-white/10">
-        <div
-          className={`${shell} text-cream/55 flex flex-wrap items-center justify-between gap-2.5 py-5 text-center text-xs`}
-        >
-          <span>
-            © ۱۴۰۴ ملی‌کیدز — تمامی حقوق محفوظ است.{" "}
-            <Link href="/terms" className="hover:text-gold py-1">
-              قوانین
-            </Link>{" "}
-            ·{" "}
-            <Link href="/privacy" className="hover:text-gold py-1">
-              حریم خصوصی
-            </Link>
-          </span>
-          <span className="font-display text-gold/80 tracking-[0.28em]">
-            MALLI KIDS
-          </span>
+      <FadeIn delay={0.2}>
+        <div className="border-t border-white/10">
+          <div
+            className={`${shell} text-cream/55 flex flex-wrap items-center justify-between gap-2.5 py-5 text-center text-xs`}
+          >
+            <span>
+              © ۱۴۰۴ ملی‌کیدز — تمامی حقوق محفوظ است.{" "}
+              <Link href="/terms" className="hover:text-gold py-1">
+                قوانین
+              </Link>{" "}
+              ·{" "}
+              <Link href="/privacy" className="hover:text-gold py-1">
+                حریم خصوصی
+              </Link>
+            </span>
+            <span className="font-display text-gold/80 tracking-[0.28em]">
+              MALLI KIDS
+            </span>
+          </div>
         </div>
-      </div>
+      </FadeIn>
     </footer>
   );
 }

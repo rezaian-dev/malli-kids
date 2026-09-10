@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EASE_OUT } from "@/components/motion";
 import { cn } from "@/lib/utils";
 
 export function BackToTop() {
@@ -16,21 +18,31 @@ export function BackToTop() {
   }, []);
 
   return (
-    <Button
-      type="button"
-      variant="gold"
-      size="icon-lg"
-      aria-label="بازگشت به ابتدای صفحه"
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className={cn(
-        "shadow-gold/40 fixed inset-e-6 bottom-6 z-60 size-12 rounded-full shadow-lg",
-        "transition-all duration-500 ease-out",
-        show
-          ? "translate-y-0 opacity-100 focus-visible:opacity-100"
-          : "pointer-events-none translate-y-6 opacity-0",
-      )}
-    >
-      <ArrowUp className="size-5" />
-    </Button>
+    <AnimatePresence>
+      {show ? (
+        <motion.div
+          key="back-to-top"
+          initial={{ opacity: 0, y: 18, scale: 0.85 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 18, scale: 0.85 }}
+          transition={{ duration: 0.3, ease: EASE_OUT }}
+          className="fixed inset-e-6 bottom-6 z-60"
+        >
+          <Button
+            type="button"
+            variant="gold"
+            size="icon-lg"
+            aria-label="بازگشت به ابتدای صفحه"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className={cn(
+              "shadow-gold/40 size-12 rounded-full shadow-lg",
+              "focus-visible:opacity-100",
+            )}
+          >
+            <ArrowUp className="size-5" />
+          </Button>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }

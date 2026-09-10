@@ -6,6 +6,7 @@ import { HeaderSpacer } from "@/components/layout/header-spacer";
 import { StorefrontEnhancements } from "@/components/layout/storefront-enhancements";
 import { BackgroundScene } from "@/components/shared/background-scene";
 import { SkipLink } from "@/components/shared/skip-link";
+import { PageReveal } from "@/components/motion";
 
 // 🛍️ Shared storefront shell for every public page.
 export default function StorefrontLayout({
@@ -20,7 +21,7 @@ export default function StorefrontLayout({
       <Header />
       <HeaderSpacer />
       <main id="main-content" className="relative z-10 pb-10 sm:pb-16">
-        {children}
+        <PageReveal>{children}</PageReveal>
       </main>
       <Footer />
       <StorefrontEnhancements />
