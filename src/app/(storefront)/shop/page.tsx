@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { JsonLd } from "@/components/shared/json-ld";
-import { REVALIDATE } from "@/lib/cache";
 import { pdpHref } from "@/lib/data/products";
 import { getAllProducts } from "@/lib/shop/products";
 import {
@@ -22,7 +21,9 @@ import {
   type ShopPageSearchParams,
 } from "@/lib/shop/shop-state";
 
-export const revalidate = REVALIDATE.catalog;
+// ⚠️ Segment config must be a literal — Turbopack statically extracts this
+// export and rejects a reference (see REVALIDATE.catalog in @/lib/cache).
+export const revalidate = 60;
 
 export async function generateMetadata({
   searchParams,

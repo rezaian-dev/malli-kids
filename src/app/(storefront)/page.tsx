@@ -1,11 +1,12 @@
 import { HomeLanding } from "./_components/home-landing";
 import { JsonLd } from "@/components/shared/json-ld";
-import { REVALIDATE } from "@/lib/cache";
 import { pdpHref } from "@/lib/data/products";
 import { getAllProducts } from "@/lib/shop/products";
 import { buildMetadata, itemListSchema, pageSchema } from "@/lib/seo";
 
-export const revalidate = REVALIDATE.catalog;
+// ⚠️ Segment config must be a literal — Turbopack statically extracts this
+// export and rejects a reference (see REVALIDATE.catalog in @/lib/cache).
+export const revalidate = 60;
 
 export const metadata = buildMetadata({
   absoluteTitle: true,
