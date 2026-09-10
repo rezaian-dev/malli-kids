@@ -2,9 +2,19 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { SliderArrow } from "@/components/ui/slider-arrow";
+import { EASE_OUT } from "@/components/motion";
 import { cn } from "@/lib/utils";
 import { pdpCard } from "../_lib/product-chrome";
+
+// 🎬 جهتِ ورود/خروجِ اسلاید: از راست وارد می‌شود وقتی رو به جلو می‌رویم،
+// از چپ وقتی رو به عقب.
+const slideVariants = {
+  enter: (dir: number) => ({ x: dir >= 0 ? "100%" : "-100%", opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir: number) => ({ x: dir >= 0 ? "-100%" : "100%", opacity: 0 }),
+};
 
 const CORNER_MARK =
   "border-gold/70 pointer-events-none absolute z-10 hidden h-6 w-6 min-[400px]:block sm:h-8 sm:w-8";
@@ -22,9 +32,11 @@ export function ProductGallery({
   badge?: string;
 }) {
   const [slide, setSlide] = useState(0);
+  const [direction, setDirection] = useState(0);
   const multi = images.length > 1;
-  const go = (n: number) => {
+  const go = (n: number, dir: number) => {
     if (!multi) return;
+    setDirection(dir);
     setSlide((n + images.length) % images.length);
   };
 
@@ -48,7 +60,10 @@ export function ProductGallery({
             ? (e) => {
                 const start = Number(e.currentTarget.dataset.x || 0);
                 const dx = e.changedTouches[0].clientX - start;
-                if (Math.abs(dx) > 40) go(slide + (dx > 0 ? -1 : 1));
+                if (Math.abs(dx) > 40) {
+                  const dir = dx > 0 ? -1 : 1;
+                  go(slide + dir, dir);
+                }
               }
             : undefined
         }
@@ -77,24 +92,31 @@ export function ProductGallery({
             "bottom-3 left-3 rounded-bl-lg border-b-2 border-l-2 sm:bottom-5 sm:left-5",
           )}
         />
-        <div
-          className="absolute inset-0 flex h-full transition-transform duration-500"
-          style={{ transform: `translateX(${-slide * 100}%)` }}
-        >
-          {images.map((src, index) => (
-            <Image
-              key={src}
-              src={src}
-              alt={name}
-              width={900}
-              height={1200}
-              preload={index === 0}
-              fetchPriority={index === 0 ? "high" : undefined}
-              loading={index === 0 ? "eager" : "lazy"}
-              sizes="(max-width: 1023px) 100vw, 44vw"
-              className="h-full w-full shrink-0 object-cover"
-            />
-          ))}
+        <div className="absolute inset-0 h-full overflow-hidden">
+          <AnimatePresence initial={false} custom={direction} mode="popLayout">
+            <motion.div
+              key={slide}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.45, ease: EASE_OUT }}
+              className="absolute inset-0 h-full w-full"
+            >
+              <Image
+                src={images[slide]}
+                alt={name}
+                width={900}
+                height={1200}
+                preload={slide === 0}
+                fetchPriority={slide === 0 ? "high" : undefined}
+                loading={slide === 0 ? "eager" : "lazy"}
+                sizes="(max-width: 1023px) 100vw, 44vw"
+                className="h-full w-full object-cover"
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
         <div className="pointer-events-none absolute inset-x-3 top-3 z-10 flex justify-between min-[400px]:inset-x-12 min-[400px]:top-5 sm:inset-x-14">
           {disc ? (
@@ -113,7 +135,9 @@ export function ProductGallery({
             <span
               className={cn(
                 "ms-auto rounded-full px-3 py-1.5 text-[11px] font-black",
-                badge === "جدید" ? "bg-gold text-navy-deep" : "bg-navy text-gold-light",
+                badge === "جدید"
+                  ? "bg-gold text-navy-deep"
+                  : "bg-navy text-gold-light",
               )}
             >
               {badge}
@@ -124,14 +148,14 @@ export function ProductGallery({
           chevron
           direction="prev"
           label="قبلی"
-          onClick={() => go(slide - 1)}
+          onClick={() => go(slide - 1, -1)}
           className="absolute inset-s-3 top-1/2 z-10 -translate-y-1/2"
         />
         <SliderArrow
           chevron
           direction="next"
           label="بعدی"
-          onClick={() => go(slide + 1)}
+          onClick={() => go(slide + 1, 1)}
           className="absolute inset-e-3 top-1/2 z-10 -translate-y-1/2"
         />
         <div className="absolute inset-x-0 bottom-7 z-10 flex justify-center gap-1.5">
@@ -140,7 +164,7 @@ export function ProductGallery({
               key={i}
               type="button"
               aria-label={`اسلاید ${i + 1}`}
-              onClick={() => go(i)}
+              onClick={() => go(i, i > slide ? 1 : -1)}
               className="flex h-6 min-w-6 items-center justify-center rounded-full transition-transform duration-150 motion-safe:hover:scale-125 motion-safe:active:scale-90"
             >
               <span
@@ -159,7 +183,7 @@ export function ProductGallery({
             <button
               key={src}
               type="button"
-              onClick={() => go(i)}
+              onClick={() => go(i, i > slide ? 1 : -1)}
               aria-label={`تصویر ${i + 1} ${name}`}
               aria-current={i === slide || undefined}
               className={cn(

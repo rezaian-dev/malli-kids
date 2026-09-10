@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowDownLeft } from "lucide-react";
 import { OrnLeaf } from "../home-ornaments";
+import { Stagger, StaggerItem } from "@/components/motion";
 import { wash } from "@/components/shared/section-wash";
 import { cn } from "@/lib/utils";
 
@@ -84,94 +85,96 @@ export function Categories() {
             انتخاب و دوخته شده است.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-3 transition-all duration-700 ease-out min-[360px]:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+        <Stagger className="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 sm:gap-5 lg:grid-cols-4">
           {BIG.map((card) => (
-            <Link
-              key={card.t}
-              href={card.href}
-              className={cn(
-                "group relative col-span-2 block h-64 overflow-hidden rounded-2xl shadow-lg min-[420px]:h-80 sm:h-105 sm:rounded-[28px]",
-                "shadow-navy/10",
-              )}
-            >
-              <Image
-                src={card.img}
-                alt={card.t}
-                width={600}
-                height={750}
-                sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(100vw - 3rem), 50vw"
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="from-navy-deep/85 via-navy/20 absolute inset-0 bg-linear-to-t to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2.5 p-4 sm:gap-3 sm:p-6">
-                <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  <span className={SEASON_BADGE}>پاییز – زمستان</span>
-                  <span className={SEASON_BADGE}>بهار – تابستان</span>
+            <StaggerItem key={card.t} className="col-span-2">
+              <Link
+                href={card.href}
+                className={cn(
+                  "group relative block h-64 overflow-hidden rounded-2xl shadow-lg min-[420px]:h-80 sm:h-105 sm:rounded-[28px]",
+                  "shadow-navy/10",
+                )}
+              >
+                <Image
+                  src={card.img}
+                  alt={card.t}
+                  width={600}
+                  height={750}
+                  sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(100vw - 3rem), 50vw"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="from-navy-deep/85 via-navy/20 absolute inset-0 bg-linear-to-t to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2.5 p-4 sm:gap-3 sm:p-6">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    <span className={SEASON_BADGE}>پاییز – زمستان</span>
+                    <span className={SEASON_BADGE}>بهار – تابستان</span>
+                  </div>
+                  <div className="flex items-end justify-between gap-2">
+                    <div className="min-w-0">
+                      <h3 className="text-xl font-black text-white sm:text-3xl">
+                        {card.t}
+                      </h3>
+                      <p className="text-cream/70 mt-1 text-xs sm:text-sm">
+                        {card.d}
+                      </p>
+                    </div>
+                    <span
+                      className={cn(
+                        "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform duration-500 group-hover:rotate-45 sm:h-12 sm:w-12",
+                        "bg-gold text-navy-deep",
+                      )}
+                    >
+                      <ArrowDownLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-end justify-between gap-2">
+              </Link>
+            </StaggerItem>
+          ))}
+          {SMALL.map((card) => (
+            <StaggerItem key={card.t}>
+              <Link
+                href={card.href}
+                className={cn(
+                  "group relative block h-52 overflow-hidden rounded-xl shadow-lg min-[420px]:h-64 sm:h-80 sm:rounded-3xl lg:h-105",
+                  "shadow-navy/10",
+                )}
+              >
+                <Image
+                  src={card.img}
+                  alt={card.t}
+                  width={600}
+                  height={750}
+                  sizes="(max-width: 359px) calc(100vw - 2rem), (max-width: 639px) calc(50vw - 1.375rem), (max-width: 1023px) calc(50vw - 2rem), 25vw"
+                  className={cn(
+                    "absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110",
+                    card.top && "object-top",
+                  )}
+                />
+                <div className="from-navy-deep/80 via-navy/10 absolute inset-0 bg-linear-to-t to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3.5 sm:p-5">
                   <div className="min-w-0">
-                    <h3 className="text-xl font-black text-white sm:text-3xl">
+                    <h3 className="text-base font-black text-white sm:text-xl">
                       {card.t}
                     </h3>
-                    <p className="text-cream/70 mt-1 text-xs sm:text-sm">
+                    <p className="text-cream/70 mt-1 text-[11px] sm:text-xs">
                       {card.d}
                     </p>
                   </div>
                   <span
                     className={cn(
-                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform duration-500 group-hover:rotate-45 sm:h-12 sm:w-12",
-                      "bg-gold text-navy-deep",
+                      "hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all min-[420px]:flex sm:h-9 sm:w-9",
+                      "bg-navy/40 border-white/30 text-white",
+                      "group-hover:border-gold group-hover:bg-gold group-hover:text-navy-deep",
                     )}
                   >
-                    <ArrowDownLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <ArrowDownLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </span>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </StaggerItem>
           ))}
-          {SMALL.map((card) => (
-            <Link
-              key={card.t}
-              href={card.href}
-              className={cn(
-                "group relative block h-52 overflow-hidden rounded-xl shadow-lg min-[420px]:h-64 sm:h-80 sm:rounded-3xl lg:h-105",
-                "shadow-navy/10",
-              )}
-            >
-              <Image
-                src={card.img}
-                alt={card.t}
-                width={600}
-                height={750}
-                sizes="(max-width: 359px) calc(100vw - 2rem), (max-width: 639px) calc(50vw - 1.375rem), (max-width: 1023px) calc(50vw - 2rem), 25vw"
-                className={cn(
-                  "absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110",
-                  card.top && "object-top",
-                )}
-              />
-              <div className="from-navy-deep/80 via-navy/10 absolute inset-0 bg-linear-to-t to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3.5 sm:p-5">
-                <div className="min-w-0">
-                  <h3 className="text-base font-black text-white sm:text-xl">
-                    {card.t}
-                  </h3>
-                  <p className="text-cream/70 mt-1 text-[11px] sm:text-xs">
-                    {card.d}
-                  </p>
-                </div>
-                <span
-                  className={cn(
-                    "hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all min-[420px]:flex sm:h-9 sm:w-9",
-                    "bg-navy/40 border-white/30 text-white",
-                    "group-hover:border-gold group-hover:bg-gold group-hover:text-navy-deep",
-                  )}
-                >
-                  <ArrowDownLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   );
