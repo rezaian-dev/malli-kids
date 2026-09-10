@@ -22,6 +22,16 @@ const BADGE: Record<string, string> = {
 const GRID_SIZES =
   "(max-width: 479px) calc(100vw - 2.5rem), (max-width: 719px) calc((100vw - 4.5rem) / 2), (max-width: 1023px) calc((100vw - 5.5rem) / 2), (max-width: 1535px) 33vw, 18rem";
 
+// 🃏 Spring "settle" for the `stack` transition (styles filter reorder) —
+// overdamped on purpose (damping > 2·√(stiffness·mass)) so cards arrive
+// crisply with no visible bounce; physical, not a linear CSS tween.
+const STACK_SPRING = {
+  type: "spring",
+  stiffness: 420,
+  damping: 38,
+  mass: 0.7,
+} as const;
+
 /** 🖼️ The tall grid card used everywhere except the shop's list view. */
 export function ProductCardGrid({
   p,
@@ -31,6 +41,8 @@ export function ProductCardGrid({
   price,
   imageProps,
   animate = true,
+  index,
+  stack = false,
 }: {
   p: Product;
   href: string;
@@ -42,26 +54,75 @@ export function ProductCardGrid({
     fetchPriority?: "high";
   };
   animate?: boolean;
+  /** 🃏 موقعیت کارت در گرید فعلی — فقط برای یک stagger بسیار جزئی در ورودِ حالت `stack`. */
+  index?: number;
+  /** 🃏 حالت «دستهٔ کارت»: به‌جای ورودِ اسکرول‌محور (`whileInView`)، ورود/خروج
+   *  synced با AnimatePresence والد اجرا می‌شود — برای بازچیدمانِ فیلتر
+   *  (مثل «استایل‌های منتخب»)، نه برای reveal حین اسکرول. */
+  stack?: boolean;
 }) {
   const badge = p.badge ? BADGE[p.badge] || "bg-navy text-gold-light" : null;
+  // 🃏 جهتِ چرخشِ خیلی جزئیِ هر کارت در حالت stack، برگرفته از id — یک دسته
+  // کارت هیچ‌وقت همه دقیقاً یک‌شکل نمی‌چرخند.
+  const tilt = p.id % 2 === 0 ? 1 : -1;
 
   return (
     <motion.div
       layout
       className="h-full min-w-0"
-      exit={{
-        opacity: 0,
-        scale: 0.85,
-        transition: { duration: 0.25, ease: EASE_OUT },
-      }}
-      {...(animate
+      {...(stack
         ? {
-            initial: { opacity: 0, y: 16, scale: 0.94 },
-            whileInView: { opacity: 1, y: 0, scale: 1 },
-            viewport: { once: true, margin: "0px 0px -60px 0px" },
-            transition: { duration: 0.45, ease: EASE_OUT },
+            // 🃏 خروج: کارت مثل جداشدن از یک دستهٔ کارت به‌سمتِ انتهای خواندن
+            // (چپ، چون RTL) می‌لغزد — لغزشِ افقی کور نیست، جهتش عمداً است.
+            exit: {
+              opacity: 0,
+              scale: 0.94,
+              x: -26,
+              y: tilt * 4,
+              rotate: tilt * -1.6,
+              transition: { duration: 0.22, ease: EASE_OUT },
+            },
+            transition: STACK_SPRING,
+            ...(animate
+              ? {
+                  // 🃏 ورود: از سمتِ شروعِ خواندن (راست، چون RTL) و کمی از بالا
+                  // می‌آید و با اسپرینگ در جای خودش می‌نشیند.
+                  initial: {
+                    opacity: 0,
+                    scale: 0.96,
+                    x: 20,
+                    y: 14,
+                    rotate: tilt * 1.2,
+                  },
+                  animate: {
+                    opacity: 1,
+                    scale: 1,
+                    x: 0,
+                    y: 0,
+                    rotate: 0,
+                    transition: {
+                      ...STACK_SPRING,
+                      delay: Math.min(index ?? 0, 10) * 0.02,
+                    },
+                  },
+                }
+              : {}),
           }
-        : {})}
+        : {
+            exit: {
+              opacity: 0,
+              scale: 0.85,
+              transition: { duration: 0.25, ease: EASE_OUT },
+            },
+            ...(animate
+              ? {
+                  initial: { opacity: 0, y: 16, scale: 0.94 },
+                  whileInView: { opacity: 1, y: 0, scale: 1 },
+                  viewport: { once: true, margin: "0px 0px -60px 0px" },
+                  transition: { duration: 0.45, ease: EASE_OUT },
+                }
+              : {}),
+          })}
     >
       <TiltCard className="h-full rounded-3xl">
         <article

@@ -13,12 +13,18 @@ export function ProductCard({
   view,
   aboveFold = false,
   animate,
+  index,
+  stack = false,
 }: {
   p: Product;
   view: "grid" | "list";
   aboveFold?: boolean;
   /** 🎬 ورودِ motion کارت؛ وقتی والد خودش انیمیشن دارد (مثل styles) خاموش کنید. */
   animate?: boolean;
+  /** 🃏 موقعیت کارت در گرید فعلی — فقط برای stagger جزئیِ حالت `stack`. */
+  index?: number;
+  /** 🃏 حالت «دستهٔ کارت» برای بازچیدمانِ فیلتر (grid view). */
+  stack?: boolean;
 }) {
   const href = pdpHref(p.id);
   const out = !p.stock;
@@ -48,17 +54,22 @@ export function ProductCard({
     <PriceTag price={p.price} old={p.old} />
   );
 
-  const Card = view === "list" ? ProductCardList : ProductCardGrid;
-  return (
-    <Card
-      p={p}
-      href={href}
-      out={out}
-      sold={sold}
-      price={price}
-      imageProps={imageProps}
-      // ⚡ کارت‌های بالای خطِ تا (LCP) بدون انیمیشن ورود رندر می‌شوند.
-      animate={animate ?? !aboveFold}
-    />
+  const cardProps = {
+    p,
+    href,
+    out,
+    sold,
+    price,
+    imageProps,
+    // ⚡ کارت‌های بالای خطِ تا (LCP) بدون انیمیشن ورود رندر می‌شوند.
+    animate: animate ?? !aboveFold,
+  };
+
+  // 🃏 `stack`/`index` فقط برای grid view معنا دارند (بازچیدمانِ فیلترها)؛
+  // برای اینکه شکلِ props بینِ دو کارت یکی نماند، این شاخه صریح نوشته شده.
+  return view === "list" ? (
+    <ProductCardList {...cardProps} />
+  ) : (
+    <ProductCardGrid {...cardProps} index={index} stack={stack} />
   );
 }
