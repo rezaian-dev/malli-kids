@@ -1,6 +1,6 @@
 import "server-only";
 import { MongoClient } from "mongodb";
-import { MONGODB_URI, cached } from "./shared";
+import { MONGODB_URI, cached, getMongooseUri } from "./shared";
 
 // 🌐 Separate from mongoose.ts's connection — mongoose's nested mongodb copy has incompatible types.
 export const connectMongoClient = cached("_mongoClient", () => {
@@ -15,5 +15,18 @@ export const connectMongoClient = cached("_mongoClient", () => {
       );
     }
   }
-  return new MongoClient(MONGODB_URI).connect();
+  const uri = getMongooseUri();
+  if (uri !== MONGODB_URI && !MONGODB_URI.includes("authSource=")) {
+    console.log(`[db] MongoClient using auto authSource URI: ${uri.replace(/:[^:@]+@/, ":****@")}`);
+  }
+  return new MongoClient(uri).connect().catch((err) => {
+    const code = (err as { code?: number })?.code;
+    const msg = (err as Error)?.message ?? "";
+    if (code === 18 || msg.includes("Authentication failed")) {
+      console.error(
+        `[db] MongoClient Authentication failed. Use ?authSource=mallikid_mallkidsDB — see mongoose.ts note. Masked URI: ${uri.replace(/:[^:@]+@/, ":****@")}`
+      );
+    }
+    throw err;
+  });
 });
