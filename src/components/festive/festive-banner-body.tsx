@@ -2,12 +2,13 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowLeft, Gift, PartyPopper, Sparkles, Ticket } from "lucide-react";
+import { ArrowLeft, Gift, Ticket } from "lucide-react";
 import { useStore } from "@/providers/store-provider";
 import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import type { FestiveTheme } from "@/types";
 import { FestiveDecor } from "./festive-decor";
+import { Gem3D, Gift3D } from "./festive-ornaments";
 
 const TONE: Record<FestiveTheme, string> = {
   navy: "from-navy via-navy-mid to-navy-deep",
@@ -53,7 +54,7 @@ function BannerFrame({
 // 🚫 No hover transforms anywhere in here (no scale, no nudges, no sweeps):
 // the cursor often sits parked on this strip at refresh, and CSS `:hover`
 // matches instantly on load — any hover movement would replay as a tick.
-// Hover feedback is color/shadow/underline only.
+// Hover feedback is brightness/shadow/underline only.
 export function FestiveBannerBody() {
   const { campaign, banner } = useStore();
 
@@ -65,7 +66,7 @@ export function FestiveBannerBody() {
         tone="light"
       >
         <div className="flex min-w-0 items-center justify-center gap-3 sm:gap-4">
-          <PartyPopper className="size-5 shrink-0" />
+          <Gift3D className="w-8 shrink-0" />
           <p className="truncate text-[13px] font-black sm:text-sm">
             {campaign.title || "جشنواره"} — {toFaDigits(campaign.percent)}٪
             تخفیف روی همهٔ محصولات
@@ -90,7 +91,8 @@ export function FestiveBannerBody() {
           <span
             className={cn(
               "relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[11px] font-black sm:px-4 sm:text-xs",
-              "bg-gold text-navy-deep shadow-gold/70 shadow-[0_4px_14px_-4px]",
+              "from-gold-glow via-gold to-gold-deep text-navy-deep bg-linear-to-b",
+              "shadow-[0_6px_16px_-6px_rgba(130,88,31,.7),inset_0_1px_0_rgb(255_255_255/.6),inset_0_-2px_3px_rgb(4_20_39/.25)]",
             )}
           >
             <Gift className="size-4" />
@@ -121,6 +123,7 @@ export function FestiveBannerBody() {
               className={cn(
                 "hidden items-center gap-1.5 rounded-lg border border-dashed px-3.5 py-2 text-xs font-black tracking-[0.14em] md:inline-flex",
                 "border-gold/60 bg-gold/10 text-gold-light",
+                "shadow-[0_2px_10px_-4px_rgb(0_0_0/.6),inset_0_1px_0_rgb(255_255_255/.12)]",
               )}
               title="کد تخفیف را در صفحهٔ پرداخت وارد کنید"
             >
@@ -132,8 +135,10 @@ export function FestiveBannerBody() {
             href={banner.href}
             prefetch={false}
             className={cn(
-              "inline-flex shrink-0 items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-black transition-[background-color,box-shadow] duration-200 sm:px-6 sm:text-[13px]",
-              "bg-gold text-navy-deep shadow-gold/30 hover:bg-gold-light hover:shadow-gold/50 shadow-lg",
+              "inline-flex shrink-0 items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-black transition-[filter,box-shadow] duration-200 sm:px-6 sm:text-[13px]",
+              "from-gold-light via-gold to-gold-deep text-navy-deep bg-linear-to-b",
+              "shadow-[0_10px_22px_-8px_rgba(130,88,31,.8),inset_0_1px_0_rgb(255_255_255/.65),inset_0_-2px_4px_rgb(4_20_39/.3)]",
+              "hover:shadow-[0_12px_26px_-8px_rgba(130,88,31,.9),inset_0_1px_0_rgb(255_255_255/.65),inset_0_-2px_4px_rgb(4_20_39/.3)] hover:brightness-110 active:brightness-95",
             )}
           >
             {banner.cta}
@@ -147,7 +152,7 @@ export function FestiveBannerBody() {
   return (
     <BannerFrame className="from-navy via-navy-mid to-navy text-ivory">
       <div className="flex min-w-0 items-center justify-center gap-3 sm:gap-4">
-        <Sparkles className="text-gold size-5 shrink-0" />
+        <Gem3D className="w-7 shrink-0" />
         <p className="truncate text-[13px] font-bold sm:text-sm">
           <span className="text-gold-light font-black">ارسال رایگان</span> برای
           خریدهای بالای ۱٬۵۰۰٬۰۰۰ تومان

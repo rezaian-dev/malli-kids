@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Balloon3D, Coin3D, Gem3D, Gift3D } from "./festive-ornaments";
 
 const STARS = [
   { top: "16%", left: "7%", size: "size-1", delay: "0s" },
@@ -75,6 +76,42 @@ export function FestiveDecor({ tone = "dark" }: { tone?: "dark" | "light" }) {
           style={{ top: s.top, left: s.left, animationDelay: s.delay }}
         />
       ))}
+      {/* ── 3D foreground clusters (roomy screens only; they paint behind the
+          content row, so even where they meet the text it reads as depth) ── */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 start-0 hidden w-44 md:block"
+      >
+        <Gift3D
+          className="animate-floaty absolute start-[-8px] bottom-[-46px] w-[88px] motion-reduce:animate-none"
+          style={{ animationDelay: ".4s" }}
+        />
+        <Coin3D
+          className="animate-floaty-slow absolute start-[66px] top-[-12px] w-[42px] motion-reduce:animate-none"
+          style={{ animationDelay: "1.2s" }}
+        />
+        <Gem3D
+          className="animate-twinkle absolute start-[80px] bottom-[2px] w-[26px] motion-reduce:animate-none"
+          style={{ animationDelay: ".8s" }}
+        />
+      </div>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 end-0 hidden w-44 md:block"
+      >
+        <Balloon3D
+          className="animate-floaty-slow absolute end-[2px] top-[-14px] h-[88px] motion-reduce:animate-none"
+          style={{ animationDelay: ".9s" }}
+        />
+        <Coin3D
+          className="animate-floaty absolute end-[58px] top-[-10px] w-[36px] opacity-90 blur-[0.6px] motion-reduce:animate-none"
+          style={{ animationDelay: "1.6s" }}
+        />
+        <Gem3D
+          className="animate-twinkle absolute end-[54px] bottom-[-6px] w-[30px] motion-reduce:animate-none"
+          style={{ animationDelay: ".2s" }}
+        />
+      </div>
       {/* edge vignettes */}
       <span
         className={cn(
