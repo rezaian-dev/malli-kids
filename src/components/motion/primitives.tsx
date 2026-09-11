@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { usePathname } from "next/navigation";
 import {
   motion,
   MotionConfig,
@@ -11,7 +10,6 @@ import {
   useSpring,
   useTransform,
   type Easing,
-  type HTMLMotionProps,
   type Variants,
 } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -20,57 +18,44 @@ import { cn } from "@/lib/utils";
 // (cubic-bezier(0.22, 1, 0.32, 1)) تا انیمیشن‌ها با حسِ قبلیِ برند یکی باشند.
 export const EASE_OUT: Easing = [0.22, 1, 0.32, 1];
 
-// 👁️ فقط وقتی عنصر به دید کاربر می‌رسد (و فقط یک‌بار) اجرا می‌شود؛
-// ۸۰ پیکسل پایین‌تر از لبه، کمی زودتر فعال می‌شود تا کاربر انیمیشن را حس کند.
-const VIEWPORT = { once: true, margin: "0px 0px -80px 0px" } as const;
-
-type RevealProps = HTMLMotionProps<"div"> & {
-  /** تأخیر شروع (ثانیه) */
+// ⚡ انیمیشن‌های «ورود» (fades/slideهای گِیت‌شده با هایدریشن و اسکرول) عمداً
+// حذف شده‌اند: چون استایلِ اولیه‌ی `opacity: 0` داخل HTML سرور هم رندر
+// می‌شد، با هر رفرش/ناوبری صفحه اول خالی/کم‌رنگ دیده می‌شد و بعد محتوا
+// تکه‌تکه «پاپ» می‌کرد (فلش و پرش). این کامپوننت‌ها حالا فقط یک div ساده‌اند
+// تا همه‌چیز از همان اولِ پینت کامل و بی‌درنگ دیده شود و ناوبری حسِ SPA
+// داشته باشد. انیمیشن‌های تعاملی (TiltCard، MagneticGlow، هاور/تپ دکمه‌ها،
+// AnimatePresence شیت‌ها/منوها/گالری) دست‌نخورده مانده‌اند.
+type StaticProps = React.HTMLAttributes<HTMLDivElement> & {
+  /** نگه‌داشته شده برای سازگاری با فراخوانی‌های قبلی — نادیده گرفته می‌شود. */
   delay?: number;
-  /** جابه‌جایی عمودی اولیه (پیکسل) */
+  /** نگه‌داشته شده برای سازگاری با فراخوانی‌های قبلی — نادیده گرفته می‌شود. */
   y?: number;
 };
 
-/** 🪶 ورود نرم «محو + بالا آمدن» هنگام اسکرول به دید کاربر. */
+/** 🪶 رندرِ بی‌درنگِ محتوا (قبلاً: ورودِ «محو + بالا آمدن» هنگام اسکرول). */
 export function Reveal({
   children,
   className,
-  delay = 0,
-  y = 22,
+  delay,
+  y,
   ...rest
-}: RevealProps) {
+}: StaticProps) {
+  void delay;
+  void y;
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={VIEWPORT}
-      transition={{ duration: 0.55, delay, ease: EASE_OUT }}
-      {...rest}
-    >
+    <div className={className} {...rest}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
-/** 👁️ فقط محو شدن (بدون جابه‌جایی) — برای جاهایی که transform با CSS تداخل دارد. */
-export function FadeIn({
-  children,
-  className,
-  delay = 0,
-  ...rest
-}: HTMLMotionProps<"div"> & { delay?: number }) {
+/** 👁️ رندرِ بی‌درنگِ محتوا (قبلاً: محو شدن هنگام رسیدن به دید کاربر). */
+export function FadeIn({ children, className, delay, ...rest }: StaticProps) {
+  void delay;
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={VIEWPORT}
-      transition={{ duration: 0.7, delay, ease: EASE_OUT }}
-      {...rest}
-    >
+    <div className={className} {...rest}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -91,18 +76,11 @@ export function Stagger({
   children,
   className,
   ...rest
-}: HTMLMotionProps<"div">) {
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <motion.div
-      className={className}
-      variants={staggerContainer}
-      initial="hidden"
-      whileInView="show"
-      viewport={VIEWPORT}
-      {...rest}
-    >
+    <div className={className} {...rest}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -110,15 +88,17 @@ export function StaggerItem({
   children,
   className,
   ...rest
-}: HTMLMotionProps<"div">) {
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <motion.div className={className} variants={staggerItem} {...rest}>
+    <div className={className} {...rest}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
-/** 🧭 محو شدنِ لطیفِ محتوای هر صفحه هنگام جابه‌جایی بین مسیرها. */
+/** 🧭 رندرِ بی‌درنگِ محتوای هر صفحه — بدون فیدِ route-change تا تعویض مسیر
+ *  فلش نزند و حسِ SPA حفظ شود (قبلاً کل صفحه با `key={pathname}` ری‌ماونت و
+ *  از `opacity: 0` فید می‌شد). */
 export function PageReveal({
   children,
   className,
@@ -126,18 +106,7 @@ export function PageReveal({
   children: React.ReactNode;
   className?: string;
 }) {
-  const pathname = usePathname();
-  return (
-    <motion.div
-      key={pathname}
-      className={className}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: EASE_OUT }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
 /** ♿ Provider سراسری: همه انیمیشن‌های motion به prefers-reduced-motion
@@ -147,7 +116,8 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
   return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }
 
-/** 🧢 ورود سربرگ: یک‌بار هنگام بارگذاری اولیه از بالا سُر می‌خورد پایین. */
+/** 🧢 سربرگ بی‌درنگ و کامل رندر می‌شود (قبلاً هنگام بارگذاری از بالا سُر
+ *  می‌خورد پایین و با PageReveal ترکیب می‌شد تا کل صفحه چشمک بزند). */
 export function HeaderEnter({
   children,
   className,
@@ -155,16 +125,7 @@ export function HeaderEnter({
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <motion.div
-      className={className}
-      initial={{ y: -14, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: EASE_OUT }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
 const TILT_SPRING = { stiffness: 300, damping: 22, mass: 0.6 } as const;

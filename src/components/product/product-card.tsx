@@ -19,7 +19,8 @@ export function ProductCard({
   p: Product;
   view: "grid" | "list";
   aboveFold?: boolean;
-  /** 🎬 ورودِ motion کارت؛ وقتی والد خودش انیمیشن دارد (مثل styles) خاموش کنید. */
+  /** 🎬 فقط در حالت `stack` ورودِ متحرک هنگام تعویض فیلتر را کنترل می‌کند؛
+   *  ورودِ اولیه‌ی کارت همیشه بی‌درنگ است تا رفرش فلش نزند. */
   animate?: boolean;
   /** 🃏 موقعیت کارت در گرید فعلی — فقط برای stagger جزئیِ حالت `stack`. */
   index?: number;
@@ -61,7 +62,7 @@ export function ProductCard({
     sold,
     price,
     imageProps,
-    // ⚡ کارت‌های بالای خطِ تا (LCP) بدون انیمیشن ورود رندر می‌شوند.
+    // ⚡ کارت‌های بالای خطِ تا (LCP) حتی در حالت stack هم ورودِ متحرک ندارند.
     animate: animate ?? !aboveFold,
   };
 

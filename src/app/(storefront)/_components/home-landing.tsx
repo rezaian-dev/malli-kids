@@ -17,8 +17,7 @@ import { TryOn } from "./sections/try-on";
 export function HomeLanding() {
   return (
     <>
-      {/* ⚡ Hero بدون Reveal: خودش انیمیشن ورودِ CSS دارد و تصویر LCP
-          نباید پشت opacity منتظر بماند. */}
+      {/* ⚡ Hero بدون انیمیشن ورود رندر می‌شود تا با رفرش، یک‌ضرب و بدون فلش دیده شود. */}
       <Hero />
       <Reveal>
         <Marquee />

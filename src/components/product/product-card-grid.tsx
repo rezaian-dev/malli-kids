@@ -109,19 +109,14 @@ export function ProductCardGrid({
               : {}),
           }
         : {
+            // ⚡ بدون ورودِ whileInView: کارت بی‌درنگ رندر می‌شود تا با رفرش،
+            // گرید یک‌ضرب و بدون «پاپ» شدنِ تکه‌تکه دیده شود. `layout` و `exit`
+            // می‌مانند تا تعویضِ فیلتر/صفحه همچنان نرم باشد.
             exit: {
               opacity: 0,
               scale: 0.85,
               transition: { duration: 0.25, ease: EASE_OUT },
             },
-            ...(animate
-              ? {
-                  initial: { opacity: 0, y: 16, scale: 0.94 },
-                  whileInView: { opacity: 1, y: 0, scale: 1 },
-                  viewport: { once: true, margin: "0px 0px -60px 0px" },
-                  transition: { duration: 0.45, ease: EASE_OUT },
-                }
-              : {}),
           })}
     >
       <TiltCard className="h-full rounded-3xl">
