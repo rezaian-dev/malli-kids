@@ -1,7 +1,7 @@
 import { connectMongoose } from "@/lib/db/mongoose";
 import { OrderModel, type OrderDoc } from "@/lib/db/models/order";
 import { ProductModel } from "@/lib/db/models/product";
-import { incrementCouponUsage } from "@/lib/shop/coupons";
+import { releaseCouponUsage, reserveCouponUsage } from "@/lib/shop/coupons";
 import { canTransitionOrder } from "@/lib/shop/order-status";
 import { deriveStock } from "@/lib/shop/inventory";
 import { notifyBackInStock } from "@/lib/shop/back-in-stock";
@@ -88,6 +88,23 @@ function isDuplicateKeyError(error: unknown): boolean {
   );
 }
 
+// 🆔 The human-facing order code shape customers already see ("MK-XXXXX").
+// Timestamp-based, so two checkouts landing in the same millisecond can
+// collide — the unique index turns that into a 11000 the retry loop below
+// absorbs by regenerating, instead of a 500 at checkout.
+function newOrderId(): string {
+  return `MK-${Date.now().toString(36).slice(-5).toUpperCase()}`;
+}
+
+// Only an `id`-index collision is retried with a fresh code — an
+// `idempotencyKey` collision means "this attempt already won", which takes
+// the return-existing path instead.
+function isOrderIdCollision(error: unknown): boolean {
+  if (!isDuplicateKeyError(error)) return false;
+  const keyValue = (error as { keyValue?: Record<string, unknown> }).keyValue;
+  return !!keyValue && "id" in keyValue && !("idempotencyKey" in keyValue);
+}
+
 /** 📦 Atomically checks-and-decrements one variant's stock — the actual
  *  overselling fix: this only ever succeeds if the size still has enough
  *  stock at the moment of the write, not at whatever moment the page was
@@ -134,13 +151,14 @@ async function restockVariant(productId: number, size: string, qty: number) {
 async function restockOrderItems(items: OrderDoc["items"]) {
   for (const item of items) {
     const product = await ProductModel.findOne({ id: item.id }).lean();
-    if (product?.variants?.length) await restockVariant(item.id, item.size, item.qty);
+    if (product?.variants?.length)
+      await restockVariant(item.id, item.size, item.qty);
   }
 }
 
 export type CreateOrderResult =
   | { ok: true; order: AdminOrder }
-  | { ok: false; outOfStock: string };
+  | { ok: false; outOfStock: string; couponExhausted?: boolean };
 
 /** 🧾 The one real place an order is created — the checkout dialog's server
  *  action calls this after verifying the session.
@@ -158,8 +176,18 @@ export type CreateOrderResult =
  *  atomically before the order is written; a legacy/unsized product keeps
  *  today's behavior (no decrement). Any decrement already applied for an
  *  earlier item in the same order is rolled back if a later item is out of
- *  stock, or if the order document itself fails to write. */
-export async function createOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
+ *  stock, or if the order document itself fails to write.
+ *
+ *  🎟️ Coupon usage is reserved atomically (`reserveCouponUsage`) before the
+ *  insert and released on any failure — the cap holds under concurrency
+ *  instead of relying on the pre-check in `findApplicableCoupon`.
+ *
+ *  🆔 The timestamp-based `MK-XXXXX` code can collide for two checkouts in
+ *  the same millisecond; an `id`-index 11000 regenerates and retries (up to
+ *  3 attempts) instead of 500ing the checkout. */
+export async function createOrder(
+  input: CreateOrderInput,
+): Promise<CreateOrderResult> {
   await connectMongoose();
 
   if (input.idempotencyKey) {
@@ -174,12 +202,30 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     const product = await ProductModel.findOne({ id: item.id }).lean();
     if (!product?.variants?.length) continue;
 
-    const decremented = await decrementVariantStock(item.id, item.size, item.qty);
+    const decremented = await decrementVariantStock(
+      item.id,
+      item.size,
+      item.qty,
+    );
     if (!decremented) {
-      for (const done of applied) await restockVariant(done.id, done.size, done.qty);
+      for (const done of applied)
+        await restockVariant(done.id, done.size, done.qty);
       return { ok: false, outOfStock: item.name };
     }
     applied.push({ id: item.id, size: item.size, qty: item.qty });
+  }
+
+  // 🎟️ Reserve coupon usage atomically *before* the order exists — the
+  // pre-check in `findApplicableCoupon` can't hold under concurrency, and
+  // incrementing after the insert is too late to refuse.
+  let couponReserved = false;
+  if (input.couponCode) {
+    couponReserved = await reserveCouponUsage(input.couponCode);
+    if (!couponReserved) {
+      for (const done of applied)
+        await restockVariant(done.id, done.size, done.qty);
+      return { ok: false, outOfStock: "", couponExhausted: true };
+    }
   }
 
   const subtotal = input.items.reduce((s, i) => s + i.price * i.qty, 0);
@@ -188,40 +234,61 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   const shipping = afterDiscount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
   const total = afterDiscount + shipping;
 
-  try {
-    const doc = await OrderModel.create({
-      id: `MK-${Date.now().toString(36).slice(-5).toUpperCase()}`,
-      userId: input.userId,
-      idempotencyKey: input.idempotencyKey,
-      customer: input.customer,
-      phone: input.phone,
-      city: input.city,
-      address: input.address,
-      postalCode: input.postalCode,
-      items: input.items,
-      subtotal,
-      discount,
-      shipping,
-      total,
-      couponCode: input.couponCode,
-      status: "جدید",
-      pay: "پرداخت‌شده",
-    });
-
-    if (input.couponCode) await incrementCouponUsage(input.couponCode);
-
-    return { ok: true, order: toAdminOrder(doc.toObject()) };
-  } catch (error) {
-    for (const done of applied) await restockVariant(done.id, done.size, done.qty);
-
-    if (input.idempotencyKey && isDuplicateKeyError(error)) {
-      const existing = await OrderModel.findOne({
-        idempotencyKey: input.idempotencyKey,
-      }).lean();
-      if (existing) return { ok: true, order: toAdminOrder(existing) };
+  async function rollback() {
+    if (couponReserved && input.couponCode) {
+      couponReserved = false;
+      await releaseCouponUsage(input.couponCode);
     }
-    throw error;
+    for (const done of applied)
+      await restockVariant(done.id, done.size, done.qty);
   }
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const doc = await OrderModel.create({
+        id: newOrderId(),
+        userId: input.userId,
+        idempotencyKey: input.idempotencyKey,
+        customer: input.customer,
+        phone: input.phone,
+        city: input.city,
+        address: input.address,
+        postalCode: input.postalCode,
+        items: input.items,
+        subtotal,
+        discount,
+        shipping,
+        total,
+        couponCode: input.couponCode,
+        status: "جدید",
+        pay: "پرداخت‌شده",
+      });
+
+      return { ok: true, order: toAdminOrder(doc.toObject()) };
+    } catch (error) {
+      // Same-millisecond `MK-XXXXX` collision — nothing was written, so
+      // regenerate and retry without rolling back the reservations.
+      if (isOrderIdCollision(error)) continue;
+
+      await rollback();
+
+      if (input.idempotencyKey && isDuplicateKeyError(error)) {
+        const existing = await OrderModel.findOne({
+          idempotencyKey: input.idempotencyKey,
+        }).lean();
+        // The winner of the race holds the one real reservation — this
+        // loser's own reservation was just rolled back above, so coupon
+        // usage stays counted exactly once.
+        if (existing) return { ok: true, order: toAdminOrder(existing) };
+      }
+      throw error;
+    }
+  }
+
+  // Three fresh codes in a row all collided (essentially impossible without
+  // a broken clock) — roll back and fail loudly rather than looping forever.
+  await rollback();
+  throw new Error("createOrder: order id collision");
 }
 
 export type SetOrderStatusResult =

@@ -51,3 +51,18 @@ export function isJalaliFuture(input: string): boolean {
 
   return target > current;
 }
+
+/** 🗓️ Inclusive "is this Jalali business date already over" check — the
+ *  counterpart `findApplicableCoupon` enforces a coupon's `until` with. A
+ *  missing/malformed date fails closed (counts as past): money-affecting
+ *  logic must never treat garbage as "no expiry". */
+export function isJalaliPast(input: string): boolean {
+  const value = jalaliParts(input);
+  if (!value) return true;
+
+  const today = jalaliToday();
+  const current = today.y * 10000 + today.m * 100 + today.d;
+  const target = value.y * 10000 + value.m * 100 + value.d;
+
+  return target < current;
+}

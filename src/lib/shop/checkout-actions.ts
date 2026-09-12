@@ -25,6 +25,8 @@ export type { CheckoutValues, CartCheckoutValues };
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 const AUTH_ERROR = "برای این کار باید وارد حساب‌تان باشید.";
 const PROFILE_INCOMPLETE_ERROR = "لطفاً پروفایل خود را تکمیل کنید.";
+const COUPON_EXHAUSTED_ERROR =
+  "ظرفیت این کد تخفیف همین حالا تکمیل شد؛ بدون کد ادامه بدهید یا کد دیگری وارد کنید.";
 
 async function requireSessionUser() {
   const session = await getSession();
@@ -51,7 +53,8 @@ export async function createOrderAction(
     phone: phoneDigits(values.phone),
     postalCode: toEnDigits(values.postalCode).replace(/\D/g, ""),
   });
-  if (!parsed.success) return { ok: false, error: "اطلاعات سفارش را کامل کنید." };
+  if (!parsed.success)
+    return { ok: false, error: "اطلاعات سفارش را کامل کنید." };
 
   const user = await requireSessionUser();
   if (!user) return { ok: false, error: AUTH_ERROR };
@@ -67,7 +70,10 @@ export async function createOrderAction(
 
   try {
     const product = await getProductById(parsed.data.productId);
-    if (!product) return { ok: false, error: "این محصول دیگر موجود نیست." };
+    // 🙈 An admin-hidden product 404s on its PDP — it must not stay
+    // purchasable through a stale "buy now" either.
+    if (!product || !product.visible)
+      return { ok: false, error: "این محصول دیگر موجود نیست." };
 
     const unit = resolvePrice(product, await getCampaign()).price;
     const subtotal = unit * parsed.data.qty;
@@ -98,6 +104,8 @@ export async function createOrderAction(
     });
 
     if (!result.ok) {
+      if (result.couponExhausted)
+        return { ok: false, error: COUPON_EXHAUSTED_ERROR };
       return {
         ok: false,
         error: `متأسفانه سایز انتخابی «${parsed.data.size}» از «${result.outOfStock}» دیگر موجود نیست.`,
@@ -126,7 +134,8 @@ export async function createCartOrderAction(
     phone: phoneDigits(values.phone),
     postalCode: toEnDigits(values.postalCode).replace(/\D/g, ""),
   });
-  if (!parsed.success) return { ok: false, error: "اطلاعات سفارش را کامل کنید." };
+  if (!parsed.success)
+    return { ok: false, error: "اطلاعات سفارش را کامل کنید." };
 
   const user = await requireSessionUser();
   if (!user) return { ok: false, error: AUTH_ERROR };
@@ -143,8 +152,13 @@ export async function createCartOrderAction(
 
     for (const line of parsed.data.items) {
       const product = await getProductById(line.productId);
-      if (!product) {
-        return { ok: false, error: "یکی از کالاهای سبد دیگر موجود نیست؛ سبد را به‌روزرسانی کنید." };
+      // 🙈 Same as the buy-now path above: admin-hidden must not stay
+      // purchasable through a stale cart either.
+      if (!product || !product.visible) {
+        return {
+          ok: false,
+          error: "یکی از کالاهای سبد دیگر موجود نیست؛ سبد را به‌روزرسانی کنید.",
+        };
       }
       const unit = resolvePrice(product, campaign).price;
       items.push({
@@ -176,6 +190,8 @@ export async function createCartOrderAction(
     });
 
     if (!result.ok) {
+      if (result.couponExhausted)
+        return { ok: false, error: COUPON_EXHAUSTED_ERROR };
       return {
         ok: false,
         error: `متأسفانه سایز انتخابی از «${result.outOfStock}» دیگر موجود نیست.`,
