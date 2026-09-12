@@ -1,15 +1,43 @@
 import "server-only";
+import { MongoClient } from "mongodb";
 import { betterAuth } from "better-auth";
 import { admin, phoneNumber } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { connectMongoClient } from "@/lib/db/mongo-client";
+import { getMongooseUri } from "@/lib/db/shared";
 import { authSecondaryStorage, redis } from "@/lib/redis";
 import { sendOTP } from "@/lib/sms";
 import { OTP_LEN } from "./schemas";
 
 // ⚙️ No native client passed → transactions stay disabled (required for a non-replica-set Mongo).
-const client = await connectMongoClient();
+//
+// 🛡️ Build-safe: this is a TOP-LEVEL await, so any rejection here doesn't just fail one
+// request — it crashes the *module*, which crashes every page whose import graph touches
+// it. AuthModal is mounted in the root layout and pulls in this file via the auth server
+// actions, so `next build`'s "Collecting page data" step loads this module for pages that
+// never call `/api/auth` at all (e.g. /articles/[slug], /product/[id]) — that's why a Mongo
+// auth failure here surfaced as those pages' build errors. connectMongoClient()'s own guard
+// only skips the network call when MONGODB_URI is completely unset; it still attempts (and
+// can fail) a real connection when the var IS set but the credentials/host are wrong — which
+// is exactly what happened. No HTTP request ever hits this route during build, so we don't
+// need a working connection yet: hand mongodbAdapter an unconnected client and let the driver
+// connect lazily on first real query. At actual runtime (`next start`) this always goes
+// through the normal, already-battle-tested connectMongoClient() path below.
+let client: MongoClient;
+if (process.env.NEXT_PHASE === "phase-production-build") {
+  client = new MongoClient(getMongooseUri());
+} else {
+  try {
+    client = await connectMongoClient();
+  } catch (err) {
+    console.error(
+      "[auth] Mongo initial connect failed — falling back to lazy client. App will still render (guest) until DB is reachable:",
+      (err as Error).message,
+    );
+    client = new MongoClient(getMongooseUri());
+  }
+}
 const db = client.db();
 
 // 💸 sendOTP returns false (never throws) on a delivery failure — surface that as a
