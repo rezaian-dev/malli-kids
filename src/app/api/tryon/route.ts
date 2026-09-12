@@ -33,9 +33,12 @@ async function requireUserId(req: NextRequest) {
  * catalog work (garment text/patterns stay sharp, 864×1296). ~$0.075/img.
  * 🥈 `fashn`: the same v1.6 model via FASHN's own API. Same quality and
  * price, needs FASHN_API_KEY instead.
- * 🥉 `huggingface`: free Kolors demo Space. No key, no bill — but a shared
- * public queue that is often busy/down. Fallback only, never the default
- * when a paid key is configured.
+ * 🥉 `huggingface`: free demo chain — needs NO key at all. IDM-VTON
+ * runs first; if it is busy/down, OOTDiffusion is tried automatically.
+ * Both are shared public ZeroGPU demos (queues + cold starts make them
+ * slower than paid, and occasionally unavailable), so this is only used
+ * when no paid key is configured. (Kolors was dropped from the chain —
+ * its Space disabled API access: `api_name=False, api_open=False`.)
  *
  * Resolution: an explicit TRYON_PROVIDER wins; otherwise the best engine
  * whose key is present is picked automatically, so setting FAL_KEY alone
@@ -356,42 +359,169 @@ async function tryonFashnDirect(
   throw new Error("پردازش طولانی شد؛ لطفاً دوباره تلاش کنید.");
 }
 
-/* 🥉 ─── Free: Hugging Face (Kolors) — best-effort fallback ───
- * Shared public demo: often busy/down. Single request with timeouts, no
- * polling at all. Only used when neither paid key is configured.
+/* 🥉 ─── Free: Hugging Face demo chain (no key, best-effort) ───
+ * Two verified public demos, tried in order with per-attempt timeouts
+ * (67s + 72s worst case — still inside the client's 150s budget):
+ *
+ * 1. IDM-VTON (`yisol/IDM-VTON`, ZeroGPU): `start_tryon` at `/tryon`
+ *    takes [ImageEditor{human photo + auto-mask}, garment, description,
+ *    auto_mask, auto_crop, denoise_steps, seed] and returns
+ *    [tryon_image, mask_image]. First because it handles ANY garment
+ *    category and needs no manual mask.
+ * 2. OOTDiffusion (`levihsu/OOTDiffusion`, ZeroGPU): full-body
+ *    `/process_dc` takes [model, garment, category, n_samples, n_steps,
+ *    image_scale, seed] and returns a Gallery. Independent deployment,
+ *    so its outages don't correlate with IDM-VTON's.
+ *
+ * Both contracts were read from the Spaces' own source (`app.py` /
+ * `run/gradio_ootd.py`) plus OOTD's live `/gradio_api/info` — never
+ * guessed. An optional free HF_TOKEN (no card) raises the shared
+ * ZeroGPU quota for both.
  */
-const HF_SPACE =
-  process.env.HF_TRYON_SPACE || "Kwai-Kolors/Kolors-Virtual-Try-On";
+const IDM_SPACE = "yisol/IDM-VTON";
+const OOTD_SPACE = "levihsu/OOTDiffusion";
+const HF_CONNECT_MS = 12_000;
+const IDM_PREDICT_MS = 55_000;
+const OOTD_PREDICT_MS = 60_000;
 
-async function tryonHuggingFace(person: Img, garment: Img): Promise<string> {
-  const token = process.env.HF_TOKEN;
+// English garment hint for IDM-VTON's text encoder (it never saw Persian).
+const IDM_GARMENT_HINT: Record<FalGarmentCategory, string> = {
+  tops: "shirt",
+  bottoms: "pants",
+  "one-pieces": "dress",
+  auto: "clothes",
+};
+
+// OOTD's full-body model REQUIRES the right category ("must be paired!!!"
+// per its own UI) — `auto` falls back to the most common catalog case.
+const OOTD_CATEGORY: Record<
+  FalGarmentCategory,
+  "Upper-body" | "Lower-body" | "Dress"
+> = {
+  tops: "Upper-body",
+  bottoms: "Lower-body",
+  "one-pieces": "Dress",
+  auto: "Upper-body",
+};
+
+const blobOf = (img: Img) =>
+  handle_file(new Blob([new Uint8Array(img.buf)], { type: img.mime }));
+
+function fileUrl(out: unknown): string | undefined {
+  if (typeof out === "string") return out;
+  const o = out as { url?: string; path?: string } | null | undefined;
+  return o?.url || o?.path;
+}
+
+function galleryUrl(out: unknown): string | undefined {
+  const first = Array.isArray(out) ? out[0] : undefined;
+  return fileUrl((first as { image?: unknown } | undefined)?.image);
+}
+
+function hfOptions(token: string | undefined) {
+  return token ? { hf_token: token as `hf_${string}` } : undefined;
+}
+
+async function tryonIdmVton(
+  person: Img,
+  garment: Img,
+  category: FalGarmentCategory,
+  token: string | undefined,
+): Promise<string> {
   const client = await timeout(
-    Client.connect(
-      HF_SPACE,
-      token ? { hf_token: token as `hf_${string}` } : undefined,
-    ),
-    20_000,
-    "اتصال به سرویس رایگان",
+    Client.connect(IDM_SPACE, hfOptions(token)),
+    HF_CONNECT_MS,
+    "اتصال به IDM-VTON",
   );
+  // 🖌️ ImageEditor payload: the human photo as `background`, zero manual
+  // mask layers — the Space's own examples use this shape, and `auto_mask`
+  // below generates the mask from the photo in ~5s.
+  const editor = {
+    background: new Blob([new Uint8Array(person.buf)], { type: person.mime }),
+    layers: [],
+    composite: null,
+  };
   const result = await timeout(
     client.predict("/tryon", [
-      handle_file(
-        new Blob([new Uint8Array(person.buf)], { type: person.mime }),
-      ),
-      handle_file(
-        new Blob([new Uint8Array(garment.buf)], { type: garment.mime }),
-      ),
-      0,
-      true,
+      editor,
+      blobOf(garment),
+      IDM_GARMENT_HINT[category],
+      true, // auto-mask — no manual mask needed
+      false, // auto-crop off — the client already sends 1024px
+      30, // the Space's default denoise steps
+      42,
     ]),
-    90_000,
-    "پردازش سرویس رایگان",
+    IDM_PREDICT_MS,
+    "پردازش IDM-VTON",
   );
-  const out = (result?.data as unknown[])?.[0] as
-    { url?: string; path?: string } | string | undefined;
-  const url = typeof out === "string" ? out : out?.url || out?.path;
-  if (!url) throw new Error("empty");
+  const url = fileUrl((result?.data as unknown[])?.[0]);
+  if (!url) throw new Error("IDM-VTON تصویری برنگرداند.");
   return url;
+}
+
+async function tryonOotd(
+  person: Img,
+  garment: Img,
+  category: FalGarmentCategory,
+  token: string | undefined,
+): Promise<string> {
+  const client = await timeout(
+    Client.connect(OOTD_SPACE, hfOptions(token)),
+    HF_CONNECT_MS,
+    "اتصال به OOTDiffusion",
+  );
+  const result = await timeout(
+    client.predict("/process_dc", [
+      blobOf(person),
+      blobOf(garment),
+      OOTD_CATEGORY[category],
+      1, // n_samples — the Space's default
+      20, // n_steps — the Space's default (faster than 40, same UI default)
+      2.0, // image_scale — the Space's default
+      -1, // seed — the Space's default (random)
+    ]),
+    OOTD_PREDICT_MS,
+    "پردازش OOTDiffusion",
+  );
+  const url = galleryUrl((result?.data as unknown[])?.[0]);
+  if (!url) throw new Error("OOTDiffusion تصویری برنگرداند.");
+  return url;
+}
+
+/* 🔗 The failover itself: a fixed 2-step `for` loop (provably finite —
+ * each step either returns or appends one failure and moves on), with a
+ * per-engine line in the server log so a dead demo is diagnosable.
+ */
+async function tryonFreeChain(
+  person: Img,
+  garment: Img,
+  category: FalGarmentCategory,
+): Promise<{ url: string; engine: string }> {
+  const token = process.env.HF_TOKEN;
+  const attempts = [
+    {
+      name: "IDM-VTON",
+      run: () => tryonIdmVton(person, garment, category, token),
+    },
+    {
+      name: "OOTDiffusion",
+      run: () => tryonOotd(person, garment, category, token),
+    },
+  ];
+  const failures: string[] = [];
+  for (const attempt of attempts) {
+    try {
+      const url = await attempt.run();
+      console.log(`[tryon] free engine ${attempt.name} succeeded`);
+      return { url, engine: attempt.name };
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      failures.push(`${attempt.name}: ${msg}`);
+      console.warn(`[tryon] free engine ${attempt.name} failed: ${msg}`);
+    }
+  }
+  console.error("[tryon] all free engines failed:", failures.join(" | "));
+  throw new Error("free-chain-exhausted");
 }
 
 const ENGINE_LABEL: Record<Provider, string> = {
@@ -458,12 +588,17 @@ export async function POST(req: NextRequest) {
 
   const provider = resolveProvider();
   try {
-    const url =
-      provider === "fal"
-        ? await tryonFal(person, garment, category)
-        : provider === "fashn"
-          ? await tryonFashnDirect(person, garment, category)
-          : await tryonHuggingFace(person, garment);
+    let url: string;
+    let engine = ENGINE_LABEL[provider];
+    if (provider === "fal") {
+      url = await tryonFal(person, garment, category);
+    } else if (provider === "fashn") {
+      url = await tryonFashnDirect(person, garment, category);
+    } else {
+      const free = await tryonFreeChain(person, garment, category);
+      url = free.url;
+      engine = free.engine;
+    }
 
     // 🖼️ One response shape for every engine: the finished image, inlined
     // when possible. The browser never polls — a single POST in, a single
@@ -472,14 +607,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       status: "completed" as const,
       image,
-      engine: ENGINE_LABEL[provider],
+      engine,
     });
   } catch (e) {
     const raw = (e as Error).message || "";
-    // 💬 The free public demo is frequently busy/offline — return a clear, friendly message.
+    // 💬 Both free demos are shared public quotas — busy/offline happens.
+    // Never leak the internal sentinel or wire detail to the shopper.
     const friendly =
       provider === "huggingface" && raw !== "FAL_KEY تنظیم نشده است."
-        ? "سرویس رایگانِ پرو مجازی الان شلوغ یا در دسترس نیست. چند لحظه بعد دوباره امتحان کنید؛ برای نتیجهٔ پایدار، مدیر سایت حالت حرفه‌ای (FAL_KEY) را فعال کند."
+        ? "هر دو سرویس رایگانِ پرو مجازی الان شلوغ یا در دسترس نیستند. چند دقیقه بعد دوباره امتحان کنید؛ برای نتیجهٔ پایدار، مدیر سایت حالت حرفه‌ای (FAL_KEY) را فعال کند."
         : raw || "پرو مجازی ناموفق بود.";
     const status =
       raw.includes("تنظیم نشده است") || raw.includes("طولانی شد") ? 503 : 502;

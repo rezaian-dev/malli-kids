@@ -100,7 +100,9 @@ export function TryOnPreview({
             <p className="text-ivory text-sm font-black">
               هوش مصنوعی در حال پرو کردن لباس…
             </p>
-            <p className="text-wheat text-[11px]">معمولاً ۱۰ تا ۴۰ ثانیه</p>
+            <p className="text-wheat text-[11px]">
+              معمولاً ۱۰ تا ۹۰ ثانیه؛ حالت رایگان گاهی در صف می‌ماند
+            </p>
           </div>
         ) : null}
 
