@@ -52,6 +52,16 @@ export function Studio() {
             src="/brand/studio-team.jpg"
             alt="تیم طراحی و دوخت ملی‌کیدز در آتلیه"
             fill
+            // ⚡ Lighthouse picks this as the page's LCP element (largest
+            // painted image) — without this it defaulted to `loading="lazy"`
+            // with normal fetch priority, so the browser discovered/started
+            // the request late and LCP blew out even though the rest of the
+            // page painted fast. `priority` is deprecated as of Next 16 (see
+            // node_modules/next/dist/docs/.../components/image.md) — `Hero`'s
+            // LCP image already uses this same `preload` + `fetchPriority`
+            // pairing, mirrored here.
+            preload
+            fetchPriority="high"
             sizes="(max-width: 639px) 100vw, (max-width: 1023px) 90vw, 960px"
             className="h-full w-full object-cover transition-transform duration-1400 ease-out group-hover/studio:scale-105"
           />

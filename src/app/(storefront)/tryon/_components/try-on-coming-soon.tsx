@@ -254,7 +254,11 @@ export function ComingSoon() {
 
           {/* ── Get-ready note ─────────────────────────── */}
           <StaggerItem>
-            <p className="text-navy/60 dark:text-wheat/70 mx-auto mt-6 max-w-xl text-center text-xs leading-6">
+            {/* ♿ navy/70, not /60 — at this text-xs size /60 measured under
+                4.5:1 against this section's background (Lighthouse
+                color-contrast). /70 matches the passing step text right
+                above and clears it. */}
+            <p className="text-navy/70 dark:text-wheat/80 mx-auto mt-6 max-w-xl text-center text-xs leading-6">
               💡 از حالا می‌توانید یک عکس تمام‌قد با نور خوب و پس‌زمینهٔ ساده
               آماده کنید — روز افتتاح، اولین پرو فقط چند ثانیه طول می‌کشد.
             </p>
