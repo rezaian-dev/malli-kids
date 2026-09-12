@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Reveal } from "@/components/motion";
+import { Reveal } from "@/components/motion/static";
 import { Atelier } from "./sections/atelier";
 import { Categories } from "./sections/categories";
 import { Handmade } from "./sections/handmade";

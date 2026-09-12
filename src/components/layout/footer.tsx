@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cn, shell } from "@/lib/utils";
-import { FadeIn, Reveal } from "@/components/motion";
+import { FadeIn, Reveal } from "@/components/motion/static";
 import { NewsletterForm } from "./newsletter-form";
 import { FooterPerks } from "./footer-perks";
 import { FooterColumns } from "./footer-columns";

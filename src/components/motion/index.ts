@@ -1,13 +1,19 @@
+// 🪶 Static (zero-JS) wrappers — server-safe, import directly from
+// `@/components/motion/static` in server components to avoid pulling the
+// client `motion/react` bundle through this barrel.
 export {
-  EASE_OUT,
   Reveal,
   FadeIn,
   Stagger,
   StaggerItem,
-  staggerContainer,
-  staggerItem,
   PageReveal,
   HeaderEnter,
+} from "./static";
+// 🎬 Interactive springs — client-only (`motion/react`).
+export {
+  EASE_OUT,
+  staggerContainer,
+  staggerItem,
   MotionProvider,
   TiltCard,
   MagneticGlow,

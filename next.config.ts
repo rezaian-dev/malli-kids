@@ -28,12 +28,18 @@ import type { NextConfig } from "next";
 // without this, `worker-src` falls back to `script-src` (no `blob:` there),
 // so the worker was silently blocked and every upload fell back to
 // compressing on the main thread instead.
+// 🪞 `img-src` also allow-lists the virtual try-on engines' CDNs
+// (`fal.media` for FASHN-via-fal results, `cdn.fashn.ai` for FASHN direct,
+// `*.hf.space` for the free Kolors fallback): `/api/tryon` normally inlines
+// the finished image as a `data:` URI (already allowed above), but if that
+// proxy download ever fails it answers with the engine's remote URL instead
+// — without these entries that fallback image would render as a broken tile.
 const isDev = process.env.NODE_ENV !== "production";
 const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob: https://server.arcgisonline.com;
+  img-src 'self' data: blob: https://server.arcgisonline.com https://fal.media https://*.fal.media https://cdn.fashn.ai https://*.hf.space;
   font-src 'self' data:;
   connect-src 'self';
   frame-src https://www.openstreetmap.org;
