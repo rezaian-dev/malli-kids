@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useStore } from "@/providers/store-provider";
 import { fullName, givenName } from "@/lib/text/name";
 import { cn } from "@/lib/utils";
-import { removeAvatarAction, updateAvatarAction } from "../_lib/actions";
+import { removeAvatarAction, updateAvatarAction } from "../_lib/avatar-actions";
 import { AVATAR_MAX_BYTES } from "../_lib/schemas";
 import type { User } from "@/types";
 

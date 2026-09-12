@@ -11,7 +11,7 @@ import { ORDER_FLOW, stageIndex } from "@/lib/shop/order-status";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { usePolling } from "@/hooks/use-polling";
-import { getMyOrdersAction } from "../_lib/actions";
+import { getMyOrdersAction } from "../_lib/orders-actions";
 import { PROFILE_CARD } from "./profile-shared";
 import { OrderCard } from "./order-card";
 

@@ -4,7 +4,7 @@ import { getAllArticles } from "./_lib/data";
 import { AdminArticlesLanding } from "./_components/admin-articles-landing";
 
 export default async function AdminArticles() {
-  const admin = await requireAdminPage();
+  await requireAdminPage();
 
   const [articles, allTags] = await Promise.all([
     getAllArticles(),

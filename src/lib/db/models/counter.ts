@@ -1,3 +1,4 @@
+import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
 import { connectMongoose } from "../mongoose";

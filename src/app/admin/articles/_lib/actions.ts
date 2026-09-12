@@ -8,6 +8,7 @@ import { TagModel } from "@/lib/db/models/tag";
 import { toFaDigits } from "@/lib/locale/fa";
 import { ARTICLES_TAG } from "@/lib/articles";
 import { getAllTags, TAGS_TAG, slugifyTag, type ContentTag } from "@/lib/tags";
+import { uniqueSlugAgainst } from "@/lib/db/unique-slug";
 import { getAllArticles } from "./data";
 import type { ActionResult } from "@/lib/action-result";
 import type { AdminArticle } from "@/types";
@@ -40,7 +41,9 @@ function revalidateArticles() {
 
 /** 🪶 A clean Persian-friendly slug from the title, de-duplicated against
  *  what's already in the database (moved from the old client-side draft —
- *  uniqueness has to be checked against the real collection now). */
+ *  uniqueness has to be checked against the real collection now). Shared
+ *  loop: `uniqueSlugAgainst` (same pattern as `products/_lib/actions.ts`'s
+ *  `uniqueProductSlug`). */
 async function uniqueSlug(title: string): Promise<string> {
   const base =
     title
@@ -48,12 +51,7 @@ async function uniqueSlug(title: string): Promise<string> {
       .replace(/\s+/g, "-")
       .replace(/[^\p{L}\p{N}-]/gu, "") || "مقاله";
 
-  let slug = base;
-  let i = 2;
-  while (await ArticleModel.exists({ slug })) {
-    slug = `${base}-${toFaDigits(i++)}`;
-  }
-  return slug;
+  return uniqueSlugAgainst(ArticleModel, base, toFaDigits);
 }
 
 export async function createArticleAction(

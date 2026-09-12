@@ -31,7 +31,7 @@ import type {
   TicketStatus,
 } from "@/lib/shop/tickets";
 import type { ChatConversation } from "@/lib/shop/chat";
-import { getChatConversationsAction } from "@/lib/shop/chat-actions";
+import { getChatConversationsAction } from "@/lib/shop/admin-chat-actions";
 import {
   DEFAULT_CANNED_RESPONSES,
   type CannedResponse,

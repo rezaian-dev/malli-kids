@@ -2,9 +2,14 @@ import { z } from "zod";
 import { parseFaNumber, phoneDigits } from "./digits";
 import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
 
+// 📧 Exported so any plain (non-zod) input check — e.g. `NewsletterForm`,
+// which validates inline rather than through this module's zod helpers —
+// can reuse the exact same pattern instead of drifting from it.
+export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+
 const RE = {
   mobile: /^09\d{9}$/,
-  email: /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/,
+  email: EMAIL_PATTERN,
   postalCode: /^\d{10}$/,
 } as const;
 

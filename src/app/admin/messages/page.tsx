@@ -4,7 +4,7 @@ import { getChatConversationsForAdmin } from "@/lib/shop/chat";
 import { AdminMessagesLanding } from "./_components/admin-messages-landing";
 
 export default async function AdminMessages() {
-  const admin = await requireAdminPage();
+  await requireAdminPage();
 
   const [tickets, conversations] = await Promise.all([
     getAllTickets(),

@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, useTransition } from "react";
 import { BadgeCheck, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,10 +8,9 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type { Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { useStore } from "@/providers/store-provider";
-import { phoneDigits } from "@/lib/digits";
-import { toEnDigits } from "@/lib/locale/fa";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
-import { checkCouponAction, createOrderAction } from "@/lib/shop/checkout-actions";
+import { createOrderAction } from "@/lib/shop/checkout-actions";
+import { useCheckoutDeliveryForm } from "@/hooks/use-checkout-delivery-form";
 import { cn } from "@/lib/utils";
 
 // 🧾 The one single-item "buy now" checkout — opened from the product page's
@@ -35,82 +33,49 @@ export function CheckoutDialog({
   unit: number;
 }) {
   const { user, showToast } = useStore();
-  const [city, setCity] = useState(user?.city || "");
-  const [address, setAddress] = useState(user?.address || "");
-  const [phone, setPhone] = useState(user?.phone || "");
-  const [postal, setPostal] = useState(user?.postalCode || "");
-  const [couponIn, setCouponIn] = useState("");
-  const [applied, setApplied] = useState<{ code: string; rate: number } | null>(
-    null,
-  );
-  const [couponBad, setCouponBad] = useState(false);
-  const [pending, startTransition] = useTransition();
-  // 🔁 One key per checkout attempt — a double-click or a retried request
-  // while this same dialog is open reuses it, so the server collapses them
-  // into the one order (see `createOrder`); reopening the dialog for a new
-  // purchase gets a fresh key.
-  const [idempotencyKey, setIdempotencyKey] = useState(() =>
-    crypto.randomUUID(),
-  );
-
-  // 🔄 Re-sync from the profile every time the dialog opens (same as the old openCheckout()).
-  useEffect(() => {
-    if (!open) return;
-    setCity(user?.city || "");
-    setAddress(user?.address || "");
-    setPhone(user?.phone || "");
-    setPostal(user?.postalCode || "");
-    setIdempotencyKey(crypto.randomUUID());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
   const subtotal = unit * qty;
+  const form = useCheckoutDeliveryForm({ open, user, subtotal, showToast });
+  const {
+    city,
+    setCity,
+    address,
+    setAddress,
+    phone,
+    setPhone,
+    postal,
+    setPostal,
+    couponIn,
+    setCouponIn,
+    applied,
+    couponBad,
+    setCouponBad,
+    pending,
+    startTransition,
+    idempotencyKey,
+    discount,
+    applyCoupon,
+    validateDelivery,
+    deliveryPayload,
+  } = form;
+
   // 🚚 Shipping is decided by the *post-discount* subtotal, same as the
   // server (`createOrder` in `lib/shop/orders.ts`) — a coupon big enough to
   // drop the order back under the free-shipping line must show shipping
   // here too, or this summary promises a total the server won't charge.
-  const discount = applied ? Math.round(subtotal * applied.rate) : 0;
   const shipping =
     subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
 
-  function applyCoupon() {
-    const code = toEnDigits(couponIn).trim().toUpperCase();
-    if (!code) return;
-
-    startTransition(async () => {
-      const hit = await checkCouponAction(code, subtotal);
-      if (hit) {
-        setApplied(hit);
-        setCouponBad(false);
-        showToast(
-          `کد ${hit.code} اعمال شد — ${toFaDigits(Math.round(hit.rate * 100))}٪ تخفیف 🎉`,
-        );
-      } else {
-        setApplied(null);
-        setCouponBad(true);
-      }
-    });
-  }
-
   function submitOrder() {
     if (!user) return;
-    if (city.trim().length < 2) return showToast("شهر را بنویسید");
-    if (address.trim().length < 10) return showToast("آدرس کامل را بنویسید");
-    if (phoneDigits(phone).length !== 11)
-      return showToast("شمارهٔ موبایل ۱۱ رقمی بنویسید");
-    const postalDigits = toEnDigits(postal).replace(/\D/g, "");
-    if (postalDigits.length !== 10)
-      return showToast("کد پستیِ ۱۰ رقمی بنویسید");
+    const error = validateDelivery();
+    if (error) return showToast(error);
 
     startTransition(async () => {
       const result = await createOrderAction({
         productId: product.id,
         size,
         qty,
-        city: city.trim(),
-        address: address.trim(),
-        phone: phoneDigits(phone),
-        postalCode: postalDigits,
+        ...deliveryPayload(),
         couponCode: applied?.code,
         idempotencyKey,
       });

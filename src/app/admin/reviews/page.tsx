@@ -3,7 +3,7 @@ import { getAllReviews } from "./_lib/data";
 import { AdminReviewsLanding } from "./_components/admin-reviews-landing";
 
 export default async function AdminReviews() {
-  const admin = await requireAdminPage();
+  await requireAdminPage();
 
   const reviews = await getAllReviews();
 

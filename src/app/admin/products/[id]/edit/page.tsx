@@ -11,7 +11,7 @@ export default async function EditProductPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const admin = await requireAdminPage();
+  await requireAdminPage();
 
   const { id } = await params;
   const [product, allProducts] = await Promise.all([
