@@ -153,9 +153,9 @@ export function ShopExplorer({
             items={shop.slice}
             activeN={shop.activeN}
             onReset={shop.reset}
+            state={state}
             page={shop.page}
             pages={shop.pages}
-            onPageChange={(page) => shop.push({ page })}
           />
         </section>
       </div>
