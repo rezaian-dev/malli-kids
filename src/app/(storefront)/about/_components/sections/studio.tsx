@@ -52,7 +52,6 @@ export function Studio() {
             src="/brand/studio-team.jpg"
             alt="تیم طراحی و دوخت ملی‌کیدز در آتلیه"
             fill
-            priority={false}
             sizes="(max-width: 639px) 100vw, (max-width: 1023px) 90vw, 960px"
             className="h-full w-full object-cover transition-transform duration-1400 ease-out group-hover/studio:scale-105"
           />

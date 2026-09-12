@@ -107,7 +107,10 @@ export function CartLineItem({
           <span className="tabular-nums">
             {formatToman(unitPrice)} تومان
             {originalPrice ? (
-              <s className="text-silver ms-1.5 text-[10px]">
+              // ♿ navy/70 (this row's own inherited tone), not `silver` —
+              // silver-on-white is ~2.5:1, below the 4.5:1 minimum; dark
+              // mode keeps `silver`, which already reads fine there.
+              <s className="text-navy/70 dark:text-silver ms-1.5 text-[10px]">
                 {formatToman(originalPrice)}
               </s>
             ) : null}
