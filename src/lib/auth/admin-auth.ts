@@ -1,9 +1,11 @@
 import "server-only";
+import { MongoClient } from "mongodb";
 import { betterAuth } from "better-auth";
 import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { connectMongoClient } from "@/lib/db/mongo-client";
+import { getMongooseUri } from "@/lib/db/shared";
 
 // 🛡️ A second, fully independent Better Auth instance for `/admin`.
 //
@@ -18,7 +20,25 @@ import { connectMongoClient } from "@/lib/db/mongo-client";
 // Sign-up stays off — admin accounts are only ever created by promoting an
 // existing customer (see `promoteCustomerAction`), never by submitting this
 // login form.
-const client = await connectMongoClient();
+//
+// 🛡️ Build-safe for the same reason as src/lib/auth/auth.ts: this is a top-level
+// await, so a real (not just "missing env") Mongo connection failure here would
+// crash the module and, with it, every page whose build-time import graph touches
+// it — see that file's comment for the full explanation.
+let client: MongoClient;
+if (process.env.NEXT_PHASE === "phase-production-build") {
+  client = new MongoClient(getMongooseUri());
+} else {
+  try {
+    client = await connectMongoClient();
+  } catch (err) {
+    console.error(
+      "[auth] Mongo initial connect failed — falling back to lazy client. App will still render (guest) until DB is reachable:",
+      (err as Error).message,
+    );
+    client = new MongoClient(getMongooseUri());
+  }
+}
 const db = client.db();
 
 export const adminAuth = betterAuth({
