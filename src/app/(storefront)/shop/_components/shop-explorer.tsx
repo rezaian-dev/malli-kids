@@ -24,7 +24,7 @@ import { ShopToolbar } from "./shop-toolbar";
 import { ShopResults } from "./shop-results";
 
 const FILTER_ICON_BADGE =
-  "bg-navy text-gold dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl";
+  "bg-navy text-gold-soft dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl";
 const CLEAR_FILTERS_BTN =
   "text-gold hover:bg-gold/10 h-8 rounded-full px-3 text-[11px] font-black";
 

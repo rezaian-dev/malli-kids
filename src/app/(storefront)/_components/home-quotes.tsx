@@ -16,7 +16,7 @@ function Stars({ n }: { n: number }) {
           key={i}
           className={cn(
             "size-3.5",
-            i < n ? "fill-gold text-gold" : "text-ivory/25",
+            i < n ? "fill-gold-light text-gold-light" : "text-ivory/25",
           )}
         />
       ))}

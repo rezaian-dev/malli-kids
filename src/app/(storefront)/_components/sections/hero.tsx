@@ -124,7 +124,7 @@ export function Hero() {
                   )}
                   aria-hidden
                 />
-                <Sparkles className="animate-twinkle text-gold relative h-4 w-4" />
+                <Sparkles className="animate-twinkle text-gold-light relative h-4 w-4" />
                 <span className="relative tracking-wide">مشاهده کالکشن</span>
                 <ArrowLeft className="relative h-5 w-5 transition-transform duration-500 group-hover:-translate-x-2" />
               </Link>
@@ -217,7 +217,7 @@ export function Hero() {
             )}
           >
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <Scissors className="text-gold h-4 w-4 sm:h-5 sm:w-5" />
+              <Scissors className="text-gold-light h-4 w-4 sm:h-5 sm:w-5" />
               <span className="text-xs font-bold sm:text-sm">دوخت اختصاصی</span>
             </div>
             <p className="text-cream/60 mt-1 hidden text-[10px] min-[420px]:block sm:text-[11px]">

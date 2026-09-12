@@ -37,7 +37,7 @@ export function buildCustomerColumns({
               "grid size-10 shrink-0 place-items-center rounded-xl font-black",
               customer.role === "admin"
                 ? "bg-gold text-navy-deep"
-                : "bg-navy text-gold dark:bg-gold/15 dark:text-gold-soft",
+                : "bg-navy text-gold-soft dark:bg-gold/15 dark:text-gold-soft",
             )}
           >
             {customer.role === "admin" ? (

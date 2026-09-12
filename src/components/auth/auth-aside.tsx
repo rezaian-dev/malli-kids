@@ -111,7 +111,7 @@ export function AuthAside() {
               "bg-navy-deep/80 text-ivory ring-gold/40",
             )}
           >
-            <Star className="fill-gold text-gold size-3.5" />
+            <Star className="fill-gold-light text-gold-light size-3.5" />
             <span>
               <span className="text-gold-light font-black">+۱۲٬۰۰۰ مادر</span>{" "}
               همراه ما
