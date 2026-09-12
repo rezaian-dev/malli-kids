@@ -30,7 +30,7 @@ export function FeaturedReview({ review }: { review: AdminReview }) {
         >
           <BadgeCheck className="size-3.5" /> خرید تأییدشده
         </Badge>
-        <ReviewStars n={review.rate} />
+        <ReviewStars n={review.rate} tone="onDark" />
       </div>
       <p className="text-ivory mt-4 text-sm leading-7 font-medium sm:text-[15px]">
         «{review.text}»

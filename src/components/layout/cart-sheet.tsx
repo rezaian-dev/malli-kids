@@ -57,7 +57,7 @@ export function CartSheet() {
             aria-hidden
             className={cn(
               "pointer-events-none absolute -inset-e-1 -top-1 justify-center overflow-hidden rounded-full border-2 p-0 tabular-nums",
-              "border-cream bg-navy text-gold text-[10px] font-black",
+              "border-cream bg-navy text-gold-light text-[10px] font-black",
               "dark:border-navy-deep dark:bg-navy dark:text-gold-light",
               cartCount > 9 ? "h-5 min-w-5 px-1" : "size-5",
               empty && "hidden",

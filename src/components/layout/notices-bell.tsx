@@ -114,7 +114,7 @@ export function NoticesBell() {
           )}
         >
           <p className="m-0 flex items-center gap-2 text-sm font-black text-white">
-            <Bell className="text-gold size-4" /> اعلان‌ها
+            <Bell className="text-gold-soft size-4" /> اعلان‌ها
           </p>
           {unread > 0 ? (
             <Button

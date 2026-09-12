@@ -131,7 +131,7 @@ export function AdminHeaderNotifications({
               <span
                 className={cn(
                   "grid size-7 shrink-0 place-items-center rounded-lg text-[10px] font-black",
-                  "bg-navy text-gold",
+                  "bg-navy text-gold-soft",
                   "dark:bg-gold dark:text-navy-deep",
                 )}
               >

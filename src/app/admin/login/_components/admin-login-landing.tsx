@@ -240,7 +240,7 @@ export function AdminLoginLanding() {
               <span
                 className={cn(
                   "grid size-9 place-items-center rounded-full transition-transform group-hover:-translate-x-1",
-                  "bg-navy-deep text-gold",
+                  "bg-navy-deep text-gold-soft",
                   "dark:bg-navy-deep dark:text-gold-soft",
                 )}
               >
@@ -264,13 +264,15 @@ export function AdminLoginLanding() {
       </main>
 
       <aside className="bg-navy relative hidden min-h-72 overflow-hidden lg:block">
+        {/* 🖼️ Not `preload`/`fetchPriority` — this panel is `hidden` below
+            `lg`, so forcing an eager `<link rel="preload">` for it would sit
+            unused on every narrower viewport (the exact "resource was
+            preloaded but not used" console warning). */}
         <Image
           src="/brand/hero-dress.jpg"
           alt=""
           width={900}
           height={1200}
-          preload
-          fetchPriority="high"
           className="absolute inset-0 size-full object-cover object-[center_15%]"
         />
         <div className="from-navy-deep via-navy-deep/35 absolute inset-0 bg-linear-to-t to-transparent" />

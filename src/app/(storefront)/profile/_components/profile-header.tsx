@@ -136,7 +136,7 @@ export function ProfileHeader({ user }: { user: User }) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-gold text-[10px] font-black tracking-[0.22em]">
+          <p className="text-gold-light text-[10px] font-black tracking-[0.22em]">
             MEMBER
           </p>
           <h1 className="mt-1 text-xl font-black text-white sm:text-3xl">
@@ -144,11 +144,11 @@ export function ProfileHeader({ user }: { user: User }) {
           </h1>
           <div className="mt-2 flex flex-col gap-1 text-xs text-white/75 sm:flex-row sm:gap-4">
             <span className="inline-flex items-center gap-1.5 truncate">
-              <Mail className="text-gold h-3.5 w-3.5" />
+              <Mail className="text-gold-light h-3.5 w-3.5" />
               <span dir="ltr">{user.email}</span>
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Phone className="text-gold h-3.5 w-3.5" />
+              <Phone className="text-gold-light h-3.5 w-3.5" />
               <span dir="ltr">{user.phone?.trim() || "—"}</span>
             </span>
           </div>

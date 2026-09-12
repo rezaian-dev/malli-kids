@@ -13,7 +13,7 @@ export function Marquee() {
       key={i}
       className="text-ivory/85 px-6 text-xs font-bold tracking-wide whitespace-nowrap sm:text-sm"
     >
-      <span className="text-gold ms-1 me-2">✦</span>
+      <span className="text-gold-light ms-1 me-2">✦</span>
       {t}
     </span>
   ));
