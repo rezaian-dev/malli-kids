@@ -12,9 +12,9 @@ export type ProductVariant = {
 /** 🪶 Below this, a variant is flagged "low stock" (but still sellable) —
  *  one shared threshold so "needs attention" means the same thing on the
  *  inventory table as it does on the dashboard's low-stock count. */
-export const LOW_STOCK_THRESHOLD = 3;
+const LOW_STOCK_THRESHOLD = 3;
 
-export function totalVariantStock(variants: ProductVariant[]): number {
+function totalVariantStock(variants: ProductVariant[]): number {
   return variants.reduce((sum, variant) => sum + Math.max(0, variant.stock), 0);
 }
 
@@ -23,7 +23,10 @@ export function totalVariantStock(variants: ProductVariant[]): number {
  *  that boolean gets computed from real variant stock instead of hand-set.
  *  A product with no variants yet (legacy, or deliberately unsized — an
  *  accessory) keeps using its own manually-set boolean untouched. */
-export function deriveStock(variants: ProductVariant[], manualStock: boolean): boolean {
+export function deriveStock(
+  variants: ProductVariant[],
+  manualStock: boolean,
+): boolean {
   if (!variants.length) return manualStock;
   return totalVariantStock(variants) > 0;
 }

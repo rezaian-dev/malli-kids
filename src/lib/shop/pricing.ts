@@ -1,12 +1,15 @@
 /** 💰 The lower-level "apply this percent off" math `resolvePrice` below
  *  builds on. Also used directly wherever only a plain number (no discount
  *  metadata) is needed. */
-export function campaignPrice(
+function campaignPrice(
   price: number,
   campaign: { active: boolean; percent: number },
 ): number {
   return campaign.active
-    ? Math.max(0, Math.round((price * (1 - campaign.percent / 100)) / 1000) * 1000)
+    ? Math.max(
+        0,
+        Math.round((price * (1 - campaign.percent / 100)) / 1000) * 1000,
+      )
     : price;
 }
 

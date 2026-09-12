@@ -80,7 +80,8 @@ export async function createProductAction(
   try {
     await connectMongoose();
     const id = await nextProductId();
-    const slug = parsed.data.slug || (await uniqueProductSlug(parsed.data.name));
+    const slug =
+      parsed.data.slug || (await uniqueProductSlug(parsed.data.name));
     await ProductModel.create({ ...parsed.data, slug, id, rate: 4.8, sold: 0 });
     revalidateCatalog();
     return { ok: true, data: { id } };
@@ -192,7 +193,8 @@ export async function setVariantStockAction(
   size: string,
   stock: number,
 ): Promise<ActionResult> {
-  if (!Number.isInteger(stock) || stock < 0) return { ok: false, error: FALLBACK_ERROR };
+  if (!Number.isInteger(stock) || stock < 0)
+    return { ok: false, error: FALLBACK_ERROR };
 
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
@@ -288,7 +290,9 @@ export async function bulkSetProductFeaturedAction(
   }
 }
 
-export async function bulkRemoveProductsAction(ids: number[]): Promise<ActionResult> {
+export async function bulkRemoveProductsAction(
+  ids: number[],
+): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
   if (!ids.length) return { ok: true };
@@ -309,5 +313,3 @@ export async function bulkRemoveProductsAction(ids: number[]): Promise<ActionRes
     return { ok: false, error: FALLBACK_ERROR };
   }
 }
-
-export type { ProductVariant };

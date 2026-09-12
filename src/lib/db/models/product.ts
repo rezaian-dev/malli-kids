@@ -3,9 +3,7 @@ import { Schema, model, models, type Model } from "mongoose";
 import type { Season } from "@/types";
 import { deriveStock, type ProductVariant } from "@/lib/shop/inventory";
 
-export type { ProductVariant };
-
-export type Gender = "دخترانه" | "پسرانه" | "یونیسکس";
+type Gender = "دخترانه" | "پسرانه" | "یونیسکس";
 
 // 🛍️ The real catalog collection behind every admin product/inventory screen
 // and every storefront listing. `id` is a small public numeric id (not

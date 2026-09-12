@@ -10,7 +10,7 @@ import {
 } from "@/lib/db/models/chat";
 import { faDateTime } from "@/lib/locale/fa";
 
-export type { ChatStatus, ChatSenderRole };
+export type { ChatStatus };
 
 export type ChatConversation = {
   id: string;

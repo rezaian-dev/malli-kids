@@ -28,7 +28,7 @@ const KEYWORD_CATS: Record<string, string> = {
   شلوار: "پسرانه",
 };
 
-export function normalizeShopText(value: string) {
+function normalizeShopText(value: string) {
   return value
     .replace(/[يى]/g, "ی")
     .replace(/ك/g, "ک")
@@ -37,7 +37,7 @@ export function normalizeShopText(value: string) {
     .trim();
 }
 
-export function matchShopCategory(value: string) {
+function matchShopCategory(value: string) {
   const normalized = normalizeShopText(value);
   if (!normalized) return;
   if (normalized in CAT_ALIASES) return CAT_ALIASES[normalized];
@@ -50,7 +50,7 @@ function matchKeywordCategory(value: string) {
   return KEYWORD_CATS[normalized];
 }
 
-export function resolveShopSearchIntent(raw: string): {
+function resolveShopSearchIntent(raw: string): {
   cat?: string;
   season?: string;
   q: string;
@@ -80,7 +80,9 @@ export function resolveShopSearchIntent(raw: string): {
     const typeCat = cats.find(
       (cat): cat is string => !!cat && TYPE_CATS.has(cat),
     );
-    const firstSeason = seasons.find((season): season is string => Boolean(season));
+    const firstSeason = seasons.find((season): season is string =>
+      Boolean(season),
+    );
     const isUnresolvedToken = (index: number) =>
       !cats[index] && !seasons[index] && !keywords[index];
 

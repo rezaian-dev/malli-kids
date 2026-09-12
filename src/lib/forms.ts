@@ -2,9 +2,7 @@ import { z } from "zod";
 import { parseFaNumber, phoneDigits } from "./digits";
 import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
 
-export { parseFaNumber, phoneDigits };
-
-export const RE = {
+const RE = {
   mobile: /^09\d{9}$/,
   email: /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/,
   postalCode: /^\d{10}$/,
@@ -65,44 +63,13 @@ export const postalCode = () =>
 // with `parseFaNumber` at the point of use, e.g. `sizeForHeightCm`) — a
 // child's height in a sane human range, or left blank entirely.
 export const optHeightCm = (min = 40, max = 200) =>
-  optionalPattern((v) => {
-    const n = parseFaNumber(v);
-    return Number.isFinite(n) && n >= min && n <= max;
-  }, fa.range(min, max));
-
-export const amount = (
-  label: string,
-  opts: { min?: number; max?: number } = {},
-) => {
-  const min = opts.min ?? 0;
-  const max = opts.max ?? 500_000_000;
-  return z
-    .string({ error: () => fa.required(label) })
-    .trim()
-    .min(1, fa.required(label))
-    .refine((v) => Number.isFinite(parseFaNumber(v)), fa.number)
-    .refine(
-      (v) => {
-        const n = parseFaNumber(v);
-        return n >= min && n <= max;
-      },
-      fa.range(min, max),
-    );
-};
-
-export const percent = (min = 1, max = 90) =>
-  z
-    .string({ error: () => fa.required("درصد تخفیف") })
-    .trim()
-    .min(1, fa.required("درصد تخفیف"))
-    .refine((v) => Number.isFinite(parseFaNumber(v)), fa.number)
-    .refine(
-      (v) => {
-        const n = parseFaNumber(v);
-        return Number.isInteger(n) && n >= min && n <= max;
-      },
-      fa.range(min, max),
-    );
+  optionalPattern(
+    (v) => {
+      const n = parseFaNumber(v);
+      return Number.isFinite(n) && n >= min && n <= max;
+    },
+    fa.range(min, max),
+  );
 
 export const fullName = (opts: { required?: boolean } = {}) => {
   const required = opts.required ?? true;
@@ -129,12 +96,11 @@ export const otpCode = (len = 5) =>
     .trim()
     .min(1, fa.required("کد تأیید"))
     .refine(
-      (v) =>
-        new RegExp(`^\\d{${len}}$`).test(toEnDigits(v).replace(/\s/g, "")),
+      (v) => new RegExp(`^\\d{${len}}$`).test(toEnDigits(v).replace(/\s/g, "")),
       `کد ${toFaDigits(len)} رقمی را کامل وارد کنید`,
     );
 
-export const password = (min = 6) =>
+const password = (min = 6) =>
   z
     .string({ error: () => fa.required("رمز عبور") })
     .min(min, `رمز باید حداقل ${toFaDigits(min)} نویسه باشد`);
@@ -153,16 +119,6 @@ export const longText = (label: string, min = 10, max = 600) =>
     .min(1, fa.required(label))
     .min(min, `حداقل ${toFaDigits(min)} حرف بنویسید تا مفید باشد`)
     .max(max, fa.max(max, label));
-
-export const list = (label: string, min = 1, max = 20) =>
-  z
-    .array(z.string().trim().min(1))
-    .min(min, `${label} را حداقل یک مورد انتخاب کنید`)
-    .max(max, `حداکثر ${toFaDigits(max)} مورد`);
-
-export const notifySchema = z.object({ email: email("ایمیل") });
-export type NotifyValues = z.infer<typeof notifySchema>;
-export const notifyDefaults: NotifyValues = { email: "" };
 
 export function countErrors(
   errors: Record<string, unknown> | undefined,

@@ -15,7 +15,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-export const ICONS: Record<string, ComponentType<{ className?: string }>> = {
+const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   crown: Crown,
   shirt: Shirt,
   baby: Baby,

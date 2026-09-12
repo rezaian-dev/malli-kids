@@ -5,10 +5,8 @@ import { ComingSoon } from "./_components/try-on-coming-soon";
 
 export const dynamic = "force-static";
 
-// 🚩 Until TRYON_LIVE=true, /tryon renders a chic coming-soon page. The
-// real studio (client JS) is dynamically imported so its bundle never
-// ships on the coming-soon page. Read at build time (force-static) —
-// restart/rebuild after flipping the flag.
+// Coming soon by default; TRYON_LIVE=true enables the studio (dynamically
+// imported so its JS never ships on the placeholder). Build-time flag.
 const LIVE = process.env.TRYON_LIVE === "true";
 
 const Studio = nextDynamic(() =>

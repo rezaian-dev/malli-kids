@@ -28,9 +28,7 @@ const faDateFormatter = new Intl.DateTimeFormat("fa-IR", {
  * swapped); numeric input is routed through `Intl.NumberFormat` so it comes
  * out exactly as fa-IR expects.
  */
-export function toFaDigits(
-  value: string | number | null | undefined,
-): string {
+export function toFaDigits(value: string | number | null | undefined): string {
   if (value == null || value === "") return "";
 
   if (typeof value === "number") return faDigitFormatter.format(value);
@@ -42,9 +40,7 @@ export function toFaDigits(
  * 🔡 Convert Persian (۰-۹) and Arabic-Indic (٠-٩) digits to plain ASCII
  * digits, preserving every non-digit character untouched.
  */
-export function toEnDigits(
-  value: string | number | null | undefined,
-): string {
+export function toEnDigits(value: string | number | null | undefined): string {
   if (value == null || value === "") return "";
 
   return String(value)
@@ -58,18 +54,6 @@ export function toEnDigits(
  */
 export function formatToman(amount: number): string {
   return tomanFormatter.format(Math.round(amount));
-}
-
-/**
- * 🧮 Parse a Persian/Arabic-Indic (or mixed) price string back into a plain
- * number: normalize its digits to ASCII, strip everything that isn't a
- * digit, and return `0` for empty/unparseable input.
- */
-export function parseFaPrice(value: string | null | undefined): number {
-  if (!value) return 0;
-
-  const digitsOnly = toEnDigits(value).replace(/[^\d]/g, "");
-  return digitsOnly ? Number(digitsOnly) : 0;
 }
 
 /**

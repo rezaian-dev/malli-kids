@@ -5,11 +5,8 @@ import { Stagger, StaggerItem } from "@/components/motion/static";
 import { pageSchema } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
-/* ✨ Coming-soon placeholder for /tryon — a pure Server Component (zero
- * client JS: entrance choreography comes from the static Stagger pair and
- * all motion is CSS-only), so this page stays feather-light for
- * Lighthouse. Shown until TRYON_LIVE=true flips the real studio on.
- */
+// Coming-soon placeholder for /tryon. Pure Server Component, CSS-only
+// motion. Shown until TRYON_LIVE=true enables the real studio.
 
 const STEPS = [
   {

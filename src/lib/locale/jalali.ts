@@ -20,7 +20,7 @@ export function jalaliParts(
   return { y, m, d };
 }
 
-export function jalaliToday(): { y: number; m: number; d: number } {
+function jalaliToday(): { y: number; m: number; d: number } {
   try {
     const parts = new Intl.DateTimeFormat("en-u-ca-persian", {
       numberingSystem: "latn",

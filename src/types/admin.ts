@@ -7,7 +7,7 @@ export type OrderStatus =
   "جدید" | "در حال آماده‌سازی" | "ارسال‌شده" | "تحویل‌شده" | "مرجوعی";
 export type PayStatus = "پرداخت‌شده" | "در انتظار" | "ناموفق";
 
-export type AdminOrderItem = {
+type AdminOrderItem = {
   id: number;
   name: string;
   img: string;

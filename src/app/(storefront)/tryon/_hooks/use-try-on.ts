@@ -12,20 +12,16 @@ import { compressToDataUrl } from "@/components/ui/image-upload";
 export type TryOnPhase = "idle" | "running" | "done" | "error";
 export type TryOnCategory = "tops" | "bottoms" | "one-pieces" | "auto";
 
-// 🧪 Ready-made sample models let parents try the studio instantly.
+// Sample models so parents can try instantly.
 export const SAMPLE_MODELS = CORE_PRODUCTS.slice(0, 4).map((p) => p.img);
 
-// ⏱️ The server finishes the whole job in one POST (it polls the AI engine
-// itself, bounded — see `src/app/api/tryon/route.ts`), so the browser needs
-// no polling loop at all: one request, one generous client-side backstop in
-// case the connection itself hangs. 150s > the route's 120s maxDuration.
+// One POST, no client polling: the server runs the bounded engine poll.
+// 150s backstop covers the route's 120s maxDuration plus proxy time.
 const REQUEST_TIMEOUT_MS = 150_000;
 
-/** 👗 Hint the engine about the garment shape from the catalog copy.
- *  Conservative by design: anything ambiguous (sets, layette, …) stays
- *  `auto` and lets the model detect it — a wrong forced category is worse
- *  than no hint. */
-export function garmentCategoryFor(p: Product): TryOnCategory {
+/** Guess the garment category from catalog copy. Ambiguous items stay auto:
+ *  a wrong forced category is worse than no hint. */
+function garmentCategoryFor(p: Product): TryOnCategory {
   const n = p.name;
   if (/سرهمی|توتو/.test(n)) return "one-pieces";
   if (/^ست /.test(n)) return "auto";
@@ -35,33 +31,23 @@ export function garmentCategoryFor(p: Product): TryOnCategory {
   return "auto";
 }
 
-/** 🧠 All state and the AI try-on call behind the studio.
- *
- *  🚫 Deliberately loop-free: `runTryOn` performs exactly ONE `fetch`
- *  guarded by a ref (double clicks / React StrictMode re-invocation can't
- *  start a second job), cancellable via AbortController, and aborted on
- *  unmount. There is no `while`, no `setInterval`, no recursive `setTimeout`
- *  anywhere in this flow — nothing here can spin forever, by construction.
- */
+/** Studio state + the AI call. Loop-free by construction: runTryOn issues
+ *  exactly one fetch, guarded by a ref, cancellable, aborted on unmount. */
 export function useTryOn() {
   const { user, setAuthOpen } = useStore();
-  const [person, setPerson] = useState<string | null>(null); // 🪶 Data URL or catalog path.
+  const [person, setPerson] = useState<string | null>(null); // Data URL or catalog path.
   const [garment, setGarment] = useState(0);
-  // 📏 Default from the shopper's own child profile (Profile → «اطلاعات
-  // کوچولو») when they've set a height, so the suggestion is already
-  // personalized the first time this studio opens.
+  // Prefill from the shopper's child profile when available.
   const [height, setHeight] = useState(() => user?.childHeightCm || "104");
   const [phase, setPhase] = useState<TryOnPhase>("idle");
   const [result, setResult] = useState<string | null>(null);
   const [engine, setEngine] = useState<string | null>(null);
   const [compressing, setCompressing] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  // 🛡️ The in-flight request, if any — the single source of truth for
-  // "am I already running", safe against re-renders and double taps.
+  // In-flight request: the one source of truth for "already running".
   const flightRef = useRef<AbortController | null>(null);
 
-  // 🧹 Leaving the page mid-generation must not leave a dangling request
-  // (or a late `setResult` on an unmounted tree): abort it on unmount.
+  // Abort on unmount: no dangling request, no late setState.
   useEffect(() => {
     return () => {
       flightRef.current?.abort();
@@ -86,9 +72,7 @@ export function useTryOn() {
     if (!file.type.startsWith("image/"))
       return toast.warning("فقط فایل تصویری (JPG/PNG)");
     if (flightRef.current) return;
-    // 🪶 Shrink the photo on-device (Web Worker, off the main thread) so
-    // the upload is ~1MB instead of ~8MB: faster POST, no 413s, and the
-    // engine gets a clean 1024px full-body frame either way.
+    // Shrink on-device first: ~1MB upload, no 413s, clean 1024px frame.
     setCompressing(true);
     try {
       const dataUrl = await compressToDataUrl(file, {
@@ -107,8 +91,7 @@ export function useTryOn() {
   }
 
   function cancel() {
-    // 🧘 No-op unless a job is actually in flight (the button only shows
-    // while running, but a result landing on the same tick must win).
+    // No-op unless a job is in flight.
     if (!flightRef.current) return;
     flightRef.current.abort();
     flightRef.current = null;
@@ -118,16 +101,13 @@ export function useTryOn() {
 
   async function runTryOn() {
     if (!person) return toast.warning("اول یک عکس یا مدل نمونه انتخاب کنید");
-    // 🔐 `/api/tryon` 401s an anonymous caller anyway — catching it here
-    // sends a guest to the real login dialog instead of a raw error toast,
-    // matching `product-buy-panel.tsx`'s `openCheckout` gate.
+    // Guests go to login instead of hitting a raw 401 toast.
     if (!user) {
       setAuthOpen(true);
       toast.warning("برای پرو مجازی اول وارد حساب‌تان شوید");
       return;
     }
-    // 🛡️ Second tap while running (or a StrictMode double-invoke) is a
-    // no-op — one job at a time, always.
+    // One job at a time: second taps are no-ops.
     if (flightRef.current) return;
 
     const ctrl = new AbortController();
@@ -157,9 +137,8 @@ export function useTryOn() {
       setPhase("done");
       toast.success("پرو مجازی آماده شد ✨");
     } catch (e) {
-      // 🧘 Aborts (user cancel / unmount / client timeout) are quiet by
-      // design — `cancel()` already toasted, unmount needs nothing, and a
-      // timeout gets its own clear message below instead of a DOMException.
+      // Aborts stay quiet (cancel/unmount already handled); a real timeout
+      // gets its own message instead of a raw DOMException.
       if (e instanceof DOMException && e.name === "AbortError") {
         if (flightRef.current === ctrl) {
           setPhase("idle");

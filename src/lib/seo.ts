@@ -100,7 +100,7 @@ export function absoluteUrl(path = "/") {
 }
 
 // 🖼️ Keep OG images consistent and explicit.
-export function buildOgImage(
+function buildOgImage(
   image: string = SEO.defaultImage,
   alt: string = SEO.defaultImageAlt,
 ) {
@@ -114,14 +114,12 @@ export function buildOgImage(
         : image.endsWith(".webp")
           ? "image/webp"
           : "image/png",
-    ...(isDefault
-      ? { width: SEO.ogWidth, height: SEO.ogHeight }
-      : {}),
+    ...(isDefault ? { width: SEO.ogWidth, height: SEO.ogHeight } : {}),
   } as const;
 }
 
 // 🛡️ Keep robots rules consistent across public and private pages.
-export function buildRobots(noIndex = false): Metadata["robots"] {
+function buildRobots(noIndex = false): Metadata["robots"] {
   if (noIndex) {
     return {
       index: false,
@@ -382,7 +380,10 @@ export function contactPageSchema() {
 // reviews back it. Google disallows self-serving ratings; an unreviewed
 // product simply gets no `aggregateRating` at all, matching what's visibly
 // on the page.
-export function productSchema(product: Product, reviews: { rate: number }[] = []) {
+export function productSchema(
+  product: Product,
+  reviews: { rate: number }[] = [],
+) {
   const url = absoluteUrl(pdpHref(product.id));
   const aggregateRating = reviews.length
     ? {
@@ -432,7 +433,13 @@ export function productSchema(product: Product, reviews: { rate: number }[] = []
 export function articleSchema(
   article: Pick<
     JournalArticle,
-    "slug" | "title" | "excerpt" | "cover" | "publishedAt" | "updatedAt" | "tags"
+    | "slug"
+    | "title"
+    | "excerpt"
+    | "cover"
+    | "publishedAt"
+    | "updatedAt"
+    | "tags"
   >,
 ) {
   const image = article.cover || SEO.defaultImage;
@@ -468,9 +475,7 @@ export function articleSchema(
 }
 
 function containsBrand(title: string) {
-  return (
-    title.includes(SEO.siteNameFa) || title.includes(SEO.siteNamePlainFa)
-  );
+  return title.includes(SEO.siteNameFa) || title.includes(SEO.siteNamePlainFa);
 }
 
 function toMetadataTitle(

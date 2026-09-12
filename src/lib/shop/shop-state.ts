@@ -132,7 +132,7 @@ export function parseShopState(params: Record<string, SearchValue>): ShopState {
  *  `ShopState` — the shop grid, its mobile/desktop filter chips, and the
  *  server-rendered JSON-LD `ItemList` all call this so the structured data
  *  search engines read never disagrees with what shoppers actually see. */
-export function matchesShopState(product: Product, state: ShopState) {
+function matchesShopState(product: Product, state: ShopState) {
   if (state.cat !== "همه" && product.cat !== state.cat) return false;
   if (state.season !== "همه" && product.season !== state.season) return false;
   if (state.stock && !product.stock) return false;

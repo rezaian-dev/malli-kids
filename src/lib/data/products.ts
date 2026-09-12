@@ -1,6 +1,9 @@
 import type { Product } from "@/types";
 
-const BASE: Omit<Product, "id" | "images" | "variants" | "visible" | "featured">[] = [
+const BASE: Omit<
+  Product,
+  "id" | "images" | "variants" | "visible" | "featured"
+>[] = [
   {
     img: "/brand/look-party.jpg",
     name: "پیراهن مجلسی الماسِ طلایی",
@@ -135,8 +138,9 @@ const PRODUCT_SLUGS = [
 /** 🪶 Cosmetic only — `parseProductRouteId` resolves the real product from
  *  the leading number in the URL, so a wrapped/reused word here can never
  *  cause two products to collide on the same route. */
-export function productSlug(id: number) {
-  const i = ((id % PRODUCT_SLUGS.length) + PRODUCT_SLUGS.length) % PRODUCT_SLUGS.length;
+function productSlug(id: number) {
+  const i =
+    ((id % PRODUCT_SLUGS.length) + PRODUCT_SLUGS.length) % PRODUCT_SLUGS.length;
   return PRODUCT_SLUGS[i];
 }
 

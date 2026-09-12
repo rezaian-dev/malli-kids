@@ -2,7 +2,7 @@ import { Schema, model, models, type Model } from "mongoose";
 
 import { connectMongoose } from "../mongoose";
 
-export type CounterDoc = {
+type CounterDoc = {
   _id: string;
   seq: number;
 };
@@ -15,7 +15,7 @@ const counterSchema = new Schema<CounterDoc>(
   { collection: "counters", versionKey: false },
 );
 
-export const CounterModel: Model<CounterDoc> =
+const CounterModel: Model<CounterDoc> =
   models.Counter ?? model<CounterDoc>("Counter", counterSchema);
 
 /** 🔢 Atomic serial allocator — `$inc` is single-document-atomic in

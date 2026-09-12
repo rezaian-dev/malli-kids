@@ -11,15 +11,10 @@ const AUTH_ERROR = "برای این کار باید وارد حساب‌تان �
 const RATE_ERROR =
   "تعداد درخواست‌های پرو مجازی شما زیاد بوده؛ کمی بعد دوباره تلاش کنید.";
 
-// 🔐 Every provider here costs real money or a shared free quota per call —
-// require a real session (never trust a client-claimed id) and throttle it,
-// instead of leaving the route open to anyone on the internet.
+// Paid or shared-quota engines: require a real session, then throttle it.
 async function requireUserId(req: NextRequest) {
   try {
-    // 🚫 A banned user's session throws (Better Auth's `admin()` plugin
-    // hooks `/get-session` to reject it) rather than resolving to "no
-    // session" — caught here so they get the same 401 as any signed-out
-    // caller instead of this route 500ing on them.
+    // A banned session throws instead of resolving empty: same 401 as guests.
     const session = await auth.api.getSession({ headers: req.headers });
     return session?.user.id ?? null;
   } catch {
@@ -27,23 +22,10 @@ async function requireUserId(req: NextRequest) {
   }
 }
 
-/* ─── Engine selection ────────────────────────────────────────────
- * 🥇 `fal` (default when FAL_KEY exists): FASHN TryOn v1.6 served on fal's
- * infrastructure — the best-tested virtual try-on in 2026 benchmarks for
- * catalog work (garment text/patterns stay sharp, 864×1296). ~$0.075/img.
- * 🥈 `fashn`: the same v1.6 model via FASHN's own API. Same quality and
- * price, needs FASHN_API_KEY instead.
- * 🥉 `huggingface`: free demo chain — needs NO key at all. IDM-VTON
- * runs first; if it is busy/down, OOTDiffusion is tried automatically.
- * Both are shared public ZeroGPU demos (queues + cold starts make them
- * slower than paid, and occasionally unavailable), so this is only used
- * when no paid key is configured. (Kolors was dropped from the chain —
- * its Space disabled API access: `api_name=False, api_open=False`.)
- *
- * Resolution: an explicit TRYON_PROVIDER wins; otherwise the best engine
- * whose key is present is picked automatically, so setting FAL_KEY alone
- * is enough to get the reliable engine.
- */
+// Engine priority: explicit TRYON_PROVIDER wins; otherwise the best engine
+// with a key (fal > fashn), else the free no-key chain (IDM-VTON, then
+// OOTDiffusion on failure). Paid: FASHN v1.6, ~$0.075/img. Free: shared
+// ZeroGPU demos — slower, sometimes busy.
 type Provider = "fal" | "fashn" | "huggingface";
 
 function resolveProvider(): Provider {
@@ -55,17 +37,14 @@ function resolveProvider(): Provider {
   return "huggingface";
 }
 
-// ⚠️ Boot-time hint (runs once per server start, not per request): Next
-// loads `.env.local` only at boot, so a key added while `next dev` is
-// already running stays invisible until restart — the single most common
-// "it 502s even though my key is valid" cause.
+// Boot-time hint: .env.local loads once at boot; restart after adding keys.
 if (
   !process.env.FAL_KEY &&
   !process.env.FASHN_API_KEY &&
   (process.env.TRYON_PROVIDER || "").trim().toLowerCase() !== "huggingface"
 ) {
   console.warn(
-    "[tryon] no FAL_KEY/FASHN_API_KEY at boot — falling back to the free Hugging Face demo (unstable). Put FAL_KEY in .env.local and restart the server for reliable try-on.",
+    "[tryon] no FAL_KEY/FASHN_API_KEY at boot — using the free Hugging Face chain (shared queues, may be slow). Put FAL_KEY in .env.local and restart the server for reliable try-on.",
   );
 }
 
@@ -77,11 +56,7 @@ async function toBytes(img: string, origin: string): Promise<Img> {
     const mime = head.slice(5, head.indexOf(";")) || "image/jpeg";
     return { buf: Buffer.from(b64 ?? "", "base64"), mime };
   }
-  // 🔒 SSRF guard: never fetch a client-supplied absolute URL — only this
-  // app's own static assets (e.g. a catalog product image path), resolved
-  // against *this request's* origin. Without the origin check, something
-  // like `"//internal-host/x"` would resolve away from `origin` and still
-  // get fetched.
+  // SSRF guard: same-origin assets only, resolved against this request.
   const url = new URL(img, origin);
   if (url.origin !== origin) {
     throw new Error("فقط تصاویر آپلودی یا محصولات همین سایت مجاز است.");
@@ -107,15 +82,8 @@ function timeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/* ─── Result proxy ────────────────────────────────────────────────
- * The engines return expiring CDN URLs (fal.media / cdn.fashn.ai / hf.space).
- * Downloading the bytes here and answering with a `data:` URI keeps the
- * response self-contained (no dead link if the CDN purges it), keeps the
- * CSP `img-src` strict (no third-party image hosts needed), and lets the
- * client `<img>` + download button work without any CORS/CSP exception.
- * If the download itself fails, the remote URL is returned as a fallback
- * (the CSP in `next.config.ts` allow-lists these hosts for that case).
- */
+// Proxy engine CDN URLs to data URIs (self-contained response, strict CSP);
+// falls back to the remote URL when the download fails.
 const PROXY_MAX_BYTES = 6_000_000;
 
 async function proxyToDataUri(url: string): Promise<string | null> {
@@ -138,29 +106,17 @@ async function proxyToDataUri(url: string): Promise<string | null> {
   }
 }
 
-/* 🥇 ─── fal.ai — FASHN TryOn v1.6 (primary, best-tested) ───
- *
- * Why polling manually instead of `fal.subscribe()`? `subscribe` hides its
- * retry loop inside the client (no documented attempt cap — exactly the
- * "infinite loop trap" this route must avoid). `queue.submit` + a bounded
- * `for` loop below is provably finite: MAX_POLLS × POLL_EVERY_MS ≈ 80s,
- * each status read guarded by its own timeout, then one hard failure.
- */
+// fal.ai, FASHN TryOn v1.6 (primary). Manual bounded polling instead of
+// fal.subscribe(): the client loop has no documented cap; this one ends
+// after FAL_MAX_POLLS x FAL_POLL_EVERY_MS (~80s) no matter what.
 const FAL_MODEL = "fal-ai/fashn/tryon/v1.6";
 const FAL_MAX_POLLS = 40;
 const FAL_POLL_EVERY_MS = 2_000;
 
 export type FalGarmentCategory = "tops" | "bottoms" | "one-pieces" | "auto";
 
-/* ─── fal diagnostics ───────────────────────────────────────────
- * `@fal-ai/client` throws `ApiError { status, body, message }` for HTTP
- * failures (see its `response.js`): 401/402/403 fail immediately, while
- * 429/5xx + network errors are retried 3× inside the client before
- * surfacing. Mapping the status to a precise Persian line tells the
- * shopper exactly what to do; the raw wire detail still lands in the
- * server terminal for the developer. Already-curated Persian messages
- * (our own timeout/poll guards) pass through untouched.
- */
+// Map fal ApiError { status, body, message } to actionable Persian errors.
+// Wire detail goes to the server log; our own guard messages pass through.
 function mapFalError(e: unknown): Error {
   const status =
     typeof (e as { status?: unknown })?.status === "number"
@@ -182,10 +138,7 @@ function mapFalError(e: unknown): Error {
     message: raw.slice(0, 300),
     body: body === undefined ? undefined : bodyText.slice(0, 500),
   });
-  // 💳 Billing signals hide in EITHER the message or the body: fal answers
-  // an exhausted balance with `403 Forbidden` + `{"detail":"...Exhausted
-  // balance..."}`, so both are scanned — otherwise this would misreport as
-  // a key/region problem instead of "top up your balance".
+  // Exhausted balance arrives as 403 + detail in the body: scan both.
   const billing = /balance|credit|payment|insufficient|top ?up/i.test(
     `${raw} ${bodyText}`,
   );
@@ -214,7 +167,7 @@ function mapFalError(e: unknown): Error {
   return new Error("موتور پرو مجازی خطا داد؛ چند لحظه بعد دوباره تلاش کنید.");
 }
 
-/** 🛡️ One guarded fal call: bounded by `timeout`, wire errors mapped. */
+/** One fal call: bounded by timeout, wire errors mapped. */
 async function falCall<T>(
   p: Promise<T>,
   ms: number,
@@ -244,8 +197,7 @@ async function tryonFal(
         category,
         mode: "balanced",
         garment_photo_type: "auto",
-        // 🛡️ Conservative on purpose: this is a *kids* boutique — also
-        // block underwear/swimwear renders, not just explicit content.
+        // Kids boutique: also blocks underwear/swimwear renders.
         moderation_level: "conservative",
         num_samples: 1,
         segmentation_free: true,
@@ -258,8 +210,7 @@ async function tryonFal(
   if (typeof request_id !== "string" || !request_id)
     throw new Error("موتور پرو مجازی پاسخ معتبری نداد.");
 
-  // 🔁 Bounded by construction: a `for` loop with a constant cap can never
-  // spin forever, whatever the queue answers.
+  // Fixed cap: cannot spin forever regardless of queue answers.
   for (let i = 0; i < FAL_MAX_POLLS; i++) {
     await sleep(FAL_POLL_EVERY_MS);
     const status = await falCall(
@@ -267,10 +218,7 @@ async function tryonFal(
       15_000,
       "بررسی وضعیت موتور پرو",
     );
-    // 🛡️ Compared as a plain string: the client's types only know
-    // IN_QUEUE/IN_PROGRESS/COMPLETED, but the wire can grow new terminal
-    // states — anything that isn't "keep waiting" or "done" must fail loud,
-    // never loop.
+    // String compare: unknown wire states fail loud instead of looping.
     const state = status.status as string;
     if (state === "COMPLETED") break;
     if (state !== "IN_QUEUE" && state !== "IN_PROGRESS") {
@@ -292,10 +240,7 @@ async function tryonFal(
   return url;
 }
 
-/* 🥈 ─── FASHN direct API (same v1.6 model, own infrastructure) ───
- * Same bounded-polling contract as the fal path above: polled here on the
- * server (never by the browser), with a constant attempt cap.
- */
+// FASHN direct API (same v1.6 model). Same bounded server-side polling.
 const FASHN_URL = "https://api.fashn.ai/v1";
 const FASHN_MAX_POLLS = 40;
 const FASHN_POLL_EVERY_MS = 2_000;
@@ -359,25 +304,9 @@ async function tryonFashnDirect(
   throw new Error("پردازش طولانی شد؛ لطفاً دوباره تلاش کنید.");
 }
 
-/* 🥉 ─── Free: Hugging Face demo chain (no key, best-effort) ───
- * Two verified public demos, tried in order with per-attempt timeouts
- * (67s + 72s worst case — still inside the client's 150s budget):
- *
- * 1. IDM-VTON (`yisol/IDM-VTON`, ZeroGPU): `start_tryon` at `/tryon`
- *    takes [ImageEditor{human photo + auto-mask}, garment, description,
- *    auto_mask, auto_crop, denoise_steps, seed] and returns
- *    [tryon_image, mask_image]. First because it handles ANY garment
- *    category and needs no manual mask.
- * 2. OOTDiffusion (`levihsu/OOTDiffusion`, ZeroGPU): full-body
- *    `/process_dc` takes [model, garment, category, n_samples, n_steps,
- *    image_scale, seed] and returns a Gallery. Independent deployment,
- *    so its outages don't correlate with IDM-VTON's.
- *
- * Both contracts were read from the Spaces' own source (`app.py` /
- * `run/gradio_ootd.py`) plus OOTD's live `/gradio_api/info` — never
- * guessed. An optional free HF_TOKEN (no card) raises the shared
- * ZeroGPU quota for both.
- */
+// Free chain, no key: IDM-VTON first (any category, auto-mask), then
+// OOTDiffusion (independent deployment). Contracts verified against the
+// Spaces' own source. Worst case ~139s, inside the client 150s budget.
 const IDM_SPACE = "yisol/IDM-VTON";
 const OOTD_SPACE = "levihsu/OOTDiffusion";
 const HF_CONNECT_MS = 12_000;
@@ -392,8 +321,7 @@ const IDM_GARMENT_HINT: Record<FalGarmentCategory, string> = {
   auto: "clothes",
 };
 
-// OOTD's full-body model REQUIRES the right category ("must be paired!!!"
-// per its own UI) — `auto` falls back to the most common catalog case.
+// OOTD requires the exact category; auto falls back to the common case.
 const OOTD_CATEGORY: Record<
   FalGarmentCategory,
   "Upper-body" | "Lower-body" | "Dress"
@@ -433,9 +361,7 @@ async function tryonIdmVton(
     HF_CONNECT_MS,
     "اتصال به IDM-VTON",
   );
-  // 🖌️ ImageEditor payload: the human photo as `background`, zero manual
-  // mask layers — the Space's own examples use this shape, and `auto_mask`
-  // below generates the mask from the photo in ~5s.
+  // Human photo as background, no manual mask (auto-mask runs in ~5s).
   const editor = {
     background: new Blob([new Uint8Array(person.buf)], { type: person.mime }),
     layers: [],
@@ -446,9 +372,9 @@ async function tryonIdmVton(
       editor,
       blobOf(garment),
       IDM_GARMENT_HINT[category],
-      true, // auto-mask — no manual mask needed
-      false, // auto-crop off — the client already sends 1024px
-      30, // the Space's default denoise steps
+      true, // auto-mask
+      false, // no auto-crop (client already sends 1024px)
+      30, // default denoise steps
       42,
     ]),
     IDM_PREDICT_MS,
@@ -475,10 +401,10 @@ async function tryonOotd(
       blobOf(person),
       blobOf(garment),
       OOTD_CATEGORY[category],
-      1, // n_samples — the Space's default
-      20, // n_steps — the Space's default (faster than 40, same UI default)
-      2.0, // image_scale — the Space's default
-      -1, // seed — the Space's default (random)
+      1, // n_samples
+      20, // n_steps (Space default)
+      2.0, // image_scale
+      -1, // random seed
     ]),
     OOTD_PREDICT_MS,
     "پردازش OOTDiffusion",
@@ -488,10 +414,7 @@ async function tryonOotd(
   return url;
 }
 
-/* 🔗 The failover itself: a fixed 2-step `for` loop (provably finite —
- * each step either returns or appends one failure and moves on), with a
- * per-engine line in the server log so a dead demo is diagnosable.
- */
+// Fixed 2-step failover: each engine returns or logs one failure line.
 async function tryonFreeChain(
   person: Img,
   garment: Img,
@@ -524,10 +447,11 @@ async function tryonFreeChain(
   throw new Error("free-chain-exhausted");
 }
 
+// Nominal label for the free chain; tryonFreeChain reports the real engine.
 const ENGINE_LABEL: Record<Provider, string> = {
   fal: "FASHN v1.6",
   fashn: "FASHN v1.6",
-  huggingface: "Kolors",
+  huggingface: "IDM-VTON",
 };
 
 function parseCategory(raw: unknown): FalGarmentCategory {
@@ -540,7 +464,7 @@ export async function POST(req: NextRequest) {
   const userId = await requireUserId(req);
   if (!userId) return NextResponse.json({ error: AUTH_ERROR }, { status: 401 });
 
-  // 🚦 Real money/quota per call — 5 per hour per signed-in user.
+  // Paid/quota engines: 5 calls per hour per user.
   const limited = rateLimit(`tryon:${userId}`, {
     windowMs: 60 * 60 * 1000,
     max: 5,
@@ -600,9 +524,7 @@ export async function POST(req: NextRequest) {
       engine = free.engine;
     }
 
-    // 🖼️ One response shape for every engine: the finished image, inlined
-    // when possible. The browser never polls — a single POST in, a single
-    // image out — so no client loop can ever run away.
+    // Single POST in, single image out: the browser never polls.
     const image = (await proxyToDataUri(url)) ?? url;
     return NextResponse.json({
       status: "completed" as const,
@@ -611,10 +533,9 @@ export async function POST(req: NextRequest) {
     });
   } catch (e) {
     const raw = (e as Error).message || "";
-    // 💬 Both free demos are shared public quotas — busy/offline happens.
-    // Never leak the internal sentinel or wire detail to the shopper.
+    // Shared free quotas fail often; never leak internals to the shopper.
     const friendly =
-      provider === "huggingface" && raw !== "FAL_KEY تنظیم نشده است."
+      provider === "huggingface"
         ? "هر دو سرویس رایگانِ پرو مجازی الان شلوغ یا در دسترس نیستند. چند دقیقه بعد دوباره امتحان کنید؛ برای نتیجهٔ پایدار، مدیر سایت حالت حرفه‌ای (FAL_KEY) را فعال کند."
         : raw || "پرو مجازی ناموفق بود.";
     const status =

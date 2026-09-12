@@ -1,14 +1,11 @@
 // 🛍️ Storefront catalog domain model. Shared across product cards, PDP, shop,
 // admin catalog and the data seed.
+import type { ProductVariant } from "@/lib/shop/inventory";
 
 export type Season = "بهاره" | "تابستانه" | "پاییزه" | "زمستانه";
-export type Gender = "دخترانه" | "پسرانه" | "یونیسکس";
+type Gender = "دخترانه" | "پسرانه" | "یونیسکس";
 
-export type ProductVariant = {
-  size: string;
-  color?: string;
-  stock: number;
-};
+export type { ProductVariant };
 
 export type Product = {
   id: number;

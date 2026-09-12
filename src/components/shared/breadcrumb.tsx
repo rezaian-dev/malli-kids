@@ -4,19 +4,9 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { breadcrumbSchema } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
-/* 🧭 The site's shared breadcrumb — one component, three jobs:
- *  1. Visual: a jewel-box pill (gradient gold hairline, frosted glass,
- *     diamond separators that twirl on hover, cascading entrance).
- *  2. SEO: auto-emits the BreadcrumbList JSON-LD from the same items, so
- *     pages never hand-roll the schema again (`schema={false}` opts out
- *     when the server already emitted it, e.g. /shop).
- *  3. A11y: `nav` + `ol` + `aria-current`, RTL-native, CSS-only motion
- *     (respects prefers-reduced-motion via the theme override).
- *
- * The last item always renders as the current page; any earlier item
- * with a `path` renders as a link. Schema is emitted only when every
- * item carries a path.
- */
+// Shared breadcrumb: jewel-box pill visuals, auto BreadcrumbList JSON-LD,
+// nav/ol/a11y semantics. Last item renders as current; schema needs paths
+// on every item (schema={false} when the server already emitted it).
 
 export type CrumbItem = { name: string; path?: string };
 

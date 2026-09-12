@@ -50,4 +50,3 @@ export const productSchema = z.object({
 });
 
 export type ProductValues = z.infer<typeof productSchema>;
-export type ProductVariantValues = z.infer<typeof productVariantSchema>;

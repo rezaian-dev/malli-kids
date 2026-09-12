@@ -4,17 +4,9 @@ import { CORE_PRODUCTS } from "@/lib/data/products";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { swatchClass } from "../_lib/swatch";
 
-function swatchClass(active: boolean) {
-  return cn(
-    "overflow-hidden rounded-xl border-2 transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95",
-    active
-      ? "border-gold motion-safe:hover:shadow-md motion-safe:hover:shadow-gold/30"
-      : "hover:border-gold/40 border-transparent",
-  );
-}
-
-/** 👕 Garment picker + height input + suggested size. */
+/** Garment picker, height input and suggested size. */
 export function TryOnControls({
   garment,
   onGarmentChange,
@@ -48,7 +40,6 @@ export function TryOnControls({
             aria-pressed={garment === i}
             className={swatchClass(garment === i)}
           >
-            {}
             <Image
               src={p.img}
               alt={p.name}

@@ -10,7 +10,6 @@ import {
   useSpring,
   useTransform,
   type Easing,
-  type Variants,
 } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -23,19 +22,6 @@ export const EASE_OUT: Easing = [0.22, 1, 0.32, 1];
 // server module with zero JS, so pages that only wrap sections in them pay
 // no hydration cost for `motion/react`. Only genuinely interactive springs
 // stay in this client module.
-// 🎼 آبشاری (stagger): پدر با `Stagger` و هر فرزند با `StaggerItem` بسته می‌شود.
-export const staggerContainer: Variants = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.08, delayChildren: 0.06 },
-  },
-};
-
-export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } },
-};
-
 /** ♿ Provider سراسری: همه انیمیشن‌های motion به prefers-reduced-motion
  *  کاربر احترام می‌گذارند. چون layout ریشه سمت سرور است، MotionConfig
  *  باید داخل یک کلاینت‌کامپوننت قرار بگیرد. */
