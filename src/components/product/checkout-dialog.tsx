@@ -11,6 +11,7 @@ import { useStore } from "@/providers/store-provider";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
 import { createOrderAction } from "@/lib/shop/checkout-actions";
 import { useCheckoutDeliveryForm } from "@/hooks/use-checkout-delivery-form";
+import { DeliveryFields } from "./checkout-delivery-fields";
 import { cn } from "@/lib/utils";
 
 // 🧾 The one single-item "buy now" checkout — opened from the product page's
@@ -53,6 +54,7 @@ export function CheckoutDialog({
     startTransition,
     idempotencyKey,
     discount,
+    errors,
     applyCoupon,
     validateDelivery,
     deliveryPayload,
@@ -67,8 +69,7 @@ export function CheckoutDialog({
 
   function submitOrder() {
     if (!user) return;
-    const error = validateDelivery();
-    if (error) return showToast(error);
+    if (!validateDelivery()) return;
 
     startTransition(async () => {
       const result = await createOrderAction({
@@ -162,51 +163,31 @@ export function CheckoutDialog({
             instead of four unrelated fields. */}
         <form
           className="space-y-2.5"
+          // ♿ The `required`/`aria-required` on each field is for assistive
+          // tech, not the browser's own popup — this form shows its own
+          // inline Persian error per field (see `DeliveryFields`), same as
+          // every other form in the app (`AppForm` sets the same
+          // `noValidate`). Without it, an empty required field never even
+          // reaches `submitOrder` below: the browser's native constraint
+          // validation intercepts the click first and shows its own
+          // (English, untranslated) "Please fill out this field" bubble
+          // instead.
+          noValidate
           onSubmit={(e) => {
             e.preventDefault();
             submitOrder();
           }}
         >
-          <Input
-            dir="ltr"
-            name="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="0912…"
-            inputMode="tel"
-            autoComplete="tel-national"
-            className="h-11 rounded-xl text-right"
-            aria-label="موبایل"
-          />
-          <Input
-            name="address-level2"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="شهر"
-            autoComplete="address-level2"
-            className="h-11 rounded-xl"
-            aria-label="شهر"
-          />
-          <Input
-            name="street-address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="آدرس کامل"
-            autoComplete="street-address"
-            className="h-11 rounded-xl"
-            aria-label="آدرس"
-          />
-          <Input
-            dir="ltr"
-            name="postal-code"
-            value={postal}
-            onChange={(e) => setPostal(e.target.value)}
-            placeholder="کد پستی (۱۰ رقم)"
-            inputMode="numeric"
-            autoComplete="postal-code"
-            maxLength={10}
-            className="h-11 rounded-xl text-right"
-            aria-label="کد پستی"
+          <DeliveryFields
+            phone={phone}
+            setPhone={setPhone}
+            city={city}
+            setCity={setCity}
+            address={address}
+            setAddress={setAddress}
+            postal={postal}
+            setPostal={setPostal}
+            errors={errors}
           />
           <div className="flex gap-2">
             <Input

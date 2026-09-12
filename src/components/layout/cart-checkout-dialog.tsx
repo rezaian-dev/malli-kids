@@ -11,6 +11,7 @@ import { useStore } from "@/providers/store-provider";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
 import { createCartOrderAction } from "@/lib/shop/checkout-actions";
 import { useCheckoutDeliveryForm } from "@/hooks/use-checkout-delivery-form";
+import { DeliveryFields } from "@/components/product";
 import { cn } from "@/lib/utils";
 
 export type CartCheckoutRow = {
@@ -59,6 +60,7 @@ export function CartCheckoutDialog({
     startTransition,
     idempotencyKey,
     discount,
+    errors,
     applyCoupon,
     validateDelivery,
     deliveryPayload,
@@ -70,8 +72,7 @@ export function CartCheckoutDialog({
 
   function submitOrder() {
     if (!user || rows.length === 0) return;
-    const error = validateDelivery();
-    if (error) return showToast(error);
+    if (!validateDelivery()) return;
 
     startTransition(async () => {
       const result = await createCartOrderAction({
@@ -171,51 +172,25 @@ export function CartCheckoutDialog({
 
           <form
             className="space-y-2.5"
+            // ♿ Same reasoning as `CheckoutDialog` — `noValidate` so the
+            // browser's own untranslated constraint-validation bubble never
+            // pre-empts this form's inline Persian field errors.
+            noValidate
             onSubmit={(e) => {
               e.preventDefault();
               submitOrder();
             }}
           >
-            <Input
-              dir="ltr"
-              name="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="0912…"
-              inputMode="tel"
-              autoComplete="tel-national"
-              className="h-11 rounded-xl text-right"
-              aria-label="موبایل"
-            />
-            <Input
-              name="address-level2"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="شهر"
-              autoComplete="address-level2"
-              className="h-11 rounded-xl"
-              aria-label="شهر"
-            />
-            <Input
-              name="street-address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="آدرس کامل"
-              autoComplete="street-address"
-              className="h-11 rounded-xl"
-              aria-label="آدرس"
-            />
-            <Input
-              dir="ltr"
-              name="postal-code"
-              value={postal}
-              onChange={(e) => setPostal(e.target.value)}
-              placeholder="کد پستی (۱۰ رقم)"
-              inputMode="numeric"
-              autoComplete="postal-code"
-              maxLength={10}
-              className="h-11 rounded-xl text-right"
-              aria-label="کد پستی"
+            <DeliveryFields
+              phone={phone}
+              setPhone={setPhone}
+              city={city}
+              setCity={setCity}
+              address={address}
+              setAddress={setAddress}
+              postal={postal}
+              setPostal={setPostal}
+              errors={errors}
             />
             <div className="flex gap-2">
               <Input
