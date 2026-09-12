@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +16,8 @@ import { LoginPanel } from "./auth-login-panel";
 import { RegisterPanel } from "./auth-register-panel";
 import { ForgotPasswordPanel } from "./auth-forgot-password-panel";
 
-const TAB_TRIGGER = "min-w-0 rounded-xl py-2.5 text-[13px] font-extrabold transition-colors text-navy/70 hover:text-navy dark:text-linen/70 dark:hover:text-ivory data-[state=active]:bg-navy data-[state=active]:text-ivory data-[state=active]:shadow-sm dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep dark:data-[state=active]:shadow-[0_2px_10px_-2px] dark:data-[state=active]:shadow-gold/50";
+const TAB_TRIGGER =
+  "min-w-0 rounded-xl py-2.5 text-[13px] font-extrabold transition-colors text-navy/70 hover:text-navy dark:text-linen/70 dark:hover:text-ivory data-[state=active]:bg-navy data-[state=active]:text-ivory data-[state=active]:shadow-sm dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep dark:data-[state=active]:shadow-[0_2px_10px_-2px] dark:data-[state=active]:shadow-gold/50";
 
 const TITLES = {
   login: "ورود به حساب",
@@ -29,6 +31,9 @@ type View = keyof typeof TITLES;
 export function AuthModal() {
   const { authOpen, setAuthOpen } = useAuth();
   const [view, setView] = useState<View>("login");
+  useEffect(() => {
+    if (!authOpen) setView("login");
+  }, [authOpen]);
 
   function onOpenChange(next: boolean) {
     setAuthOpen(next);
@@ -40,19 +45,16 @@ export function AuthModal() {
       <DialogContent
         dir="rtl"
         showCloseButton={false}
-        className="z-100 block max-h-[94dvh] w-[calc(100%-1.5rem)] max-w-104 gap-0 overflow-x-hidden overflow-y-auto overscroll-contain p-0 sm:max-w-104 bg-paper text-navy rounded-[28px] ring-0 border-gold/35 border shadow-[0_28px_80px_-20px_rgba(4,20,39,.55)] dark:border-gold/40 dark:bg-dusk dark:text-ivory lg:flex lg:max-w-216 lg:flex-row-reverse"
+        className="bg-paper text-navy border-gold/35 dark:border-gold/40 dark:bg-dusk dark:text-ivory z-100 block max-h-[calc(100dvh-1.5rem)] w-[calc(100%-1.5rem)] max-w-104 gap-0 overflow-hidden rounded-[28px] border p-0 shadow-[0_28px_80px_-20px_rgba(4,20,39,.55)] ring-0 sm:max-w-104 lg:flex lg:max-w-216 lg:flex-row-reverse"
       >
-        {}
-        <DialogClose
-          className="absolute inset-s-4 top-4 z-20 inline-flex size-9 items-center justify-center rounded-full text-navy/70 hover:bg-sand hover:text-navy transition-colors focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none dark:text-ivory/70 dark:hover:bg-dusk-mid dark:hover:text-ivory"
-        >
+        <DialogClose className="text-navy/70 hover:bg-sand hover:text-navy focus-visible:ring-gold dark:text-ivory/70 dark:hover:bg-dusk-mid dark:hover:text-ivory absolute inset-s-4 top-4 z-20 inline-flex size-9 items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none">
           <X className="size-5" />
           <span className="sr-only">بستن</span>
         </DialogClose>
 
         <AuthAside />
 
-        <div className="bg-paper dark:bg-dusk flex max-h-[94dvh] min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-5 pt-14 sm:p-7 sm:pt-14">
+        <div className="bg-paper dark:bg-dusk flex max-h-[calc(100dvh-1.5rem)] min-h-0 min-w-0 flex-1 flex-col overflow-hidden p-5 pt-14 sm:p-7 sm:pt-14">
           <div className="mb-4 shrink-0">
             <p className="text-gold text-[11px] font-black tracking-[0.2em]">
               MALLI KIDS
@@ -60,10 +62,13 @@ export function AuthModal() {
             <DialogTitle className="mt-1 text-lg font-black">
               {TITLES[view]}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              ورود، ساخت حساب یا بازیابی رمز با شمارهٔ موبایل تأییدشده.
+            </DialogDescription>
           </div>
 
           {view === "forgot" ? (
-            <div className="auth-fields -mx-2 min-h-0 flex-1 scrollbar-thin overflow-x-clip overflow-y-auto overscroll-contain px-2">
+            <div className="auth-fields -mx-4 min-h-0 flex-1 scrollbar-thin [scrollbar-gutter:stable] overflow-x-hidden overflow-y-auto overscroll-contain px-4 pt-2 pb-4">
               <ForgotPasswordPanel onBack={() => setView("login")} />
             </div>
           ) : (
@@ -82,7 +87,7 @@ export function AuthModal() {
                 </TabsTrigger>
               </TabsList>
 
-              <div className="auth-fields -mx-2 min-h-0 flex-1 scrollbar-thin overflow-x-clip overflow-y-auto overscroll-contain px-2">
+              <div className="auth-fields -mx-4 min-h-0 flex-1 scrollbar-thin [scrollbar-gutter:stable] overflow-x-hidden overflow-y-auto overscroll-contain px-4 pt-2 pb-4">
                 <TabsContent value="login" className="mt-5">
                   <LoginPanel onForgot={() => setView("forgot")} />
                 </TabsContent>

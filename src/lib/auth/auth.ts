@@ -1,6 +1,6 @@
 import "server-only";
 import { MongoClient } from "mongodb";
-import { betterAuth } from "better-auth";
+import { APIError, betterAuth } from "better-auth";
 import { admin, phoneNumber } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
@@ -8,7 +8,9 @@ import { connectMongoClient } from "@/lib/db/mongo-client";
 import { getMongooseUri } from "@/lib/db/shared";
 import { authSecondaryStorage, redis } from "@/lib/redis";
 import { sendOTP } from "@/lib/sms";
-import { OTP_LEN } from "./schemas";
+import { OTP_EXPIRES_IN, OTP_LEN } from "./schemas";
+import { createPhonePolicy } from "./phone-policy";
+import { cached } from "@/lib/db/shared";
 
 // ⚙️ No native client passed → transactions stay disabled (required for a non-replica-set Mongo).
 //
@@ -40,6 +42,22 @@ if (process.env.NEXT_PHASE === "phase-production-build") {
 }
 const db = client.db();
 
+// A partial unique index permits legacy users with no phone, while preventing
+// two concurrent signups/phone changes from ever owning the same number.
+// Lazy: no index mutation/network call during `next build`.
+const ensurePhoneIndex = cached("_authPhoneIndex", () =>
+  db
+    .collection("user")
+    .createIndex(
+      { phoneNumber: 1 },
+      {
+        name: "malli_user_phone_unique",
+        unique: true,
+        partialFilterExpression: { phoneNumber: { $type: "string" } },
+      },
+    ),
+);
+
 // 💸 sendOTP returns false (never throws) on a delivery failure — surface that as a
 // rejection so the endpoint actually errors out instead of silently reporting "sent".
 async function sendPhoneOTP({
@@ -50,13 +68,40 @@ async function sendPhoneOTP({
   code: string;
 }) {
   const ok = await sendOTP(to, code);
-  if (!ok) throw new Error("failed to send OTP SMS");
+  if (!ok)
+    throw new APIError("BAD_GATEWAY", {
+      code: "SMS_DELIVERY_FAILED",
+      message: "SMS delivery failed",
+    });
 }
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL,
+  hooks: {
+    before: createPhonePolicy(async (body): Promise<void> => {
+      await auth.api.consumePhoneNumberOTP({ body });
+    }, ensurePhoneIndex),
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user, ctx) => {
+          if (ctx?.path !== "/sign-up/email") return;
+          // The before hook has already consumed the proof. Never accept a
+          // client-supplied phoneNumberVerified flag or persist the OTP.
+          return {
+            data: {
+              ...user,
+              phoneNumber: ctx.body.phoneNumber,
+              phoneNumberVerified: true,
+            },
+          };
+        },
+      },
+    },
+  },
   // ⚡ Skips Mongo per getSession(); a banned user lingers ≤30s — accepted
   session: { cookieCache: { enabled: true, maxAge: 30 } },
   emailAndPassword: {
@@ -77,6 +122,7 @@ export const auth = betterAuth({
     storage: redis ? "secondary-storage" : "memory",
     customRules: {
       "/sign-in/email": { window: 60, max: 5 },
+      "/sign-up/email": { window: 600, max: 10 },
       "/phone-number/send-otp": { window: 120, max: 2 },
       "/phone-number/verify": { window: 600, max: 5 },
       "/phone-number/request-password-reset": { window: 600, max: 3 },
@@ -91,6 +137,10 @@ export const auth = betterAuth({
     // `auth-otp-panel.tsx` — the built-in default is 6.
     phoneNumber({
       otpLength: OTP_LEN,
+      expiresIn: OTP_EXPIRES_IN,
+      allowedAttempts: 5,
+      requireVerification: true,
+      phoneNumberValidator: (value) => /^09\d{9}$/.test(value),
       sendOTP: sendPhoneOTP,
       sendPasswordResetOTP: sendPhoneOTP,
       // 🆕 A phone number nobody's seen before gets an account on the spot —

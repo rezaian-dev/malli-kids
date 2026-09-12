@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, type ReactNode } from "react";
 import {
   FormProvider,
   type FieldErrors,
@@ -20,11 +20,7 @@ function errorPaths(errors: FieldErrors, prefix = "", depth = 0): string[] {
     errors as Record<string, unknown>,
   )) {
     if (!value || typeof value !== "object") continue;
-    const node = value as {
-      message?: unknown;
-      type?: unknown;
-      errors?: FieldErrors;
-    };
+    const node = value as { message?: unknown; type?: unknown };
     if (node.message || node.type) out.push(prefix + key);
     else
       out.push(
@@ -34,36 +30,44 @@ function errorPaths(errors: FieldErrors, prefix = "", depth = 0): string[] {
   return out;
 }
 
-const esc = (s: string) =>
-  typeof CSS !== "undefined" && CSS.escape
-    ? CSS.escape(s)
-    : s.replace(/[^\w-]/g, "\\");
-
-function focusFirstError(errors: FieldErrors) {
-  if (typeof document === "undefined") return;
-  const FOCUSABLE =
-    'input:not([type="hidden"]), textarea, select, button, a[href], [tabindex]';
-  const pick = (name: string) => {
-    const wrap = document.querySelector<HTMLElement>(
-      `[data-field="${esc(name)}"]`,
+function focusFirstError(root: HTMLFormElement, errors: FieldErrors) {
+  const focusable =
+    'input:not([type="hidden"]):not(:disabled), textarea:not(:disabled), select:not(:disabled), button:not(:disabled), [tabindex]:not([tabindex="-1"])';
+  // Scope to THIS form; a background checkout/profile can have the same field names.
+  const nodes = errorPaths(errors).flatMap((name) => {
+    const wrap = root.querySelector<HTMLElement>(
+      `[data-field="${CSS.escape(name)}"]`,
     );
-    const direct = document.querySelector<HTMLElement>(`[name="${esc(name)}"]`);
-    const inWrap = wrap?.querySelector<HTMLElement>(FOCUSABLE);
-    if (inWrap) return inWrap;
-    if (wrap?.matches(FOCUSABLE)) return wrap;
-    if (direct?.matches(FOCUSABLE)) return direct;
-    return wrap ?? direct;
-  };
-  const nodes = errorPaths(errors)
-    .map(pick)
-    .filter((n): n is HTMLElement => Boolean(n));
-  if (!nodes.length) return;
-  const el = nodes.reduce((a, b) =>
-    a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? a : b,
+    const control =
+      wrap?.querySelector<HTMLElement>(focusable) ??
+      root.querySelector<HTMLElement>(`[name="${CSS.escape(name)}"]`);
+    return control ? [{ control, wrap }] : [];
+  });
+  if (!nodes.length) {
+    const summary = root.querySelector<HTMLElement>("[data-form-error]");
+    summary?.focus({ preventScroll: true });
+    summary?.scrollIntoView({
+      behavior: "instant",
+      block: "nearest",
+      inline: "nearest",
+    });
+    return;
+  }
+  const first = nodes.reduce((a, b) =>
+    a.control.compareDocumentPosition(b.control) &
+    Node.DOCUMENT_POSITION_FOLLOWING
+      ? a
+      : b,
   );
-  el.focus({ preventScroll: true });
-
-  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  first.control.focus({ preventScroll: true });
+  // Scroll the actual field, not the deliberately oversized inset input.
+  (first.wrap ?? first.control).scrollIntoView({
+    // Reveal the field before shaking; smooth scrolling could leave it
+    // underneath the tab header for most of the validation animation.
+    behavior: "instant",
+    block: "nearest",
+    inline: "nearest",
+  });
 }
 
 export type AppFormProps<T extends FieldValues> = {
@@ -73,17 +77,13 @@ export type AppFormProps<T extends FieldValues> = {
   className?: string;
   id?: string;
   ariaLabel?: string;
-
   notify?: boolean;
-
   shake?: boolean;
   role?: "search" | "form";
-
   action?: string;
   method?: "get" | "post";
-
   shakeSignal?: number;
-
+  busy?: boolean;
   onInvalid?: (errors: FieldErrors<T>) => void;
   resetOnSubmit?: boolean;
 };
@@ -102,47 +102,128 @@ export function AppForm<T extends FieldValues>({
   shake = true,
   onInvalid,
   shakeSignal,
+  busy,
   resetOnSubmit,
 }: AppFormProps<T>) {
-  const [shaking, setShaking] = useState(false);
+  const element = useRef<HTMLFormElement>(null);
+  const submitting = useRef(false);
+  const frame = useRef<number | null>(null);
+
+  const feedback = useCallback(
+    (errors?: FieldErrors) => {
+      if (frame.current !== null) cancelAnimationFrame(frame.current);
+      frame.current = requestAnimationFrame(() => {
+        const root = element.current;
+        if (!root) return;
+        if (errors) focusFirstError(root, errors);
+        if (
+          !shake ||
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        )
+          return;
+        // Animate once at the OUTER field only. Animating [data-invalid] also hit
+        // its shell, doubled the displacement, and clipped borders/focus rings.
+        root
+          .querySelectorAll<HTMLElement>('[data-field][data-invalid="true"]')
+          .forEach((field) => {
+            if (
+              field.parentElement?.closest('[data-field][data-invalid="true"]')
+            )
+              return;
+            field
+              .getAnimations()
+              .filter((animation) => animation.id === "field-validation")
+              .forEach((animation) => animation.cancel());
+            const animation = field.animate(
+              [
+                { transform: "translateX(0)" },
+                { transform: "translateX(-5px)" },
+                { transform: "translateX(5px)" },
+                { transform: "translateX(-3px)" },
+                { transform: "translateX(3px)" },
+                { transform: "translateX(0)" },
+              ],
+              { duration: 450, easing: "ease-out" },
+            );
+            animation.id = "field-validation";
+          });
+      });
+    },
+    [shake],
+  );
+
   useEffect(() => {
-    if (shakeSignal) setShaking(true);
-  }, [shakeSignal]);
+    if (shakeSignal) feedback(form.formState.errors);
+  }, [shakeSignal, feedback]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(
+    () => () => {
+      if (frame.current !== null) cancelAnimationFrame(frame.current);
+    },
+    [],
+  );
+  const serverError = form.formState.errors.root?.server?.message;
+  useEffect(() => {
+    if (serverError)
+      feedback({
+        root: { server: { type: "server", message: String(serverError) } },
+      });
+  }, [serverError, feedback]);
 
   return (
     <FormProvider {...form}>
       <form
+        ref={element}
         id={id}
         role={role}
         aria-label={ariaLabel}
         action={action}
         method={method}
         noValidate
-        data-shaking={shaking ? "true" : undefined}
-        className={cn(
-          className,
-          "[&[data-shaking=true]_[data-invalid=true]]:animate-shake",
-        )}
-        onAnimationEnd={(e) => {
-          if (e.animationName === "shake") setShaking(false);
+        data-app-form
+        aria-busy={form.formState.isSubmitting || busy || undefined}
+        className={cn("min-w-0", className)}
+        onSubmit={async (event) => {
+          event.preventDefault();
+          // Ref guards even two clicks/Enter events before React paints disabled.
+          if (submitting.current || busy) return;
+          submitting.current = true;
+          form.clearErrors("root.server");
+          try {
+            await form.handleSubmit(
+              async (values) => {
+                await onSubmit(values);
+                if (resetOnSubmit) form.reset();
+              },
+              (errors) => {
+                if (onInvalid) onInvalid(errors);
+                else {
+                  const n = countErrors(errors as Record<string, unknown>);
+                  if (notify && n)
+                    toast.error(`${toFaDigits(n)} مورد را اصلاح کنید`);
+                }
+                feedback(errors as FieldErrors);
+              },
+            )(event);
+          } catch {
+            form.setError("root.server", {
+              type: "server",
+              message: "ارتباط برقرار نشد؛ لطفاً دوباره تلاش کنید.",
+            });
+          } finally {
+            submitting.current = false;
+          }
         }}
-        onSubmit={form.handleSubmit(
-          async (values) => {
-            await onSubmit(values);
-            if (resetOnSubmit) form.reset();
-          },
-          (errors) => {
-            if (onInvalid) onInvalid(errors);
-            else {
-              const n = countErrors(errors as Record<string, unknown>);
-              if (notify && n)
-                toast.error(`${toFaDigits(n)} مورد را اصلاح کنید`);
-            }
-            if (shake) setShaking(true);
-            focusFirstError(errors as FieldErrors);
-          },
-        )}
       >
+        {serverError ? (
+          <p
+            role="alert"
+            data-form-error
+            tabIndex={-1}
+            className="border-rose/30 bg-rose/5 text-rose scroll-my-3 rounded-xl border px-3 py-2 text-xs leading-6 break-words"
+          >
+            {String(serverError)}
+          </p>
+        ) : null}
         {children}
       </form>
     </FormProvider>

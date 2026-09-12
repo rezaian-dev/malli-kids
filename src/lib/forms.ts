@@ -3,7 +3,7 @@ import { parseFaNumber, phoneDigits } from "./digits";
 import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
 
 // 📧 Exported so non-zod inline checks reuse the same pattern.
-export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+export const EMAIL_PATTERN = z.regexes.email;
 
 const RE = {
   mobile: /^09\d{9}$/,
@@ -47,7 +47,8 @@ export const mobile = (label = "شمارهٔ موبایل") =>
     .string({ error: () => fa.required(label) })
     .trim()
     .min(1, fa.required("شمارهٔ موبایل"))
-    .refine((v) => RE.mobile.test(phoneDigits(v)), fa.mobile);
+    .refine((v) => RE.mobile.test(phoneDigits(v)), fa.mobile)
+    .transform(phoneDigits);
 
 export const optMobile = () =>
   optionalPattern((v) => RE.mobile.test(phoneDigits(v)), fa.mobile);
@@ -99,7 +100,8 @@ export const otpCode = (len = 5) =>
     .refine(
       (v) => new RegExp(`^\\d{${len}}$`).test(toEnDigits(v).replace(/\s/g, "")),
       `کد ${toFaDigits(len)} رقمی را کامل وارد کنید`,
-    );
+    )
+    .transform((v) => toEnDigits(v).replace(/\s/g, ""));
 
 const password = (min = 6) =>
   z
@@ -109,6 +111,7 @@ const password = (min = 6) =>
 // 🔐 Registration/reset password: length + letter + number.
 export const strongPassword = (min = 8) =>
   password(min)
+    .max(128, "رمز عبور حداکثر ۱۲۸ نویسه می‌تواند باشد")
     .refine((v) => /[A-Za-z]/.test(v), "رمز باید شامل حداقل یک حرف باشد")
     .refine((v) => /\d/.test(v), "رمز باید شامل حداقل یک عدد باشد");
 

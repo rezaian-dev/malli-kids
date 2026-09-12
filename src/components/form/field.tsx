@@ -88,14 +88,19 @@ export function Field({
 
   return (
     <div
-      className={cn("min-w-0 space-y-1.5", className)}
+      className={cn("min-w-0 scroll-my-3 space-y-1.5", className)}
       data-field={name}
       data-invalid={invalid ? "true" : undefined}
     >
       {label ? (
         <Label htmlFor={id} className={cn(LABEL[skin], labelClassName)}>
           {label}
-          {required ? <span className="text-rose"> *</span> : null}
+          {required ? (
+            <span aria-hidden="true" className="text-rose">
+              {" "}
+              *
+            </span>
+          ) : null}
         </Label>
       ) : null}
 
@@ -136,15 +141,9 @@ export function Field({
       )}
 
       {showMsg ? (
-        <p
-          id={`${id}-msg`}
-          role="alert"
-          className="m-0 grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity] duration-280 ease-[cubic-bezier(.25,.1,.25,1)] *:min-h-0 *:overflow-hidden starting:grid-rows-[0fr] starting:opacity-0"
-        >
-          <span className={ERROR_TEXT}>
-            <CircleAlert className="mt-0.5 size-3 shrink-0" />
-            <span>{message}</span>
-          </span>
+        <p id={`${id}-msg`} role="alert" className={cn("m-0", ERROR_TEXT)}>
+          <CircleAlert aria-hidden="true" className="mt-0.5 size-3 shrink-0" />
+          <span className="min-w-0 break-words">{message}</span>
         </p>
       ) : showHint ? (
         <p id={`${id}-hint`} className={HINT_TEXT}>

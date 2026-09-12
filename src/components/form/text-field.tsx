@@ -70,7 +70,12 @@ export function TextField({
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
 
-            className={cn(INPUT[skin], LATIN_ANCHOR, inputClassName)}
+            className={cn(
+              INPUT[skin],
+              LATIN_ANCHOR,
+              "text-base md:text-sm",
+              inputClassName,
+            )}
             value={(field.value as string | number | undefined) ?? ""}
             name={field.name}
             onChange={field.onChange}

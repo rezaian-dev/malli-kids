@@ -8,6 +8,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "@/lib/toast";
 import { signOutAction } from "@/lib/auth/actions";
 import type { User } from "@/types";
 
@@ -32,14 +34,19 @@ export function AuthProvider({
   children: ReactNode;
   initialUser: User | null;
 }) {
+  const router = useRouter();
   const [user, setUser] = useState(initialUser);
   const [authOpen, setAuthOpen] = useState(false);
 
   // 🔐 Mirrors an already-created server session into UI state
-  const login = useCallback((nextUser: User) => {
-    setUser(nextUser);
-    setAuthOpen(false);
-  }, []);
+  const login = useCallback(
+    (nextUser: User) => {
+      setUser(nextUser);
+      setAuthOpen(false);
+      router.refresh();
+    },
+    [router],
+  );
 
   const updateUser = useCallback(
     (patch: Partial<User>) =>
@@ -49,9 +56,15 @@ export function AuthProvider({
 
   // 🔐 Revokes the server session first, then clears UI state
   const logout = useCallback(async () => {
-    await signOutAction();
+    const result = await signOutAction();
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
     setUser(null);
-  }, []);
+    setAuthOpen(false);
+    router.refresh();
+  }, [router]);
 
   return (
     <AuthCtx.Provider

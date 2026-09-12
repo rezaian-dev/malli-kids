@@ -1,9 +1,0 @@
-{
-  "tailwindCSS.classAttributes": ["class", "className", "ngClass", ".*Class.*"],
-  "tailwindCSS.experimental.classRegex": [
-    ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
-  ],
-  "editor.quickSuggestions": {
-    "strings": true
-  }
-}

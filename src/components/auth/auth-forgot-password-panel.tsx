@@ -3,59 +3,41 @@
 import { useState } from "react";
 import {
   ArrowLeft,
-  ArrowRight,
   Eye,
   EyeOff,
   KeyRound,
   Lock,
   PartyPopper,
-  RotateCcw,
   Smartphone,
 } from "lucide-react";
-import { toast } from "@/lib/toast";
-import { toFaDigits } from "@/lib/locale/fa";
-import { AppForm, Field, InsetField, SubmitButton, useAppForm } from "@/components/form";
+import {
+  AppForm,
+  Field,
+  InsetField,
+  SubmitButton,
+  useAppForm,
+} from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { forgotPasswordAction, resetPasswordAction } from "@/lib/auth/actions";
 import {
   forgotPasswordDefaults,
   forgotPasswordSchema,
-  OTP_LEN,
   resetPasswordDefaults,
   resetPasswordSchema,
   type ForgotPasswordValues,
   type ResetPasswordValues,
 } from "@/lib/auth/schemas";
-import { OtpBoxes } from "./auth-otp-panel";
-import { SUBMIT_GOLD, useCooldown } from "./auth-shared";
+import { OtpBoxes } from "./auth-code-input";
+import { CodeStepActions } from "./auth-code-actions";
+import { reportAuthError, SUBMIT_GOLD, useCooldown } from "./auth-shared";
 
-/** 🎉 Same "done" shape as elsewhere in the modal — one highlighted result card. */
-function SuccessCard() {
-  return (
-    <div className="mx-auto flex flex-col items-center gap-3 rounded-2xl border px-5 py-6 text-center border-gold/30 bg-sand/80 dark:border-gold/25 dark:bg-navy-deep/60">
-      <span className="bg-gold/12 text-gold flex size-14 items-center justify-center rounded-full">
-        <PartyPopper className="size-6" />
-      </span>
-      <div>
-        <p className="text-navy dark:text-ivory font-black">رمز عبور تغییر کرد</p>
-        <p className="text-navy/70 dark:text-linen/70 mt-1.5 text-[13px] leading-6">
-          می‌توانید با رمزِ جدید وارد حساب‌تان شوید.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// 🔁 Forgot-password step, all inline (no email link anymore): phone → OTP +
-// new password → done. Same two-step shape as `OtpLoginPanel`, sharing its
-// `OtpBoxes`, just ending in a password instead of a session.
 export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
   const [step, setStep] = useState<"phone" | "reset" | "done">("phone");
   const [phone, setPhone] = useState("");
   const [show, setShow] = useState(false);
   const [shakeSignal, setShakeSignal] = useState(0);
+  const [resending, setResending] = useState(false);
   const cd = useCooldown();
-
   const phoneForm = useAppForm({
     schema: forgotPasswordSchema,
     defaultValues: forgotPasswordDefaults,
@@ -68,179 +50,183 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
   async function sendCode(values: ForgotPasswordValues) {
     const result = await forgotPasswordAction(values);
     if (!result.ok) {
-      toast.error(result.error);
+      reportAuthError(phoneForm, result);
+      setShakeSignal((n) => n + 1);
+      if (result.retryAfterSec) cd.restart(result.retryAfterSec);
       return;
     }
     setPhone(values.phone);
+    resetForm.reset();
     cd.restart();
     setStep("reset");
-    toast.success(`کد به ${values.phone} پیامک شد`);
-  }
-
-  async function resend() {
-    const result = await forgotPasswordAction({ phone });
-    if (!result.ok) {
-      toast.error(result.error);
-      return;
-    }
-    cd.restart();
-    toast.info("کد دوباره ارسال شد");
+    // Do not claim delivery to a number that might not belong to any account.
   }
 
   async function submitReset(values: ResetPasswordValues) {
     const result = await resetPasswordAction({ ...values, phone });
     if (!result.ok) {
-      toast.error(result.error);
+      reportAuthError(resetForm, result);
       setShakeSignal((n) => n + 1);
       return;
     }
+    resetForm.reset();
+    setShow(false);
     setStep("done");
   }
 
-  if (step === "done") {
+  if (step === "done")
     return (
       <div className="space-y-4">
-        <SuccessCard />
+        <div
+          role="status"
+          className="border-gold/30 bg-sand/80 dark:bg-navy-deep/60 flex flex-col items-center gap-3 rounded-2xl border px-5 py-6 text-center"
+        >
+          <PartyPopper aria-hidden="true" className="text-gold size-10" />
+          <p className="font-black">رمز عبور تغییر کرد</p>
+          <p className="text-navy/70 dark:text-linen/70 text-[13px] leading-7">
+            با رمز جدید وارد شوید. نشست‌های قبلی حساب لغو شدند.
+          </p>
+        </div>
         <Button variant="navy" size="pill" className="w-full" onClick={onBack}>
           ورود به حساب
         </Button>
       </div>
     );
-  }
 
-  if (step === "phone") {
+  if (step === "phone")
     return (
       <AppForm
         form={phoneForm}
         onSubmit={sendCode}
-        ariaLabel="فراموشیِ رمز عبور"
+        ariaLabel="فراموشی رمز عبور"
         className="space-y-4"
-        notify
+        shakeSignal={shakeSignal}
       >
-        <p className="text-navy/70 dark:text-linen/70 -mt-1 text-[13px] leading-6">
-          شمارهٔ موبایلِ حساب‌تان را وارد کنید تا کدِ بازنشانیِ رمز برایتان پیامک شود.
+        <p className="text-navy/70 dark:text-linen/70 text-[13px] leading-7">
+          شمارهٔ موبایل تأییدشدهٔ حساب‌تان را وارد کنید. کد یک‌بارمصرف برای
+          تعیین رمز جدید پیامک می‌شود؛ رمز فعلی هرگز ارسال نمی‌شود.
         </p>
-
         <InsetField
           name="phone"
           label="شمارهٔ موبایل"
           icon={<Smartphone className="size-4" />}
           type="tel"
-          inputMode="numeric"
+          inputMode="tel"
           dir="ltr"
           autoComplete="tel"
-          placeholder="0912xxxxxxx"
+          placeholder="09123456789"
           inputClassName="text-left"
           required
         />
-
         <SubmitButton className={SUBMIT_GOLD} pendingLabel="در حال ارسال…">
-          ارسالِ کدِ پیامکی <ArrowLeft className="size-4" />
+          ارسال کد بازیابی <ArrowLeft className="size-4" />
         </SubmitButton>
-
+        <p className="text-navy/70 dark:text-linen/70 text-xs leading-6">
+          اگر قبلاً شمارهٔ حساب‌تان را تأیید نکرده‌اید یا به آن دسترسی ندارید،
+          با پشتیبانی تماس بگیرید.
+        </p>
         <Button
           type="button"
           variant="ghost"
-          className="text-navy/70 dark:text-linen/70 w-full text-xs font-bold"
+          className="w-full text-xs font-bold"
           onClick={onBack}
+          disabled={phoneForm.formState.isSubmitting}
         >
           بازگشت به ورود
         </Button>
       </AppForm>
     );
-  }
 
   return (
-    // 🩹 Same clipping fix as the OTP-login code step — no scrollbar pop mid-animation.
-    <div className="overflow-hidden">
-      <AppForm
-        form={resetForm}
-        onSubmit={submitReset}
-        ariaLabel="تعیینِ رمزِ جدید"
-        className="animate-fade-up space-y-4"
-        shakeSignal={shakeSignal}
+    <AppForm
+      form={resetForm}
+      onSubmit={submitReset}
+      ariaLabel="تعیین رمز جدید"
+      className="space-y-4"
+      shakeSignal={shakeSignal}
+      busy={resending}
+    >
+      <p
+        className="text-navy/70 dark:text-linen/70 text-[13px] leading-7"
+        role="status"
       >
-        <p className="text-navy/70 dark:text-linen/70 text-[13px] leading-6">
-          کدِ {toFaDigits(OTP_LEN)} رقمیِ ارسال‌شده به{" "}
-          <span dir="ltr" className="text-gold font-black">
-            {phone}
-          </span>{" "}
-          را وارد کنید و رمزِ جدید را انتخاب کنید.
-        </p>
-
-        <Field name="code" label="کدِ تأیید" required noShell>
-          {({ field, invalid }) => (
-            <OtpBoxes
-              value={String(field.value ?? "")}
-              onChange={field.onChange}
-              invalid={invalid}
-            />
-          )}
-        </Field>
-
-        <InsetField
-          name="password"
-          label="رمز عبور جدید"
-          icon={<Lock className="size-4" />}
-          type={show ? "text" : "password"}
-          dir="ltr"
-          autoComplete="new-password"
-          inputClassName="text-left"
-          required
-          trailing={
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="size-8 shrink-0 text-gold hover:bg-gold/10 hover:text-gold"
-              onClick={() => setShow((s) => !s)}
-              aria-label={show ? "پنهان کردنِ رمز" : "نمایشِ رمز"}
-            >
-              {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-            </Button>
-          }
-        />
-
-        <InsetField
-          name="confirmPassword"
-          label="تکرارِ رمز عبور"
-          icon={<Lock className="size-4" />}
-          type={show ? "text" : "password"}
-          dir="ltr"
-          autoComplete="new-password"
-          inputClassName="text-left"
-          required
-        />
-
-        <SubmitButton className={SUBMIT_GOLD} pendingLabel="در حال ثبت…">
-          تعیینِ رمز جدید <KeyRound className="size-4" />
-        </SubmitButton>
-
-        <div className="flex items-center justify-between text-[11px] font-bold">
-          {cd.sec > 0 ? (
-            <span className="text-navy/70 dark:text-linen/70">
-              ارسالِ دوباره تا {toFaDigits(cd.sec)} ثانیه
-            </span>
-          ) : (
-            <Button
-              type="button"
-              variant="link"
-              className="text-gold h-auto gap-1 p-0 text-[11px] font-bold"
-              onClick={resend}
-            >
-              <RotateCcw className="size-3.5" /> ارسالِ دوبارهٔ کد
-            </Button>
-          )}
+        اگر{" "}
+        <bdi dir="ltr" className="text-gold font-bold">
+          {phone}
+        </bdi>{" "}
+        شمارهٔ تأییدشدهٔ یک حساب باشد، کد بازیابی برایش ارسال می‌شود. کد تا ۵
+        دقیقه معتبر است.
+      </p>
+      <Field name="code" label="کد بازیابی" required noShell>
+        {({ field, invalid, id, describedBy }) => (
+          <OtpBoxes
+            id={id}
+            name={field.name}
+            inputRef={field.ref}
+            onBlur={field.onBlur}
+            describedBy={describedBy}
+            value={String(field.value ?? "")}
+            onChange={field.onChange}
+            invalid={invalid}
+            disabled={resending || resetForm.formState.isSubmitting}
+          />
+        )}
+      </Field>
+      <InsetField
+        name="password"
+        label="رمز عبور جدید"
+        icon={<Lock className="size-4" />}
+        type={show ? "text" : "password"}
+        dir="ltr"
+        autoComplete="new-password"
+        inputClassName="text-left"
+        required
+        hint="حداقل ۸ نویسه، شامل حرف انگلیسی و عدد"
+        trailing={
           <Button
             type="button"
-            variant="link"
-            className="text-navy/70 dark:text-linen/70 h-auto p-0 text-[11px] font-bold"
-            onClick={() => setStep("phone")}
+            variant="ghost"
+            size="icon"
+            className="text-gold hover:bg-gold/10 size-9 shrink-0"
+            onClick={() => setShow((s) => !s)}
+            aria-pressed={show}
+            aria-label={show ? "پنهان کردن رمز" : "نمایش رمز"}
           >
-            بازگشت <ArrowRight className="size-3.5" />
+            {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </Button>
-        </div>
-      </AppForm>
-    </div>
+        }
+      />
+      <InsetField
+        name="confirmPassword"
+        label="تکرار رمز عبور"
+        icon={<Lock className="size-4" />}
+        type={show ? "text" : "password"}
+        dir="ltr"
+        autoComplete="new-password"
+        inputClassName="text-left"
+        required
+      />
+      <SubmitButton
+        className={SUBMIT_GOLD}
+        disabled={resending}
+        pendingLabel="در حال ثبت…"
+      >
+        تعیین رمز جدید <KeyRound className="size-4" />
+      </SubmitButton>
+      <CodeStepActions
+        cooldown={cd}
+        onResend={() => forgotPasswordAction({ phone })}
+        onPendingChange={setResending}
+        onSent={() => {
+          resetForm.resetField("code");
+          resetForm.clearErrors();
+        }}
+        onBack={() => {
+          resetForm.reset();
+          setStep("phone");
+        }}
+        sentMessage="اگر شماره به حساب متصل باشد، کد جدید ارسال می‌شود."
+      />
+    </AppForm>
   );
 }

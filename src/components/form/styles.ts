@@ -44,7 +44,7 @@ export const SHELL_BARE_IDLE =
 export const SHELL_BARE_BAD = "border-rose";
 
 export const ERROR_TEXT =
-  "flex items-start gap-1 text-[11px] font-bold leading-5 text-rose animate-fade-up";
+  "flex items-start gap-1 text-[11px] font-bold leading-5 text-rose";
 export const HINT_TEXT = "text-[11px] leading-5 text-navy/70 dark:text-wheat";
 export const COUNT_TEXT =
   "text-[10px] font-bold tabular-nums text-navy/70 dark:text-wheat/70";

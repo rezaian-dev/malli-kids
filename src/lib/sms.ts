@@ -19,7 +19,7 @@ function describeErr(err: unknown): string {
   if (err instanceof Error) {
     return err.name === "AbortError"
       ? `timeout after ${SEND_TIMEOUT_MS}ms (upstream unreachable from deploy region?)`
-      : `${err.name}: ${err.message}`;
+      : err.name;
   }
   return "unknown network error";
 }
@@ -47,6 +47,27 @@ async function postJSON(
   }
 }
 
+// Some providers report a rejected delivery inside an HTTP-200 JSON envelope.
+function deliveryAccepted(text: string): boolean {
+  try {
+    const body = JSON.parse(text) as {
+      ok?: boolean;
+      success?: boolean;
+      status?: boolean;
+      meta?: { status?: boolean };
+    };
+    return (
+      body?.ok !== false &&
+      body?.success !== false &&
+      body?.status !== false &&
+      body?.meta?.status !== false
+    );
+  } catch {
+    // Existing relays may reply with an empty body or plain "OK".
+    return true;
+  }
+}
+
 // 🇮🇷 Preferred path — forward {phone, code} to a relay running on an Iran IP.
 //    IPPanel credentials live on the relay, never on Vercel.
 async function sendViaRelay(phone: string, code: string): Promise<boolean> {
@@ -64,8 +85,8 @@ async function sendViaRelay(phone: string, code: string): Promise<boolean> {
       { "x-relay-secret": relaySecret },
       { phone, code },
     );
-    if (!ok) {
-      console.error(`[sendOTP] relay HTTP ${status} → ${text.slice(0, 300)}`);
+    if (!ok || !deliveryAccepted(text)) {
+      console.error(`[sendOTP] relay rejected delivery (HTTP ${status})`);
       return false;
     }
     return true;
@@ -103,9 +124,9 @@ async function sendViaIppanel(phone: string, code: string): Promise<boolean> {
         params: { code },
       },
     );
-    if (!ok) {
+    if (!ok || !deliveryAccepted(text)) {
       // 🔎 502 + Cloudflare body → IPPanel geo-blocks this IP → configure a relay
-      console.error(`[sendOTP] IPPanel HTTP ${status} → ${text.slice(0, 300)}`);
+      console.error(`[sendOTP] IPPanel rejected delivery (HTTP ${status})`);
       return false;
     }
     return true;
@@ -117,7 +138,10 @@ async function sendViaIppanel(phone: string, code: string): Promise<boolean> {
 
 // 📨 Public API — unchanged boolean contract (callers untouched). Routes through
 //    the Iran relay when one is configured, otherwise hits IPPanel directly.
-export const sendOTP = async (phone: string, code: string): Promise<boolean> => {
+export const sendOTP = async (
+  phone: string,
+  code: string,
+): Promise<boolean> => {
   return readEnv("SMS_RELAY_URL")
     ? sendViaRelay(phone, code)
     : sendViaIppanel(phone, code);

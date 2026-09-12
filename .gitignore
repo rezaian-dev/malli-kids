@@ -43,3 +43,8 @@ yarn-error.log*
 
 # Playwright (invoice PDF only — browsers cache)
 /playwright/.cache/
+
+# Isolated regression fixtures and generated reports
+/.cache/
+/test-results/
+/playwright-report/

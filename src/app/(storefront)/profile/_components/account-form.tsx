@@ -106,18 +106,22 @@ export function AccountForm() {
 
         <TextField
           name="phone"
-          label="شماره موبایل"
+          label="شمارهٔ تماس سفارش‌ها"
           dir="ltr"
           type="tel"
           inputMode="tel"
           inputClassName="text-left"
           autoComplete="tel-national"
           placeholder="0912…"
-          hint="فقط برای تماس در صورت نیاز."
+          hint="فقط برای تماس و سفارش‌هاست؛ شمارهٔ بازیابی را در بخش امنیت حساب تأیید کنید."
         />
       </div>
 
-      <SubmitButton variant="navy" className="h-11 px-7" pendingLabel="در حال ذخیره…">
+      <SubmitButton
+        variant="navy"
+        className="h-11 px-7"
+        pendingLabel="در حال ذخیره…"
+      >
         ذخیره حساب
       </SubmitButton>
     </AppForm>

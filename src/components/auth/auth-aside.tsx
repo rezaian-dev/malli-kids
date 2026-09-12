@@ -1,13 +1,11 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { Percent, ShieldCheck, Sparkles, Star } from "lucide-react";
+import { Truck, ShieldCheck, Smartphone, Star } from "lucide-react";
 
 function Perk({ icon, t, d }: { icon: ReactNode; t: string; d: string }) {
   return (
     <li className="flex items-center gap-3">
-      <span
-        className="flex size-9 shrink-0 items-center justify-center rounded-xl border text-gold-light border-white/15 bg-white/10"
-      >
+      <span className="text-gold-light flex size-9 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/10">
         {icon}
       </span>
       <div>
@@ -20,9 +18,7 @@ function Perk({ icon, t, d }: { icon: ReactNode; t: string; d: string }) {
 
 export function AuthAside() {
   return (
-    <aside
-      className="relative hidden w-[46%] shrink-0 overflow-hidden rounded-s-[28px] lg:block bg-navy text-ivory"
-    >
+    <aside className="bg-navy text-ivory relative hidden w-[46%] shrink-0 overflow-hidden rounded-s-[28px] lg:block">
       <Image
         src="/brand/auth-aside.jpg"
         alt=""
@@ -30,12 +26,8 @@ export function AuthAside() {
         sizes="46vw"
         className="absolute inset-0 size-full object-cover object-[center_18%]"
       />
-      <div
-        className="absolute inset-0 from-navy-deep via-navy-deep/55 bg-linear-to-t to-transparent"
-      />
-      <div
-        className="pointer-events-none absolute inset-3 rounded-[22px] border border-gold/45"
-      />
+      <div className="from-navy-deep via-navy-deep/55 absolute inset-0 bg-linear-to-t to-transparent" />
+      <div className="border-gold/45 pointer-events-none absolute inset-3 rounded-[22px] border" />
 
       <div className="relative flex h-full min-h-0 flex-col justify-between p-7 pe-8">
         <div className="flex items-center gap-3">
@@ -50,9 +42,7 @@ export function AuthAside() {
             <span className="font-display block text-sm font-bold tracking-[0.2em] text-white">
               MALLI
             </span>
-            <span
-              className="font-display mt-1 block text-[10px] tracking-[0.38em] text-gold-light"
-            >
+            <span className="font-display text-gold-light mt-1 block text-[10px] tracking-[0.38em]">
               KIDS
             </span>
           </div>
@@ -68,35 +58,30 @@ export function AuthAside() {
             <span className="text-gold-light">کوچولوها</span>
           </h2>
           <p className="text-ivory/90 mt-3 max-w-60 text-sm leading-7">
-            عضویت یعنی ۱۰٪ تخفیف، پرو مجازی و سایز دقیق.
+            ورود ساده، پیگیری سفارش‌ها و انتخاب سایز دقیق.
           </p>
 
           <ul className="mt-5 space-y-2">
             <Perk
-              icon={<Percent className="size-4" />}
-              t="۱۰٪ تخفیف اولین خرید"
-              d="همان لحظهٔ عضویت"
+              icon={<Truck className="size-4" />}
+              t="پیگیری سفارش‌ها"
+              d="همهٔ خریدها در حساب شما"
             />
             <Perk
-              icon={<Sparkles className="size-4" />}
-              t="پرو مجازی با AI"
-              d="لباس را روی تن ببینید"
+              icon={<Smartphone className="size-4" />}
+              t="ورود آسان با پیامک"
+              d="با شمارهٔ موبایل تأییدشده"
             />
             <Perk
               icon={<ShieldCheck className="size-4" />}
-              t="حسابِ امن"
-              d="رمزنگاریِ استاندارد صنعتی"
+              t="بازیابی امن رمز"
+              d="بدون ارسال رمز فعلی شما"
             />
           </ul>
 
-          <p
-            className="mt-5 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold ring-1 bg-navy-deep/80 text-ivory ring-gold/40"
-          >
+          <p className="bg-navy-deep/80 text-ivory ring-gold/40 mt-5 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold ring-1">
             <Star className="fill-gold-light text-gold-light size-3.5" />
-            <span>
-              <span className="text-gold-light font-black">+۱۲٬۰۰۰ مادر</span>{" "}
-              همراه ما
-            </span>
+            <span>همراهِ روزهای شیرینِ کوچولوها</span>
           </p>
         </div>
       </div>
