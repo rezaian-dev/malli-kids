@@ -109,15 +109,6 @@ export function SizeGuideLanding() {
 
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
-            href="/tryon"
-            className={cn(
-              "inline-flex rounded-full px-6 py-3 font-black transition-transform hover:-translate-y-0.5",
-              "bg-navy text-cream",
-            )}
-          >
-            پرو مجازی
-          </Link>
-          <Link
             href="/shop"
             className={cn(
               "inline-flex rounded-full border-2 px-6 py-3 font-black transition-colors",

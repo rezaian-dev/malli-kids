@@ -129,33 +129,6 @@ export function Hero() {
                 <ArrowLeft className="relative h-5 w-5 transition-transform duration-500 group-hover:-translate-x-2" />
               </Link>
             </MagneticGlow>
-            <MagneticGlow className="rounded-full">
-              <Link
-                href="/tryon"
-                prefetch={false}
-                className={cn(
-                  "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full border-2 px-8 py-3 text-sm font-black transition-[box-shadow,color,background-color] duration-500 sm:px-9 sm:py-3.75 sm:text-base",
-                  "border-gold bg-gold text-navy-deep hover:bg-gold-light shadow-[0_0_28px_rgba(193,147,87,.45)] hover:shadow-[0_18px_40px_-10px_rgba(193,147,87,.7)]",
-                )}
-              >
-                <span
-                  className={cn(
-                    "pointer-events-none absolute -inset-1 animate-ping rounded-full border opacity-40",
-                    "border-gold",
-                  )}
-                  aria-hidden
-                />
-                <span
-                  className={cn(
-                    "animate-shimmer pointer-events-none absolute inset-0",
-                    "bg-[linear-gradient(110deg,transparent_20%,rgba(255,255,255,.65)_50%,transparent_76%)]",
-                  )}
-                  aria-hidden
-                />
-                <Sparkles className="animate-orn-spin relative h-5 w-5" />
-                <span className="relative tracking-wide">پرو مجازی با AI</span>
-              </Link>
-            </MagneticGlow>
           </div>
           <div className="mx-auto mt-10 grid max-w-md grid-cols-3 gap-2 min-[420px]:gap-6 sm:mt-12 sm:gap-10 lg:mx-0 lg:flex lg:max-w-none lg:items-center lg:justify-start">
             <div className="min-w-0 text-center lg:text-right">

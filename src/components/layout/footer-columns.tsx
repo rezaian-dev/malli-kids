@@ -127,11 +127,6 @@ export function FooterColumns() {
         <p className={FOOTER_HEADING}>دسترسی سریع</p>
         <ul className={FOOTER_LIST}>
           <li>
-            <Link href="/tryon" className={FOOT_LINK}>
-              پرو مجازی
-            </Link>
-          </li>
-          <li>
             <Link href="/size-guide" className={FOOT_LINK}>
               راهنمای سایز
             </Link>

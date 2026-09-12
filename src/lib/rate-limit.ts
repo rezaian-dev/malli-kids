@@ -2,8 +2,8 @@ import "server-only";
 
 // 🚦 Small in-memory fixed-window rate limiter for Route Handlers and Server
 // Actions that Better Auth's own `rateLimit.customRules` (see
-// `src/lib/auth/auth.ts`) doesn't cover — e.g. `/api/tryon` (burns paid
-// third-party API credits per call) and `reverseGeocodeAction` (Nominatim rate policy).
+// `src/lib/auth/auth.ts`) doesn't cover — e.g. the invoice PDF route
+// (expensive render per call) and `reverseGeocodeAction` (Nominatim rate policy).
 //
 // Deliberately simple: a `Map` keyed by caller-supplied string, single
 // process. Good enough for this app's current one-instance deployment; if it
@@ -30,7 +30,7 @@ export type RateLimitResult =
   { ok: true } | { ok: false; retryAfterSec: number };
 
 /** `key` should already identify the caller *and* the route (e.g.
- *  `` `tryon:${userId}` ``) — one shared bucket per raw user/IP would let
+ *  `` `invoice:${userId}` ``) — one shared bucket per raw user/IP would let
  *  different endpoints exhaust each other's quota. */
 export function rateLimit(
   key: string,

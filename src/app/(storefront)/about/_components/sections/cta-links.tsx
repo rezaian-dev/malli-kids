@@ -13,17 +13,6 @@ export function CtaLinks() {
       >
         مشاهده کالکشن
       </Link>
-      <Link
-        href="/tryon"
-        className={cn(
-          "inline-flex rounded-full border-2 px-6 py-3 font-black transition-transform hover:-translate-y-0.5",
-          // ♿ brown-mid, not gold: gold text on this white card is
-          // ~2.2:1, below the 4.5:1 minimum. Dark mode already passes.
-          "border-brown-mid text-brown-mid dark:border-gold dark:text-gold",
-        )}
-      >
-        پرو مجازی
-      </Link>
     </div>
   );
 }
