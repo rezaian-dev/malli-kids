@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { SlidersHorizontal, X } from "lucide-react";
 import { PER_PAGE } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { toFaDigits } from "@/lib/locale/fa";
 import type { ShopState } from "@/lib/shop/shop-state";
+import { defaultShopState, toShopHref } from "@/lib/shop/shop-state";
 import type { Product } from "@/types";
 import { useShopExplorer } from "../_hooks/use-shop-explorer";
 import { ShopFilters } from "./shop-filters";
@@ -38,50 +39,35 @@ export function ShopExplorer({
 
   return (
     <div className="shop-page xs:px-4 mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-7">
-      <nav
-        aria-label="مسیر صفحه"
-        className="text-navy/70 dark:text-wheat mb-5 text-xs font-bold"
-      >
-        <ol className="m-0 flex list-none flex-wrap items-center gap-0 p-0">
-          <li>
-            <Link href="/" prefetch={false} className="hover:text-gold py-1">
-              خانه
-            </Link>
-          </li>
-          <li aria-hidden className="text-gold mx-1.5">
-            /
-          </li>
-          <li>
-            {state.cat !== "همه" || state.season !== "همه" ? (
-              <Link
-                href="/shop"
-                prefetch={false}
-                className="hover:text-gold py-1"
-              >
-                فروشگاه
-              </Link>
-            ) : (
-              <span>فروشگاه</span>
-            )}
-          </li>
-          {state.cat !== "همه" ? (
-            <>
-              <li aria-hidden className="text-gold mx-1.5">
-                /
-              </li>
-              <li>{state.cat}</li>
-            </>
-          ) : null}
-          {state.season !== "همه" ? (
-            <>
-              <li aria-hidden className="text-gold mx-1.5">
-                /
-              </li>
-              <li>{state.season}</li>
-            </>
-          ) : null}
-        </ol>
-      </nav>
+      {/* 🧭 Same crumb URLs the server emits as JSON-LD (`shop/page.tsx`),
+          so visual + schema never drift (`schema={false}` — already emitted). */}
+      <Breadcrumb
+        schema={false}
+        items={[
+          { name: "خانه", path: "/" },
+          { name: "فروشگاه", path: "/shop" },
+          ...(state.cat !== "همه"
+            ? [
+                {
+                  name: state.cat,
+                  path: toShopHref({ ...defaultShopState(), cat: state.cat }),
+                },
+              ]
+            : []),
+          ...(state.season !== "همه"
+            ? [
+                {
+                  name: state.season,
+                  path: toShopHref({
+                    ...defaultShopState(),
+                    cat: state.cat,
+                    season: state.season,
+                  }),
+                },
+              ]
+            : []),
+        ]}
+      />
 
       <div className="grid items-start gap-5 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-7">
         {/* Desktop sidebar filter */}

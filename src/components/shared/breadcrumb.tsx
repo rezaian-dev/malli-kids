@@ -1,13 +1,21 @@
 import Link from "next/link";
 import { Fragment } from "react";
+import { JsonLd } from "@/components/shared/json-ld";
+import { breadcrumbSchema } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
-/* 🧭 Chic shared breadcrumb — a frosted-glass gold pill with a home
- * medallion, chevron separators and a highlighted current page. Pure
- * Server Component (CSS-only hover/focus), RTL-native.
+/* 🧭 The site's shared breadcrumb — one component, three jobs:
+ *  1. Visual: a jewel-box pill (gradient gold hairline, frosted glass,
+ *     diamond separators that twirl on hover, cascading entrance).
+ *  2. SEO: auto-emits the BreadcrumbList JSON-LD from the same items, so
+ *     pages never hand-roll the schema again (`schema={false}` opts out
+ *     when the server already emitted it, e.g. /shop).
+ *  3. A11y: `nav` + `ol` + `aria-current`, RTL-native, CSS-only motion
+ *     (respects prefers-reduced-motion via the theme override).
  *
- * Usage: <Breadcrumb items={[{ name: "خانه", path: "/" }, { name: "پرو مجازی" }]} />
- * The last item (no `path`) renders as the current page.
+ * The last item always renders as the current page; any earlier item
+ * with a `path` renders as a link. Schema is emitted only when every
+ * item carries a path.
  */
 
 export type CrumbItem = { name: string; path?: string };
@@ -18,7 +26,7 @@ function HomeIcon() {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.8}
+      strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
@@ -30,92 +38,120 @@ function HomeIcon() {
   );
 }
 
-function Chevron() {
+function Diamond() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2.2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
+    <span
       aria-hidden="true"
-      className="text-gold/70 size-3 shrink-0"
-    >
-      {/* points left = “forward” in RTL */}
-      <path d="m14.5 6-6 6 6 6" />
-    </svg>
+      className={cn(
+        "mx-1 block size-1.5 rotate-45 rounded-[2px]",
+        "from-gold-soft to-gold-deep bg-gradient-to-br",
+        "transition-transform duration-500 group-hover:rotate-[225deg]",
+      )}
+    />
   );
 }
 
-export function Breadcrumb({ items }: { items: CrumbItem[] }) {
+const SWEEP = cn(
+  "bg-gradient-to-l from-gold-deep to-gold bg-no-repeat",
+  "[background-size:0%_2px] [background-position:0_100%]",
+  "transition-[background-size] duration-300 hover:[background-size:100%_2px]",
+);
+
+export function Breadcrumb({
+  items,
+  schema = true,
+  className,
+}: {
+  items: CrumbItem[];
+  schema?: boolean;
+  className?: string;
+}) {
+  const emittable =
+    schema && items.length > 0 && items.every((item) => item.path);
   return (
-    <nav aria-label="مسیر صفحه" className="mb-5">
-      <ol
-        className={cn(
-          "inline-flex max-w-full items-center gap-1 overflow-x-auto rounded-full border px-2 py-1.5",
-          "border-gold/30 bg-white/80 shadow-[0_10px_25px_-15px_rgba(14,42,71,.35)] backdrop-blur",
-          "dark:border-gold/35 dark:bg-navy-deep/70",
-        )}
-      >
-        {items.map((item, i) => {
-          const last = i === items.length - 1;
-          return (
-            <Fragment key={item.name}>
-              {i > 0 ? (
-                <li aria-hidden="true" className="flex">
-                  <Chevron />
-                </li>
-              ) : null}
-              <li className="flex min-w-0">
-                {last || !item.path ? (
-                  <span
-                    aria-current="page"
-                    className={cn(
-                      "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black whitespace-nowrap",
-                      "bg-gold/15 text-gold-ink dark:bg-gold/20 dark:text-gold-soft",
-                    )}
+    <>
+      {emittable ? (
+        <JsonLd
+          data={breadcrumbSchema(items as { name: string; path: string }[])}
+        />
+      ) : null}
+      <nav aria-label="مسیر صفحه" className={cn("mb-5", className)}>
+        {/* gradient hairline frame */}
+        <div
+          className={cn(
+            "inline-block max-w-full rounded-full p-px",
+            "from-gold/60 via-gold/20 to-gold/60 bg-gradient-to-l",
+            "shadow-[0_12px_28px_-16px_rgba(14,42,71,.4)]",
+          )}
+        >
+          <ol className="group dark:bg-navy-deep/85 flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full bg-white/85 px-1.5 py-1 backdrop-blur">
+            {items.map((item, i) => {
+              const last = i === items.length - 1;
+              const linked = !last && item.path;
+              return (
+                <Fragment key={`${item.name}-${i}`}>
+                  {i > 0 ? (
+                    <li aria-hidden="true" className="flex shrink-0">
+                      <Diamond />
+                    </li>
+                  ) : null}
+                  <li
+                    className="animate-crumb-in flex min-w-0"
+                    style={{ animationDelay: `${i * 90}ms` }}
                   >
-                    <span
-                      aria-hidden="true"
-                      className="bg-gold size-1.5 shrink-0 rounded-full"
-                    />
-                    <span className="truncate">{item.name}</span>
-                  </span>
-                ) : (
-                  <Link
-                    href={item.path}
-                    className={cn(
-                      "group flex items-center gap-1.5 rounded-full py-1 ps-1 pe-3 text-xs font-bold whitespace-nowrap",
-                      "text-navy/70 hover:bg-gold/10 hover:text-gold-ink transition-colors",
-                      "dark:text-wheat/80 dark:hover:text-gold-soft",
-                      "focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "flex size-6 items-center justify-center rounded-full",
-                        "bg-gold/15 text-gold-ink group-hover:bg-gold group-hover:text-navy-deep transition-colors",
-                        "dark:bg-gold/20 dark:text-gold-soft dark:group-hover:bg-gold dark:group-hover:text-navy-deep",
-                      )}
-                    >
-                      {i === 0 ? (
-                        <HomeIcon />
-                      ) : (
+                    {last ? (
+                      <span
+                        aria-current="page"
+                        className={cn(
+                          "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black whitespace-nowrap",
+                          "from-gold-soft via-gold to-gold-deep text-navy-deep bg-gradient-to-l",
+                          "shadow-[0_4px_12px_-4px_rgba(193,147,87,.8)]",
+                        )}
+                      >
                         <span
                           aria-hidden="true"
-                          className="size-1.5 rounded-full bg-current"
+                          className="bg-navy-deep/70 size-1.5 shrink-0 rounded-full"
                         />
-                      )}
-                    </span>
-                    <span className="truncate">{item.name}</span>
-                  </Link>
-                )}
-              </li>
-            </Fragment>
-          );
-        })}
-      </ol>
-    </nav>
+                        <span className="truncate">{item.name}</span>
+                      </span>
+                    ) : linked ? (
+                      <Link
+                        href={item.path as string}
+                        prefetch={false}
+                        className={cn(
+                          "flex items-center gap-1.5 rounded-full py-1 ps-1 pe-2.5 text-xs font-bold whitespace-nowrap",
+                          "text-navy/70 hover:text-gold-ink transition-all hover:-translate-y-px",
+                          "dark:text-wheat/80 dark:hover:text-gold-soft",
+                          "focus-visible:ring-gold focus-visible:ring-2 focus-visible:outline-none",
+                        )}
+                      >
+                        {i === 0 ? (
+                          <span
+                            className={cn(
+                              "flex size-6 items-center justify-center rounded-full",
+                              "from-gold-soft to-gold-deep text-navy-deep bg-gradient-to-br",
+                              "shadow-[0_4px_10px_-4px_rgba(193,147,87,.9)]",
+                            )}
+                          >
+                            <HomeIcon />
+                          </span>
+                        ) : null}
+                        <span className={cn("truncate pb-0.5", SWEEP)}>
+                          {item.name}
+                        </span>
+                      </Link>
+                    ) : (
+                      <span className="text-navy/50 dark:text-wheat/50 truncate px-2 py-1 text-xs font-bold">
+                        {item.name}
+                      </span>
+                    )}
+                  </li>
+                </Fragment>
+              );
+            })}
+          </ol>
+        </div>
+      </nav>
+    </>
   );
 }

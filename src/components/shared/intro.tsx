@@ -1,7 +1,7 @@
-import Link from "next/link";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Stagger, StaggerItem } from "@/components/motion/static";
-import { breadcrumbSchema, pageSchema } from "@/lib/seo";
+import { pageSchema } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 type IntroProps = {
@@ -28,14 +28,6 @@ export function Intro({
     <>
       {path ? (
         <JsonLd
-          data={breadcrumbSchema([
-            { name: "خانه", path: "/" },
-            { name: crumb, path },
-          ])}
-        />
-      ) : null}
-      {path ? (
-        <JsonLd
           data={pageSchema({
             title,
             description: schemaDescription ?? lead,
@@ -54,22 +46,13 @@ export function Intro({
             )}
           >
             <StaggerItem>
-              <nav
-                aria-label="مسیر صفحه"
-                className="text-navy/70 dark:text-wheat text-xs font-bold"
-              >
-                <ol className="flex flex-wrap items-center gap-1.5">
-                  <li>
-                    <Link href="/" className="hover:text-gold">
-                      خانه
-                    </Link>
-                  </li>
-                  <li aria-hidden className="text-gold">
-                    /
-                  </li>
-                  <li className="text-navy/70 dark:text-ivory/80">{crumb}</li>
-                </ol>
-              </nav>
+              <Breadcrumb
+                items={[
+                  { name: "خانه", path: "/" },
+                  { name: crumb, path },
+                ]}
+                className="mb-0"
+              />
             </StaggerItem>
             {kicker ? (
               // ♿ brown-mid, not gold: this kicker sits on the same
