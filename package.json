@@ -12,14 +12,8 @@
     "not dead"
   ],
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3143",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "test:auth": "node tests/run.mjs",
-    "test:ui": "node tests/run.mjs --ui"
+    "start": "next start -p 3143"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -44,6 +38,7 @@
     "next": "^16.3.3",
     "next-themes": "^0.4.6",
     "nextjs-toploader": "^3.9.17",
+    "playwright": "^1.62.1",
     "radix-ui": "1.6.7",
     "react": "19.2.8",
     "react-date-object": "^2.1.9",
@@ -65,16 +60,11 @@
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "@types/sanitize-html": "^2.16.1",
-    "esbuild": "^0.28.2",
-    "eslint": "9.39.5",
-    "eslint-config-next": "^16.3.3",
-    "mongodb-memory-server": "^11.2.0",
-    "playwright": "^1.62.1",
     "postcss": "8.5.26",
-    "postcss-load-config": "^6.0.1",
-    "prettier": "^3.9.6",
-    "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }
