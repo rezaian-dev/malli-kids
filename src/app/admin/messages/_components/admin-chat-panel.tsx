@@ -21,6 +21,7 @@ import {
   TicketCheck,
 } from "lucide-react";
 import { toast } from "@/lib/toast";
+import { requestErrorMessage } from "@/lib/action-result";
 import { usePolling } from "@/hooks/use-polling";
 import type { ChatConversation, ChatStatus } from "@/lib/shop/chat";
 import {
@@ -351,7 +352,7 @@ function AdminChatThread({
     const now = Date.now();
     if (now - lastPingAt.current < TYPING_PING_MS) return;
     lastPingAt.current = now;
-    void pingChatTypingAsAdminAction(conversationId);
+    void pingChatTypingAsAdminAction(conversationId).catch(() => {});
   }
 
   async function send() {
@@ -382,7 +383,7 @@ function AdminChatThread({
         onConversationChanged(result.data.conversation);
       toast.success("پاسخ ارسال شد");
     } catch {
-      toast.error("ارسال نشد؛ اتصال را بررسی کنید و دوباره تلاش کنید.");
+      toast.error(requestErrorMessage());
     } finally {
       setSending(false);
     }

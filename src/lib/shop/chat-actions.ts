@@ -1,13 +1,13 @@
 "use server";
 
 import { getSession } from "@/lib/auth/session";
-import { rateLimit } from "@/lib/rate-limit";
-import type { ActionResult } from "@/lib/action-result";
+import { rateLimit, rateLimitError } from "@/lib/rate-limit";
 import {
-  DEFAULT_SUPPORT_HOURS,
-  getSupportHours,
-  type SupportHours,
-} from "./settings";
+  isServiceUnavailable,
+  serviceUnavailable,
+  type ActionResult,
+} from "@/lib/action-result";
+import { DEFAULT_SUPPORT_HOURS, getSupportHours, type SupportHours } from "./settings";
 import {
   customerSendMessage,
   getChatMessages,
@@ -64,16 +64,16 @@ export async function sendChatMessageAction(input: {
   const clientId = cleanClientId(input.clientId);
   if (!body || !clientId) return { ok: false, error: FALLBACK_ERROR };
 
-  const user = await requireUser();
-  if (!user) return { ok: false, error: AUTH_ERROR };
-
-  const limited = await rateLimit(`chat-send:${user.id}`, {
-    windowMs: 60_000,
-    max: 12,
-  });
-  if (!limited.ok) return { ok: false, error: TOO_FAST_ERROR };
-
   try {
+    const user = await requireUser();
+    if (!user) return { ok: false, error: AUTH_ERROR };
+
+    const limited = await rateLimit(`chat-send:${user.id}`, {
+      windowMs: 60_000,
+      max: 12,
+    });
+    if (!limited.ok) return rateLimitError(limited, TOO_FAST_ERROR);
+
     const { conversation } = await customerSendMessage({
       customerId: user.id,
       customerName: user.name,
@@ -88,24 +88,22 @@ export async function sendChatMessageAction(input: {
         messages: await getChatMessages(conversation.id),
       },
     };
-  } catch {
-    return { ok: false, error: FALLBACK_ERROR };
+  } catch (error) {
+    return isServiceUnavailable(error)
+      ? serviceUnavailable()
+      : { ok: false, error: FALLBACK_ERROR };
   }
 }
 
 // Fire-and-forget — a failed call just leaves the count for next time.
-export async function markChatReadAction(
-  conversationId: string,
-): Promise<void> {
+export async function markChatReadAction(conversationId: string): Promise<void> {
   const user = await requireUser();
   if (!user) return;
   await markChatReadAsCustomer(conversationId, user.id);
 }
 
 // Fire-and-forget; throttled client-side (~1/3s) and rate-limited here as a backstop.
-export async function pingChatTypingAction(
-  conversationId: string,
-): Promise<void> {
+export async function pingChatTypingAction(conversationId: string): Promise<void> {
   const user = await requireUser();
   if (!user || typeof conversationId !== "string") return;
   const limited = await rateLimit(`chat-typing:${user.id}`, {

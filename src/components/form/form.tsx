@@ -11,21 +11,17 @@ import {
 import { toast } from "@/lib/toast";
 import { toFaDigits } from "@/lib/locale/fa";
 import { countErrors } from "@/lib/forms";
+import { requestErrorMessage } from "@/lib/action-result";
 import { cn } from "@/lib/utils";
 
 function errorPaths(errors: FieldErrors, prefix = "", depth = 0): string[] {
   const out: string[] = [];
   if (depth > 4) return out;
-  for (const [key, value] of Object.entries(
-    errors as Record<string, unknown>,
-  )) {
+  for (const [key, value] of Object.entries(errors as Record<string, unknown>)) {
     if (!value || typeof value !== "object") continue;
     const node = value as { message?: unknown; type?: unknown };
     if (node.message || node.type) out.push(prefix + key);
-    else
-      out.push(
-        ...errorPaths(value as FieldErrors, `${prefix}${key}.`, depth + 1),
-      );
+    else out.push(...errorPaths(value as FieldErrors, `${prefix}${key}.`, depth + 1));
   }
   return out;
 }
@@ -35,9 +31,7 @@ function focusFirstError(root: HTMLFormElement, errors: FieldErrors) {
     'input:not([type="hidden"]):not(:disabled), textarea:not(:disabled), select:not(:disabled), button:not(:disabled), [tabindex]:not([tabindex="-1"])';
   // Scope to THIS form; a background checkout/profile can have the same field names.
   const nodes = errorPaths(errors).flatMap((name) => {
-    const wrap = root.querySelector<HTMLElement>(
-      `[data-field="${CSS.escape(name)}"]`,
-    );
+    const wrap = root.querySelector<HTMLElement>(`[data-field="${CSS.escape(name)}"]`);
     const control =
       wrap?.querySelector<HTMLElement>(focusable) ??
       root.querySelector<HTMLElement>(`[name="${CSS.escape(name)}"]`);
@@ -54,8 +48,7 @@ function focusFirstError(root: HTMLFormElement, errors: FieldErrors) {
     return;
   }
   const first = nodes.reduce((a, b) =>
-    a.control.compareDocumentPosition(b.control) &
-    Node.DOCUMENT_POSITION_FOLLOWING
+    a.control.compareDocumentPosition(b.control) & Node.DOCUMENT_POSITION_FOLLOWING
       ? a
       : b,
   );
@@ -115,19 +108,13 @@ export function AppForm<T extends FieldValues>({
         const root = element.current;
         if (!root) return;
         if (errors) focusFirstError(root, errors);
-        if (
-          !shake ||
-          window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        )
+        if (!shake || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
           return;
         // Shake only the outer field to avoid doubled movement and clipped borders.
         root
           .querySelectorAll<HTMLElement>('[data-field][data-invalid="true"]')
           .forEach((field) => {
-            if (
-              field.parentElement?.closest('[data-field][data-invalid="true"]')
-            )
-              return;
+            if (field.parentElement?.closest('[data-field][data-invalid="true"]')) return;
             field
               .getAnimations()
               .filter((animation) => animation.id === "field-validation")
@@ -196,8 +183,7 @@ export function AppForm<T extends FieldValues>({
                 if (onInvalid) onInvalid(errors);
                 else {
                   const n = countErrors(errors as Record<string, unknown>);
-                  if (notify && n)
-                    toast.error(`${toFaDigits(n)} مورد را اصلاح کنید`);
+                  if (notify && n) toast.error(`${toFaDigits(n)} مورد را اصلاح کنید`);
                 }
                 feedback(errors as FieldErrors);
               },
@@ -205,7 +191,7 @@ export function AppForm<T extends FieldValues>({
           } catch {
             form.setError("root.server", {
               type: "server",
-              message: "ارتباط برقرار نشد؛ لطفاً دوباره تلاش کنید.",
+              message: requestErrorMessage(),
             });
           } finally {
             submitting.current = false;

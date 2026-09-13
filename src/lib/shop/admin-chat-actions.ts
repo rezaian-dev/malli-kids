@@ -1,7 +1,7 @@
 "use server";
 
 import { requireAdmin, getAdminSession } from "@/lib/auth/admin";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitError } from "@/lib/rate-limit";
 import type { ActionResult } from "@/lib/action-result";
 import {
   adminSendMessage,
@@ -14,21 +14,14 @@ import {
   type ChatConversation,
   type ChatStatus,
 } from "./chat";
-import {
-  cleanBody,
-  cleanClientId,
-  FALLBACK_ERROR,
-  type ChatThread,
-} from "./chat-shared";
+import { cleanBody, cleanClientId, FALLBACK_ERROR, type ChatThread } from "./chat-shared";
 
 export type { ChatThread };
 
 const ADMIN_AUTH_ERROR = "برای این کار باید ادمین وارد شده باشید.";
 const TOO_FAST_ERROR = "پیام‌ها کمی سریع ارسال شدند؛ چند لحظه صبر کنید.";
 
-export async function getChatConversationsAction(): Promise<
-  ChatConversation[]
-> {
+export async function getChatConversationsAction(): Promise<ChatConversation[]> {
   const admin = await requireAdmin();
   if (!admin) return [];
   return getChatConversationsForAdmin();
@@ -66,7 +59,7 @@ export async function sendChatReplyAction(input: {
     windowMs: 60_000,
     max: 30,
   });
-  if (!limited.ok) return { ok: false, error: TOO_FAST_ERROR };
+  if (!limited.ok) return rateLimitError(limited, TOO_FAST_ERROR);
 
   try {
     const sent = await adminSendMessage({
@@ -108,17 +101,13 @@ export async function setChatStatusAction(
   }
 }
 
-export async function markChatReadAsAdminAction(
-  conversationId: string,
-): Promise<void> {
+export async function markChatReadAsAdminAction(conversationId: string): Promise<void> {
   const admin = await requireAdmin();
   if (!admin) return;
   await markChatReadAsAdmin(conversationId);
 }
 
-export async function pingChatTypingAsAdminAction(
-  conversationId: string,
-): Promise<void> {
+export async function pingChatTypingAsAdminAction(conversationId: string): Promise<void> {
   const admin = await requireAdmin();
   if (!admin || typeof conversationId !== "string") return;
   await setTypingAsAdmin(conversationId);

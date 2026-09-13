@@ -3,8 +3,12 @@
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/auth";
 import { splitName } from "@/lib/auth/user";
-import { rateLimit } from "@/lib/rate-limit";
-import type { ActionResult } from "@/lib/action-result";
+import { rateLimit, rateLimitError } from "@/lib/rate-limit";
+import {
+  isServiceUnavailable,
+  serviceUnavailable,
+  type ActionResult,
+} from "@/lib/action-result";
 import type { User } from "@/types";
 import {
   ADDRESS_MAX_LEN,
@@ -59,7 +63,10 @@ function formatAddress(
 
   const seen = new Set<string>();
   const parts = ADDRESS_LEVELS.map((level) => {
-    const value = level.keys.map((k) => address[k]).find(Boolean)?.trim();
+    const value = level.keys
+      .map((k) => address[k])
+      .find(Boolean)
+      ?.trim();
     if (!value) return null;
     const core = addressCore(value);
     if (seen.has(core)) return null;
@@ -87,18 +94,18 @@ export async function reverseGeocodeAction(
   const parsed = reverseGeocodeSchema.safeParse(values);
   if (!parsed.success) return { ok: false, error: "مختصات نامعتبر است." };
 
-  const userId = await requireUserId();
-  if (!userId) return { ok: false, error: AUTH_ERROR };
-
-  // Nominatim caps ~1 req/sec — per-user throttle stays inside the policy
-  const limited = await rateLimit(`geocode:${userId}`, {
-    windowMs: 60_000,
-    max: 20,
-  });
-  if (!limited.ok)
-    return { ok: false, error: "تعداد درخواست زیاد بود؛ کمی صبر کنید." };
-
   try {
+    const userId = await requireUserId();
+    if (!userId) return { ok: false, error: AUTH_ERROR };
+
+    // Nominatim caps ~1 req/sec — per-user throttle stays inside the policy
+    const limited = await rateLimit(`geocode:${userId}`, {
+      windowMs: 60_000,
+      max: 20,
+    });
+    if (!limited.ok)
+      return rateLimitError(limited, "تعداد درخواست زیاد بود؛ کمی صبر کنید.");
+
     const { lat, lng } = parsed.data;
     const siteUrl = process.env.BETTER_AUTH_URL || "https://mallikids.ir";
     const res = await fetch(
@@ -123,7 +130,9 @@ export async function reverseGeocodeAction(
       ok: true,
       data: { address: formatAddress(data.display_name, data.address) },
     };
-  } catch {
-    return { ok: false, error: FALLBACK_ERROR };
+  } catch (error) {
+    return isServiceUnavailable(error)
+      ? serviceUnavailable()
+      : { ok: false, error: FALLBACK_ERROR };
   }
 }

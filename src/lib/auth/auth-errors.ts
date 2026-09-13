@@ -1,11 +1,14 @@
 import { APIError } from "better-auth";
-import type { ActionResult } from "@/lib/action-result";
+import {
+  isServiceUnavailable,
+  serviceUnavailable,
+  type ActionResult,
+} from "@/lib/action-result";
 
 // Map known authentication errors; hide unknown provider details.
 export const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 
-const RATE_LIMIT_ERROR =
-  "تعداد درخواست‌ها زیاد بوده؛ کمی صبر کنید و دوباره تلاش کنید.";
+const RATE_LIMIT_ERROR = "تعداد درخواست‌ها زیاد بوده؛ کمی صبر کنید و دوباره تلاش کنید.";
 
 export const AUTH_ERROR_MESSAGES: Record<string, string> = {
   INVALID_EMAIL_OR_PASSWORD: "ایمیل یا رمز عبور اشتباه است.",
@@ -19,8 +22,7 @@ export const AUTH_ERROR_MESSAGES: Record<string, string> = {
   INVALID_TOKEN: "لینکِ بازنشانی نامعتبر یا منقضی شده — دوباره درخواست دهید.",
   TOKEN_EXPIRED: "لینکِ بازنشانی منقضی شده — دوباره درخواست دهید.",
   USER_NOT_FOUND: "کاربری با این مشخصات پیدا نشد.",
-  BANNED_USER:
-    "دسترسیِ این حساب مسدود شده — برای پیگیری با پشتیبانی تماس بگیرید.",
+  BANNED_USER: "دسترسیِ این حساب مسدود شده — برای پیگیری با پشتیبانی تماس بگیرید.",
   // From the `phoneNumber` plugin (OTP login, phone-based password reset).
   INVALID_PHONE_NUMBER: "شمارهٔ موبایل معتبر نیست.",
   PHONE_NUMBER_EXIST: "این شماره قبلاً به حسابی دیگر متصل است.",
@@ -34,8 +36,7 @@ export const AUTH_ERROR_MESSAGES: Record<string, string> = {
   SEND_OTP_NOT_IMPLEMENTED: FALLBACK_ERROR,
   SMS_DELIVERY_FAILED: "ارسال پیامک انجام نشد؛ کمی بعد دوباره تلاش کنید.",
   SMS_COOLDOWN: "برای ارسال دوبارهٔ کد کمی صبر کنید.",
-  PHONE_NUMBER_CANNOT_BE_UPDATED:
-    "شمارهٔ بازیابی را فقط با کد پیامکی تغییر دهید.",
+  PHONE_NUMBER_CANNOT_BE_UPDATED: "شمارهٔ بازیابی را فقط با کد پیامکی تغییر دهید.",
 };
 
 const ERROR_FIELDS: Record<string, string> = {
@@ -55,9 +56,8 @@ const ERROR_FIELDS: Record<string, string> = {
   TOO_MANY_ATTEMPTS: "code",
 };
 
-export function authActionError(
-  error: unknown,
-): Extract<ActionResult, { ok: false }> {
+export function authActionError(error: unknown): Extract<ActionResult, { ok: false }> {
+  if (isServiceUnavailable(error)) return serviceUnavailable();
   if (error instanceof APIError) {
     const body = error.body as {
       code?: string;
@@ -82,13 +82,11 @@ export function authActionError(
         retryAfterSec: body.retryAfterSec,
       };
     if (error.statusCode === 429) return { ok: false, error: RATE_LIMIT_ERROR };
+    if (error.statusCode >= 500) return serviceUnavailable();
   }
-  if (
-    typeof Response !== "undefined" &&
-    error instanceof Response &&
-    error.status === 429
-  ) {
-    return { ok: false, error: RATE_LIMIT_ERROR };
+  if (typeof Response !== "undefined" && error instanceof Response) {
+    if (error.status === 429) return { ok: false, error: RATE_LIMIT_ERROR };
+    if (error.status >= 500) return serviceUnavailable();
   }
   return { ok: false, error: FALLBACK_ERROR };
 }

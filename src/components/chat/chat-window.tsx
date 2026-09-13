@@ -1,5 +1,7 @@
 "use client";
 
+import { requestErrorMessage } from "@/lib/action-result";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Headphones,
@@ -160,7 +162,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
     const now = Date.now();
     if (now - lastPingAt.current < TYPING_PING_MS) return;
     lastPingAt.current = now;
-    void pingChatTypingAction(conversation.id);
+    void pingChatTypingAction(conversation.id).catch(() => {});
   }
 
   async function send() {
@@ -189,7 +191,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
       setDraft("");
       setData(result.data);
     } catch {
-      setSendError("ارسال نشد؛ اتصال را بررسی کنید و دوباره تلاش کنید.");
+      setSendError(requestErrorMessage());
     } finally {
       setSending(false);
     }
@@ -272,9 +274,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
     >
       <div className="flex min-h-0 w-full flex-col">
         {/* Header */}
-        <div
-          className="flex shrink-0 items-center gap-3 px-4 py-3 from-navy to-navy-mid border-gold/30 border-b bg-linear-to-br dark:border-gold/40"
-        >
+        <div className="flex shrink-0 items-center gap-3 px-4 py-3 from-navy to-navy-mid border-gold/30 border-b bg-linear-to-br dark:border-gold/40">
           <span
             aria-hidden
             className={cn(
@@ -285,14 +285,12 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
             )}
           />
           <div className="min-w-0 flex-1">
-            <p className="m-0 text-sm font-black text-white">
-              پشتیبانی MALLI KIDS
-            </p>
+            <p className="m-0 text-sm font-black text-white">پشتیبانی MALLI KIDS</p>
             <p className="text-gold-soft m-0 text-[10px] font-bold">
               {status === "live"
                 ? "متصل — معمولاً در چند دقیقه پاسخ می‌دهیم"
                 : status === "retrying"
-                  ? "در حال تلاش برای اتصال مجدد…"
+                  ? "پاسخی از پشتیبانی دریافت نشد؛ تلاش مجدد…"
                   : "اتصال اینترنت قطع است"}
             </p>
           </div>
@@ -324,8 +322,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
             role="alert"
             className="bg-rose/10 text-rose flex shrink-0 items-center justify-center gap-2 px-4 py-2 text-[11px] font-black"
           >
-            <WifiOff className="size-4" /> اینترنت قطع است — پیام‌ها ذخیره
-            نمی‌شوند
+            <WifiOff className="size-4" /> اینترنت قطع است — پیام‌ها ذخیره نمی‌شوند
           </p>
         ) : null}
 
@@ -339,17 +336,16 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
         {/* Outside-hours notice */}
         {conversation?.status !== "closed" && !openHours && hours ? (
           <p className="bg-gold/10 text-navy dark:text-gold-soft shrink-0 px-4 py-2 text-center text-[11px] font-bold">
-            خارج از ساعات پاسخگویی ({hours.label}) — پیام شما ثبت می‌شود و در
-            ساعات کاری پاسخ می‌دهیم.
+            خارج از ساعات پاسخگویی ({hours.label}) — پیام شما ثبت می‌شود و در ساعات کاری
+            پاسخ می‌دهیم.
           </p>
         ) : null}
 
         {/* Escalated notice */}
         {conversation?.escalatedTicketNumber ? (
           <p className="bg-gold/10 text-navy dark:text-gold-soft shrink-0 px-4 py-2 text-center text-[11px] font-bold">
-            این گفتگو به تیکت{" "}
-            {toFaDigits(`#${conversation.escalatedTicketNumber}`)} تبدیل شده —
-            پیگیری از پنل کاربری.
+            این گفتگو به تیکت {toFaDigits(`#${conversation.escalatedTicketNumber}`)} تبدیل
+            شده — پیگیری از پنل کاربری.
           </p>
         ) : null}
 
@@ -369,7 +365,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
             <div className="py-10 text-center">
               <p className="text-sm font-black">خطا در دریافت گفتگو</p>
               <p className="text-navy/70 dark:text-wheat mt-1 text-xs">
-                اتصال را بررسی کنید و دوباره تلاش کنید.
+                {requestErrorMessage()}
               </p>
               <Button
                 type="button"
@@ -384,12 +380,9 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
           ) : messages.length === 0 ? (
             <div className="py-10 text-center">
               <Headphones className="text-gold mx-auto size-10" />
-              <p className="mt-3 text-sm font-black">
-                سلام! 👋 سوالتان را بنویسید
-              </p>
+              <p className="mt-3 text-sm font-black">سلام! 👋 سوالتان را بنویسید</p>
               <p className="text-navy/70 dark:text-wheat mx-auto mt-1 max-w-55 text-xs leading-6">
-                مشاوره سایز، پیگیری سفارش یا هر سوال دیگر — همین‌جا پاسخ
-                می‌گیرید.
+                مشاوره سایز، پیگیری سفارش یا هر سوال دیگر — همین‌جا پاسخ می‌گیرید.
               </p>
             </div>
           ) : (
@@ -443,9 +436,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
         {/* Post-close rating */}
         {showRating ? (
           <div className="border-navy/8 dark:border-gold/15 shrink-0 space-y-2 border-t px-4 py-3">
-            <p className="text-center text-xs font-black">
-              از این گفتگو راضی بودید؟
-            </p>
+            <p className="text-center text-xs font-black">از این گفتگو راضی بودید؟</p>
             <div
               role="radiogroup"
               aria-label="امتیاز به گفتگو"

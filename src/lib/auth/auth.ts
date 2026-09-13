@@ -4,7 +4,7 @@ import { admin, phoneNumber } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { getAuthMongoClient } from "@/lib/db/mongo-client";
-import { authSecondaryStorage, redis } from "@/lib/redis";
+import { authSecondaryStorage, redisConfigured } from "@/lib/redis";
 import { sendOTP } from "@/lib/sms";
 import { OTP_EXPIRES_IN, OTP_LEN } from "./schemas";
 import { createPhonePolicy } from "./phone-policy";
@@ -79,7 +79,7 @@ export const auth = betterAuth({
   secondaryStorage: authSecondaryStorage,
   // Limit login attempts and paid SMS requests.
   rateLimit: {
-    storage: redis ? "secondary-storage" : "memory",
+    storage: redisConfigured ? "secondary-storage" : "memory",
     customRules: {
       "/sign-in/email": { window: 60, max: 5 },
       "/sign-up/email": { window: 600, max: 10 },

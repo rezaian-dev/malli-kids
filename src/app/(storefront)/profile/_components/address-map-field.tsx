@@ -1,5 +1,7 @@
 "use client";
 
+import { requestErrorMessage } from "@/lib/action-result";
+
 // Scoped here so Leaflet CSS ships only with this lazy chunk
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
@@ -37,9 +39,7 @@ export function AddressMapField() {
   const [doneTick, setDoneTick] = useState(0);
   const [preview, setPreview] = useState("");
   // Candidate center — committed to the form only on confirm
-  const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(
-    null,
-  );
+  const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(null);
   const [moving, setMoving] = useState(false);
   // Rekeys the indicator so the drop-bounce replays per settle
   const [settleTick, setSettleTick] = useState(0);
@@ -82,13 +82,18 @@ export function AddressMapField() {
 
   async function runGeocode(nextLat: number, nextLng: number) {
     setGeocoding(true);
-    const result = await reverseGeocodeAction({ lat: nextLat, lng: nextLng });
-    setGeocoding(false);
-    if (!result.ok) {
-      toast.error(result.error);
-      return;
+    try {
+      const result = await reverseGeocodeAction({ lat: nextLat, lng: nextLng });
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+      startTypewriter(result.data.address);
+    } catch {
+      toast.error(requestErrorMessage());
+    } finally {
+      setGeocoding(false);
     }
-    startTypewriter(result.data.address);
   }
 
   // Read the settled center, never marker coords; debounce the geocode
@@ -261,14 +266,11 @@ export function AddressMapField() {
         )}
       >
         <div className="min-h-0 overflow-hidden">
-          <div
-            className="space-y-3 rounded-2xl border p-3 sm:p-4 border-navy/10 bg-sand/40 dark:border-gold/20 dark:bg-navy-deep/30"
-          >
+          <div className="space-y-3 rounded-2xl border p-3 sm:p-4 border-navy/10 bg-sand/40 dark:border-gold/20 dark:bg-navy-deep/30">
             <p className="text-navy/70 dark:text-wheat text-xs leading-6">
-              نقشه را جابه‌جا کنید تا نشانگرِ وسط، روی نقطهٔ موردنظر بیفتد —
-              خودِ نشانگر ثابت می‌ماند و نقشه زیرِ آن حرکت می‌کند. با تایپ
-              روی نقطه‌ای هم می‌توانید نقشه را به همان‌جا برسانید. آدرس متنی
-              خودکار پر می‌شود.
+              نقشه را جابه‌جا کنید تا نشانگرِ وسط، روی نقطهٔ موردنظر بیفتد — خودِ نشانگر
+              ثابت می‌ماند و نقشه زیرِ آن حرکت می‌کند. با تایپ روی نقطه‌ای هم می‌توانید
+              نقشه را به همان‌جا برسانید. آدرس متنی خودکار پر می‌شود.
             </p>
 
             <div className="bg-sand relative h-72 w-full overflow-hidden rounded-2xl sm:h-80">
@@ -343,12 +345,7 @@ export function AddressMapField() {
                             <stop offset="55%" stopColor="#c19357" />
                             <stop offset="100%" stopColor="#b8893f" />
                           </linearGradient>
-                          <radialGradient
-                            id="malliPinShine"
-                            cx="35%"
-                            cy="22%"
-                            r="45%"
-                          >
+                          <radialGradient id="malliPinShine" cx="35%" cy="22%" r="45%">
                             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.6" />
                             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
                           </radialGradient>

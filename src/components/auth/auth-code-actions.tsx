@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { ArrowRight, Loader2, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { ActionResult } from "@/lib/action-result";
+import { requestErrorMessage, type ActionResult } from "@/lib/action-result";
 import { toFaDigits } from "@/lib/locale/fa";
 import { toast } from "@/lib/toast";
 import { reportAuthError, type useCooldown } from "./auth-shared";
@@ -49,7 +49,8 @@ export function CodeStepActions({
       toast.info(sentMessage);
     } catch {
       form.setError("root.server", {
-        message: "ارتباط برقرار نشد؛ دوباره تلاش کنید.",
+        type: "server",
+        message: requestErrorMessage(),
       });
     } finally {
       lock.current = false;
