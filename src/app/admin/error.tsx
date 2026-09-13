@@ -6,7 +6,7 @@ import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useErrorRetry } from "@/hooks/use-error-retry";
 
-// 🧯 Catches errors anywhere in the admin console.
+// Catches errors anywhere in the admin console.
 export default function AdminError({
   error,
   reset,

@@ -16,7 +16,7 @@ import { Collab } from "./sections/collab";
 export function HomeLanding() {
   return (
     <>
-      {/* ⚡ Hero بدون انیمیشن ورود رندر می‌شود تا با رفرش، یک‌ضرب و بدون فلش دیده شود. */}
+      {/* Hero بدون انیمیشن ورود رندر می‌شود تا با رفرش، یک‌ضرب و بدون فلش دیده شود. */}
       <Hero />
       <Reveal>
         <Marquee />
@@ -30,9 +30,7 @@ export function HomeLanding() {
       <Reveal>
         <Categories />
       </Reveal>
-      {/* 🧊 Own Suspense boundary: its `cookies()` read + product lookup
-          shouldn't hold up the rest of an otherwise-static-shaped homepage,
-          and it renders nothing for most first-time visitors anyway. */}
+      {/* Keep personalized reads from delaying the main page. */}
       <Reveal>
         <Suspense fallback={null}>
           <RecentlyViewed />

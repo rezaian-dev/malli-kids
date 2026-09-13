@@ -3,7 +3,7 @@ import { ArticleModel } from "@/lib/db/models/article";
 import { faDate } from "@/lib/locale/fa";
 import type { AdminArticle } from "@/types";
 
-// 📰 All articles, raw body kept for the editor (storefront lib sanitizes)
+// All articles, raw body kept for the editor (storefront lib sanitizes)
 export async function getAllArticles(): Promise<AdminArticle[]> {
   await connectMongoose();
   const docs = await ArticleModel.find().sort({ createdAt: -1 }).lean();

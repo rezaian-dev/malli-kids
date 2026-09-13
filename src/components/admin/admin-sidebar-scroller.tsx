@@ -10,7 +10,7 @@ import {
 } from "react";
 import { cn } from "@/lib/utils";
 
-// 📜 Slim scrollbar viewport — the caller draws the fade edges
+// Slim scrollbar viewport — the caller draws the fade edges
 export function AdminSidebarScroller({
   children,
   className = "",

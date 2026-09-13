@@ -1,7 +1,7 @@
 import { Activity, ChevronLeft, LayoutGrid, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 
-/** 📋 The kicker/title/description/action header every admin page opens with. */
+/** The kicker/title/description/action header every admin page opens with. */
 export function AdminPageHeader({
   kicker,
   title,

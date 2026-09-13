@@ -6,7 +6,7 @@ import type { CollabRequest } from "@/lib/shop/collab";
 
 const STATUS_ACTION_BUTTON = "min-h-9 rounded-xl text-[10px]";
 
-/** 🤝 One partnership request — contact info, message, and a status toggle. */
+/** One partnership request — contact info, message, and a status toggle. */
 export function CollabCard({
   request,
   onToggleStatus,

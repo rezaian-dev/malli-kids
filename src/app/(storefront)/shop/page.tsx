@@ -22,7 +22,7 @@ import {
   type ShopPageSearchParams,
 } from "@/lib/shop/shop-state";
 
-// ⚠️ Segment config must be a literal — Turbopack static-extracts it
+// Segment config must be a literal — Turbopack static-extracts it
 export const revalidate = 60;
 
 export async function generateMetadata({
@@ -37,7 +37,7 @@ export async function generateMetadata({
     ...(state.cat !== "همه" ? [state.cat] : []),
     ...(state.season !== "همه" ? [state.season] : []),
   ];
-  // 📄 Page N needs its own title — identical titles are a duplicate signal
+  // Page N needs its own title — identical titles are a duplicate signal
   const pageSuffix =
     indexable && state.page > 1 ? ` — صفحه ${toFaDigits(state.page)}` : "";
 
@@ -83,7 +83,7 @@ export default async function ShopPage({
     });
   }
 
-  // 🙈 getAllProducts serves admin too — only the storefront drops hidden rows
+  // getAllProducts serves admin too — only the storefront drops hidden rows
   const catalog = (await getAllProducts()).filter((product) => product.visible);
   const items = filterShopProducts(catalog, state)
     .slice(0, 12)

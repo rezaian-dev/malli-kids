@@ -52,7 +52,7 @@ export type ArticleDraft = {
   body: string;
   cover: string;
   published: boolean;
-  // 🏷️ Tag.slug refs — distinct from the fixed editorial category
+  // Tag.slug refs — distinct from the fixed editorial category
   tags: string[];
   date?: string;
 };
@@ -72,7 +72,7 @@ const TAG_CHIP = "inline-flex items-center gap-1.5 rounded-full border px-3 py-1
 const TAG_CHIP_SELECTED =
   "bg-navy text-ivory border-navy dark:bg-gold dark:text-navy-deep dark:border-gold";
 
-// ✍️ Create/edit view — own draft state, saves via real actions
+// Create/edit view — own draft state, saves via real actions
 export function ArticleEditor({
   initial,
   allTags,
@@ -322,7 +322,7 @@ export function ArticleEditor({
             <span className={FIELD_LABEL}>تصویر شاخص</span>
             {draft.cover ? (
               <div className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use saved data URLs. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={draft.cover}
                   alt="تصویر شاخص"

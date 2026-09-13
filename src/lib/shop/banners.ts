@@ -29,8 +29,7 @@ export function toFestiveBanner(
   };
 }
 
-// 🎉 Today's applicable banner (pinned, or whose Jalali range covers today).
-// 🧊 Read on every request; revalidateTag covers admin edits, the merch window covers day-boundary rollover.
+// Cache by tag and time so edits and date changes refresh the banner.
 export const getActiveBanner = unstable_cache(
   async (): Promise<FestiveBanner | null> => {
     try {

@@ -12,7 +12,7 @@ import {
   writeJsonCookie,
 } from "@/lib/storefront-state";
 
-// 📦 Generic reader — every key safely falls back on corruption
+// Generic reader — every key safely falls back on corruption
 function readLocalCart(scope: string, current: CartItem[]): CartItem[] {
   try {
     const raw = window.localStorage.getItem(cartStorageKey(scope));
@@ -22,7 +22,7 @@ function readLocalCart(scope: string, current: CartItem[]): CartItem[] {
   }
 }
 
-// 🧹 Sweep the pre-namespacing shared `malli_cart` key once
+// Sweep the pre-namespacing shared `malli_cart` key once
 function clearLegacyCartStorage() {
   try {
     window.localStorage.removeItem(STORAGE.cart);
@@ -34,8 +34,7 @@ function clearLegacyCartStorage() {
 
 const CartStoreCtx = createContext<CartStore | null>(null);
 
-// 🪶 Owns persistence: SSR cookie snapshot first (no empty-cart flash),
-// localStorage wins on mount, then mirrors to both stores
+// Start from SSR cookies, then restore and persist this account’s local cart.
 export function CartStoreProvider({
   children,
   initialCart,
@@ -48,7 +47,7 @@ export function CartStoreProvider({
   storeRef.current ??= createCartStore(initialCart);
   const store = storeRef.current;
 
-  // 🔐 Loaded identity — compared on the next scope change
+  // Loaded identity — compared on the next scope change
   const scopeRef = useRef(cartScopeOf(user));
   const readyRef = useRef(false);
 
@@ -58,7 +57,7 @@ export function CartStoreProvider({
     readyRef.current = true;
   }, [store]);
 
-  // 🔐 Login/logout swaps to the new identity's cart immediately
+  // Login/logout swaps to the new identity's cart immediately
   useEffect(() => {
     const nextScope = cartScopeOf(user);
     if (nextScope === scopeRef.current) return;

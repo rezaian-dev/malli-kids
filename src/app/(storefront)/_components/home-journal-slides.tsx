@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Newspaper } from "lucide-react";
 import { loadPublishedArticles } from "@/lib/articles";
 
-// 📰 Latest published articles — same source as the articles page
+// Latest published articles — same source as the articles page
 export async function HomeJournalSlides() {
   const articles = (await loadPublishedArticles()).slice(0, 5);
   if (articles.length === 0) return null;
@@ -21,7 +21,7 @@ export async function HomeJournalSlides() {
           >
             <div className="bg-sand aspect-16/10 overflow-hidden">
               {a.cover ? (
-                /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin article covers can be raw data URLs. */
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={a.cover}
                   alt=""

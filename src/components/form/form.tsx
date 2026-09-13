@@ -62,8 +62,7 @@ function focusFirstError(root: HTMLFormElement, errors: FieldErrors) {
   first.control.focus({ preventScroll: true });
   // Scroll the actual field, not the deliberately oversized inset input.
   (first.wrap ?? first.control).scrollIntoView({
-    // Reveal the field before shaking; smooth scrolling could leave it
-    // underneath the tab header for most of the validation animation.
+    // Reveal the field before shaking; smooth scrolling can hide it under the tabs.
     behavior: "instant",
     block: "nearest",
     inline: "nearest",
@@ -121,8 +120,7 @@ export function AppForm<T extends FieldValues>({
           window.matchMedia("(prefers-reduced-motion: reduce)").matches
         )
           return;
-        // Animate once at the OUTER field only. Animating [data-invalid] also hit
-        // its shell, doubled the displacement, and clipped borders/focus rings.
+        // Shake only the outer field to avoid doubled movement and clipped borders.
         root
           .querySelectorAll<HTMLElement>('[data-field][data-invalid="true"]')
           .forEach((field) => {

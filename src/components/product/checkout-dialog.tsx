@@ -19,7 +19,7 @@ import {
 import { DeliveryFields } from "./checkout-delivery-fields";
 import { cn } from "@/lib/utils";
 
-// 🧾 Single-item checkout — shared by the product page and cart lines
+// Single-item checkout — shared by the product page and cart lines
 export function CheckoutDialog({
   open,
   onOpenChange,
@@ -51,8 +51,7 @@ export function CheckoutDialog({
     deliveryPayload,
   } = useCheckoutDeliveryForm({ open, user, subtotal });
 
-  // 🚚 Shipping keys off the post-discount subtotal, matching the server —
-  // otherwise this summary would promise a total the server won't charge
+  // Match the server's post-discount shipping calculation.
   const shipping =
     subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
 
@@ -151,7 +150,7 @@ export function CheckoutDialog({
                 setCouponBad(false);
               }}
               onKeyDown={(e) => {
-                // 🚫 Enter applies the coupon; stop it before the form submits
+                // Enter applies the coupon; stop it before the form submits
                 if (e.key !== "Enter") return;
                 e.preventDefault();
                 applyCoupon();

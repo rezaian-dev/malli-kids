@@ -2,7 +2,7 @@ import { z } from "zod";
 import { parseFaNumber, phoneDigits } from "./digits";
 import { toEnDigits, toFaDigits } from "@/lib/locale/fa";
 
-// 📧 Exported so non-zod inline checks reuse the same pattern.
+// Exported so non-zod inline checks reuse the same pattern.
 export const EMAIL_PATTERN = z.regexes.email;
 
 const RE = {
@@ -63,7 +63,7 @@ export const email = (label = "ایمیل") =>
 export const postalCode = () =>
   optionalPattern((v) => RE.postalCode.test(toEnDigits(v)), fa.postalCode);
 
-// 📏 Kept as a string like childAge, parsed at point of use — a sane height range, or blank.
+// Kept as a string like childAge, parsed at point of use — a sane height range, or blank.
 export const optHeightCm = (min = 40, max = 200) =>
   optionalPattern(
     (v) => {
@@ -82,7 +82,7 @@ export const fullName = (opts: { required?: boolean } = {}) => {
     .min(required ? 3 : 0, fa.min(3, "نام"))
     .max(60, fa.max(60, "نام و نام خانوادگی"))
     .refine(
-      // ✍️ U+200C (ZWNJ) is common in compound Persian names like «احمدی‌نژاد»
+      // U+200C (ZWNJ) is common in compound Persian names like «احمدی‌نژاد»
       (v) => v === "" || /^[\p{L}][\p{L}\s'’.‌-]+$/u.test(v),
       "فقط حروف و فاصله مجاز است",
     )
@@ -108,7 +108,7 @@ const password = (min = 6) =>
     .string({ error: () => fa.required("رمز عبور") })
     .min(min, `رمز باید حداقل ${toFaDigits(min)} نویسه باشد`);
 
-// 🔐 Registration/reset password: length + letter + number.
+// Registration/reset password: length + letter + number.
 export const strongPassword = (min = 8) =>
   password(min)
     .max(128, "رمز عبور حداکثر ۱۲۸ نویسه می‌تواند باشد")

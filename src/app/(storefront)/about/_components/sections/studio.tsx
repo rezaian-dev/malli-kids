@@ -36,9 +36,7 @@ export function Studio() {
         />
       </div>
 
-      {/* 🖼️ Real asset is 1280×853 (≈3:2) — the frame keeps that exact
-          ratio so the studio photo never letterboxes or gets stretched,
-          and simply grows/shrinks with the container across breakpoints. */}
+      {/* Preserve the image's 3:2 aspect ratio. */}
       <div className="group/studio relative mx-auto mt-8 w-full sm:mt-10">
         <div
           className="relative aspect-1280/853 overflow-hidden rounded-4xl border-6 sm:border-10 bg-sand shadow-navy/20 border-white shadow-2xl dark:border-linen"
@@ -47,7 +45,7 @@ export function Studio() {
             src="/brand/studio-team.jpg"
             alt="تیم طراحی و دوخت ملی‌کیدز در آتلیه"
             fill
-            // ⚡ LCP image — eager preload (priority is deprecated in Next 16)
+            // LCP image — eager preload (priority is deprecated in Next 16)
             preload
             fetchPriority="high"
             sizes="(max-width: 639px) 100vw, (max-width: 1023px) 90vw, 960px"

@@ -1,10 +1,7 @@
 import { APIError } from "better-auth";
 import type { ActionResult } from "@/lib/action-result";
 
-// 🈯 Better Auth error codes mapped to Farsi; unlisted codes fall back to a
-// generic message. Shared by both the storefront (`actions.ts`) and admin
-// (`admin-actions.ts`) Better Auth instances — the codes are identical,
-// only the session/cookie behind them differs.
+// Map known authentication errors; hide unknown provider details.
 export const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 
 const RATE_LIMIT_ERROR =
@@ -24,7 +21,7 @@ export const AUTH_ERROR_MESSAGES: Record<string, string> = {
   USER_NOT_FOUND: "کاربری با این مشخصات پیدا نشد.",
   BANNED_USER:
     "دسترسیِ این حساب مسدود شده — برای پیگیری با پشتیبانی تماس بگیرید.",
-  // 📱 From the `phoneNumber` plugin (OTP login, phone-based password reset).
+  // From the `phoneNumber` plugin (OTP login, phone-based password reset).
   INVALID_PHONE_NUMBER: "شمارهٔ موبایل معتبر نیست.",
   PHONE_NUMBER_EXIST: "این شماره قبلاً به حسابی دیگر متصل است.",
   PHONE_NUMBER_NOT_EXIST: "حسابی با این شماره پیدا نشد.",

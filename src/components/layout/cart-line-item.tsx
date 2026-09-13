@@ -9,7 +9,7 @@ import { SheetClose } from "@/components/ui/sheet";
 import { QtyStepper } from "@/components/shared/qty-stepper";
 import type { Product } from "@/types";
 
-// 🛍️ One cart row; checkout is whole-cart, not per-line
+// One cart row; checkout is whole-cart, not per-line
 export function CartLineItem({
   item,
   product,
@@ -21,8 +21,6 @@ export function CartLineItem({
   item: { id: number; size: string; qty: number };
   product: Product;
   unitPrice: number;
-  /** Pre-discount price to show struck through — undefined when there's no
-   *  active discount (product-level or festival) to compare against. */
   originalPrice?: number;
   onQtyChange: (qty: number) => void;
   onRemove: () => void;
@@ -77,7 +75,7 @@ export function CartLineItem({
           <span className="tabular-nums">
             {formatToman(unitPrice)} تومان
             {originalPrice ? (
-              // ♿ navy/70, not silver — silver-on-white fails 4.5:1; dark keeps silver
+              // navy/70, not silver — silver-on-white fails 4.5:1; dark keeps silver
               <s className="text-navy/70 dark:text-silver ms-1.5 text-[10px]">
                 {formatToman(originalPrice)}
               </s>

@@ -3,12 +3,12 @@ import { REVALIDATE } from "@/lib/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { TagModel } from "@/lib/db/models/tag";
 
-// 🧊 Cached like the product catalog/articles; admin tag mutations revalidate this tag.
+// Cached like the product catalog/articles; admin tag mutations revalidate this tag.
 export const TAGS_TAG = "tags";
 
 export type ContentTag = { name: string; slug: string };
 
-// 🔤 No de-dup suffix loop — near-duplicate tags are meant to collide onto the same canonical slug.
+// Similar tags intentionally resolve to the same canonical slug.
 export function slugifyTag(name: string): string {
   return (
     name
@@ -18,7 +18,7 @@ export function slugifyTag(name: string): string {
   );
 }
 
-// 📚 Alphabetical — feeds the admin picker and the slug lookup table. Build-safe.
+// Alphabetical — feeds the admin picker and the slug lookup table. Build-safe.
 export const getAllTags = unstable_cache(
   async (): Promise<ContentTag[]> => {
     try {

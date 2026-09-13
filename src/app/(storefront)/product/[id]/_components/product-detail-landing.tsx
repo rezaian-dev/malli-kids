@@ -41,8 +41,6 @@ export async function ProductDetailLanding({
     getVisibleReviewsForProduct(product.name),
     getSession(),
   ]);
-  // 🧵 Independent per-user reads — parallelized instead of chained now that
-  // neither depends on the other's result.
   const [canReview, subscribedSizes] = session?.user
     ? await Promise.all([
         hasPurchased(session.user.id, product.id),

@@ -1,7 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// ⚙️ One singleton document (key: "site") backing the site-wide campaign banner; no admin UI edits it yet.
+// Site-wide settings use one document keyed by site.
 export type SettingsCampaign = {
   active: boolean;
   percent: number;
@@ -27,7 +27,7 @@ const settingsSchema = new Schema<SettingsDoc>({
     percent: { type: Number, default: 20 },
     title: { type: String, default: "جشنواره ملی‌کیدز" },
   },
-  // 🕘 Live-chat support hours (Tehran-local, 24h); editable in settings.
+  // Live-chat support hours (Tehran-local, 24h); editable in settings.
   support: {
     startHour: { type: Number, default: 9 },
     endHour: { type: Number, default: 21 },

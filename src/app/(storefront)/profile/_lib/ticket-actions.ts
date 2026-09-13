@@ -71,8 +71,7 @@ export async function replyTicketAsUserAction(
   if (!userId) return { ok: false, error: AUTH_ERROR };
 
   try {
-    // 🔐 Scoped to `userId` — a signed-in user can only reply on their own
-    // ticket, never one they merely guessed the id of.
+    // Include userId in the query to enforce ticket ownership.
     const found = await replyTicket(id, "user", text, { userId });
     if (!found) return { ok: false, error: "تیکت پیدا نشد." };
     return { ok: true };

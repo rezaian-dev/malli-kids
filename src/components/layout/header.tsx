@@ -6,11 +6,11 @@ import { HeaderEnter } from "@/components/motion/static";
 import { HeaderActions } from "./header-actions";
 import { DesktopNav } from "./desktop-nav";
 
-// 🧭 Keep the storefront shell visually stable on first paint. ✨
+// Keep the storefront shell visually stable on first paint.
 export function Header() {
   return (
     <header dir="rtl" aria-label="سربرگ" className="fixed inset-x-0 top-0 z-70">
-      {/* ⚡ بدون انیمیشن ورود — سربرگ از همان اول کامل رندر می‌شود تا رفرش/ناوبری فلش نزند. */}
+      {/* بدون انیمیشن ورود — سربرگ از همان اول کامل رندر می‌شود تا رفرش/ناوبری فلش نزند. */}
       <HeaderEnter>
         <FestiveBannerBody />
 
@@ -55,9 +55,7 @@ export function Header() {
                 >
                   MALLI
                 </span>
-                {/* ♿ brown-mid, not gold: gold-on-cream is ~2.2:1 at this
-                  size, below the 4.5:1 text-contrast minimum. Gold-on-navy
-                  in dark mode already clears it, so only light mode changes. */}
+                {/* Use darker text in light mode to preserve contrast. */}
                 <span className="font-display text-brown-mid dark:text-gold mt-0.5 block text-[10px] tracking-[0.3em]">
                   KIDS
                 </span>

@@ -10,7 +10,7 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";import { shopHeading, type ShopState } from "@/lib/shop/shop-state";
 import { ShopSortOptions } from "./shop-sort-options";
 
-/** 🧭 Heading + result count + filter/sort/view controls above the grid. */
+/** Heading + result count + filter/sort/view controls above the grid. */
 export function ShopToolbar({
   state,
   resultCount,

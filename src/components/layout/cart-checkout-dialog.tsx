@@ -25,7 +25,7 @@ export type CartCheckoutRow = {
   unitPrice: number;
 };
 
-// 🧾 Whole-cart checkout — mirrors CheckoutDialog via the shared delivery form
+// Whole-cart checkout — mirrors CheckoutDialog via the shared delivery form
 export function CartCheckoutDialog({
   open,
   onOpenChange,

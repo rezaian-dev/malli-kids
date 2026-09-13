@@ -10,9 +10,6 @@ import { checkCouponAction } from "@/lib/shop/checkout-actions";
 import type { AppliedCoupon } from "@/lib/shop/coupons";
 import type { User } from "@/types";
 
-// 🧾 Delivery-form + coupon state shared by both checkout dialogs; each
-// keeps only its own submit call and item markup. Validation is the usual
-// react-hook-form + zod combo
 export const deliverySchema = z.object({
   city: z.string().trim().min(2, "شهر را بنویسید").max(60),
   address: z.string().trim().min(10, "آدرس کامل را بنویسید").max(300),
@@ -56,12 +53,12 @@ export function useCheckoutDeliveryForm({
   const [applied, setApplied] = useState<AppliedCoupon | null>(null);
   const [couponBad, setCouponBad] = useState(false);
   const [couponPending, startCouponTransition] = useTransition();
-  // 🔁 One idempotency key per attempt while this dialog is open
+  // One idempotency key per attempt while this dialog is open
   const [idempotencyKey, setIdempotencyKey] = useState(() =>
     crypto.randomUUID(),
   );
 
-  // 🔄 Re-sync from the profile every time the dialog opens.
+  // Re-sync from the profile every time the dialog opens.
   useEffect(() => {
     if (!open) return;
     form.reset(deliveryDefaults(user));
@@ -90,8 +87,6 @@ export function useCheckoutDeliveryForm({
     });
   }
 
-  /** 📦 The delivery fields shaped exactly as both order-creating actions
-   *  expect them (trimmed / digit-normalized). */
   function deliveryPayload(values: DeliveryValues) {
     return {
       city: values.city.trim(),

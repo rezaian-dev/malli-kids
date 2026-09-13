@@ -19,7 +19,7 @@ const counterSchema = new Schema<CounterDoc>(
 const CounterModel: Model<CounterDoc> =
   models.Counter ?? model<CounterDoc>("Counter", counterSchema);
 
-// 🔢 Atomic serial allocator; start only clamps the first allocation for a key (e.g. tickets begin at 1001).
+// Allocate serials atomically; apply the starting value only once.
 export async function getNextSequence(key: string, start = 1): Promise<number> {
   await connectMongoose();
   const first = await CounterModel.findOneAndUpdate(
@@ -29,7 +29,7 @@ export async function getNextSequence(key: string, start = 1): Promise<number> {
   ).lean<CounterDoc>();
   if (!first || first.seq >= start) return first?.seq ?? start;
 
-  // 🪜 Clamps a legacy counter up to start once; a concurrent loser re-increments
+  // Clamps a legacy counter up to start once; a concurrent loser re-increments
   const clamped = await CounterModel.findOneAndUpdate(
     { _id: key, seq: { $lt: start } },
     { $set: { seq: start } },

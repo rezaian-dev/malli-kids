@@ -5,8 +5,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { useFavoritesStore } from "@/providers/favorites-store-provider";
 import { toggleFavoriteAction } from "@/lib/shop/favorites-actions";
 
-// 💛 Account-backed only — guests hit the login dialog; optimistic, then
-// server-reconciled
+// Account-backed only — guests hit the login dialog; optimistic, then server-reconciled
 export function useFavorites() {
   const { user, setAuthOpen } = useAuth();
   const ids = useFavoritesStore((state) => state.ids);

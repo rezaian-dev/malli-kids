@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { AdminIdentity } from "./admin-shell";
 
-/** 🪪 The signed-in admin's avatar + name chip in the header. */
+/** The signed-in admin's avatar + name chip in the header. */
 export function AdminHeaderIdentity({ profile }: { profile: AdminIdentity }) {
   const letter = profile.name.trim().charAt(0) || "م";
   return (

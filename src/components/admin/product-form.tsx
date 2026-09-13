@@ -620,7 +620,7 @@ export function ProductForm({
               className="overflow-hidden rounded-[22px] border bg-white/55 border-navy/10 dark:border-gold/14 dark:bg-white/4"
             >
               {values.images[0] ? (
-                /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use local files and data URLs. */
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={values.images[0]}
                   alt={values.name || "پیش‌نمایش محصول"}
@@ -637,7 +637,7 @@ export function ProductForm({
               <div className="flex flex-wrap gap-2">
                 {values.images.slice(1).map((src, i) => (
                   <div key={src} className="relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use local files and data URLs. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={src}
                       alt={`تصویر ${i + 2} محصول`}

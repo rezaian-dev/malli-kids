@@ -1,7 +1,6 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 📈 count is bumped on every real search so "پرطرفدار" ranks by genuine popularity, not a static list.
 export type SearchTermDoc = {
   term: string;
   count: number;
@@ -16,7 +15,7 @@ const searchTermSchema = new Schema<SearchTermDoc>(
   { timestamps: { createdAt: false, updatedAt: true } },
 );
 
-// 🔎 The only read pattern this collection ever serves: "top N by count".
+// The only read pattern this collection ever serves: "top N by count".
 searchTermSchema.index({ count: -1 });
 
 export const SearchTermModel: Model<SearchTermDoc> =

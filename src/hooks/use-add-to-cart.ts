@@ -2,7 +2,7 @@ import { toast } from "@/lib/toast";
 import { useAuth } from "@/providers/auth-provider";
 import { useCartStore } from "@/providers/cart-store-provider";
 
-// 🛒 No session, nothing added — returns whether it really went in
+// No session, nothing added — returns whether it really went in
 export function useAddToCart() {
   const { user, setAuthOpen } = useAuth();
   const addToCart = useCartStore((state) => state.addToCart);

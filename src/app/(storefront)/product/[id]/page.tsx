@@ -6,8 +6,7 @@ import { getAllProducts, getProductById } from "@/lib/shop/products";
 import { buildMetadata } from "@/lib/seo";
 import { ProductDetailLanding } from "./_components/product-detail-landing";
 
-// ⚠️ Segment config must be a literal — Turbopack statically extracts this
-// export and rejects a reference (see REVALIDATE.catalog in @/lib/cache).
+// Next.js requires literal route configuration values.
 export const revalidate = 60;
 
 export const dynamicParams = true;
@@ -82,7 +81,7 @@ export default async function ProductPage({
     product = null;
   }
 
-  // 🙈 A hidden product 404s for customers and crawlers alike
+  // A hidden product 404s for customers and crawlers alike
   if (!product || !product.visible) notFound();
 
   const canonicalPath = pdpHref(product.id);

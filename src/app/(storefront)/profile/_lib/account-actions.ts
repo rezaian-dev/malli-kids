@@ -34,7 +34,7 @@ export async function updateAccountAction(
   }
 }
 
-// 📐 Biggest → smallest; essential levels never drop, finest trims first
+// Biggest → smallest; essential levels never drop, finest trims first
 const ADDRESS_LEVELS = [
   { keys: ["state"], essential: true },
   { keys: ["county"], essential: false },
@@ -46,13 +46,11 @@ const ADDRESS_LEVELS = [
   { keys: ["house_number"], essential: true },
 ] as const satisfies readonly { keys: readonly string[]; essential: boolean }[];
 
-// 🏷️ Nominatim prefixes scope words («استان/شهرستان») — strip them for
-// dedup comparison, keep the raw value for display
+// Ignore administrative prefixes when comparing address parts.
 const ADMIN_SCOPE_PREFIX = /^(استان|شهرستان|بخش|دهستان)\s+/;
 const addressCore = (value: string) => value.replace(ADMIN_SCOPE_PREFIX, "");
 
-// 🧭 Builds from structured address fields, not Nominatim's display_name —
-// that repeats city names per admin level and blows the 160-char cap
+// Build from address fields to avoid repeated city names.
 function formatAddress(
   displayName: string,
   address: Record<string, string> | undefined,
@@ -71,7 +69,7 @@ function formatAddress(
 
   const join = (list: typeof parts) => list.map((p) => p.value).join("، ");
 
-  // ✂️ Drop optional parts finest-first; essential ones stay
+  // Drop optional parts finest-first; essential ones stay
   let trimmed = parts;
   while (join(trimmed).length > ADDRESS_MAX_LEN) {
     const i = trimmed.map((p) => p.essential).lastIndexOf(false);
@@ -83,8 +81,6 @@ function formatAddress(
   return text.length > ADDRESS_MAX_LEN ? text.slice(0, ADDRESS_MAX_LEN) : text;
 }
 
-// 🗺️ Pin → text address via OSM Nominatim: keyless, but coarser and less
-// Persian than a paid Iranian provider would give
 export async function reverseGeocodeAction(
   values: ReverseGeocodeValues,
 ): Promise<ActionResult<{ address: string }>> {
@@ -94,7 +90,7 @@ export async function reverseGeocodeAction(
   const userId = await requireUserId();
   if (!userId) return { ok: false, error: AUTH_ERROR };
 
-  // 🚦 Nominatim caps ~1 req/sec — per-user throttle stays inside the policy
+  // Nominatim caps ~1 req/sec — per-user throttle stays inside the policy
   const limited = await rateLimit(`geocode:${userId}`, {
     windowMs: 60_000,
     max: 20,
@@ -108,7 +104,7 @@ export async function reverseGeocodeAction(
     const res = await fetch(
       `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=fa`,
       {
-        // 📛 Nominatim requires an identifying User-Agent
+        // Nominatim requires an identifying User-Agent
         headers: { "User-Agent": `MalliKids/1 (${siteUrl})` },
         signal: AbortSignal.timeout(8000),
       },

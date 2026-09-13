@@ -91,7 +91,7 @@ export function TextField({
   );
 }
 
-/** 🪞 `TextField` pinned to the "inset" skin — used across auth/checkout forms. */
+/** `TextField` pinned to the "inset" skin — used across auth/checkout forms. */
 export function InsetField(props: TextFieldProps) {
   return <TextField skin="inset" {...props} />;
 }

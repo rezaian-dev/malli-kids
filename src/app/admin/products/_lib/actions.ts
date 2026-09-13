@@ -18,7 +18,7 @@ import type { ActionResult } from "@/lib/action-result";
 import type { Product } from "@/types";
 import { productSchema, type ProductValues } from "./schemas";
 
-// 🔄 Polled by the products + inventory landings
+// Polled by the products + inventory landings
 export async function getAllProductsAction(): Promise<Product[]> {
   const admin = await requireAdmin();
   if (!admin) return [];
@@ -32,12 +32,11 @@ function revalidateCatalog() {
   revalidatePath("/admin/products");
   revalidatePath("/admin/inventory");
   revalidatePath("/admin");
-  // 🧊 /shop renders dynamically — the catalog cache is the PRODUCTS_TAG,
-  // not a route cache
+  // /shop renders dynamically — the catalog cache is the PRODUCTS_TAG, not a route cache
   revalidateTag(PRODUCTS_TAG, "max");
 }
 
-// 🪶 URL-safe slug from the name, de-duplicated (admin may type their own)
+// URL-safe slug from the name, de-duplicated (admin may type their own)
 async function uniqueProductSlug(name: string): Promise<string> {
   const base =
     name
@@ -50,7 +49,7 @@ async function uniqueProductSlug(name: string): Promise<string> {
   return uniqueSlugAgainst(ProductModel, base);
 }
 
-// 🧮 findOneAndUpdate skips pre("save") — derive the stock boolean by hand
+// findOneAndUpdate skips pre("save") — derive the stock boolean by hand
 function withDerivedStock(values: ProductValues) {
   return { ...values, stock: deriveStock(values.variants, values.stock) };
 }
@@ -112,7 +111,7 @@ export async function updateProductAction(
     revalidateCatalog();
     revalidatePath(`/admin/products/${id}/edit`);
 
-    // 🔔 Best-effort back-in-stock notifies; no-op when nobody's subscribed
+    // Best-effort back-in-stock notifies; no-op when nobody's subscribed
     if (parsed.data.variants.length) {
       for (const variant of parsed.data.variants) {
         if (variant.stock > 0) await notifyBackInStock(id, variant.size);
@@ -150,7 +149,7 @@ export async function removeProductAction(id: number): Promise<ActionResult> {
   }
 }
 
-// 🪶 Legacy boolean toggle — still the whole story for variant-less products
+// Legacy boolean toggle — still the whole story for variant-less products
 export async function setProductStockAction(
   id: number,
   stock: boolean,
@@ -169,7 +168,7 @@ export async function setProductStockAction(
   }
 }
 
-// 📦 Sets one variant's exact quantity; keeps the stock boolean derived
+// Sets one variant's exact quantity; keeps the stock boolean derived
 export async function setVariantStockAction(
   id: number,
   size: string,
@@ -203,7 +202,7 @@ export async function setVariantStockAction(
   }
 }
 
-// 📦 Same quantity on one size across several products (e.g. a shipment)
+// Same quantity on one size across several products (e.g. a shipment)
 export async function bulkSetVariantStockAction(
   updates: { id: number; size: string; stock: number }[],
 ): Promise<ActionResult> {

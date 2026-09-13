@@ -4,8 +4,7 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { breadcrumbSchema } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
-// Shared breadcrumb with auto BreadcrumbList JSON-LD; schema={false} when
-// the server already emitted it
+// Disable schema output if the server already emitted it.
 
 export type CrumbItem = { name: string; path?: string };
 

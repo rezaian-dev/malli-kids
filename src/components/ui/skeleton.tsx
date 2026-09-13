@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-// 🦴 Small shimmer block for loading shells. ✨
+// Small shimmer block for loading shells.
 export function Skeleton({ className }: { className?: string }) {
   return (
     <div

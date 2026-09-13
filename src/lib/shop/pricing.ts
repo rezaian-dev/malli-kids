@@ -1,4 +1,3 @@
-// 💰 Lower-level percent-off math that resolvePrice builds on; used directly when no discount metadata is needed.
 function campaignPrice(
   price: number,
   campaign: { active: boolean; percent: number },
@@ -24,8 +23,7 @@ export type ResolvedPrice = {
   source: "festival" | "product" | "none";
 };
 
-// 🎪 Festival overrides markdown — never stacks; percent off the true old
-// price, never an already-discounted one
+// Campaign discounts replace product markdowns; never stack them.
 export function resolvePrice(
   product: PricedProduct,
   campaign: { active: boolean; percent: number },

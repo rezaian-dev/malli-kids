@@ -1,6 +1,6 @@
 import imageCompression from "browser-image-compression";
 
-/** 🪶 Compress a picked image into a light data URL. */
+/** Compress a picked image into a light data URL. */
 export async function compressToDataUrl(
   file: File,
   opts?: { maxSizeMB?: number; maxWidthOrHeight?: number },

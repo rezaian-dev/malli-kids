@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { PackageSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
-// 🎨 May render outside the (storefront) layout — needs its own Tailwind output
+// May render outside the (storefront) layout — needs its own Tailwind output
 import "./storefront.css";
 
-// 🧭 Global 404 — the last resort when no closer not-found.tsx matches.
+// Global 404 — the last resort when no closer not-found.tsx matches.
 export default function NotFound() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-5 px-4 text-center">

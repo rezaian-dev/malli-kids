@@ -27,7 +27,6 @@ export type Ticket = {
   assigneeId?: string;
   assigneeName?: string;
   createdAt: string;
-  // ⏳ Whole hours since the customer's last message while open, else null; drives the "waiting" chip.
   waitingHours: number | null;
   replies: TicketReply[];
 };
@@ -54,7 +53,7 @@ function toTicket(
     name: doc.name,
     subject: doc.subject,
     status: doc.status,
-    // 🕰️ Rows created before this field existed default the same as the schema does.
+    // Rows created before this field existed default the same as the schema does.
     category: doc.category ?? "other",
     priority: doc.priority ?? "normal",
     number: doc.number,
@@ -78,9 +77,7 @@ export async function getAllTickets(): Promise<Ticket[]> {
 
 export async function getTicketsForUser(userId: string): Promise<Ticket[]> {
   await connectMongoose();
-  const docs = await TicketModel.find({ userId })
-    .sort({ updatedAt: -1 })
-    .lean();
+  const docs = await TicketModel.find({ userId }).sort({ updatedAt: -1 }).lean();
   return docs.map(toTicket);
 }
 
@@ -119,7 +116,7 @@ export async function replyTicket(
       $push: { replies: { from, text: text.trim(), at: new Date() } },
       $set: { status: from === "support" ? "answered" : "open" },
     },
-    { new: true },
+    { returnDocument: "after" },
   ).lean();
   return doc ? toTicket(doc) : null;
 }
@@ -129,14 +126,11 @@ export async function setTicketStatus(
   status: TicketStatus,
 ): Promise<boolean> {
   await connectMongoose();
-  const updated = await TicketModel.updateOne(
-    { _id: id },
-    { $set: { status } },
-  );
+  const updated = await TicketModel.updateOne({ _id: id }, { $set: { status } });
   return updated.matchedCount > 0;
 }
 
-// 🗂️ Category/priority/assignee upkeep; pass assigneeId: null to unassign.
+// Category/priority/assignee upkeep; pass assigneeId: null to unassign.
 export async function setTicketMeta(
   id: string,
   patch: {
@@ -165,7 +159,7 @@ export async function setTicketMeta(
   return updated.matchedCount > 0;
 }
 
-// 🙋 First support reply auto-claims an unassigned ticket, same rule as live-chat threads.
+// First support reply auto-claims an unassigned ticket, same rule as live-chat threads.
 export async function claimTicketIfUnassigned(
   id: string,
   adminId: string,

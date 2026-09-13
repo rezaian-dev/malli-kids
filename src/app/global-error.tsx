@@ -6,21 +6,18 @@ import { Button } from "@/components/ui/button";
 import { STORAGE } from "@/lib/constants";
 import "./theme.css";
 
-// 🎨 Same light/dark paint as the root layout's CRITICAL_CSS, so this page
-// never flashes the wrong theme before the script below runs.
+// Match the root layout's initial theme colors.
 const CRITICAL_CSS =
   "html{background:#ece6dc;color:#0e2a47;color-scheme:light}" +
   "html.dark{background:#041427;color:#fff8ec;color-scheme:dark}" +
   "body{background:inherit;color:inherit}";
 
-// 🌗 ThemeProvider never mounts here (the root layout it lives in is what
-// just crashed), so this page has to pick the `.dark` class itself — same
-// source of truth next-themes uses: the stored preference, else the OS.
+// Resolve the theme here because the failed root provider cannot mount.
 const THEME_SCRIPT = `(function(){try{var m=localStorage.getItem(${JSON.stringify(
   STORAGE.theme,
 )});var d=m==="dark"||(m!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(d)document.documentElement.classList.add("dark");}catch(e){}})();`;
 
-// 🧯 Root layout failed — must render its own <html>/<body>.
+// Root layout failed — must render its own <html>/<body>.
 export default function GlobalError({
   error,
   reset,
@@ -35,7 +32,7 @@ export default function GlobalError({
   return (
     <html lang="fa-IR" dir="rtl" suppressHydrationWarning>
       <head>
-        {/* 🌗 Blocking inline script — must run before body paints */}
+        {/* Blocking inline script — must run before body paints */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <style>{CRITICAL_CSS}</style>
       </head>

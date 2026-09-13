@@ -1,7 +1,6 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🔔 Created server-side by the actions that change a customer's ticket/order — never fabricated client-side.
 export type NotificationKind = "ticket" | "order" | "system" | "restock";
 
 export type NotificationDoc = {

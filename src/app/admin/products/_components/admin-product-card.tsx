@@ -9,7 +9,7 @@ import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import type { ActionResult } from "@/lib/action-result";
 import type { Product } from "@/types";
 
-/** 🛍️ One catalog product — thumbnail, price, stock, edit/delete. */
+/** One catalog product — thumbnail, price, stock, edit/delete. */
 export function AdminProductCard({
   product,
   selected,

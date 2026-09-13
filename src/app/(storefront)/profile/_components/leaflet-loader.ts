@@ -1,10 +1,9 @@
 "use client";
 
-// 🗺️ Plain Leaflet — free and keyless (OSM tiles, Nominatim geocoding).
-// ⚡ Dynamic import only — Leaflet touches window/document, never safe at module scope during SSR.
+// Load Leaflet only in the browser; it requires window and document.
 let loading: Promise<typeof import("leaflet")> | null = null;
 
-// 🗺️ Loads Leaflet exactly once, wherever it's called from
+// Loads Leaflet exactly once, wherever it's called from
 export function loadLeaflet(): Promise<typeof import("leaflet")> {
   if (typeof window === "undefined") {
     return Promise.reject(new Error("فقط در مرورگر قابل استفاده است."));

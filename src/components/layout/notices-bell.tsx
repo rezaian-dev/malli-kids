@@ -131,8 +131,7 @@ export function NoticesBell() {
         ) : (
           <ul className="max-h-96 scrollbar-thin overflow-y-auto p-2">
             {notices.slice(0, 12).map((n) => {
-              // 🛡️ Legacy rows can carry kinds retired since (e.g. "chat",
-              // decoupled to the bubble) — never let one crash the menu.
+              // Ignore unknown notification kinds from older rows.
               const Icon = KIND_ICON[n.kind as NotificationKind] ?? Bell;
               return (
                 <li key={n.id}>

@@ -58,8 +58,7 @@ export function AdminShell({
   counts: initialCounts,
 }: {
   children: ReactNode;
-  // 🔒 Server-verified admin (null on /admin/login) — display data only;
-  // every page re-checks requireAdmin() itself
+  // Display data only; each admin page enforces authorization.
   profile: AdminIdentity | null;
   counts: AdminNotifCounts;
 }) {
@@ -72,8 +71,6 @@ export function AdminShell({
     initialCounts,
     Boolean(identity),
   );
-  // ⚡ An admin's own action (close a chat, answer a ticket, ship an
-  // order…) moves these badges immediately — no waiting for the poll.
   useEffect(() => {
     if (!identity) return;
     const onMutated = () => refreshCounts();
@@ -88,7 +85,7 @@ export function AdminShell({
   if (path === "/admin/login") return <>{children}</>;
 
   function logout() {
-    // 🔒 Clears only the admin cookie (`adminAuth`) — never the storefront's.
+    // Clears only the admin cookie (`adminAuth`) — never the storefront's.
     void adminSignOutAction().then(() => router.push("/admin/login"));
   }
 

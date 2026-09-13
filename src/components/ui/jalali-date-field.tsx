@@ -37,8 +37,6 @@ function toDateObject(value: string): DateObject | null {
   });
 }
 
-/** 📅 Admin date field: pick-only Persian calendar (no typing). Themed in
- *  `admin.css`. Value contract stays the plain `YYYY/MM/DD` string. */
 export function JalaliDateField({
   id,
   label,
@@ -53,7 +51,7 @@ export function JalaliDateField({
   const pickerRef = useRef<DatePickerRef | null>(null);
   const [open, setOpen] = useState(false);
 
-  // 🩹 Document-level capture — close before Radix's bubble-phase listener
+  // Document-level capture — close before Radix's bubble-phase listener
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
@@ -121,8 +119,6 @@ export function JalaliDateField({
           if (date.weekDay.index === 6) return { className: "malli-weekend" };
           return {};
         }}
-        // 🩹 No portal — body pointer-events:none inside a modal dialog
-        // would make a portaled popup unclickable
         calendarPosition="bottom-center"
         className="malli-jalali"
         containerClassName="malli-jalali-field"

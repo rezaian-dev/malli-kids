@@ -27,8 +27,7 @@ export function AddToCartButton({
       toast("به محض موجود شدن خبرتان می‌کنیم");
       return;
     }
-    // 🔐 `addToCart` itself gates guests (opens the login dialog + its own
-    // toast) — only announce success when it actually added the line.
+    // Announce success only after addToCart accepts the item.
     if (addToCart(id, size)) toast("به سبد اضافه شد");
   }
 

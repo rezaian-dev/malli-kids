@@ -1,5 +1,4 @@
 import { z } from "zod";
 
-// 🩹 Zod's JIT Function() probe trips strict CSP; jitless skips it.
-// Imported once, before any schema validates
+// Disable Zod JIT before validation to respect the Content Security Policy.
 z.config({ jitless: true });

@@ -1,6 +1,6 @@
 import type { Product } from "@/types";
 
-// 🧱 One row per sellable unit — per variant, or one for legacy unsized
+// One row per sellable unit — per variant, or one for legacy unsized
 export type InventoryRow = {
   id: string;
   product: Product;

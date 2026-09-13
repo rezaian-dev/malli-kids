@@ -1,6 +1,6 @@
 "use client";
 
-// 🗺️ Scoped here so Leaflet CSS ships only with this lazy chunk
+// Scoped here so Leaflet CSS ships only with this lazy chunk
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -15,14 +15,13 @@ import type { UpdateAccountValues } from "../_lib/schemas";
 import { loadLeaflet } from "./leaflet-loader";
 
 const PICK_DEBOUNCE_MS = 600;
-// 🎬 Sits just past the 500ms marker-drop so the two never overlap
+// Sits just past the 500ms marker-drop so the two never overlap
 const SETTLE_BOUNCE_MS = 520;
-// ✍️ Reveal timing must track --animate-letter-in in theme.css
+// Reveal timing must track --animate-letter-in in theme.css
 const WORD_STAGGER_MS = 45;
 const REVEAL_ANIM_MS = 340;
 
-// 📍 Inline map picker — fixed center overlay, not a Leaflet marker; every
-// settle funnels through one `moveend` → candidate + reverse-geocode.
+// Use one moveend handler for the pin and reverse geocoding.
 export function AddressMapField() {
   const { watch, setValue, getValues } = useFormContext<UpdateAccountValues>();
   const lat = watch("lat");
@@ -34,15 +33,15 @@ export function AddressMapField() {
   const [locating, setLocating] = useState(false);
   const [geocoding, setGeocoding] = useState(false);
   const [typing, setTyping] = useState(false);
-  // ✨ Rekeys the checkmark so its pop replays per address
+  // Rekeys the checkmark so its pop replays per address
   const [doneTick, setDoneTick] = useState(0);
   const [preview, setPreview] = useState("");
-  // 📍 Candidate center — committed to the form only on confirm
+  // Candidate center — committed to the form only on confirm
   const [picked, setPicked] = useState<{ lat: number; lng: number } | null>(
     null,
   );
   const [moving, setMoving] = useState(false);
-  // 🎬 Rekeys the indicator so the drop-bounce replays per settle
+  // Rekeys the indicator so the drop-bounce replays per settle
   const [settleTick, setSettleTick] = useState(0);
   const [bouncing, setBouncing] = useState(false);
 
@@ -53,19 +52,19 @@ export function AddressMapField() {
   const typeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 🧊 No useCallback — nothing compares these by reference
+  // No useCallback — nothing compares these by reference
   function stopTyping() {
     if (typeTimeoutRef.current) clearTimeout(typeTimeoutRef.current);
     typeTimeoutRef.current = null;
     setTyping(false);
   }
 
-  // ✍️ Full text up front — the reveal is a pure CSS stagger
+  // Full text up front — the reveal is a pure CSS stagger
   function startTypewriter(text: string) {
     stopTyping();
     setPreview(text);
     setTyping(true);
-    // 🧮 Must mirror the JSX word split for the timing math
+    // Must mirror the JSX word split for the timing math
     const chunks = text.split(/(\s+)/).length;
     const total = Math.max(chunks - 1, 0) * WORD_STAGGER_MS + REVEAL_ANIM_MS;
     typeTimeoutRef.current = setTimeout(() => {
@@ -92,7 +91,7 @@ export function AddressMapField() {
     startTypewriter(result.data.address);
   }
 
-  // 📌 Read the settled center, never marker coords; debounce the geocode
+  // Read the settled center, never marker coords; debounce the geocode
   function handleSettle(map: LeafletMap) {
     setMoving(false);
     setSettleTick((n) => n + 1);
@@ -123,7 +122,7 @@ export function AddressMapField() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocating(false);
-        // 🎯 moveend after the flight reuses the single settle path
+        // moveend after the flight reuses the single settle path
         map.flyTo(
           [pos.coords.latitude, pos.coords.longitude],
           Math.max(map.getZoom(), 16),
@@ -144,7 +143,7 @@ export function AddressMapField() {
     );
   }
 
-  // 🗺️ Fresh map per open — safer than keeping Leaflet alive through unmount
+  // Fresh map per open — safer than keeping Leaflet alive through unmount
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
@@ -156,7 +155,7 @@ export function AddressMapField() {
     const hasExisting = existingLat != null && existingLng != null;
     const startLat = existingLat ?? BRAND.map.lat;
     const startLng = existingLng ?? BRAND.map.lng;
-    // 📍 A saved location already counts as picked
+    // A saved location already counts as picked
     setPicked(hasExisting ? { lat: existingLat, lng: existingLng } : null);
     setPreview(getValues("address") ?? "");
 
@@ -167,9 +166,7 @@ export function AddressMapField() {
           center: [startLat, startLng],
           zoom: 15,
         });
-        // 🆓 Keyless OSM tiles — unlike Esri (a US company that geo-blocks
-        // sanctioned countries), OSM's tile server has no country block, so
-        // this loads on an Iranian IP without a VPN.
+        // Use keyless OpenStreetMap tiles.
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
           maxZoom: 19,
           attribution:
@@ -179,14 +176,14 @@ export function AddressMapField() {
         map.on("movestart", () => setMoving(true));
         map.on("moveend", () => handleSettle(map));
 
-        // 🖱️ Taps pan the point under the fixed pin; moveend picks it up
+        // Taps pan the point under the fixed pin; moveend picks it up
         map.on("click", (e: import("leaflet").LeafletMouseEvent) => {
           map.panTo(e.latlng, { animate: true });
         });
 
         mapRef.current = map;
         setMapReady(true);
-        // 🩹 Card still mid-expand at init; ResizeObserver keeps Leaflet sized
+        // Card still mid-expand at init; ResizeObserver keeps Leaflet sized
         const ro = new ResizeObserver(() => map.invalidateSize());
         ro.observe(mapElRef.current);
         resizeObserverRef.current = ro;
@@ -205,11 +202,11 @@ export function AddressMapField() {
       mapRef.current?.remove();
       mapRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 🎯 only re-run on open/close.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   function handleConfirm() {
-    // ♿️ Address-only confirm works without ever touching the map
+    // Address-only confirm works without ever touching the map
     if (!picked && !preview.trim()) {
       toast.warning("اول نقشه را جابه‌جا کنید یا آدرس را تایپ کنید.");
       return;
@@ -256,7 +253,7 @@ export function AddressMapField() {
         ) : null}
       </div>
 
-      {/* 📥 0fr↔1fr grid trick — animates open without a known height */}
+      {/* 0fr1fr grid trick — animates open without a known height */}
       <div
         className={cn(
           "grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(.25,.1,.25,1)]",
@@ -275,7 +272,7 @@ export function AddressMapField() {
             </p>
 
             <div className="bg-sand relative h-72 w-full overflow-hidden rounded-2xl sm:h-80">
-              {/* 🩹 Fade the wrapper, not the mount node — React would clobber Leaflet's classes */}
+              {/* Fade the wrapper, not the mount node — React would clobber Leaflet's classes */}
               <div
                 className={cn(
                   "absolute inset-0 opacity-0 transition-opacity duration-500",
@@ -290,7 +287,7 @@ export function AddressMapField() {
                 />
               </div>
 
-              {/* 🎯 Fixed CSS pin; pointer-events pass through to the map */}
+              {/* Fixed CSS pin; pointer-events pass through to the map */}
               {mapReady ? (
                 <div
                   aria-hidden
@@ -447,7 +444,7 @@ export function AddressMapField() {
                   />
                 ) : null}
               </div>
-              {/* ♿️ Announce geocoded addresses; value changes once per geocode */}
+              {/* Announce geocoded addresses; value changes once per geocode */}
               <div
                 aria-live="polite"
                 className={cn(
@@ -470,12 +467,12 @@ export function AddressMapField() {
                   placeholder="پس از جابه‌جا کردن نقشه، آدرس اینجا نوشته می‌شود…"
                   className={cn(
                     "bg-sand/60 text-navy placeholder:text-navy/70 dark:bg-navy-deep/40 dark:text-ivory dark:placeholder:text-ivory/30 min-h-20 w-full rounded-2xl px-4 py-3 text-sm font-semibold outline-none",
-                    // 🎭 invisible (not opacity-0) keeps this box driving layout
+                    // invisible (not opacity-0) keeps this box driving layout
                     typing && "invisible",
                   )}
                 />
                 {typing ? (
-                  // ✍️ Word-level spans — per-character boxes break Persian cursive joining
+                  // Word-level spans — per-character boxes break Persian cursive joining
                   <div
                     aria-hidden
                     dir="rtl"

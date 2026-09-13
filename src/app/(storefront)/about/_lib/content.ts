@@ -1,4 +1,4 @@
-// 📖 About-page copy, route-local
+// About-page copy, route-local
 export const ABOUT = {
   crumb: "درباره ما",
   kicker: "we design happiness ♥",

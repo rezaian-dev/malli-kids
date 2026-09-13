@@ -1,7 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-/** 🦴 Loosely mirrors `CollabLanding`'s two-column info cards + the form
- *  section below them. */
+/** Loosely mirrors `CollabLanding`'s two-column info cards + the form section below them. */
 export default function CollabLoading() {
   return (
     <div

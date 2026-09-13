@@ -2,7 +2,7 @@ import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 import type { OrderStatus, PayStatus } from "@/types";
 
-// 📦 id is a short human-facing code ("MK-XXXXX"); userId is the real Better Auth user id.
+// id is a short human-facing code ("MK-XXXXX"); userId is the real Better Auth user id.
 export type OrderItemDoc = {
   id: number;
   name: string;
@@ -15,7 +15,7 @@ export type OrderItemDoc = {
 export type OrderDoc = {
   id: string;
   userId: string;
-  // 🔁 Client-generated key; the unique+sparse index is the real guard against duplicate concurrent orders.
+  // The unique sparse index prevents duplicate checkout submissions.
   idempotencyKey?: string;
   customer: string;
   phone: string;

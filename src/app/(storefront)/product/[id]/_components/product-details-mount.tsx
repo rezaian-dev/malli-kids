@@ -48,7 +48,7 @@ const ProductDetailsTabs = dynamic(
   },
 );
 
-// 📚 Defer below-the-fold product tabs and review logic.
+// Defer below-the-fold product tabs and review logic.
 export function ProductDetailsMount({
   product,
   reviews,

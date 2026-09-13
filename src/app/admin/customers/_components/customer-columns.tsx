@@ -14,8 +14,6 @@ import { cn } from "@/lib/utils";
 import type { ActionResult } from "@/lib/action-result";
 import type { AdminCustomer } from "@/types";
 
-/** 🧱 The customer table column set — a plain builder (not a hook) so it
- *  can stay a Server-Component-clean file; `page.tsx` owns the callbacks. */
 export function buildCustomerColumns({
   onToggleStatus,
   onRemove,

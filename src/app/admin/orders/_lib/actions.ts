@@ -12,8 +12,6 @@ const AUTH_ERROR = "برای این کار باید ادمین وارد شده �
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 const INVALID_TRANSITION_ERROR = "تغییر به این وضعیت از وضعیت فعلی سفارش مجاز نیست.";
 
-/** 🔄 Polled from `AdminOrdersLanding` — a new customer order should show
- *  up in an already-open admin tab without a manual reload. */
 export async function getAllOrdersAction(): Promise<AdminOrder[]> {
   const admin = await requireAdmin();
   if (!admin) return [];

@@ -4,8 +4,6 @@ import { createContext, useContext, type ReactNode } from "react";
 import type { StoredCampaign } from "@/lib/storefront-state";
 import type { FestiveBanner as BannerItem } from "@/types";
 
-// 🎉 Read-only context — hands server-computed campaign/banner values down
-// without prop-threading
 type Ctx = { campaign: StoredCampaign; banner: BannerItem | null };
 
 const CampaignCtx = createContext<Ctx | null>(null);

@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { toShopHref, type ShopState } from "@/lib/shop/shop-state";
 import type { Product } from "@/types";
 
-/** 🛍️ Product grid/list, empty state, and pagination. */
+/** Product grid/list, empty state, and pagination. */
 export function ShopResults({
   view,
   items,
@@ -25,21 +25,17 @@ export function ShopResults({
   items: Product[];
   activeN: number;
   onReset: () => void;
-  // 🔗 Pagination must be crawlable <a> links — JS-only handlers hide
-  // page 2+ from Googlebot
+  // Pagination must be crawlable <a> links — JS-only handlers hide page 2+ from Googlebot
   state: ShopState;
   page: number;
   pages: number;
-  // 🌱 The whole catalog is empty (not just this filter) — a different
-  // message than "no match", since there's nothing to reset.
+  // Distinguish an empty catalog from an empty filter result.
   catalogEmpty?: boolean;
 }) {
   return (
     <>
       <h2 className="sr-only">نتایج فروشگاه</h2>
-      {/* 🎬 با تعویضِ فیلتر/صفحه، کارت‌های خارج‌شده با محو+کوچک‌شدن بیرون
-          می‌روند و بقیه با `layout` نرم در جای خالی می‌نشینند — نه یک
-          رفرشِ خشکِ گرید. */}
+      {/* کارت‌های باقی‌مانده با layout جای خالی را پر می‌کنند. */}
       <div className={view === "list" ? "flex flex-col gap-4" : PRODUCT_GRID}>
         <AnimatePresence mode="popLayout" initial={false}>
           {items.map((p, index) => (

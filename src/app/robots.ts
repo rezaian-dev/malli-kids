@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // 🚫 /admin and /profile stay crawlable so Googlebot sees their noindex tags; /api is safe to disallow (JSON only).
+        // Allow private pages to be crawled so their noindex tags can be read.
         disallow: ["/api", "/api/"],
       },
     ],

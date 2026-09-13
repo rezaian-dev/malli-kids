@@ -6,11 +6,10 @@ import { articleSchema, breadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { ArticleActions } from "./_components/article-actions";
 import { ArticleView } from "./_components/article-view";
 
-// ⚠️ Segment config must be a literal — Turbopack statically extracts this
-// export and rejects a reference (see REVALIDATE.editorial in @/lib/cache).
+// Next.js requires literal route configuration values.
 export const revalidate = 3600;
 
-// 🛡️ Build-safe: if DB/auth unavailable (Pars build without MONGODB_URI), return no params and let ISR hydrate at runtime.
+// Missing build data is fetched at runtime.
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
@@ -68,7 +67,7 @@ export async function generateMetadata({
     image: article.cover,
     imageAlt: article.title,
     type: "article",
-    // 🏷️ Real assigned tags only — legitimate metadata, not stuffing
+    // Real assigned tags only — legitimate metadata, not stuffing
     keywords: [article.tag, ...article.tags.map((t) => t.name)].filter(Boolean),
   });
 }
@@ -91,7 +90,7 @@ export default async function ArticlePage({
     article = undefined;
   }
 
-  // 🚫 A missing/unpublished slug is a real 404, not a 200
+  // A missing/unpublished slug is a real 404, not a 200
   if (!article) notFound();
 
   return (

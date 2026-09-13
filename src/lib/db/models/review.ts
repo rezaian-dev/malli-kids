@@ -1,7 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// ⭐ Only visible: true reviews are shown; held for admin moderation until approved.
+// Only visible: true reviews are shown; held for admin moderation until approved.
 export type ReviewDoc = {
   product: string;
   author: string;

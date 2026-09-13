@@ -5,16 +5,12 @@ import type { OrderDoc } from "@/lib/db/models/order";
 import { BRAND } from "@/lib/constants";
 import { faDate, formatToman, toFaDigits } from "@/lib/locale/fa";
 
-// 🧾 Historical snapshot — every value off the OrderDoc; never re-prices.
-// 🖨️ Playwright, not a PDF lib — only a real engine shapes Persian glyphs
+// Render the stored order snapshot; never recalculate historical prices.
 
-const FONT_PATH = path.join(
-  process.cwd(),
-  "src/fonts/Vazirmatn-Variable.woff2",
-);
+const FONT_PATH = path.join(process.cwd(), "src/fonts/Vazirmatn-Variable.woff2");
 const LOGO_PATH = path.join(process.cwd(), "public/brand/logo-white.png");
 
-// ♻️ Cached once per process; embedded as data: URIs so the page never depends on this server reaching itself.
+// Embed cached assets so PDF rendering needs no network requests.
 let fontDataUri: string | null = null;
 function getFontDataUri(): string {
   if (!fontDataUri) {
@@ -63,7 +59,7 @@ function itemRow(item: OrderDoc["items"][number], index: number): string {
     </tr>`;
 }
 
-// 🧾 The invoice number is just the order's own permanent id — no second counter to keep in sync.
+// Reuse the permanent order ID as the invoice number.
 function renderInvoiceHtml(order: OrderDoc & { createdAt: Date }): string {
   const font = getFontDataUri();
   const logo = getLogoDataUri();
@@ -321,35 +317,29 @@ function renderInvoiceHtml(order: OrderDoc & { createdAt: Date }): string {
 </html>`;
 }
 
-// 🖨️ Fresh browser per call, not a kept-alive singleton — simpler lifecycle at the cost of ~1s launch overhead.
-// 🔧 Playwright is now dev-only (host OOM fix for `npm i` Killed). Dynamically imported so `next start` works without it.
+// Always close the per-request browser.
 export async function generateInvoicePdf(
   order: OrderDoc & { createdAt: Date },
 ): Promise<Buffer> {
   const html = renderInvoiceHtml(order);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let chromium: any = null;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mod = (await import("playwright")) as any;
-    chromium = mod.chromium;
-  } catch (err) {
-    console.error("[invoice] playwright not installed — install devDeps to enable PDF", (err as Error).message);
-    throw new Error("PDF generation not available on this host (playwright missing). Run npm install with dev deps or set PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0");
-  }
-  if (!chromium) {
-    throw new Error("PDF generation not available (playwright chromium is null)");
-  }
+  const { chromium } = await import("playwright").catch((error: unknown) => {
+    console.error(
+      "[invoice] Renderer unavailable:",
+      error instanceof Error ? error.name : "unknown",
+    );
+    throw new Error(
+      "PDF generation unavailable. Install runtime dependencies and Chromium.",
+    );
+  });
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle" });
-    const pdf = await page.pdf({
+    return await page.pdf({
       format: "A4",
       printBackground: true,
       margin: { top: "0", bottom: "0", left: "0", right: "0" },
     });
-    return Buffer.from(pdf);
   } finally {
     await browser.close();
   }

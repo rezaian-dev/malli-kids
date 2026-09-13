@@ -16,7 +16,6 @@ function inRange(
 
 export type BannerStatus = "draft" | "scheduled" | "live" | "expired";
 
-// 🚦 "expired" means past this year's recurring window, not gone forever — it comes back next cycle.
 export function bannerStatus(banner: FestiveBanner, d = new Date()): BannerStatus {
   if (!banner.active) return "draft";
 

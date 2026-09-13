@@ -20,7 +20,7 @@ export function jalaliParts(
   return { y, m, d };
 }
 
-// 📆 The one place this app converts Gregorian→Jalali via Intl; other modules build on this.
+// The one place this app converts Gregorian→Jalali via Intl; other modules build on this.
 export function toJalali(d: Date = new Date()): { jy: number; jm: number; jd: number } {
   try {
     const parts = new Intl.DateTimeFormat("en-u-ca-persian", {
@@ -53,7 +53,7 @@ export function isJalaliFuture(input: string): boolean {
   return target > current;
 }
 
-// 🗓️ Fails closed on malformed dates — money logic must never see garbage as "no expiry"
+// Fails closed on malformed dates — money logic must never see garbage as "no expiry"
 export function isJalaliPast(input: string): boolean {
   const value = jalaliParts(input);
   if (!value) return true;

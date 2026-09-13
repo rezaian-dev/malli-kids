@@ -1,7 +1,7 @@
 import type { AdminReview } from "@/types";
 import { ReviewStars } from "./review-stars";
 
-/** 💬 One regular (non-featured) buyer review. */
+/** One regular (non-featured) buyer review. */
 export function BuyerReviewCard({ review }: { review: AdminReview }) {
   return (
     <article

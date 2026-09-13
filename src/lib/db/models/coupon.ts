@@ -1,8 +1,6 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🎟️ Discount codes — `code` is the natural unique key (uppercase), used
-// directly for lookups/updates/removal instead of a separate id.
 export type CouponDoc = {
   code: string;
   title: string;
@@ -23,7 +21,7 @@ const couponSchema = new Schema<CouponDoc>(
     cap: { type: Number, required: true },
     active: { type: Boolean, default: true },
     min: { type: Number, default: 0 },
-    // 🗓️ Jalali "YYYY/MM/DD" — a business date, not an event timestamp, so it stays a plain string.
+    // Jalali "YYYY/MM/DD" — a business date, not an event timestamp, so it stays a plain string.
     until: { type: String, required: true },
   },
   { timestamps: true },

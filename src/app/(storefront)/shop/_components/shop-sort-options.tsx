@@ -24,7 +24,7 @@ const SORT_META = [
   { k: "rate", label: "بیشترین امتیاز", hint: "محبوب مادران", Icon: Star },
 ] as const;
 
-/** 🔀 Shared sort UI for the desktop popover and the mobile sheet. */
+/** Shared sort UI for the desktop popover and the mobile sheet. */
 export function ShopSortOptions({
   value,
   onValueChange,

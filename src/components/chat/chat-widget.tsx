@@ -9,32 +9,28 @@ import { toFaDigits } from "@/lib/locale/fa";
 import { usePolling } from "@/hooks/use-polling";
 import { getMyChatUnreadAction } from "@/lib/shop/chat-actions";
 
-// 🪶 The heavy window downloads only on first open — the bubble is the
-// whole always-on cost
+// The heavy window downloads only on first open — the bubble is the whole always-on cost
 const ChatWindow = dynamic(
   () => import("./chat-window").then((m) => m.ChatWindow),
   { ssr: false },
 );
 
 const INVITE_DELAY_MS = 5_000;
-// 🔴 Same rhythm as the header bells — one indexed document read per tick,
-// only while signed in with the window closed.
+// Poll the unread badge only while the chat window is closed.
 const UNREAD_POLL_MS = 8_000;
 const DISMISSED_KEY = "mk-chat-invite-dismissed";
 const OPENED_KEY = "mk-chat-opened";
 
-// 💬 Floating support bubble + delayed invitation. Mounted once, so it
-// never re-invites on route changes; guests hit the login dialog first —
-// chat is authenticated-only in the MVP
+// Require login before opening chat.
 export function ChatWidget() {
   const { user, setAuthOpen } = useAuth();
   const [open, setOpen] = useState(false);
   const [invite, setInvite] = useState(false);
-  // 🚪 Open the window the moment a pending guest login lands
+  // Open the window the moment a pending guest login lands
   const pendingOpen = useRef(false);
   const prevUnread = useRef(0);
 
-  // 🔴 Badge count only while the window is closed and signed in
+  // Badge count only while the window is closed and signed in
   const [unread] = usePolling<number>(
     async () => {
       try {
@@ -105,7 +101,7 @@ export function ChatWidget() {
           <MessageCircle className="size-6" />
           {shown > 0 ? (
             <span
-              // 🔑 Count-keyed pop-in — new replies re-announce themselves
+              // Count-keyed pop-in — new replies re-announce themselves
               key={shown}
               aria-hidden
               className="pointer-events-none absolute -inset-e-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full px-1 bg-rose text-[10px] font-black text-white ring-paper dark:ring-dusk shadow ring-2 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-200"

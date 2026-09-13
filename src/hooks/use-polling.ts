@@ -9,10 +9,6 @@ import {
   type SetStateAction,
 } from "react";
 
-// 🔄 The app's one realtime primitive: poll while the tab is visible, pause
-// hidden, refetch on return — no websocket needed.
-// Returns [value, setValue, refresh]: optimistic local updates via setValue,
-// immediate server truth via refresh()
 export function usePolling<T>(
   fetcher: () => Promise<T>,
   intervalMs: number,
@@ -23,7 +19,7 @@ export function usePolling<T>(
   const fetcherRef = useRef(fetcher);
   fetcherRef.current = fetcher;
 
-  // ⚡ Stable by design — safe from listeners without re-subscribing
+  // Stable by design — safe from listeners without re-subscribing
   const refresh = useCallback(() => {
     fetcherRef.current().then((next) => setData(next));
   }, []);

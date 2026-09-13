@@ -13,8 +13,6 @@ import {
   removeCannedResponseAction,
 } from "../_lib/actions";
 
-/** 💬 The team's shared snippet library — the composer chips in ticket +
- *  chat cards insert these; an empty library falls back to built-ins. */
 export function CannedManager({
   open,
   canned,
@@ -52,7 +50,7 @@ export function CannedManager({
   }
 
   function remove(id: string) {
-    // 🛡️ Built-in defaults aren't real rows — nothing to delete.
+    // Built-in defaults aren't real rows — nothing to delete.
     if (id.startsWith("default-")) return;
     startTransition(async () => {
       const result = await removeCannedResponseAction(id);

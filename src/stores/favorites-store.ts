@@ -7,7 +7,7 @@ type FavoritesState = {
 
 export type FavoritesStore = ReturnType<typeof createFavoritesStore>;
 
-// 🪶 Just the ids, optimistically held — the server stays authoritative
+// Just the ids, optimistically held — the server stays authoritative
 export function createFavoritesStore(initialIds: number[]) {
   return createStore<FavoritesState>()((set) => ({
     ids: initialIds,

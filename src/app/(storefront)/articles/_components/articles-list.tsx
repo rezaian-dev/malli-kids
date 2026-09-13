@@ -26,7 +26,7 @@ export function ArticlesList({ initial: articles }: { initial: JournalArticle[] 
         >
           <Link href={`/articles/${a.slug}`}>
             {a.cover ? (
-              /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin article covers can be raw data URLs. */
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={a.cover}
                 alt={a.title}

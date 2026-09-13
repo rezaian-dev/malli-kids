@@ -9,7 +9,7 @@ const SIZES = {
   sm: { btn: "size-6.5", icon: "size-3.5", digits: "min-w-5 text-xs" },
 } as const;
 
-// 🔢 The one qty +/− control — one shape, two sizes
+// The one qty +/− control — one shape, two sizes
 export function QtyStepper({
   qty,
   onChange,

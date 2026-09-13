@@ -1,4 +1,4 @@
-// 🕘 Tehran-local hour against the configured window; wrap-around windows (e.g. 20→2) count as overnight.
+// Interpret support hours in Tehran, including overnight windows.
 export function isWithinSupportHours(
   now: Date,
   startHour: number,

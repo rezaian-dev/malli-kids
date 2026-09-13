@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-/** 🔘 One toolbar button in the rich editor. */
+/** One toolbar button in the rich editor. */
 export function RichEditorTool({
   active,
   label,

@@ -14,8 +14,6 @@ import type { ActionResult } from "@/lib/action-result";
 import type { AdminArticle } from "@/types";
 import { articleSchema, tagNameSchema, type ArticleValues } from "./schemas";
 
-/** 🔄 Polled from `AdminArticlesLanding` — article/tag edits (this tab or
- *  another admin) show up without a manual reload. */
 export async function getAdminArticlesAction(): Promise<{
   articles: AdminArticle[];
   tags: ContentTag[];
@@ -32,11 +30,11 @@ const TAG_NAME_ERROR = "نام برچسب باید بین ۲ تا ۳۰ نویس�
 
 function revalidateArticles() {
   revalidatePath("/admin/articles");
-  // 🧊 Article routes render dynamically — bust ARTICLES_TAG, not a route cache
+  // Article routes render dynamically — bust ARTICLES_TAG, not a route cache
   revalidateTag(ARTICLES_TAG, "max");
 }
 
-// 🪶 Persian-friendly slug, de-duplicated (uniqueSlugAgainst)
+// Persian-friendly slug, de-duplicated (uniqueSlugAgainst)
 async function uniqueSlug(title: string): Promise<string> {
   const base =
     title
@@ -129,7 +127,7 @@ function revalidateTags() {
   revalidateTag(TAGS_TAG, "max");
 }
 
-// 🏷️ Resolves a typed name to a real tag — upsert, never a near-duplicate
+// Resolves a typed name to a real tag — upsert, never a near-duplicate
 export async function createTagAction(
   name: string,
 ): Promise<ActionResult<ContentTag>> {
@@ -154,7 +152,7 @@ export async function createTagAction(
   }
 }
 
-// 🗑️ Deletes a tag and pulls it off articles — no rename at this taxonomy size
+// Deletes a tag and pulls it off articles — no rename at this taxonomy size
 export async function removeTagAction(slug: string): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };

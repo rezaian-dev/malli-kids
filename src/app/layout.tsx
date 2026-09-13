@@ -18,11 +18,10 @@ import { getCampaign } from "@/lib/shop/settings";
 import { getActiveBanner } from "@/lib/shop/banners";
 import { getFavoriteIds } from "@/lib/shop/favorites";
 import { cn } from "@/lib/utils";
-// 🧱 Shared tokens/base only — each route group's layout imports its own
-// stylesheet, so no utilities are generated here
+// Route layouts load utilities; the root loads shared tokens only.
 import "./theme.css";
 
-// 🪶 Variable fonts — one file covers the whole weight axis
+// Variable fonts — one file covers the whole weight axis
 const vazir = localFont({
   src: "../fonts/Vazirmatn-Variable.woff2",
   weight: "100 900",
@@ -37,13 +36,13 @@ const playfair = localFont({
   display: "swap",
 });
 
-// 🎨 Inline theme colors — paints on-theme the instant .dark is set
+// Inline theme colors — paints on-theme the instant .dark is set
 const CRITICAL_CSS =
   "html{background:#ece6dc;color:#0e2a47;color-scheme:light}" +
   "html.dark{background:#041427;color:#fff8ec;color-scheme:dark}" +
   "body{background:inherit;color:inherit}";
 
-// 🔄 Gold route-change bar (RTL-anchored in globals.css).
+// Gold route-change bar (RTL-anchored in globals.css).
 const TOP_LOADER = {
   color: "#d9b77f",
   height: 3,
@@ -57,7 +56,7 @@ const TOP_LOADER = {
 
 export const metadata = getRootMetadata();
 
-// 🎨 next-themes owns the theme client-side; the browser picks until then
+// next-themes owns the theme client-side; the browser picks until then
 export const viewport: Viewport = {
   colorScheme: "light dark",
   themeColor: [
@@ -75,7 +74,7 @@ export default async function RootLayout({
   const pathname = (await headers()).get("x-malli-pathname") ?? "";
   const isAdmin = pathname.startsWith("/admin");
   const user = await getSessionUser();
-  // 🎛️ Skip storefront chrome for admin — one-shot paint, no extra round-trips
+  // Skip storefront chrome for admin — one-shot paint, no extra round-trips
   const [campaign, banner] = isAdmin
     ? [null, null]
     : await Promise.all([getCampaign(), getActiveBanner()]).catch((err) => {
@@ -118,7 +117,7 @@ export default async function RootLayout({
         <JsonLd data={websiteSchema()} />
         {isAdmin ? null : <NextTopLoader {...TOP_LOADER} />}
 
-        {/* ♿ reducedMotion="user" respects prefers-reduced-motion */}
+        {/* reducedMotion="user" respects prefers-reduced-motion */}
         <MotionProvider>
           <ThemeProvider>
             <AuthProvider initialUser={user}>

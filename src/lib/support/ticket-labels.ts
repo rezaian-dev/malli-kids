@@ -4,8 +4,6 @@ import type {
   TicketStatus,
 } from "@/lib/shop/tickets";
 
-// 🏷️ Mirrors the server-only lib/shop/tickets.ts value lists so client code can import labels directly.
-
 export const TICKET_STATUS_META: Record<
   TicketStatus,
   { admin: string; customer: string }

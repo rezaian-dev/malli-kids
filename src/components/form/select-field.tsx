@@ -50,10 +50,7 @@ export function SelectField({
           onValueChange={field.onChange}
           onOpenChange={(o) => !o && field.onBlur()}
         >
-          {/* ♿ Without `id` here, the Field's <label htmlFor> above points
-              at nothing — the trigger renders as a button with no
-              accessible name once a placeholder (not a real value) is
-              showing. */}
+          {/* Connect the label to the trigger even when it shows a placeholder. */}
           <SelectTrigger
             id={id}
             aria-required={required || undefined}

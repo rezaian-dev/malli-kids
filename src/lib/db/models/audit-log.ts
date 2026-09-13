@@ -1,7 +1,6 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🧾 Targeted audit trail for sensitive ops only (role/price/campaign/order changes) — not a generic event log.
 export type AuditLogDoc = {
   actorEmail: string;
   actorName: string;

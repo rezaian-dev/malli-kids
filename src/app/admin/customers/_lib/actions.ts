@@ -9,7 +9,7 @@ import type { ActionResult } from "@/lib/action-result";
 import type { AdminCustomer } from "@/types";
 import { getAllCustomers } from "./data";
 
-// 🔄 Polled by the customers + team landings
+// Polled by the customers + team landings
 export async function getAllCustomersAction(): Promise<AdminCustomer[]> {
   const admin = await requireAdmin();
   if (!admin) return [];
@@ -64,8 +64,7 @@ export async function setCustomerStatusAction(
   }
 }
 
-// 👑 Promotes a customer to admin (Better Auth admin plugin); demote lives
-// in demoteAdminAction behind the minimum-admin-count check
+// Demotion has a separate minimum-admin-count guard.
 export async function promoteCustomerAction(userId: string): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
@@ -123,7 +122,7 @@ export async function removeCustomerAction(userId: string): Promise<ActionResult
   }
 }
 
-// 🔢 Counts durable admins server-side — never from client-loaded state
+// Counts durable admins server-side — never from client-loaded state
 async function countAdmins(): Promise<number> {
   const result = await adminAuth.api.listUsers({
     headers: await headers(),
@@ -132,15 +131,12 @@ async function countAdmins(): Promise<number> {
   return result.users.length;
 }
 
-// 👇 Demotes an admin; refuses when it would leave zero admins
+// Demotes an admin; refuses when it would leave zero admins
 export async function demoteAdminAction(userId: string): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
 
-  // 🔐 Flat admin model (no super_admin) lets any admin demote any other —
-  // this check is what stops a self-lockout. Off the admin session, not the
-  // storefront one — an admin browsing with no storefront login still needs
-  // this guard.
+  // Use the admin session to prevent removing the last administrator.
   const session = await getAdminSession();
   if (session?.user.id === userId) {
     return { ok: false, error: SELF_DEMOTE_ERROR };

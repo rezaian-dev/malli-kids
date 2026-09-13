@@ -1,4 +1,4 @@
-// 🛍️ Shared reads for storefront and admin; writes live in admin/products/_lib/actions.ts.
+// Shared reads for storefront and admin; writes live in admin/products/_lib/actions.ts.
 
 import { unstable_cache } from "next/cache";
 import { REVALIDATE } from "@/lib/cache";
@@ -6,13 +6,14 @@ import { connectMongoose } from "@/lib/db/mongoose";
 import { ProductModel, type ProductDoc } from "@/lib/db/models/product";
 import type { Product } from "@/types";
 
-// 🧊 Cached like getActiveBanner; admin writes revalidate this tag, the 60s window is just a safety net.
+// Invalidate on admin edits; the time limit is a fallback.
 export const PRODUCTS_TAG = "products";
 
-function toProduct(doc: ProductDoc): Product {
-  // 🖼️ Falls back to the legacy single img string on old documents, never to a made-up placeholder.
-  const legacyImg = (doc as unknown as { img?: string }).img;
-  const images = doc.images?.length ? doc.images : legacyImg ? [legacyImg] : [];
+type ProductRow = ProductDoc & { img?: string };
+
+function toProduct(doc: ProductRow): Product {
+  // Support the legacy single-image field.
+  const images = doc.images?.length ? doc.images : doc.img ? [doc.img] : [];
 
   return {
     id: doc.id,
@@ -30,7 +31,7 @@ function toProduct(doc: ProductDoc): Product {
     badge: doc.badge,
     rate: doc.rate,
     stock: doc.stock,
-    // 🪶 ?? [] treats a pre-existing document (no variants key) as legacy/unsized instead of crashing consumers.
+    // Treat missing variants as a legacy unsized product.
     variants: doc.variants ?? [],
     sold: doc.sold,
     desc: doc.desc,
@@ -43,28 +44,32 @@ function toProduct(doc: ProductDoc): Product {
   };
 }
 
-// 📚 Single source both the shop grid and admin tables filter/sort client-side. Build-safe.
+// Single source both the shop grid and admin tables filter/sort client-side. Build-safe.
+async function readProducts(
+  query: () => PromiseLike<ProductRow[]>,
+  operation: string,
+): Promise<Product[]> {
+  try {
+    await connectMongoose();
+    return (await query()).map(toProduct);
+  } catch (error) {
+    console.warn(
+      `[products] ${operation} failed:`,
+      error instanceof Error ? error.name : "unknown",
+    );
+    return [];
+  }
+}
+
 export const getAllProducts = unstable_cache(
-  async (): Promise<Product[]> => {
-    try {
-      await connectMongoose();
-      const docs = await ProductModel.find().sort({ id: -1 }).lean();
-      return docs.map(toProduct);
-    } catch (err) {
-      console.warn(
-        "[products] getAllProducts failed — returning empty (build without DB):",
-        (err as Error).message,
-      );
-      return [];
-    }
-  },
+  () => readProducts(() => ProductModel.find().sort({ id: -1 }).lean(), "getAllProducts"),
   ["all-products"],
   { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
 );
 
 export const getProductById = unstable_cache(
   async (id: number): Promise<Product | null> => {
-    // 🛡️ A malformed route param can hand this NaN, which Mongo would throw a CastError on — treat it as not found.
+    // Treat invalid numeric IDs as missing products.
     if (!Number.isFinite(id)) return null;
     try {
       await connectMongoose();
@@ -82,47 +87,33 @@ export const getProductById = unstable_cache(
   { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
 );
 
-/** 💛 Hydrates a locally-stored favorites id list into real product cards. Build-safe. */
+/** Hydrates a locally-stored favorites id list into real product cards. Build-safe. */
 export const getProductsByIds = unstable_cache(
   async (ids: number[]): Promise<Product[]> => {
     if (!ids.length) return [];
-    try {
-      await connectMongoose();
-      const docs = await ProductModel.find({ id: { $in: ids } }).lean();
-      return docs.map(toProduct);
-    } catch (err) {
-      console.warn(
-        "[products] getProductsByIds failed — returning empty:",
-        (err as Error).message,
-      );
-      return [];
-    }
+    return readProducts(
+      () => ProductModel.find({ id: { $in: ids } }).lean(),
+      "getProductsByIds",
+    );
   },
   ["products-by-ids"],
   { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
 );
 
 export const getRelatedProducts = unstable_cache(
-  async (cat: string, excludeId: number, limit = 4): Promise<Product[]> => {
-    try {
-      await connectMongoose();
-      const docs = await ProductModel.find({ cat, id: { $ne: excludeId } })
-        .limit(limit)
-        .lean();
-      return docs.map(toProduct);
-    } catch (err) {
-      console.warn(
-        "[products] getRelatedProducts failed — returning empty:",
-        (err as Error).message,
-      );
-      return [];
-    }
-  },
+  (cat: string, excludeId: number, limit = 4) =>
+    readProducts(
+      () =>
+        ProductModel.find({ cat, id: { $ne: excludeId } })
+          .limit(limit)
+          .lean(),
+      "getRelatedProducts",
+    ),
   ["related-products"],
   { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
 );
 
-// 🧵 Preserves the admin's chosen pairing order, unlike getProductsByIds's unguaranteed $in order.
+// Restore the chosen pairing order after the unordered database query.
 export async function getCompleteTheLook(pairIds: number[]): Promise<Product[]> {
   if (!pairIds.length) return [];
   const products = await getProductsByIds(pairIds);
@@ -132,8 +123,7 @@ export async function getCompleteTheLook(pairIds: number[]): Promise<Product[]> 
     .filter((p): p is Product => Boolean(p?.visible));
 }
 
-// 🔎 Live, tiny lookup for the home search's type-ahead dropdown — a direct
-// query rather than unstable_cache since the term varies on every keystroke.
+// Do not cache each type-ahead search term.
 export async function searchProductsPreview(
   query: string,
   limit = 5,
@@ -150,11 +140,11 @@ export async function searchProductsPreview(
     })
       .limit(limit)
       .select("id img images name cat price")
-      .lean();
+      .lean<Pick<ProductRow, "id" | "images" | "img" | "name" | "cat" | "price">[]>();
 
     return docs.map((doc) => ({
       id: doc.id,
-      img: doc.images?.[0] ?? (doc as unknown as { img?: string }).img ?? "",
+      img: doc.images?.[0] ?? doc.img ?? "",
       name: doc.name,
       cat: doc.cat,
       price: doc.price,
@@ -168,8 +158,7 @@ export async function searchProductsPreview(
   }
 }
 
-// 🔢 Atomic $inc on a monotonic counter — max+1 races and reuses ids after
-// deletes, which can serve a deleted product's stale cache
+// Allocate IDs atomically and never reuse deleted product IDs.
 export async function nextProductId(): Promise<number> {
   const mongoose = await connectMongoose();
   const counters = mongoose.connection.collection<{ _id: string; seq: number }>(
@@ -178,7 +167,7 @@ export async function nextProductId(): Promise<number> {
 
   const top = await ProductModel.findOne().sort({ id: -1 }).lean();
   const floor = Math.max(999, top?.id ?? 0);
-  // 🌱 One-time catch-up; a no-op once the counter has overtaken the catalog's own max.
+  // One-time catch-up; a no-op once the counter has overtaken the catalog's own max.
   await counters.updateOne(
     { _id: "productId" },
     { $max: { seq: floor } },

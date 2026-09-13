@@ -4,8 +4,7 @@ import { isJalaliPast } from "@/lib/locale/jalali";
 
 export type AppliedCoupon = { code: string; rate: number };
 
-// 🎟️ Returns null for anything invalid/inactive/expired/capped/below minimum.
-// This used>=cap check is the display fast path — reserveCouponUsage enforces the real cap atomically.
+// This is a pre-check; reserveCouponUsage enforces the cap atomically.
 export async function findApplicableCoupon(
   rawCode: string,
   subtotal: number,
@@ -23,7 +22,7 @@ export async function findApplicableCoupon(
   return { code: coupon.code, rate: coupon.rate };
 }
 
-// 🎟️ Atomic check-and-increment; call before writing the order, releaseCouponUsage if the write then fails.
+// Reserve atomically before creating the order; release on failure.
 export async function reserveCouponUsage(code: string): Promise<boolean> {
   await connectMongoose();
   const updated = await CouponModel.findOneAndUpdate(
@@ -33,7 +32,7 @@ export async function reserveCouponUsage(code: string): Promise<boolean> {
   return updated !== null;
 }
 
-// ↩️ Gives back a reservation whose order never got written.
+// Gives back a reservation whose order never got written.
 export async function releaseCouponUsage(code: string): Promise<void> {
   await connectMongoose();
   await CouponModel.updateOne({ code }, { $inc: { used: -1 } });

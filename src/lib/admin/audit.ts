@@ -16,7 +16,7 @@ export type AuditAction =
   | "product.remove"
   | "review.remove";
 
-// 📝 Fire-and-forget: a logging failure must never block the mutation it describes.
+// Fire-and-forget: a logging failure must never block the mutation it describes.
 export async function logAudit(entry: {
   actor: User;
   action: AuditAction;
@@ -35,6 +35,6 @@ export async function logAudit(entry: {
       summary: entry.summary,
     });
   } catch {
-    // 🤐 Never let an audit-log write fail the operation it's logging.
+    // Never let an audit-log write fail the operation it's logging.
   }
 }

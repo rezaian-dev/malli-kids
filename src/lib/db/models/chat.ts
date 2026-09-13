@@ -1,8 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 💬 Deliberately separate from ticket.ts: chats are realtime with per-side unread
-// counts, tickets are async threads. MongoDB is the source of truth; polling only delivers what's persisted.
+// Persist chat separately from asynchronous support tickets.
 export type ChatStatus = "open" | "active" | "closed";
 export type ChatSenderRole = "customer" | "admin";
 
@@ -15,14 +14,14 @@ export type ConversationDoc = {
   lastMessagePreview: string;
   customerUnreadCount: number;
   adminUnreadCount: number;
-  // ⌨️ Typing heartbeat; fresh (<6s) shows "در حال نوشتن" on the other side.
+  // Typing heartbeat; fresh (<6s) shows "در حال نوشتن" on the other side.
   customerTypingAt?: Date;
   adminTypingAt?: Date;
-  // ⭐ Post-close rating, customer-given.
+  // Post-close rating, customer-given.
   rating?: number;
   ratingNote?: string;
   ratedAt?: Date;
-  // 🎫 Escalation link — set once when the chat becomes a ticket.
+  // Escalation link — set once when the chat becomes a ticket.
   escalatedTicketId?: string;
   escalatedTicketNumber?: number;
   page?: string;
@@ -33,9 +32,9 @@ export type ConversationDoc = {
 const conversationSchema = new Schema<ConversationDoc>(
   {
     customerId: { type: String, required: true },
-    // 📛 Snapshot at creation — avoids joining the user collection per list render.
+    // Snapshot at creation — avoids joining the user collection per list render.
     customerName: { type: String, required: true },
-    // 🙋 First admin to reply auto-claims the thread; no manual assignment UI yet.
+    // The first reply auto-assigns an unclaimed conversation.
     assignedAdminId: { type: String },
     status: {
       type: String,
@@ -44,7 +43,7 @@ const conversationSchema = new Schema<ConversationDoc>(
       default: "open",
     },
     lastMessageAt: { type: Date, required: true, default: Date.now },
-    // 📝 Not required — mongoose would reject the "" a new conversation starts with.
+    // Not required — mongoose would reject the "" a new conversation starts with.
     lastMessagePreview: { type: String, default: "" },
     customerUnreadCount: { type: Number, required: true, default: 0 },
     adminUnreadCount: { type: Number, required: true, default: 0 },
@@ -55,15 +54,15 @@ const conversationSchema = new Schema<ConversationDoc>(
     ratedAt: { type: Date },
     escalatedTicketId: { type: String },
     escalatedTicketNumber: { type: Number },
-    // 🧭 Where the chat started (e.g. /product/…) — context only.
+    // Where the chat started (e.g. /product/…) — context only.
     page: { type: String },
   },
   { timestamps: true },
 );
 
-// 🗂️ Supports the admin inbox's newest-activity-first list.
+// Supports the admin inbox's newest-activity-first list.
 conversationSchema.index({ lastMessageAt: -1 });
-// 🛡️ One live thread per customer, enforced by the database — concurrent inserts collapse to one.
+// Enforce one live conversation per customer with a database index.
 conversationSchema.index(
   { customerId: 1 },
   {
@@ -89,13 +88,13 @@ export type ChatMessageDoc = {
 
 const chatMessageSchema = new Schema<ChatMessageDoc>(
   {
-    // 🔗 Plain string like every other *Id field — the conversation's _id stringified.
+    // Plain string like every other *Id field — the conversation's _id stringified.
     conversationId: { type: String, required: true },
-    // 🔐 Always derived server-side from the session — never trusted from the client.
+    // Always derived server-side from the session — never trusted from the client.
     senderId: { type: String, required: true },
     senderRole: { type: String, required: true, enum: ["customer", "admin"] },
     body: { type: String, required: true },
-    // 🔁 Client-generated UUID; a retry replays the same id, so the unique index dedupes instead of inserting twice.
+    // Use the client ID to deduplicate message retries.
     clientId: { type: String, required: true },
     readAt: { type: Date },
   },

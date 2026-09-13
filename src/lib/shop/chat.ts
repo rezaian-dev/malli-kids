@@ -38,11 +38,11 @@ export type ChatMessage = {
   at: string;
 };
 
-// ✂️ The real ceiling; the client's maxLength attribute just mirrors it.
+// The real ceiling; the client's maxLength attribute just mirrors it.
 export const CHAT_MESSAGE_MAX_LEN = 1000;
 
 const PREVIEW_LEN = 80;
-// 🧊 Hard cap keeps a runaway conversation from turning the 4s poll into a heavyweight query.
+// Hard cap keeps a runaway conversation from turning the 4s poll into a heavyweight query.
 const MESSAGE_LIMIT = 200;
 const CONVERSATION_LIMIT = 100;
 
@@ -57,7 +57,7 @@ type MessageLean = ChatMessageDoc & {
   createdAt: Date;
 };
 
-// ⌨️ 6s window — longer than the 4s poll, short enough that a closed tab clears almost immediately.
+// Keep typing visible longer than one polling interval.
 const TYPING_WINDOW_MS = 6_000;
 
 function isTyping(at?: Date): boolean {
@@ -102,7 +102,7 @@ function isDuplicateKey(error: unknown) {
   );
 }
 
-// 🧵 Opening the chat window never creates a row by itself; the first message does.
+// Opening the chat window never creates a row by itself; the first message does.
 export async function getOpenConversationForCustomer(
   customerId: string,
 ): Promise<ChatConversation | null> {
@@ -116,9 +116,7 @@ export async function getOpenConversationForCustomer(
   return doc ? toConversation(doc) : null;
 }
 
-export async function getChatMessages(
-  conversationId: string,
-): Promise<ChatMessage[]> {
+export async function getChatMessages(conversationId: string): Promise<ChatMessage[]> {
   if (!isValidObjectId(conversationId)) return [];
   await connectMongoose();
   const docs = await ChatMessageModel.find({ conversationId })
@@ -128,7 +126,63 @@ export async function getChatMessages(
   return docs.map(toMessage);
 }
 
-// ✉️ Finds the live thread or creates one; a message after a close starts a fresh thread.
+// Finds the live thread or creates one; a message after a close starts a fresh thread.
+type OutgoingMessage = {
+  senderId: string;
+  senderRole: "customer" | "admin";
+  body: string;
+  clientId: string;
+};
+
+async function saveMessage(
+  conversation: Pick<ConversationLean, "_id" | "assignedAdminId">,
+  message: OutgoingMessage,
+): Promise<{ conversation: ChatConversation; message: ChatMessage }> {
+  const conversationId = conversation._id.toString();
+  const fromCustomer = message.senderRole === "customer";
+  const unreadField = fromCustomer ? "adminUnreadCount" : "customerUnreadCount";
+  const typingField = fromCustomer ? "customerTypingAt" : "adminTypingAt";
+
+  try {
+    const created = await ChatMessageModel.create({ conversationId, ...message });
+    const updated = await ChatConversationModel.findByIdAndUpdate(
+      conversation._id,
+      {
+        $set: {
+          status: fromCustomer ? "open" : "active",
+          lastMessagePreview: message.body.slice(0, PREVIEW_LEN),
+          lastMessageAt: new Date(),
+          ...(!fromCustomer && !conversation.assignedAdminId
+            ? { assignedAdminId: message.senderId }
+            : {}),
+        },
+        $inc: { [unreadField]: 1 },
+        $unset: { [typingField]: "" },
+      },
+      { returnDocument: "after" },
+    ).lean<ConversationLean>();
+    if (!updated) throw new Error("chat conversation vanished mid-send");
+    return {
+      conversation: toConversation(updated),
+      message: toMessage(created.toObject() as MessageLean),
+    };
+  } catch (error) {
+    // Return retries without incrementing unread counts again.
+    if (!isDuplicateKey(error)) throw error;
+    const existing = await ChatMessageModel.findOne({
+      conversationId,
+      clientId: message.clientId,
+    }).lean<MessageLean>();
+    if (!existing) throw error;
+    const current = await ChatConversationModel.findById(
+      conversation._id,
+    ).lean<ConversationLean>();
+    if (!current) throw error;
+    return { conversation: toConversation(current), message: toMessage(existing) };
+  }
+}
+
+// A customer's first message creates the conversation.
 export async function customerSendMessage(input: {
   customerId: string;
   customerName: string;
@@ -137,78 +191,35 @@ export async function customerSendMessage(input: {
   clientId: string;
 }): Promise<{ conversation: ChatConversation; message: ChatMessage }> {
   await connectMongoose();
-  const text = input.body.trim().slice(0, CHAT_MESSAGE_MAX_LEN);
-
-  let doc = await ChatConversationModel.findOne({
+  const body = input.body.trim().slice(0, CHAT_MESSAGE_MAX_LEN);
+  const filter = {
     customerId: input.customerId,
-    status: { $in: ["open", "active"] },
-  });
-  if (!doc) {
+    status: { $in: ["open", "active"] as const },
+  };
+  let conversation = await ChatConversationModel.findOne(filter);
+  if (!conversation) {
     try {
-      doc = await ChatConversationModel.create({
+      conversation = await ChatConversationModel.create({
         customerId: input.customerId,
         customerName: input.customerName,
         page: input.page,
         status: "open",
       });
     } catch (error) {
-      // 🏁 Lost a same-millisecond race — re-read the winner instead of failing.
+      // Reuse the winning conversation after a concurrent insert.
       if (!isDuplicateKey(error)) throw error;
-      doc = await ChatConversationModel.findOne({
-        customerId: input.customerId,
-        status: { $in: ["open", "active"] },
-      });
-      if (!doc) throw error;
+      conversation = await ChatConversationModel.findOne(filter);
+      if (!conversation) throw error;
     }
   }
-
-  try {
-    const created = await ChatMessageModel.create({
-      conversationId: doc._id.toString(),
-      senderId: input.customerId,
-      senderRole: "customer",
-      body: text,
-      clientId: input.clientId,
-    });
-    const now = new Date();
-    const updated = await ChatConversationModel.findByIdAndUpdate(
-      doc._id,
-      {
-        $set: {
-          status: "open",
-          lastMessagePreview: text.slice(0, PREVIEW_LEN),
-          lastMessageAt: now,
-        },
-        $inc: { adminUnreadCount: 1 },
-        $unset: { customerTypingAt: "" },
-      },
-      { new: true },
-    ).lean<ConversationLean>();
-    if (!updated) throw new Error("chat conversation vanished mid-send");
-    return {
-      conversation: toConversation(updated),
-      message: toMessage(created.toObject() as MessageLean),
-    };
-  } catch (error) {
-    // 🔁 Same clientId as a stored message — a retry; return the original without touching unread counts.
-    if (!isDuplicateKey(error)) throw error;
-    const existing = await ChatMessageModel.findOne({
-      conversationId: doc._id.toString(),
-      clientId: input.clientId,
-    }).lean<MessageLean>();
-    if (!existing) throw error;
-    const current = await ChatConversationModel.findById(
-      doc._id,
-    ).lean<ConversationLean>();
-    if (!current) throw error;
-    return {
-      conversation: toConversation(current),
-      message: toMessage(existing),
-    };
-  }
+  return saveMessage(conversation, {
+    senderId: input.customerId,
+    senderRole: "customer",
+    body,
+    clientId: input.clientId,
+  });
 }
 
-// 🛎️ Auto-claims an unassigned thread; replying to a closed thread reopens it as active.
 export async function adminSendMessage(input: {
   conversationId: string;
   adminId: string;
@@ -217,58 +228,17 @@ export async function adminSendMessage(input: {
 }): Promise<{ conversation: ChatConversation; message: ChatMessage } | null> {
   if (!isValidObjectId(input.conversationId)) return null;
   await connectMongoose();
-  const text = input.body.trim().slice(0, CHAT_MESSAGE_MAX_LEN);
-
-  const doc = await ChatConversationModel.findById(input.conversationId);
-  if (!doc) return null;
-
-  try {
-    const created = await ChatMessageModel.create({
-      conversationId: doc._id.toString(),
-      senderId: input.adminId,
-      senderRole: "admin",
-      body: text,
-      clientId: input.clientId,
-    });
-    const now = new Date();
-    const updated = await ChatConversationModel.findByIdAndUpdate(
-      doc._id,
-      {
-        $set: {
-          status: "active",
-          lastMessagePreview: text.slice(0, PREVIEW_LEN),
-          lastMessageAt: now,
-          ...(doc.assignedAdminId ? {} : { assignedAdminId: input.adminId }),
-        },
-        $inc: { customerUnreadCount: 1 },
-        $unset: { adminTypingAt: "" },
-      },
-      { new: true },
-    ).lean<ConversationLean>();
-    if (!updated) throw new Error("chat conversation vanished mid-send");
-    return {
-      conversation: toConversation(updated),
-      message: toMessage(created.toObject() as MessageLean),
-    };
-  } catch (error) {
-    if (!isDuplicateKey(error)) throw error;
-    const existing = await ChatMessageModel.findOne({
-      conversationId: doc._id.toString(),
-      clientId: input.clientId,
-    }).lean<MessageLean>();
-    if (!existing) throw error;
-    const current = await ChatConversationModel.findById(
-      doc._id,
-    ).lean<ConversationLean>();
-    if (!current) throw error;
-    return {
-      conversation: toConversation(current),
-      message: toMessage(existing),
-    };
-  }
+  const body = input.body.trim().slice(0, CHAT_MESSAGE_MAX_LEN);
+  const conversation = await ChatConversationModel.findById(input.conversationId);
+  if (!conversation) return null;
+  return saveMessage(conversation, {
+    senderId: input.adminId,
+    senderRole: "admin",
+    body,
+    clientId: input.clientId,
+  });
 }
 
-// 👀 Ownership is part of the filter, so a forged id clears nothing.
 export async function markChatReadAsCustomer(
   conversationId: string,
   customerId: string,
@@ -287,9 +257,7 @@ export async function markChatReadAsCustomer(
   return true;
 }
 
-export async function markChatReadAsAdmin(
-  conversationId: string,
-): Promise<boolean> {
+export async function markChatReadAsAdmin(conversationId: string): Promise<boolean> {
   if (!isValidObjectId(conversationId)) return false;
   await connectMongoose();
   const conv = await ChatConversationModel.findOneAndUpdate(
@@ -308,10 +276,8 @@ export async function markChatReadAsAdmin(
   return true;
 }
 
-/** 📥 Newest activity first — the admin inbox order. */
-export async function getChatConversationsForAdmin(): Promise<
-  ChatConversation[]
-> {
+/** Newest activity first — the admin inbox order. */
+export async function getChatConversationsForAdmin(): Promise<ChatConversation[]> {
   await connectMongoose();
   const docs = await ChatConversationModel.find()
     .sort({ lastMessageAt: -1 })
@@ -327,9 +293,7 @@ export async function getChatThreadForAdmin(conversationId: string): Promise<{
   if (!isValidObjectId(conversationId)) return null;
   await connectMongoose();
   const conv =
-    await ChatConversationModel.findById(
-      conversationId,
-    ).lean<ConversationLean>();
+    await ChatConversationModel.findById(conversationId).lean<ConversationLean>();
   if (!conv) return null;
   const messages = await getChatMessages(conversationId);
   return { conversation: toConversation(conv), messages };
@@ -348,7 +312,7 @@ export async function setChatStatus(
   return updated.matchedCount > 0;
 }
 
-// ⌨️ Ownership is part of the filter, so a forged id stamps nothing.
+// Ownership is part of the filter, so a forged id stamps nothing.
 export async function setTypingAsCustomer(
   conversationId: string,
   customerId: string,
@@ -370,7 +334,7 @@ export async function setTypingAsAdmin(conversationId: string): Promise<void> {
   );
 }
 
-// ⭐ Re-rating overwrites, so the latest sentiment wins.
+// Re-rating overwrites, so the latest sentiment wins.
 export async function submitChatRating(
   conversationId: string,
   customerId: string,
@@ -407,7 +371,7 @@ export async function setChatAssignee(
   return updated.matchedCount > 0;
 }
 
-// 🎫 Idempotent — re-escalating returns the original ticket instead of forking a second one.
+// Reuse the linked ticket when this conversation was already escalated.
 export async function escalateChatToTicket(
   conversationId: string,
   customerId: string,

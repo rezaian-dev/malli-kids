@@ -1,7 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🏷️ A real entity, not a free-text string — renaming a tag updates every article that uses it.
+// A real entity, not a free-text string — renaming a tag updates every article that uses it.
 export type TagDoc = {
   name: string;
   slug: string;

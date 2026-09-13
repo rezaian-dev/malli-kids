@@ -84,7 +84,7 @@ export function AdminMessagesLanding({
     POLL_MS,
     initialTickets,
   );
-  // 📡 One poll shared by the tab badge and the inbox
+  // One poll shared by the tab badge and the inbox
   const [conversations, setConversations, refreshConversations] = usePolling(
     getChatConversationsAction,
     POLL_MS,
@@ -104,7 +104,7 @@ export function AdminMessagesLanding({
   const [canned, setCanned] = useState<CannedResponse[]>([]);
   const [cannedOpen, setCannedOpen] = useState(false);
 
-  // 🧑‍💼 Staff + snippets load once per visit, refreshed after edits
+  // Staff + snippets load once per visit, refreshed after edits
   useEffect(() => {
     getSupportStaffAction().then(setStaff);
     getCannedResponsesAction().then(setCanned);
@@ -118,7 +118,7 @@ export function AdminMessagesLanding({
     notifyAdminMutation();
   }
 
-  // #️⃣ Hash-routed tabs — refresh-safe, no useSearchParams Suspense boundary
+  // #⃣ Hash-routed tabs — refresh-safe, no useSearchParams Suspense boundary
   useEffect(() => {
     const sync = () =>
       setTab(window.location.hash === "#chat" ? "chat" : "tickets");
@@ -136,7 +136,7 @@ export function AdminMessagesLanding({
     );
   }
 
-  // 🗓️ Tickets arrive newest-first; "oldest" just reverses
+  // Tickets arrive newest-first; "oldest" just reverses
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
     const filtered = tickets.filter((ticket) => {
@@ -159,7 +159,7 @@ export function AdminMessagesLanding({
     if (sort === "most-replies") {
       return [...filtered].sort((a, b) => b.replies.length - a.replies.length);
     }
-    // ⏳ Longest-waiting first — support-desk triage order
+    // Longest-waiting first — support-desk triage order
     if (sort === "waiting") {
       return [...filtered].sort(
         (a, b) => (b.waitingHours ?? -1) - (a.waitingHours ?? -1),
@@ -259,7 +259,7 @@ export function AdminMessagesLanding({
     });
   }
 
-  // ⚡ Thread replies update the inbox instantly, not on the next poll
+  // Thread replies update the inbox instantly, not on the next poll
   function conversationChanged(next: ChatConversation) {
     setConversations((current) =>
       current.map((conv) => (conv.id === next.id ? next : conv)),

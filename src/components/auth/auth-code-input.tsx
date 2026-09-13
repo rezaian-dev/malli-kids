@@ -5,8 +5,7 @@ import { cn } from "@/lib/utils";
 import { OTP_LEN } from "@/lib/auth/schemas";
 import { onlyDigits } from "./auth-shared";
 
-/** One real, controlled input: paste, Persian digits, SMS autofill, selection,
- * backspace and screen readers work natively. The five boxes are visual only. */
+/** Use one real OTP input; the five boxes are visual only. */
 export function OtpBoxes({
   value,
   onChange,

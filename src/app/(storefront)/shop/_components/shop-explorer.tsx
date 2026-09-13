@@ -37,8 +37,7 @@ export function ShopExplorer({
 
   return (
     <div className="shop-page xs:px-4 mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-7">
-      {/* 🧭 Same crumb URLs the server emits as JSON-LD (`shop/page.tsx`),
-          so visual + schema never drift (`schema={false}` — already emitted). */}
+      {/* The server already emits the breadcrumb schema. */}
       <Breadcrumb
         schema={false}
         items={[

@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { formatToman } from "@/lib/locale/fa";
 
-/** 🧾 Subtotal / shipping / total breakdown. */
+/** Subtotal / shipping / total breakdown. */
 export function CartSummary({
   subtotal,
   shipping,

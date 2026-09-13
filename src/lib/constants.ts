@@ -10,7 +10,7 @@ export const BRAND = {
   freeShipFrom: 1_500_000,
 };
 
-// 🚚 Flat shipping fee below BRAND.freeShipFrom; shared by server and client totals.
+// Flat shipping fee below BRAND.freeShipFrom; shared by server and client totals.
 export const SHIPPING_FEE = 95_000;
 
 export const CATS = [

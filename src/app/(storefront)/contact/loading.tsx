@@ -1,7 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-/** 🦴 Loosely mirrors `ContactLanding`'s hero band + the info-card row
- *  below it. */
+/** Loosely mirrors `ContactLanding`'s hero band + the info-card row below it. */
 export default function ContactLoading() {
   return (
     <div

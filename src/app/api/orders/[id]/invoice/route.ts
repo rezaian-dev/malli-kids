@@ -5,7 +5,7 @@ import { getOrderForRequester } from "@/lib/shop/orders";
 import { generateInvoicePdf } from "@/lib/shop/invoice";
 import { rateLimit } from "@/lib/rate-limit";
 
-// 🖨️ Playwright needs real Node APIs — never the Edge runtime
+// Playwright needs real Node APIs — never the Edge runtime
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
@@ -14,11 +14,7 @@ const NOT_FOUND_ERROR = "سفارش پیدا نشد.";
 const UNPAID_ERROR = "فاکتور فقط برای سفارش‌های پرداخت‌شده صادر می‌شود.";
 const RATE_ERROR = "تعداد درخواست‌های دانلود فاکتور زیاد بوده؛ کمی بعد دوباره تلاش کنید.";
 
-// 🧾 The one PDF invoice download path.
-// 🔐 Ownership off the real session — null for missing or not-yours; admin is the one exception.
-// 🛡️ Storefront and admin sessions are checked independently (they're
-// fully separate cookies, see admin-auth.ts) — either one alone is enough.
-// 💳 Paid orders only, whatever the client claims.
+// Allow only paid orders owned by the customer or accessed by an admin.
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -65,7 +61,7 @@ export async function GET(
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `inline; filename="invoice-${order.id}.pdf"`,
-      // 🔒 Per-user asset — never cacheable by CDN, proxy, or disk
+      // Per-user asset — never cacheable by CDN, proxy, or disk
       "Cache-Control": "private, no-store",
     },
   });

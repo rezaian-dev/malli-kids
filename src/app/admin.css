@@ -1,14 +1,12 @@
-/* 🎛️ Tailwind entry for the admin route group only (see storefront.css) */
+/* Tailwind entry for the admin route group only (see storefront.css) */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./theme.css";
 
-/* 🚫 No storefront imports from admin code — excluding it keeps the public
-   site's CSS surface out of every admin page */
+/* Exclude storefront utilities from the admin stylesheet. */
 @source not "./(storefront)";
 
-/* 📅 JalaliDateField theme — recolors the library's own layout CSS; the
-   popup renders inline, so no z-index override is needed */
+/* Theme the inline Persian calendar popup. */
 .malli-jalali-field {
   display: block !important;
   width: 100%;
@@ -279,8 +277,7 @@
 
 /* NOTE: .rmdp-ym are rows, not cells — unstyled to avoid whole-row hovers */
 
-/* 📱 Shrink the grid so the popup fits 360px — the fixed 2.35rem cells
-   above would otherwise bleed past the dialog edges */
+/* Keep the calendar inside narrow dialogs. */
 @media (max-width: 450px) {
   .malli-jalali .rmdp-header {
     padding: 0.45rem 0.4rem;
@@ -311,7 +308,7 @@
   }
 }
 
-/* 🌙 Dark console. */
+/* Dark console. */
 .dark .malli-jalali.rmdp-wrapper,
 .dark .malli-jalali .rmdp-wrapper {
   background: var(--color-dusk);

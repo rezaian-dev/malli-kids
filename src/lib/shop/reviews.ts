@@ -16,7 +16,7 @@ function toAdminReview(doc: ReviewDoc & { _id: { toString(): string }; createdAt
   };
 }
 
-// ✅ Backs both the PDP's "write a review" gate and the review-submit action.
+// Backs both the PDP's "write a review" gate and the review-submit action.
 export async function hasPurchased(userId: string, productId: number): Promise<boolean> {
   await connectMongoose();
   const purchased = await OrderModel.exists({
@@ -26,7 +26,7 @@ export async function hasPurchased(userId: string, productId: number): Promise<b
   return Boolean(purchased);
 }
 
-// ⭐ Held for admin moderation (visible: false) until approved.
+// Held for admin moderation (visible: false) until approved.
 export async function createReview(input: {
   productName: string;
   author: string;
@@ -51,7 +51,7 @@ export async function getVisibleReviewsForProduct(productName: string): Promise<
   return docs.map(toAdminReview);
 }
 
-// 🏅 Recent, well-rated reviews across every product, for the homepage testimonials.
+// Recent, well-rated reviews across every product, for the homepage testimonials.
 export async function getFeaturedReviews(limit = 5): Promise<AdminReview[]> {
   await connectMongoose();
   const docs = await ReviewModel.find({ visible: true, rate: { $gte: 4 } })
@@ -63,7 +63,7 @@ export async function getFeaturedReviews(limit = 5): Promise<AdminReview[]> {
 
 export type ReviewStats = { avg: number; count: number };
 
-// 📊 Site-wide average rating and count, for the homepage's aggregate stat block.
+// Site-wide average rating and count, for the homepage's aggregate stat block.
 export async function getReviewStats(): Promise<ReviewStats> {
   await connectMongoose();
   const [agg] = await ReviewModel.aggregate<{ avg: number; count: number }>([

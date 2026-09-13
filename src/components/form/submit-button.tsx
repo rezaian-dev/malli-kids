@@ -8,14 +8,11 @@ import type { VariantProps } from "class-variance-authority";
 
 export type SubmitButtonProps = Omit<ComponentProps<typeof Button>, "type"> &
   VariantProps<typeof buttonVariants> & {
-    /** Swapped in for `children` while the form is submitting — omit to
-     *  just keep the original label and let the spinner + disabled state
-     *  speak for themselves. */
+    /** Optional label shown while submitting. */
     pendingLabel?: ReactNode;
   };
 
-// 🚦 Every AppForm submit button — reads formState.isSubmitting, disables
-// + spins, so no double-click ever refires; must sit inside <AppForm>
+// Use AppForm's submitting state to prevent duplicate submissions.
 export function SubmitButton({
   children,
   pendingLabel,

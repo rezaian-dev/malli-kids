@@ -1,7 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 📰 slug is the natural unique key — already the URL, no separate id needed.
+// slug is the natural unique key — already the URL, no separate id needed.
 export type ArticleDoc = {
   slug: string;
   tag: string;
@@ -10,7 +10,6 @@ export type ArticleDoc = {
   body: string;
   cover?: string;
   published: boolean;
-  // 🏷️ Multi-value taxonomy, distinct from the single fixed `tag` category above; not a Mongoose ref.
   tags: string[];
   createdAt: Date;
   updatedAt: Date;

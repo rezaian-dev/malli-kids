@@ -52,7 +52,7 @@ function readHashTab(): ProfileTab {
     : "info";
 }
 
-// 👤 Profile shell stays light and loads each panel on demand.
+// Profile shell stays light and loads each panel on demand.
 export function ProfileView() {
   const { user, setAuthOpen } = useAuth();
   const [tab, setTab] = useState<ProfileTab>("info");
@@ -62,7 +62,7 @@ export function ProfileView() {
     sync();
     window.addEventListener("hashchange", sync);
 
-    // 🔗 pushState never fires hashchange — same-page hash links need this
+    // pushState never fires hashchange — same-page hash links need this
     function onAnnounce(event: Event) {
       const tab = (event as CustomEvent<ProfileTab>).detail;
       if (tab) setTab(tab);

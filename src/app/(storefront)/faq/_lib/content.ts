@@ -1,5 +1,3 @@
-// ❓ FAQ copy — used only within this route (the accordion + its schema.org
-// JSON-LD), so it lives here instead of the global `lib/data` grab-bag.
 export const FAQ = [
   {
     q: "چطور سایز درست را انتخاب کنم؟",

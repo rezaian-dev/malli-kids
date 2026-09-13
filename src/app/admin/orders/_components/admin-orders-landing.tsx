@@ -23,7 +23,7 @@ import { ORDER_COLUMNS } from "./order-columns";
 import { OrderDetailSheet } from "./order-detail-sheet";
 
 const PER_PAGE = 6;
-// ⚡ Orders move the sidebar badge — operational cadence, not content.
+// Orders move the sidebar badge — operational cadence, not content.
 const POLL_MS = 8_000;
 type StatusFilter = "all" | OrderStatus;
 type SortFilter = "newest" | "amount-desc" | "amount-asc" | "items";

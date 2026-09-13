@@ -16,8 +16,7 @@ function invalidInput(message: string, field: string): never {
   });
 }
 
-/** Runs for BOTH server actions and direct /api/auth requests. UI validation alone
- * must never let a caller bypass required phone ownership or SMS rate limits. */
+/** Enforce phone ownership and rate limits on actions and direct API requests. */
 export function createPhonePolicy(
   consumeOTP: (body: { phoneNumber: string; code: string }) => Promise<void>,
   ensurePhoneIndex: () => Promise<unknown>,
@@ -115,8 +114,7 @@ export function createPhonePolicy(
         model: "user",
         where: [{ field: "phoneNumber", value: phone }],
       });
-      // Never promote a legacy contact number into a recovery credential.
-      // Unknown/unverified numbers receive the same public acknowledgement.
+      // Only verified identity numbers may recover accounts; acknowledge others generically.
       if (user && !user.phoneNumberVerified) {
         if (!resetting) return ctx.json({ status: true });
         throw new APIError("BAD_REQUEST", {
@@ -151,8 +149,7 @@ export function createPhonePolicy(
         code: "USER_ALREADY_EXISTS",
         message: "حسابی با این ایمیل قبلاً ساخته شده است.",
       });
-    // Built-in, atomic, attempt-limited consumption: no account/session is made here.
-    // Only the successful signup request reaches the user.create hook below.
+    // Consume OTP proof atomically without creating an account or session.
     await consumeOTP({ phoneNumber: phone, code: parsed.data.code });
     ctx.body = {
       ...ctx.body,

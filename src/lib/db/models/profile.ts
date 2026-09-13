@@ -1,8 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🧸 Everything about a customer that isn't identity (name/email live on
-// Better Auth's own `user` collection — see `@/lib/auth/session`).
+// Keep profile details separate from Better Auth identity fields.
 export type ProfileDoc = {
   userId: string;
   phone?: string;
@@ -10,7 +9,7 @@ export type ProfileDoc = {
   postalCode?: string;
   city?: string;
   address?: string;
-  // 🗺️ Set together with address from the map picker; a plain-text address with no pin is still valid.
+  // A text address remains valid without a map pin.
   lat?: number;
   lng?: number;
   childName?: string;

@@ -2,7 +2,7 @@ import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 import type { FestiveTheme } from "@/types";
 
-// 🎉 from/to are recurring Jalali "M/D" (no year) — a real Date can't express "every year around this day".
+// Store recurring Jalali month/day ranges without a year.
 export type FestiveBannerDoc = {
   occasion: string;
   title: string;

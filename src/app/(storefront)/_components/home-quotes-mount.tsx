@@ -18,7 +18,7 @@ const HomeQuotes = dynamic(
   },
 );
 
-// 📚 Defers the embla carousel; reviews arrive as server-fetched children
+// Defers the embla carousel; reviews arrive as server-fetched children
 export function HomeQuotesMount({ reviews }: { reviews: AdminReview[] }) {
   return <HomeQuotes reviews={reviews} />;
 }

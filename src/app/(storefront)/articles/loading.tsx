@@ -1,7 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-/** 🦴 Mirrors the real hero + `ArticlesList` card shape instead of a
- *  generic spinner. */
+/** Mirrors the real hero + `ArticlesList` card shape instead of a generic spinner. */
 export default function ArticlesLoading() {
   return (
     <div

@@ -36,7 +36,7 @@ async function requireUser() {
   return { id: session.user.id, name: session.user.name };
 }
 
-// 💬 One round trip for the whole chat window; keyed by the session's own user id, so nothing to forge.
+// Resolve chat ownership from the session.
 export async function getMyChatAction(): Promise<ChatThread> {
   const user = await requireUser();
   if (!user) return { conversation: null, messages: [] };
@@ -48,7 +48,6 @@ export async function getMyChatAction(): Promise<ChatThread> {
   };
 }
 
-// 🔴 Feeds the unread badge while the window is closed; the window's own poll takes over once open.
 export async function getMyChatUnreadAction(): Promise<number> {
   const user = await requireUser();
   if (!user) return 0;
@@ -94,7 +93,7 @@ export async function sendChatMessageAction(input: {
   }
 }
 
-// 👀 Fire-and-forget — a failed call just leaves the count for next time.
+// Fire-and-forget — a failed call just leaves the count for next time.
 export async function markChatReadAction(
   conversationId: string,
 ): Promise<void> {
@@ -103,7 +102,7 @@ export async function markChatReadAction(
   await markChatReadAsCustomer(conversationId, user.id);
 }
 
-// ⌨️ Fire-and-forget; throttled client-side (~1/3s) and rate-limited here as a backstop.
+// Fire-and-forget; throttled client-side (~1/3s) and rate-limited here as a backstop.
 export async function pingChatTypingAction(
   conversationId: string,
 ): Promise<void> {
@@ -117,7 +116,7 @@ export async function pingChatTypingAction(
   await setTypingAsCustomer(conversationId, user.id);
 }
 
-/** ⭐ Rate the thread after it closes — re-rating overwrites. */
+/** Rate the thread after it closes — re-rating overwrites. */
 export async function submitChatRatingAction(
   conversationId: string,
   stars: number,
@@ -137,7 +136,7 @@ export async function submitChatRatingAction(
   }
 }
 
-// 🎫 Turns the chat into a ticket with the transcript attached.
+// Turns the chat into a ticket with the transcript attached.
 export async function escalateChatToTicketAction(
   conversationId: string,
 ): Promise<ActionResult<{ number?: number }>> {
@@ -152,7 +151,7 @@ export async function escalateChatToTicketAction(
   }
 }
 
-// 🕘 Cached like the campaign; editable in /admin/settings.
+// Cached like the campaign; editable in /admin/settings.
 export async function getSupportHoursAction(): Promise<SupportHours> {
   const user = await requireUser();
   if (!user) return DEFAULT_SUPPORT_HOURS;

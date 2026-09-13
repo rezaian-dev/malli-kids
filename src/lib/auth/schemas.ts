@@ -29,7 +29,7 @@ export const signUpDefaults: SignUpValues = {
   password: "",
 };
 
-// 📱 Password reset moved off email onto the SMS panel — same phone+code shape as OTP login.
+// Password reset moved off email onto the SMS panel — same phone+code shape as OTP login.
 export const forgotPasswordSchema = z.object({ phone: mobile() });
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 export const forgotPasswordDefaults: ForgotPasswordValues = { phone: "" };
@@ -49,9 +49,7 @@ export const otpVerifySchema = z.object({ code: otpCode(OTP_LEN) });
 export type OtpVerifyValues = z.infer<typeof otpVerifySchema>;
 export const otpVerifyDefaults: OtpVerifyValues = { code: "" };
 
-// 🔑 Second step of the phone-based reset. No `phone` field here — same as
-// `verifyOtpAction`, it carries over from step one as component state, not a
-// re-typed form field, and gets merged in only where the server action needs it.
+// The reset action supplies the phone retained from the first step.
 export const resetPasswordSchema = z
   .object({
     code: otpCode(OTP_LEN),

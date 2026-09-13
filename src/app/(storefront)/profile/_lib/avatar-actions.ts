@@ -36,8 +36,7 @@ export async function removeAvatarAction(): Promise<
 
   try {
     await connectMongoose();
-    // 🗑️ `$unset` (not `$set: {avatar: undefined}`, which the driver just
-    // drops and does nothing) — actually removes the field.
+    // Use $unset; setting undefined does not remove the stored avatar.
     await Profile.updateOne({ userId }, { $unset: { avatar: "" } });
     return { ok: true, data: { avatar: undefined } };
   } catch {

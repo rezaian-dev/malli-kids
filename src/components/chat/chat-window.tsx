@@ -29,16 +29,15 @@ import {
 } from "@/lib/shop/chat-actions";
 import type { SupportHours } from "@/lib/shop/settings";
 
-// 🪞 Mirrors CHAT_MESSAGE_MAX_LEN in lib/shop/chat.ts (server-only module)
+// Mirrors CHAT_MESSAGE_MAX_LEN in lib/shop/chat.ts (server-only module)
 const MESSAGE_MAX_LEN = 1000;
 const POLL_MS = 4_000;
-// ⌨️ One heartbeat per 3s — inside the 6s server window
+// One heartbeat per 3s — inside the 6s server window
 const TYPING_PING_MS = 3_000;
 
 type Status = "live" | "retrying" | "offline";
 
-// 🪟 Customer chat window — lazy-loaded by ChatWidget; server-confirmed
-// messages only, no fake success
+// Display only messages confirmed by the server.
 export function ChatWindow({ onClose }: { onClose: () => void }) {
   const [online, setOnline] = useState(() =>
     typeof navigator === "undefined" ? true : navigator.onLine,
@@ -53,7 +52,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
   const [ratingNote, setRatingNote] = useState("");
   const [ratingSending, setRatingSending] = useState(false);
   const [escalating, setEscalating] = useState(false);
-  // 🔁 Retries reuse the id — a lost response can't duplicate server-side
+  // Retries reuse the id — a lost response can't duplicate server-side
   const pendingClientId = useRef<string | null>(null);
   const prevRef = useRef<ChatThread | null>(null);
   const lastAdminId = useRef<string | null>(null);
@@ -61,7 +60,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
   const listRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLInputElement>(null);
 
-  // 🌐 Online/offline gates polling; refetches instantly on reconnect
+  // Online/offline gates polling; refetches instantly on reconnect
   useEffect(() => {
     const update = () => setOnline(navigator.onLine);
     window.addEventListener("online", update);
@@ -72,14 +71,14 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
     };
   }, []);
 
-  // 🕘 Support hours load once per open
+  // Support hours load once per open
   useEffect(() => {
     getSupportHoursAction()
       .then(setHours)
       .catch(() => {});
   }, []);
 
-  // 🛡️ usePolling doesn't catch — this wrapper must never reject
+  // usePolling doesn't catch — this wrapper must never reject
   const [data, setData] = usePolling<ChatThread | null>(
     async () => {
       try {
@@ -104,7 +103,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
   const openHours =
     !hours || isWithinSupportHours(new Date(), hours.startHour, hours.endHour);
 
-  // 👀 Thread is visible — clear unread as admin messages arrive
+  // Thread is visible — clear unread as admin messages arrive
   useEffect(() => {
     if (!conversation || conversation.customerUnreadCount === 0) return;
     const last = messages[messages.length - 1];
@@ -120,7 +119,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
     );
   }, [conversation, messages, setData]);
 
-  // 🔊 Announce new admin replies to screen readers
+  // Announce new admin replies to screen readers
   useEffect(() => {
     const admins = messages.filter((m) => m.senderRole === "admin");
     const lastId = admins.length ? admins[admins.length - 1].id : null;
@@ -132,13 +131,13 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
     }
   }, [messages]);
 
-  // ⬇️ Pin to bottom; length-keyed so idle polls don't yank scroll
+  // Pin to bottom; length-keyed so idle polls don't yank scroll
   useEffect(() => {
     const el = listRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages.length, conversation?.adminTyping]);
 
-  // ♿️ Focus only with a fine pointer — no uninvited mobile keyboard
+  // Focus only with a fine pointer — no uninvited mobile keyboard
   useEffect(() => {
     if (window.matchMedia("(pointer: fine)").matches) {
       composerRef.current?.focus();
@@ -156,7 +155,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
 
   function onDraftChange(value: string) {
     setDraft(value);
-    // ⌨️ Throttled heartbeat — keeps the admin "writing…" state fresh
+    // Throttled heartbeat — keeps the admin "writing…" state fresh
     if (!conversation || !value.trim() || !online) return;
     const now = Date.now();
     if (now - lastPingAt.current < TYPING_PING_MS) return;
@@ -210,7 +209,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
         return;
       }
       toast.success("ممنون از امتیاز شما ⭐");
-      // ⚡ Optimistic local echo; the next poll confirms
+      // Optimistic local echo; the next poll confirms
       setData((current) =>
         current?.conversation
           ? {
@@ -426,7 +425,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
               در حال ارسال…
             </p>
           ) : null}
-          {/* ⌨️ Admin typing indicator */}
+          {/* Admin typing indicator */}
           {conversation?.adminTyping ? (
             <div className="flex justify-end" aria-live="polite">
               <p className="border-gold/30 bg-gold/10 text-navy dark:text-ivory flex items-center gap-1.5 rounded-2xl rounded-se-md border px-4 py-3 text-[11px] font-bold">
@@ -441,7 +440,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
           ) : null}
         </div>
 
-        {/* ⭐ Post-close rating */}
+        {/* Post-close rating */}
         {showRating ? (
           <div className="border-navy/8 dark:border-gold/15 shrink-0 space-y-2 border-t px-4 py-3">
             <p className="text-center text-xs font-black">
@@ -529,7 +528,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
                 send();
               }}
               onFocus={(event) => {
-                // 📱 iOS Safari doesn't resize the layout for the keyboard
+                // iOS Safari doesn't resize the layout for the keyboard
                 event.target.scrollIntoView({ block: "nearest" });
               }}
               disabled={sending || !online}

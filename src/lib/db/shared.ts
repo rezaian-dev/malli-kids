@@ -2,47 +2,46 @@ import "server-only";
 
 export const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/malli-kids";
-
 export const hasMongooseEnv = !!process.env.MONGODB_URI;
 
-// 🔗 cPanel/Pars host creates users like mallikid_mrezaian for DB mallikid_mallkidsDB.
-// The driver needs ?authSource=<db> or it may try "admin" and fail with code 18 AuthenticationFailed.
-// If the URI has user:pass and a db but no authSource, we append it automatically so
-//   mongodb://user:pass@localhost:27017/mydb  ->  .../mydb?authSource=mydb
+// Default credentialed URIs to their own database's authSource.
 export function getMongooseUri(): string {
-  const raw = MONGODB_URI;
-  if (raw.includes("authSource=")) return raw;
+  if (MONGODB_URI.includes("authSource=")) return MONGODB_URI;
   try {
-    const u = new URL(raw);
-    if (u.username && u.pathname && u.pathname !== "/" && u.pathname.length > 1) {
-      const dbName = u.pathname.slice(1).split("?")[0].split("/")[0];
-      if (dbName) {
-        // Keep original encoding; just add param
-        const sep = raw.includes("?") ? "&" : "?";
-        return `${raw}${sep}authSource=${encodeURIComponent(dbName)}`;
-      }
+    const uri = new URL(MONGODB_URI);
+    const database = uri.pathname.split("/")[1];
+    if (uri.username && database) {
+      const separator = MONGODB_URI.includes("?") ? "&" : "?";
+      return `${MONGODB_URI}${separator}authSource=${encodeURIComponent(database)}`;
     }
   } catch {
-    // Fallback: raw may not be a valid URL (e.g. mongodb+srv) — return as-is
+    // Leave driver-specific URI formats unchanged.
   }
-  return raw;
+  return MONGODB_URI;
 }
 
-// 🔒 Caches one connection promise per key on globalThis, so HMR/serverless reuse never opens a second connection.
-// ♻️ On failure the cached promise is cleared so a retry (e.g. next ISR hit after env fixed) can succeed.
-export function cached<T>(
-  key: string,
-  create: () => Promise<T>,
-): () => Promise<T> {
+export function requireBuildDatabase(): void {
+  if (process.env.NEXT_PHASE === "phase-production-build" && !process.env.MONGODB_URI) {
+    console.warn("[db] No build-time database; use the runtime fallback.");
+    throw new Error("MONGODB_URI not configured during build");
+  }
+}
+
+export function rethrowMongoError(error: unknown): never {
+  const code = (error as { code?: number } | null)?.code;
+  const message = error instanceof Error ? error.message : "";
+  if (code === 18 || message.includes("Authentication failed")) {
+    console.error("[db] Authentication failed; check credentials and authSource.");
+  }
+  throw error;
+}
+
+// Reuse connection promises; clear failures so later requests can retry.
+export function cached<T>(key: string, create: () => Promise<T>): () => Promise<T> {
   const store = globalThis as unknown as Record<string, Promise<T> | undefined>;
-  return () => {
-    const existing = store[key];
-    if (existing) return existing;
-    const promise = create().catch((err) => {
+  return () =>
+    (store[key] ??= create().catch((error) => {
       delete store[key];
-      throw err;
-    });
-    store[key] = promise;
-    return promise;
-  };
+      throw error;
+    }));
 }

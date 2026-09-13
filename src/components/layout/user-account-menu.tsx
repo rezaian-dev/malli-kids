@@ -1,7 +1,6 @@
 "use client";
 
-// 🎯 Radix DropdownMenu + floating-ui only ship to signed-in visitors,
-// loaded on demand — guests never parse this chunk
+// Load the account menu only for signed-in visitors.
 import Link from "next/link";
 import { Heart, Headphones, LogOut, Phone, Truck, User } from "lucide-react";
 import type { User as UserType } from "@/types";

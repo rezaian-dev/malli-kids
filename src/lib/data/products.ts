@@ -6,8 +6,6 @@ export function parseProductRouteId(value: string) {
   return Number(match[1]);
 }
 
-// 🪶 Generic, product-agnostic words — cosmetic only (see productRouteParam
-// below), so they must never encode any specific product's name.
 const PRODUCT_SLUGS = [
   "kids-boutique",
   "little-style",
@@ -19,7 +17,7 @@ const PRODUCT_SLUGS = [
   "new-season",
 ] as const;
 
-// 🪶 Cosmetic only — the route resolves products by the leading number, not this word.
+// Cosmetic only — the route resolves products by the leading number, not this word.
 function productSlug(id: number) {
   const i =
     ((id % PRODUCT_SLUGS.length) + PRODUCT_SLUGS.length) % PRODUCT_SLUGS.length;

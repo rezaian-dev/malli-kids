@@ -45,16 +45,16 @@ export async function getOrdersForUser(userId: string): Promise<AdminOrder[]> {
   return docs.map(toAdminOrder);
 }
 
-// 🔐 The authorization boundary: returns null for both "doesn't exist" and "isn't yours" alike, unless isAdmin.
+// Return null for missing or unowned orders unless the requester is an admin.
 export async function getOrderForRequester(
   orderId: string,
   requester: { userId: string; isAdmin: boolean },
 ): Promise<(OrderDoc & { createdAt: Date }) | null> {
   await connectMongoose();
-  const doc = await OrderModel.findOne({ id: orderId }).lean();
-  if (!doc) return null;
-  if (!requester.isAdmin && doc.userId !== requester.userId) return null;
-  return doc;
+  return OrderModel.findOne({
+    id: orderId,
+    ...(!requester.isAdmin ? { userId: requester.userId } : {}),
+  }).lean();
 }
 
 export type CreateOrderInput = {
@@ -70,7 +70,7 @@ export type CreateOrderInput = {
   idempotencyKey?: string;
 };
 
-// 🔁 Mongo's duplicate-key error — the unique+sparse idempotencyKey index turns a race into a lookup, not a 500.
+// A duplicate idempotency key identifies an existing checkout.
 function isDuplicateKeyError(error: unknown): boolean {
   return (
     typeof error === "object" &&
@@ -80,19 +80,19 @@ function isDuplicateKeyError(error: unknown): boolean {
   );
 }
 
-// 🆔 Timestamp-based ids collide within a millisecond — the retry loop regenerates
+// Retry IDs that collide within the same millisecond.
 function newOrderId(): string {
   return `MK-${Date.now().toString(36).slice(-5).toUpperCase()}`;
 }
 
-// 🆔 Only an id collision retries fresh — an idempotencyKey collision means this attempt already won
+// Retry order-ID collisions; reuse the winner for idempotency-key collisions.
 function isOrderIdCollision(error: unknown): boolean {
   if (!isDuplicateKeyError(error)) return false;
   const keyValue = (error as { keyValue?: Record<string, unknown> }).keyValue;
   return !!keyValue && "id" in keyValue && !("idempotencyKey" in keyValue);
 }
 
-// 📦 Atomic check-and-decrement — the overselling fix; stock must cover at write time
+// Check available stock in the same atomic write that decrements it.
 async function decrementVariantStock(
   productId: number,
   size: string,
@@ -101,7 +101,7 @@ async function decrementVariantStock(
   const updated = await ProductModel.findOneAndUpdate(
     { id: productId, variants: { $elemMatch: { size, stock: { $gte: qty } } } },
     { $inc: { "variants.$.stock": -qty } },
-    { new: true },
+    { returnDocument: "after" },
   );
   if (!updated) return false;
   await ProductModel.updateOne(
@@ -115,24 +115,23 @@ async function restockVariant(productId: number, size: string, qty: number) {
   const updated = await ProductModel.findOneAndUpdate(
     { id: productId, "variants.size": size },
     { $inc: { "variants.$.stock": qty } },
-    { new: true },
+    { returnDocument: "after" },
   );
   if (updated) {
     await ProductModel.updateOne(
       { id: productId },
       { $set: { stock: deriveStock(updated.variants, updated.stock) } },
     );
-    // 🔔 A return/rollback is a genuine stock increase — notify like any admin restock.
+    // A return/rollback is a genuine stock increase — notify like any admin restock.
     await notifyBackInStock(productId, size);
   }
 }
 
-// ↩️ Restocks variant stock on cancel/return; legacy unsized products are skipped
+// Restocks variant stock on cancel/return; legacy unsized products are skipped
 async function restockOrderItems(items: OrderDoc["items"]) {
   for (const item of items) {
     const product = await ProductModel.findOne({ id: item.id }).lean();
-    if (product?.variants?.length)
-      await restockVariant(item.id, item.size, item.qty);
+    if (product?.variants?.length) await restockVariant(item.id, item.size, item.qty);
   }
 }
 
@@ -140,11 +139,8 @@ export type CreateOrderResult =
   | { ok: true; order: AdminOrder }
   | { ok: false; outOfStock: string; couponExhausted?: boolean };
 
-// 🧾 Idempotent creation: atomic per-item stock decrement with rollback,
-// atomic coupon reservation, id-collision retries
-export async function createOrder(
-  input: CreateOrderInput,
-): Promise<CreateOrderResult> {
+// Reserve stock and coupons atomically; roll back failed order creation.
+export async function createOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
   await connectMongoose();
 
   if (input.idempotencyKey) {
@@ -154,49 +150,43 @@ export async function createOrder(
     if (existing) return { ok: true, order: toAdminOrder(existing) };
   }
 
-  const applied: { id: number; size: string; qty: number }[] = [];
-  for (const item of input.items) {
-    const product = await ProductModel.findOne({ id: item.id }).lean();
-    if (!product?.variants?.length) continue;
-
-    const decremented = await decrementVariantStock(
-      item.id,
-      item.size,
-      item.qty,
-    );
-    if (!decremented) {
-      for (const done of applied)
-        await restockVariant(done.id, done.size, done.qty);
-      return { ok: false, outOfStock: item.name };
-    }
-    applied.push({ id: item.id, size: item.size, qty: item.qty });
-  }
-
-  // 🎟️ Reserve before the order exists — findApplicableCoupon's pre-check can't hold under concurrency.
+  const reservedStock: { id: number; size: string; qty: number }[] = [];
   let couponReserved = false;
-  if (input.couponCode) {
-    couponReserved = await reserveCouponUsage(input.couponCode);
-    if (!couponReserved) {
-      for (const done of applied)
-        await restockVariant(done.id, done.size, done.qty);
-      return { ok: false, outOfStock: "", couponExhausted: true };
-    }
-  }
-
-  const subtotal = input.items.reduce((s, i) => s + i.price * i.qty, 0);
-  const discount = Math.round(subtotal * (input.discountRate ?? 0));
-  const afterDiscount = subtotal - discount;
-  const shipping = afterDiscount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
-  const total = afterDiscount + shipping;
 
   async function rollback() {
     if (couponReserved && input.couponCode) {
       couponReserved = false;
       await releaseCouponUsage(input.couponCode);
     }
-    for (const done of applied)
-      await restockVariant(done.id, done.size, done.qty);
+    for (const { id, size, qty } of reservedStock) await restockVariant(id, size, qty);
   }
+
+  for (const item of input.items) {
+    const product = await ProductModel.findOne({ id: item.id }).lean();
+    if (!product?.variants?.length) continue;
+
+    const decremented = await decrementVariantStock(item.id, item.size, item.qty);
+    if (!decremented) {
+      await rollback();
+      return { ok: false, outOfStock: item.name };
+    }
+    reservedStock.push({ id: item.id, size: item.size, qty: item.qty });
+  }
+
+  // Reserve coupon usage before writing the order.
+  if (input.couponCode) {
+    couponReserved = await reserveCouponUsage(input.couponCode);
+    if (!couponReserved) {
+      await rollback();
+      return { ok: false, outOfStock: "", couponExhausted: true };
+    }
+  }
+
+  const subtotal = input.items.reduce((total, item) => total + item.price * item.qty, 0);
+  const discount = Math.round(subtotal * (input.discountRate ?? 0));
+  const afterDiscount = subtotal - discount;
+  const shipping = afterDiscount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
+  const total = afterDiscount + shipping;
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
@@ -221,7 +211,7 @@ export async function createOrder(
 
       return { ok: true, order: toAdminOrder(doc.toObject()) };
     } catch (error) {
-      // 🔁 Same-millisecond collision — nothing written; regenerate and retry
+      // Same-millisecond collision — nothing written; regenerate and retry
       if (isOrderIdCollision(error)) continue;
 
       await rollback();
@@ -230,14 +220,14 @@ export async function createOrder(
         const existing = await OrderModel.findOne({
           idempotencyKey: input.idempotencyKey,
         }).lean();
-        // 🏁 The winner holds the one real reservation; this loser's was rolled back
+        // The winner holds the one real reservation; this loser's was rolled back
         if (existing) return { ok: true, order: toAdminOrder(existing) };
       }
       throw error;
     }
   }
 
-  // 🛑 Three collisions is essentially impossible — roll back and fail loudly
+  // Release all reservations after exhausting ID retries.
   await rollback();
   throw new Error("createOrder: order id collision");
 }
@@ -246,7 +236,7 @@ export type SetOrderStatusResult =
   | { ok: true; order: AdminOrder }
   | { ok: false; error: "not-found" | "invalid-transition" };
 
-// 🔒 The real enforcement boundary for ORDER_TRANSITIONS; restocks variant stock on a return.
+// The real enforcement boundary for ORDER_TRANSITIONS; restocks variant stock on a return.
 export async function setOrderStatus(
   id: string,
   status: OrderStatus,
@@ -261,7 +251,7 @@ export async function setOrderStatus(
   const doc = await OrderModel.findOneAndUpdate(
     { id },
     { $set: { status } },
-    { new: true },
+    { returnDocument: "after" },
   ).lean();
   if (!doc) return { ok: false, error: "not-found" };
 
@@ -272,10 +262,7 @@ export async function setOrderStatus(
   return { ok: true, order: toAdminOrder(doc) };
 }
 
-// 🧊 Refreshed every few minutes rather than on every order, like
-// getTopSearchTerms — a vanity stat for the homepage, not a live counter.
-// Distinct customers with a non-returned order — a real "happy customers"
-// figure instead of a hand-typed number.
+// Cache the count of distinct customers with non-returned orders.
 export const getHappyCustomerCount = unstable_cache(
   async (): Promise<number> => {
     try {
@@ -285,7 +272,10 @@ export const getHappyCustomerCount = unstable_cache(
       });
       return ids.length;
     } catch (err) {
-      console.warn("[orders] getHappyCustomerCount failed — returning 0:", (err as Error).message);
+      console.warn(
+        "[orders] getHappyCustomerCount failed — returning 0:",
+        (err as Error).message,
+      );
       return 0;
     }
   },

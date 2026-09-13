@@ -29,8 +29,6 @@ export function FavButton({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        // 🔔 `toggle` itself decides — and shows — what actually happened
-        // (added/removed, or "please sign in first"); it never does both.
         toggle(id);
       }}
       className={cn(
@@ -41,8 +39,7 @@ export function FavButton({
         className,
       )}
     >
-      {/* 🎬 با فعال شدن، قلب با یک فنرِ کوچک بزرگ و کمی می‌چرخد — یک
-          «پاپ»ِ واقعی به‌جای صرفِ scale ثابتِ CSS. */}
+      {/* فعال‌شدن علاقه‌مندی با یک انیمیشن کوتاه نمایش داده می‌شود. */}
       <motion.span
         className="inline-flex"
         animate={

@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import type { Paged } from "@/types";
 
-// 📄 Client-side pagination over an in-memory list; resetKey resets to page 1
-// when the filter changes
 export function usePagination<T>(
   items: T[],
   pageSize: number,
@@ -15,19 +13,19 @@ export function usePagination<T>(
   const total = items.length;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
 
-  // 🔁 Reset to page 1 whenever the filtered set identity changes.
+  // Reset to page 1 whenever the filtered set identity changes.
   useEffect(() => {
     setPageRaw(1);
   }, [resetKey]);
 
-  // 📏 Keep the page in range when the list shrinks.
+  // Keep the page in range when the list shrinks.
   useEffect(() => {
     setPageRaw((p) => Math.min(p, pageCount));
   }, [pageCount]);
 
   const current = Math.min(Math.max(1, page), pageCount);
 
-  // 🍕 A handful of rows per render — memoizing isn't worth it
+  // A handful of rows per render — memoizing isn't worth it
   const start = (current - 1) * pageSize;
   const pageItems = items.slice(start, start + pageSize);
 

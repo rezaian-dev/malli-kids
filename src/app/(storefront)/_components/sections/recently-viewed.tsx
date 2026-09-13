@@ -6,8 +6,7 @@ import { getProductsByIds } from "@/lib/shop/products";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
-// 👀 Reads the mk_recent cookie (see src/proxy.ts). Renders nothing until
-// there's history — an empty personalization shelf is noise, not a state
+// Hide this section until the browser has product history.
 const COOKIE_NAME = "mk_recent";
 const MAX_SHOWN = 8;
 
@@ -29,7 +28,7 @@ export async function RecentlyViewed() {
 
   const products = await getProductsByIds(ids);
   const byId = new Map(products.map((p) => [p.id, p]));
-  // 🔢 $in loses order — reorder to the cookie's recent-first, drop hidden
+  // $in loses order — reorder to the cookie's recent-first, drop hidden
   const ordered = ids
     .map((id) => byId.get(id))
     .filter((p): p is Product => Boolean(p?.visible));

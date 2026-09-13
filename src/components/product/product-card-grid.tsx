@@ -22,7 +22,7 @@ const BADGE: Record<string, string> = {
 const GRID_SIZES =
   "(max-width: 479px) calc(100vw - 2.5rem), (max-width: 719px) calc((100vw - 4.5rem) / 2), (max-width: 1023px) calc((100vw - 5.5rem) / 2), (max-width: 1535px) 33vw, 18rem";
 
-// 🃏 Overdamped settle — crisp arrival, no visible bounce
+// Overdamped settle — crisp arrival, no visible bounce
 const STACK_SPRING = {
   type: "spring",
   stiffness: 420,
@@ -30,7 +30,7 @@ const STACK_SPRING = {
   mass: 0.7,
 } as const;
 
-/** 🖼️ The tall grid card used everywhere except the shop's list view. */
+/** The tall grid card used everywhere except the shop's list view. */
 export function ProductCardGrid({
   p,
   href,
@@ -53,12 +53,10 @@ export function ProductCardGrid({
   };
   animate?: boolean;
   index?: number;
-  // 🃏 Stack mode: exit/enter synced with the parent AnimatePresence —
-  // filter re-layout, not scroll reveal
   stack?: boolean;
 }) {
   const badge = p.badge ? BADGE[p.badge] || "bg-navy text-gold-light" : null;
-  // 🃏 id-based tilt direction — a deck never rotates all alike
+  // id-based tilt direction — a deck never rotates all alike
   const tilt = p.id % 2 === 0 ? 1 : -1;
 
   return (
@@ -67,7 +65,7 @@ export function ProductCardGrid({
       className="h-full min-w-0"
       {...(stack
         ? {
-            // 🃏 Exit slides toward the reading end (left in RTL)
+            // Exit slides toward the reading end (left in RTL)
             exit: {
               opacity: 0,
               scale: 0.94,
@@ -79,7 +77,7 @@ export function ProductCardGrid({
             transition: STACK_SPRING,
             ...(animate
               ? {
-                  // 🃏 Enter springs in from the reading start (right in RTL)
+                  // Enter springs in from the reading start (right in RTL)
                   initial: {
                     opacity: 0,
                     scale: 0.96,
@@ -102,8 +100,7 @@ export function ProductCardGrid({
               : {}),
           }
         : {
-            // ⚡ No whileInView — instant paint on refresh; layout/exit keep
-            // filter swaps smooth
+            // No whileInView — instant paint on refresh; layout/exit keep filter swaps smooth
             exit: {
               opacity: 0,
               scale: 0.85,
@@ -207,7 +204,7 @@ export function ProductCardGrid({
                 price
               )}
             </div>
-            {/* 📱 Actions pinned to the bottom edge on narrow screens */}
+            {/* Actions pinned to the bottom edge on narrow screens */}
             <div className="mt-auto grid grid-cols-1 gap-1.5 pt-2.5 pointer-fine:min-[520px]:hidden">
               <Link
                 href={href}

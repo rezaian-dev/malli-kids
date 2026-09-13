@@ -3,13 +3,12 @@ import { connectMongoose } from "@/lib/db/mongoose";
 import { Profile } from "@/lib/db/models/profile";
 import type { User } from "@/types";
 
-// 🧩 Shared helpers for the profile action files
+// Shared helpers for the profile action files
 
 export const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 export const AUTH_ERROR = "برای این کار باید وارد حساب‌تان باشید.";
 
-// 🔐 Every action re-checks the real session server-side — the client never
-// gets to say whose profile it's editing.
+// Resolve profile ownership from the server session.
 export async function requireUserId() {
   const session = await getSession();
   return session?.user.id ?? null;

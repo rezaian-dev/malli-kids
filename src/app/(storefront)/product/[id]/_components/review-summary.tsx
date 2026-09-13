@@ -3,8 +3,7 @@ import { cn } from "@/lib/utils";
 import { pdpKicker, pdpWell } from "../_lib/product-chrome";
 import { ReviewStars } from "./review-stars";
 
-/** 📊 Real per-star histogram (percentage of `ratings` at each star), not a
- *  formula guess. */
+/** Real per-star histogram (percentage of `ratings` at each star), not a formula guess. */
 function starDistribution(ratings: number[]) {
   return [5, 4, 3, 2, 1].map((star) => {
     if (!ratings.length) return 0;
@@ -13,7 +12,7 @@ function starDistribution(ratings: number[]) {
   });
 }
 
-// 📊 All computed from real reviews, nothing fabricated
+// All computed from real reviews, nothing fabricated
 export function ReviewSummary({
   avg,
   count,

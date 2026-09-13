@@ -15,8 +15,7 @@ const STAT_VALUE = "text-base font-black min-[380px]:text-xl sm:text-3xl text-na
 
 const STAT_LABEL = "mt-1 text-[10px] leading-4 min-[380px]:text-xs sm:text-sm text-navy/70 dark:text-wheat";
 
-// 🧮 Real, live figures only — never a hand-typed "+12,000". Zero-value
-// stats are dropped instead of shown, so launch day never lies.
+// Hide empty statistics instead of displaying placeholder numbers.
 async function heroStats() {
   const [products, customers, reviews] = await Promise.all([
     getAllProducts(),
@@ -151,13 +150,7 @@ export async function Hero() {
             </div>
           )}
         </div>
-        {/* ⚡ No entrance fade here — this frame holds the LCP image, and
-            animating its opacity in delays when Chrome can score the paint.
-            No Ken Burns either: the infinite transform made the compositor
-            intermittently drop the photo's bitmap (a visible blink/tick,
-            incl. right after refresh), so the photo stays perfectly static.
-            No shimmer sweep over the photo either — the only thing covering
-            it now is a static gradient, so nothing can flash across it. */}
+        {/* Keep the hero static to avoid LCP delays and image flicker. */}
         <div className="group/hero xs:max-w-80 xs:px-4 relative mx-auto w-full max-w-72 px-2 sm:max-w-110 sm:px-0">
           <div
             className="relative aspect-3/4 overflow-hidden rounded-t-[999px] rounded-b-4xl border-8 sm:rounded-b-[40px] sm:border-10 bg-sand shadow-navy/20 border-white shadow-2xl dark:border-linen"

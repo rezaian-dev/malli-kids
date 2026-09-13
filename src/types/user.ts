@@ -1,4 +1,4 @@
-// 👤 Authenticated customer profile (account area, checkout prefill).
+// Authenticated customer profile (account area, checkout prefill).
 
 export type User = {
   firstName: string;
@@ -16,6 +16,6 @@ export type User = {
   childName?: string;
   childAge?: string;
   childGender?: string;
-  // 📏 Free text like childAge — parsed via parseFaNumber where needed
+  // Free text like childAge — parsed via parseFaNumber where needed
   childHeightCm?: string;
 };

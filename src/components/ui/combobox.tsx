@@ -15,7 +15,7 @@ export type ComboboxProps = {
   emptyText?: string;
   id?: string;
   name?: string;
-  // 🖋️ "off" by default; a real token (e.g. "address-level2") enables autofill
+  // "off" by default; a real token (e.g. "address-level2") enables autofill
   autoComplete?: string;
   className?: string;
   invalid?: boolean;
@@ -24,8 +24,6 @@ export type ComboboxProps = {
   "aria-describedby"?: string;
 };
 
-// ✍️ Type-ahead combobox — the field is the search box; free text is always
-// a valid value, picking a suggestion is just a shortcut
 export function Combobox({
   value,
   onChange,
@@ -75,7 +73,7 @@ export function Combobox({
         e.preventDefault();
         pick(filtered[active]);
       } else {
-        // ✅ Nothing highlighted — Enter confirms the typed free-form text
+        // Nothing highlighted — Enter confirms the typed free-form text
         setOpenState(false);
       }
     } else if (e.key === "Escape") {
@@ -126,8 +124,7 @@ export function Combobox({
           <ChevronDown
             aria-hidden
             onMouseDown={(e) => {
-              // 🖱️ preventDefault keeps focus in the input — a plain click
-              // would blur-close the popover first
+              // preventDefault keeps focus in the input — a plain click would blur-close the popover first
               e.preventDefault();
               setOpenState(!open);
               inputRef.current?.focus();
@@ -139,8 +136,7 @@ export function Combobox({
 
       <PopoverContent
         align="start"
-        // 🩹 Popper (not -popover-) anchor width — the wrong name falls
-        // through to the fixed w-72
+        // Popper (not -popover-) anchor width — the wrong name falls through to the fixed w-72
         className="w-(--radix-popper-anchor-width) overflow-hidden p-1"
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}

@@ -1,8 +1,8 @@
-// 📱 Input-specific parsing on top of @/lib/locale/fa's digit conversion.
+// Input-specific parsing on top of @/lib/locale/fa's digit conversion.
 
 import { toEnDigits } from "@/lib/locale/fa";
 
-// 🔢 Parses Persian/Arabic digits and thousands separators; NaN for anything but a clean whole number.
+// Accept localized whole numbers; reject malformed input as NaN.
 export function parseFaNumber(value: unknown): number {
   if (typeof value === "number") return value;
   if (typeof value !== "string") return Number.NaN;
@@ -13,7 +13,7 @@ export function parseFaNumber(value: unknown): number {
   return Number(raw);
 }
 
-// ☎️ Normalizes +98/0098 prefixes to local 0912… digits, stripping spacing/punctuation.
+// Normalizes +98/0098 prefixes to local 0912… digits, stripping spacing/punctuation.
 export function phoneDigits(value: string): string {
   const raw = toEnDigits(value).replace(
     /[\s‌‎‏().٫،‐-―_-]/g,

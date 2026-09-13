@@ -7,11 +7,9 @@ import { motion, type HTMLMotionProps } from "motion/react";
 
 import { cn } from "@/lib/utils";
 
-// 🪄 motion-capable Slot so asChild elements get the same spring gestures
+// motion-capable Slot so asChild elements get the same spring gestures
 const MotionSlot = motion.create(Slot.Root);
 
-// 🎬 Spring physics, not CSS transitions; MotionProvider handles
-// prefers-reduced-motion globally
 const HOVER_SPRING = { type: "spring", stiffness: 420, damping: 24 } as const;
 const TAP_SPRING = { type: "spring", stiffness: 500, damping: 30 } as const;
 
@@ -69,7 +67,7 @@ function Button({
   }) {
   const Comp = asChild ? MotionSlot : motion.button;
 
-  // 🧭 Triggers skip press-down; while open they skip the hover-lift too
+  // Triggers skip press-down; while open they skip the hover-lift too
   const isPopupTrigger = props["aria-haspopup"] != null;
   const isExpanded =
     props["aria-expanded"] === true || props["aria-expanded"] === "true";

@@ -11,7 +11,7 @@ const TABS = [
   { id: "info", label: "اطلاعات حساب", Icon: Pencil },
 ] as const;
 
-/** 🧭 The section switcher above the active profile panel. */
+/** The section switcher above the active profile panel. */
 export function ProfileTabs({
   active,
   onChange,

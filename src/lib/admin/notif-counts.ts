@@ -12,7 +12,7 @@ export type AdminNotifCounts = {
   pendingReviews: number;
 };
 
-// 🔔 Computed once in admin/layout.tsx and passed down as props.
+// Computed once in admin/layout.tsx and passed down as props.
 export const getAdminNotifCounts = cache(async (): Promise<AdminNotifCounts> => {
   await connectMongoose();
   const [freshOrders, openTickets, openChats, pendingReviews] =

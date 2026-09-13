@@ -1,7 +1,7 @@
 import { ShoppingBag, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-/** 🛒 Shown inside the cart sheet when there's nothing in it yet. */
+/** Shown inside the cart sheet when there's nothing in it yet. */
 export function CartEmptyState() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">

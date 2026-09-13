@@ -12,9 +12,6 @@ import {
 
 import { useTheme } from "next-themes";
 
-// 🍞 One brand toast style — wash + glow key off a single --toast-accent
-// var per type; `!` beats sonner's injected stylesheet where it collides.
-// 🎯 relative (not overflow-hidden) — the close button pokes past the corner
 const TOAST_BASE =
   "items-start! gap-3 rounded-2xl border py-3.5! px-4! relative " +
   "[--normal-bg:linear-gradient(160deg,var(--popover)_0%,color-mix(in_srgb,var(--popover)_80%,var(--toast-accent,var(--color-gold-pale)))_100%)] " +
@@ -82,7 +79,7 @@ export function Toaster(props: ToasterProps) {
       }}
       style={
         {
-          // 🍞 Per-type bg comes from TOAST_BASE/TOAST_ACCENT; theme bits only
+          // Per-type bg comes from TOAST_BASE/TOAST_ACCENT; theme bits only
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
           "--border-radius": "var(--radius-2xl)",

@@ -9,7 +9,7 @@ const productVariantSchema = z.object({
   stock: z.number().int().min(0).max(100_000),
 });
 
-// 🧾 Mirrors the client checks — this is the real boundary
+// Mirrors the client checks — this is the real boundary
 export const productSchema = z.object({
   name: z.string().trim().min(3).max(80),
   cat: z.enum(CAT_OPTIONS as unknown as [string, ...string[]]),
@@ -30,10 +30,9 @@ export const productSchema = z.object({
   desc: z.string().trim().min(15).max(800),
   images: z.array(z.string().min(1)).min(1).max(6),
   stock: z.boolean(),
-  // 🆕 Empty for legacy/unsized products — stock keeps its old meaning
+  // Empty for legacy/unsized products — stock keeps its old meaning
   variants: z.array(productVariantSchema).max(40).default([]),
-  // 🧵 Hand-picked "complete the look" ids — capped small, not a catalog dump
-  // 🐛 .min(0), not .positive() — product ids are 0-indexed
+  // Accept zero-based product IDs and limit manual pairings.
   pairsWith: z.array(z.number().int().min(0)).max(6).default([]),
   seoTitle: z.string().trim().max(70).optional(),
   seoDescription: z.string().trim().max(160).optional(),

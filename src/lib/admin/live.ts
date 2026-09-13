@@ -1,4 +1,3 @@
-// 📡 Client-only event: mutations broadcast so AdminShell refreshes header/sidebar counts instantly.
 export const ADMIN_MUTATED_EVENT = "mk:admin-mutated";
 
 export function notifyAdminMutation() {

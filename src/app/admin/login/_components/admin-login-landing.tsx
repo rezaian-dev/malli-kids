@@ -99,10 +99,7 @@ export function AdminLoginLanding() {
         }}
       />
 
-      {/* ♿ AdminShell renders its own `<main>` for every other admin route
-          but bypasses its whole chrome here (see `admin-shell.tsx`'s
-          `path === "/admin/login"` check) — this page needs its own main
-          landmark since nothing upstream provides one. */}
+      {/* The login page supplies its own main landmark. */}
       <main className="relative flex flex-col justify-between px-6 py-8 sm:px-10 lg:px-16 lg:py-12">
         <header className="flex items-center justify-between gap-4">
           <AdminLogoMark tagline="CONSOLE" />
@@ -218,10 +215,7 @@ export function AdminLoginLanding() {
       </main>
 
       <aside className="bg-navy relative hidden min-h-72 overflow-hidden lg:block">
-        {/* 🖼️ Not `preload`/`fetchPriority` — this panel is `hidden` below
-            `lg`, so forcing an eager `<link rel="preload">` for it would sit
-            unused on every narrower viewport (the exact "resource was
-            preloaded but not used" console warning). */}
+        {/* Do not preload an image hidden on smaller screens. */}
         <Image
           src="/brand/hero-dress.jpg"
           alt=""

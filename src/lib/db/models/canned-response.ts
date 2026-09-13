@@ -1,7 +1,7 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 💬 Shared reply snippets for ticket/chat composers; falls back to a built-in set when empty.
+// Shared reply snippets for ticket/chat composers; falls back to a built-in set when empty.
 export type CannedResponseDoc = {
   title: string;
   body: string;

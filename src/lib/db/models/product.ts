@@ -5,16 +5,15 @@ import { deriveStock, type ProductVariant } from "@/lib/shop/inventory";
 
 type Gender = "دخترانه" | "پسرانه" | "یونیسکس";
 
-// 🛍️ id is a small public numeric id (not Mongo's _id) — matches the numeric ids used everywhere else.
 export type ProductDoc = {
   id: number;
   images: string[];
   name: string;
   cat: string;
-  // 🆕 Additive, not a replacement for cat — cat still mixes category/gender today.
+  // Additive, not a replacement for cat — cat still mixes category/gender today.
   gender?: Gender;
   ageRange?: string;
-  // 🔗 Auto-generated from name on create, editable after.
+  // Auto-generated from name on create, editable after.
   slug?: string;
   season?: Season;
   price: number;
@@ -22,9 +21,9 @@ export type ProductDoc = {
   disc?: string;
   badge?: string;
   rate: number;
-  // 🧮 Derived from variants when any exist; stored (not computed) so unvaried products keep working untouched.
+  // Derive stock from variants; preserve the legacy stock flag otherwise.
   stock: boolean;
-  // 🆕 Per size(/color) stock; empty for legacy/unsized products, which keep using the stock boolean above.
+  // An empty variant list identifies a legacy unsized product.
   variants: ProductVariant[];
   sold: number;
   desc: string;
@@ -32,7 +31,7 @@ export type ProductDoc = {
   seoDescription?: string;
   visible: boolean;
   featured: boolean;
-  // 🧵 Admin-curated "complete the look" pairing — a list of other product ids.
+  // Admin-curated "complete the look" pairing — a list of other product ids.
   pairsWith?: number[];
   updatedAt: Date;
 };
@@ -78,7 +77,7 @@ const productSchema = new Schema<ProductDoc>(
   { timestamps: true },
 );
 
-// 🔁 Keeps stock honest with variants on .save()/create; findOneAndUpdate paths recompute it themselves.
+// Update queries must recompute stock; this hook covers save and create only.
 productSchema.pre("save", function () {
   this.stock = deriveStock(this.variants, this.stock);
 });

@@ -29,8 +29,6 @@ import { getAllCustomers } from "../../customers/_lib/data";
 const AUTH_ERROR = "برای این کار باید ادمین وارد شده باشید.";
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 
-/** 🔄 Polled from `AdminMessagesLanding` — a new customer ticket/reply
- *  should show up in an already-open admin tab without a manual reload. */
 export async function getAllTicketsAction(): Promise<Ticket[]> {
   const admin = await requireAdmin();
   if (!admin) return [];
@@ -55,9 +53,7 @@ export async function replyTicketAction(
     const ticket = await replyTicket(id, "support", text);
     if (!ticket) return { ok: false, error: "تیکت پیدا نشد." };
 
-    // 🙋 First reply claims the thread, so the assignee filter tells the
-    // truth even when nobody assigned it by hand. Off the admin session
-    // (whoever is actually replying here), not the storefront one.
+    // Auto-assign the first reply using the admin session.
     const session = await getAdminSession();
     if (session?.user) {
       await claimTicketIfUnassigned(id, session.user.id, session.user.name);
@@ -106,7 +102,7 @@ export async function setTicketStatusAction(
   }
 }
 
-// 🗂️ Enums re-checked here; assignee name resolved server-side
+// Enums re-checked here; assignee name resolved server-side
 export async function updateTicketMetaAction(
   id: string,
   patch: {
@@ -152,8 +148,6 @@ export async function updateTicketMetaAction(
   }
 }
 
-// 🧑‍💼 Assignable staff: admins only, id + display name. Manual chat
-// assignment stores only the id
 export async function setChatAssigneeAction(
   conversationId: string,
   assigneeId: string | null,

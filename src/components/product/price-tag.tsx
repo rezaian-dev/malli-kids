@@ -17,7 +17,7 @@ export function PriceTag({
   const { campaign } = useCampaign();
   const resolved = resolvePrice({ price, old }, campaign);
 
-  // 🏷️ The card's one discount indicator — single render path, never duplicated
+  // The card's one discount indicator — single render path, never duplicated
   if (resolved.original && resolved.percent) {
     return (
       <span
@@ -29,11 +29,7 @@ export function PriceTag({
             تومان
           </span>
         </span>
-        {/* ♿ navy/70, not the flat `silver` token: silver-on-white is
-            ~2.5:1, below the 4.5:1 text-contrast minimum. navy/70 already
-            reads as this card's "muted" tone (see the "تومان" label above)
-            and clears it (~5.6:1); dark mode keeps `silver`, which already
-            has good contrast against these cards' dark surfaces. */}
+        {/* Use navy text on light cards to preserve contrast. */}
         <s className="text-navy/70 dark:text-silver text-[11px] whitespace-nowrap line-through">
           {formatToman(resolved.original)}
         </s>

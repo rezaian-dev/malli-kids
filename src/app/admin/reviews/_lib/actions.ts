@@ -12,8 +12,6 @@ import { getAllReviews } from "./data";
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 const AUTH_ERROR = "برای این کار باید ادمین وارد شده باشید.";
 
-/** 🔄 Polled from `AdminReviewsLanding` — a freshly-submitted customer
- *  review should show up in an already-open admin tab without a reload. */
 export async function getAllReviewsAction(): Promise<AdminReview[]> {
   const admin = await requireAdmin();
   if (!admin) return [];

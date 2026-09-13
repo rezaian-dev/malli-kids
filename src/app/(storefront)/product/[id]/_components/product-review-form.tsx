@@ -19,7 +19,7 @@ import {
   reviewSchema,
 } from "../_lib/product-review-schema";
 
-// ✍️ canReview resolved server-side — no client round-trip to gate the form
+// canReview resolved server-side — no client round-trip to gate the form
 export function ProductReviewForm({
   product,
   canReview,

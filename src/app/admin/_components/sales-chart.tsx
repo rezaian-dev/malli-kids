@@ -24,7 +24,7 @@ const PLOT_W = W - PAD.left - PAD.right;
 const PLOT_H = H - PAD.top - PAD.bottom;
 const BASELINE = PAD.top + PLOT_H;
 
-/** 📈 Smooth each point into one clean Bézier path. */
+/** Smooth each point into one clean Bézier path. */
 function smoothPath(pts: { x: number; y: number }[]): string {
   if (pts.length === 0) return "";
   if (pts.length === 1) return `M ${pts[0].x} ${pts[0].y}`;
@@ -75,7 +75,7 @@ export function SalesChart({ orders }: { orders: AdminOrder[] }) {
     return `${smoothPath(coords)} L ${last.x} ${BASELINE} L ${first.x} ${BASELINE} Z`;
   }, [coords]);
 
-  // ✨ Draw the path in, while respecting reduced motion.
+  // Draw the path in, while respecting reduced motion.
   useEffect(() => {
     setActive(null);
     const reduce =

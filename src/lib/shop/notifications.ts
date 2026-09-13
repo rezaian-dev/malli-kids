@@ -27,7 +27,7 @@ function toNotice(doc: NotificationDoc & { _id: { toString(): string }; createdA
 
 export async function getNotificationsForUser(userId: string): Promise<Notice[]> {
   await connectMongoose();
-  // 🔔 Excludes legacy "chat" rows (pre-dating the chat bubble) from the bell's list and unread count.
+  // Exclude legacy chat notices from the notification bell.
   const docs = await NotificationModel.find({
     userId,
     kind: { $ne: "chat" as NotificationKind },

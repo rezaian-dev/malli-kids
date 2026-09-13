@@ -26,7 +26,7 @@ const STATUS_STYLE = {
   },
 } as const;
 
-// 🧱 Column builder — keeps this file Server-Component-clean
+// Column builder — keeps this file Server-Component-clean
 export function buildInventoryColumns({
   selected,
   onToggleSelect,

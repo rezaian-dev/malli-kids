@@ -8,14 +8,14 @@ import { EASE_OUT } from "@/components/motion";
 import { cn } from "@/lib/utils";
 import { pdpCard } from "../_lib/product-chrome";
 
-// 🎬 Slides enter from the right going forward, from the left going back
+// Slides enter from the right going forward, from the left going back
 const slideVariants = {
   enter: (dir: number) => ({ x: dir >= 0 ? "100%" : "-100%", opacity: 0 }),
   center: { x: 0, opacity: 1 },
   exit: (dir: number) => ({ x: dir >= 0 ? "-100%" : "100%", opacity: 0 }),
 };
 
-/** 🖼️ The swipeable product image carousel + thumbnail strip. */
+/** The swipeable product image carousel + thumbnail strip. */
 export function ProductGallery({
   images,
   name,

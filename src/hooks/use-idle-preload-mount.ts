@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-// 🧲 Mounts a lazy dialog once active; preloads its chunk on idle.
-// preload must be a stable module-scope reference
 export function useIdlePreloadMount(active: boolean, preload: () => unknown) {
   const [mounted, setMounted] = useState(false);
 

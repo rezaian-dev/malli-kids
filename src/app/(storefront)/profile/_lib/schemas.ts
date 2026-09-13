@@ -1,12 +1,11 @@
 import { z } from "zod";
 import { fullName, optHeightCm, optMobile, optText, postalCode } from "@/lib/forms";
 
-// 📍 Set together by the map picker; re-validated server-side regardless
+// Set together by the map picker; re-validated server-side regardless
 const latitude = z.number().min(-90).max(90).optional();
 const longitude = z.number().min(-180).max(180).optional();
 
-// 📏 Shared with `formatAddress` in `_lib/actions.ts` so the reverse-geocoded
-// text it builds is trimmed to the same limit this field enforces.
+// Keep reverse-geocoded text within the address field's limit.
 export const ADDRESS_MAX_LEN = 160;
 
 export const updateAccountSchema = z.object({
@@ -49,5 +48,5 @@ export const updateChildDefaults: UpdateChildValues = {
   childHeightCm: "",
 };
 
-// 🖼️ Upload cap: reject the raw file before it's even compressed.
+// Upload cap: reject the raw file before it's even compressed.
 export const AVATAR_MAX_BYTES = 1024 * 1024; // 1MB

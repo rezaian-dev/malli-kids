@@ -18,7 +18,7 @@ const HomeJournal = dynamic(
   },
 );
 
-// 📚 Defers the embla carousel; slides stay server-rendered children
+// Defers the embla carousel; slides stay server-rendered children
 export function HomeJournalMount({ children }: { children: ReactNode }) {
   return <HomeJournal>{children}</HomeJournal>;
 }

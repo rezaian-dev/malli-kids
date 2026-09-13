@@ -12,8 +12,7 @@ type FilterTab = (typeof TABS)[number];
 
 const TRIGGER = "inline-flex min-h-9 items-center justify-center whitespace-nowrap rounded-full px-2.5 text-[11px] font-extrabold text-navy/70 transition-colors min-[360px]:px-4 min-[360px]:text-xs sm:min-h-10 sm:px-5 sm:text-sm dark:text-khaki data-[state=active]:bg-navy data-[state=active]:text-ivory data-[state=active]:shadow-md dark:data-[state=active]:bg-gold dark:data-[state=active]:text-navy-deep";
 
-// 🃏 One TabsContent holding the active tab's subset — shared cards animate
-// to their new positions instead of remounting
+// Keep one tab panel so shared cards animate without remounting.
 export function StylesFilter({ catalog }: { catalog: Product[] }) {
   const [tab, setTab] = useState<FilterTab>("همه");
   const items = tab === "همه" ? catalog : catalog.filter((p) => p.cat === tab);
@@ -50,9 +49,7 @@ export function StylesFilter({ catalog }: { catalog: Product[] }) {
       </div>
 
       <TabsContent value={tab} className="mt-0">
-        {/* `layout` روی خودِ گرید هم هست تا وقتی تعدادِ ردیف‌ها با فیلتر عوض
-            می‌شود، ارتفاعِ کانتینر هم نرم (با transform، نه height خام)
-            جابه‌جا شود — نه یک پرشِ ناگهانی. */}
+        {/* تغییر اندازهٔ گرید با انیمیشن layout انجام می‌شود. */}
         <motion.div
           layout
           className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-[repeat(auto-fill,minmax(13.5rem,1fr))] sm:gap-4"

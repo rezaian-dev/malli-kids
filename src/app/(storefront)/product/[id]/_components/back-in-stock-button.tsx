@@ -9,8 +9,7 @@ import { cn } from "@/lib/utils";
 import { pdpCtaButton } from "../_lib/product-chrome";
 import { requestBackInStockAction } from "../_lib/back-in-stock-actions";
 
-// 🔔 Really subscribes — notifyBackInStock fires on restock; sizeKey ""
-// means the whole legacy product
+// An empty size identifies an unsized product.
 export function BackInStockButton({
   productId,
   sizeKey,

@@ -4,8 +4,7 @@ import { cn } from "@/lib/utils";
 import { StylesFilter } from "./styles-filter";
 
 export async function Styles() {
-  // 🧊 Live, cached catalog (see `page.tsx`'s own comment) — not the static
-  // seed array, so a hidden/edited product never lingers here.
+  // Use the live catalog so admin edits appear here.
   const catalog = (await getAllProducts()).filter((product) => product.visible);
 
   return (

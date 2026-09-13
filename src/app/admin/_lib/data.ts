@@ -14,8 +14,7 @@ export async function getDashboardData(): Promise<DashboardData> {
   const [orders, products, { users }] = await Promise.all([
     getAllOrders(),
     getAllProducts(),
-    // 🔑 `adminAuth`, not the storefront `auth` — this call authorizes off
-    // the admin-only cookie in these same request headers.
+    // Authorize with the admin cookie, not the storefront session.
     adminAuth.api.listUsers({ headers: await headers(), query: { limit: 500 } }),
   ]);
 

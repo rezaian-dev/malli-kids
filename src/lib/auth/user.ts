@@ -3,7 +3,7 @@ import { connectMongoose } from "@/lib/db/mongoose";
 import { Profile } from "@/lib/db/models/profile";
 import type { User } from "@/types";
 
-// 👤 Splits Better Auth's single name field into firstName/lastName.
+// Splits Better Auth's single name field into firstName/lastName.
 export function splitName(name: string) {
   const [firstName, ...rest] = name.trim().split(/\s+/);
   return {
@@ -12,8 +12,7 @@ export function splitName(name: string) {
   };
 }
 
-// 🧩 Merges identity + persisted Profile into the app's User shape.
-// 🧊 cache()-wrapped so repeat calls in one request share a single Profile query.
+// Cache the profile lookup within each request.
 export const buildUser = cache(
   async (identity: {
     id: string;

@@ -9,10 +9,7 @@ import { signInSchema, type SignInValues } from "@/lib/auth/schemas";
 import type { ActionResult } from "@/lib/action-result";
 import type { User } from "@/types";
 
-// 🔒 Signs in against the admin-only session (`adminAuth`) — entirely
-// separate from `signInAction`'s storefront cookie. Non-admins are signed
-// back out of this cookie immediately, so a stray customer login never
-// leaves an admin-panel session behind.
+// Keep admin sessions separate and sign non-admin users back out.
 export async function adminSignInAction(
   values: SignInValues,
 ): Promise<ActionResult<User>> {
@@ -36,8 +33,7 @@ export async function adminSignInAction(
   }
 }
 
-// 👋 Clears only the admin cookie — the storefront session (if any, in the
-// same browser) is left untouched.
+// Clear only the admin session.
 export async function adminSignOutAction(): Promise<ActionResult> {
   try {
     await adminAuth.api.signOut({ headers: await headers() });

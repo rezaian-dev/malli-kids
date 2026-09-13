@@ -2,18 +2,14 @@ import "server-only";
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "@/lib/redis";
 
-// 🚦 Fixed-window limiter shared by every non-Better-Auth route in the app
-// (OTP requests, geocoding, invoice PDFs, chat sends/typing — see call sites).
-// Backed by Upstash Redis when configured (`UPSTASH_REDIS_REST_URL`/`_TOKEN`)
-// so the limit is real across Vercel's many serverless instances; falls back
-// to an in-memory map for local dev, where a single process is all there is.
+// Use Redis for shared limits; memory fallback applies to one process only.
 
 type Bucket = { count: number; resetAt: number };
 
 const buckets = new Map<string, Bucket>();
 let lastSweep = Date.now();
 
-// 🧹 Piggybacks cleanup on normal traffic instead of running a separate timer.
+// Piggybacks cleanup on normal traffic instead of running a separate timer.
 function sweepExpired(now: number) {
   if (now - lastSweep < 60_000) return;
   lastSweep = now;
@@ -38,16 +34,14 @@ function memoryLimit(key: string, windowMs: number, max: number): RateLimitResul
   return { ok: true };
 }
 
-// 📇 One Ratelimit instance per distinct (max, windowMs) pair — Upstash is HTTP
-// under the hood so there's no connection to reuse, but the instance itself is
-// cheap to keep around rather than rebuild on every call.
+// Reuse a limiter for each window and maximum.
 const limiters = new Map<string, Ratelimit>();
 
 function redisLimiter(windowMs: number, max: number): Ratelimit {
   const cacheKey = `${max}:${windowMs}`;
   let limiter = limiters.get(cacheKey);
   if (!limiter) {
-    // ⚛️ redis is non-null whenever this function runs — see the `redis ??` guard below.
+    // redis is non-null whenever this function runs — see the `redis ??` guard below.
     limiter = new Ratelimit({
       redis: redis!,
       limiter: Ratelimit.fixedWindow(max, `${windowMs} ms`),
@@ -61,7 +55,7 @@ function redisLimiter(windowMs: number, max: number): Ratelimit {
 export type RateLimitResult =
   { ok: true } | { ok: false; retryAfterSec: number };
 
-// key should identify both caller and route (e.g. invoice:${userId}) so endpoints don't share a quota.
+// Include the caller and route in each rate-limit key.
 export async function rateLimit(
   key: string,
   { windowMs, max }: { windowMs: number; max: number },

@@ -3,7 +3,7 @@ import { HomeSearch } from "../home-search";
 import { getTopSearchTerms } from "@/lib/shop/search-terms";
 
 export async function Find() {
-  // 🔥 Real, ranked-by-actual-search-count terms — see `@/lib/shop/search-terms`.
+  // Real, ranked-by-actual-search-count terms — see `@/lib/shop/search-terms`.
   const popularTerms = await getTopSearchTerms();
 
   return (

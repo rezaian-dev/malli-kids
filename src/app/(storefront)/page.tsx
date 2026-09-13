@@ -4,8 +4,7 @@ import { pdpHref } from "@/lib/data/products";
 import { getAllProducts } from "@/lib/shop/products";
 import { buildMetadata, itemListSchema, pageSchema } from "@/lib/seo";
 
-// ⚠️ Segment config must be a literal — Turbopack statically extracts this
-// export and rejects a reference (see REVALIDATE.catalog in @/lib/cache).
+// Next.js requires literal route configuration values.
 export const revalidate = 60;
 
 export const metadata = buildMetadata({
@@ -14,7 +13,7 @@ export const metadata = buildMetadata({
 });
 
 export default async function Page() {
-  // 🧊 Live cached catalog, not the static seed — correct after admin edits
+  // Live cached catalog, not the static seed — correct after admin edits
   const catalog = await getAllProducts();
   const featured = catalog
     .filter((product) => product.visible)

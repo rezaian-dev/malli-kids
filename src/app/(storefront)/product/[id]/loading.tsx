@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn, shell } from "@/lib/utils";
 import { pdpCard, pdpWell } from "./_lib/product-chrome";
 
-// 🦴 Mirrors the real buy-panel layout — a bare spinner would blank the PDP
+// Mirrors the real buy-panel layout — a bare spinner would blank the PDP
 export default function ProductLoading() {
   return (
     <div

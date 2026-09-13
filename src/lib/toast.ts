@@ -1,7 +1,5 @@
 import { toast as sonner, type ExternalToast } from "sonner";
 
-// 🎯 Drop-in for sonner's toast, but each severity is pre-routed to the corner it reads best at.
-// Errors/warnings interrupt top-center; everything ambient confirms quietly bottom-right.
 const AMBIENT: ExternalToast = { position: "bottom-right" };
 const URGENT: ExternalToast = { position: "top-center" };
 

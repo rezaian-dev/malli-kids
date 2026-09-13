@@ -7,7 +7,7 @@ export const articleSchema = z.object({
   body: z.string().trim().min(1),
   cover: z.string().trim().optional(),
   published: z.boolean(),
-  // 🏷️ Tag.slug refs — a content taxonomy, not an SEO keyword bag
+  // Tag.slug refs — a content taxonomy, not an SEO keyword bag
   tags: z.array(z.string().trim().min(1)).max(8).default([]),
 });
 

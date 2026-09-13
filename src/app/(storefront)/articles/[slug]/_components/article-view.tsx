@@ -40,7 +40,7 @@ export function ArticleView({
         </h1>
       </header>
       {article.cover ? (
-        /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin article covers can be raw data URLs. */
+        /* eslint-disable-next-line @next/next/no-img-element */
         <img
           src={article.cover}
           alt={article.title}

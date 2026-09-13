@@ -4,7 +4,7 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { Stagger, StaggerItem } from "@/components/motion/static";
 import { pageSchema } from "@/lib/seo";
 
-// 🧪 Coming-soon teaser — pure Server Component, CSS-only motion
+// Coming-soon teaser — pure Server Component, CSS-only motion
 
 const STEPS = [
   {
@@ -76,7 +76,7 @@ export function ComingSoon() {
         />
 
         <Stagger>
-          {/* ── Hero panel ─────────────────────────────── */}
+          {/* Hero panel */}
           <StaggerItem>
             <section
               aria-labelledby="tryon-soon-title"
@@ -193,7 +193,7 @@ export function ComingSoon() {
             </section>
           </StaggerItem>
 
-          {/* ── How it will work ───────────────────────── */}
+          {/* How it will work */}
           <StaggerItem>
             <section
               aria-labelledby="tryon-steps-title"
@@ -232,9 +232,9 @@ export function ComingSoon() {
             </section>
           </StaggerItem>
 
-          {/* ── Get-ready note ─────────────────────────── */}
+          {/* Get-ready note */}
           <StaggerItem>
-            {/* ♿ /70, not /60 — /60 fails 4.5:1 at this size */}
+            {/* /70, not /60 — /60 fails 4.5:1 at this size */}
             <p className="text-navy/70 dark:text-wheat/80 mx-auto mt-6 max-w-xl text-center text-xs leading-6">
               💡 از حالا می‌توانید یک عکس تمام‌قد با نور خوب و پس‌زمینهٔ ساده
               آماده کنید — روز افتتاح، اولین پرو فقط چند ثانیه طول می‌کشد.

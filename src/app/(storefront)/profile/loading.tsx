@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const TAB_PILL = "h-10 w-24 rounded-xl";
 
-// 🦴 Mirrors ProfileHeader + tabs + one panel card, like the in-page fallback
+// Mirrors ProfileHeader + tabs + one panel card, like the in-page fallback
 export default function ProfileLoading() {
   return (
     <div

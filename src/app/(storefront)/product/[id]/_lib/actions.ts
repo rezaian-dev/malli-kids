@@ -15,8 +15,7 @@ async function requireSessionUser() {
   return { id: session.user.id, name: session.user.name };
 }
 
-/** ⭐ Submitted by a signed-in buyer from the product page, after the real
- *  purchase check below — held for admin moderation (`visible: false`). */
+/** Only verified buyers may submit reviews; moderation is still required. */
 export async function submitReviewAction(
   productId: number,
   productName: string,

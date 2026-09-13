@@ -57,7 +57,7 @@ export async function sendChatReplyAction(input: {
 
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: ADMIN_AUTH_ERROR };
-  // 🪪 The admin's own id, off the admin session — not the storefront one.
+  // The admin's own id, off the admin session — not the storefront one.
   const session = await getAdminSession();
   const adminId = session?.user.id;
   if (!adminId) return { ok: false, error: ADMIN_AUTH_ERROR };
@@ -76,8 +76,6 @@ export async function sendChatReplyAction(input: {
       clientId,
     });
     if (!sent) return { ok: false, error: "گفتگو پیدا نشد." };
-
-    // 🔕 Deliberately no header-bell notification — a chat reply surfaces as a badge on the chat bubble instead.
 
     return {
       ok: true,

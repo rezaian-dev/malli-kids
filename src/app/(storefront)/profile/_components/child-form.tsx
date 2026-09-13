@@ -31,7 +31,7 @@ function toValues(user: User): UpdateChildValues {
   };
 }
 
-/** 🧸 The optional "your kid" half of the profile info panel. */
+/** The optional "your kid" half of the profile info panel. */
 export function ChildForm() {
   const { user, updateUser } = useAuth();
   const form = useAppForm({

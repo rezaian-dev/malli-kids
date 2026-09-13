@@ -35,7 +35,7 @@ import { CartSummary } from "./cart-summary";
 import { CartEmptyState } from "./cart-empty-state";
 import { CartCheckoutMount } from "./cart-checkout-mount";
 
-// 🛍️ Lazy-loaded sheet body — prices refresh on every open, not every page
+// Lazy-loaded sheet body — prices refresh on every open, not every page
 export function CartSheetBody({
   cart,
   cartCount,
@@ -61,7 +61,7 @@ export function CartSheetBody({
   const [products, setProducts] = useState<Product[]>([]);
   const idsKey = cart.map((item) => item.id).join(",");
 
-  // 🛒 Pay-per-open fetch — re-runs if the cart changes mid-open
+  // Pay-per-open fetch — re-runs if the cart changes mid-open
   useEffect(() => {
     let active = true;
     getProductsByIdsAction(cart.map((item) => item.id)).then((list) => {
@@ -150,8 +150,7 @@ export function CartSheetBody({
           />
 
           <div className="min-h-0 flex-1 scrollbar-thin space-y-2.5 overflow-y-auto px-4 py-4">
-            {/* 🎬 حذفِ یک ردیف با سُر خوردن + محو شدن بیرون می‌رود؛ بقیهٔ
-                ردیف‌ها با `layout` نرم جای خالی را پر می‌کنند. */}
+            {/* پس از حذف، ردیف‌ها با layout جای خالی را پر می‌کنند. */}
             <AnimatePresence initial={false} mode="popLayout">
               {rows.map(({ item, product, unitPrice, originalPrice }) => (
                 <motion.div

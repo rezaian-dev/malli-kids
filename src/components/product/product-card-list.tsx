@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 const LIST_SIZES = "104px";
 
-/** 📋 The compact horizontal card used in the shop's list view. */
+/** The compact horizontal card used in the shop's list view. */
 export function ProductCardList({
   p,
   href,
@@ -33,7 +33,7 @@ export function ProductCardList({
     loading?: "eager";
     fetchPriority?: "high";
   };
-  // 🩹 Kept for compatibility — the card always renders instantly
+  // Kept for compatibility — the card always renders instantly
   animate?: boolean;
 }) {
   void animate;

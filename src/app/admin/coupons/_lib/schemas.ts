@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-/** 🧾 Mirrors `NewCouponDialog`'s client-side validation (see its
- *  `validateCouponForm`) — the real boundary for a value the client shaped. */
+/** Validate coupon values again on the server. */
 export const couponSchema = z.object({
   code: z
     .string()

@@ -9,8 +9,7 @@ import { loadPublishedArticles } from "@/lib/articles";
 import { cn } from "@/lib/utils";
 
 export async function Stories() {
-  // 🧊 Same cached read HomeJournalSlides makes — this just decides which
-  // shell (carousel vs. "no articles yet") wraps it, no extra DB round-trip.
+  // Reuse the cached article read to choose the section layout.
   const hasArticles = (await loadPublishedArticles()).length > 0;
 
   return (

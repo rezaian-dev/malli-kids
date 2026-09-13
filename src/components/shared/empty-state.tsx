@@ -15,14 +15,8 @@ const RING_PULSE = {
   transition: { duration: 3.4, repeat: Infinity, ease: "easeInOut" as const },
 };
 
-/**
- * 🌱 Shown instead of a broken/blank grid when a section's collection is
- * genuinely empty (no products/articles yet) — a designed "coming soon",
- * never a padded-with-fixtures fake shelf. Ambient-loop motion only (no
- * mount fade), so it never flashes on server-rendered pages.
- */
-// 🎨 "light" sits on the paper/cream sections; "dark" sits on a navy
-// section (Handmade) where light-on-light text would vanish.
+/** Show a real empty state without an entrance fade. */
+// Match the empty state to its section's background.
 const TONE = {
   light: {
     card: "border-navy/10 bg-white/70 dark:border-gold/20 dark:bg-dusk-alt/40",
@@ -46,9 +40,6 @@ export function EmptyState({
   tone = "light",
   className,
 }: {
-  // 🪶 A rendered icon element (e.g. `<Newspaper className="size-6" />`),
-  // not the component itself — a bare component reference can't cross the
-  // server→client boundary as a prop, only its rendered output can.
   icon: ReactNode;
   title: string;
   description?: string;

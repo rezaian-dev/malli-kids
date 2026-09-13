@@ -34,8 +34,7 @@ const EMPTY_COUNTS: AdminNotifCounts = {
   pendingReviews: 0,
 };
 
-// 🛡️ Wraps `/admin/login` too — no redirect here (that would loop login).
-// `requireAdmin()` is display-only; each protected `page.tsx` is the gate.
+// Authorize each page separately; redirecting this layout would loop login.
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const admin = await requireAdmin();
   const counts = admin ? await getAdminNotifCounts() : EMPTY_COUNTS;

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getSession, getSessionUser } from "@/lib/auth/session";
 import { findApplicableCoupon, type AppliedCoupon } from "@/lib/shop/coupons";
-import { createOrder } from "@/lib/shop/orders";
+import { createOrder, type CreateOrderInput } from "@/lib/shop/orders";
 import { getProductById } from "@/lib/shop/products";
 import { getCampaign } from "@/lib/shop/settings";
 import { resolvePrice } from "@/lib/shop/pricing";
@@ -34,6 +34,31 @@ async function requireSessionUser() {
   return { id: session.user.id, name: session.user.name };
 }
 
+async function submitOrder(
+  input: Omit<CreateOrderInput, "discountRate">,
+  subtotal: number,
+  selectedSize?: string,
+): Promise<ActionResult<AdminOrder>> {
+  const coupon = input.couponCode
+    ? await findApplicableCoupon(input.couponCode, subtotal)
+    : null;
+  const result = await createOrder({
+    ...input,
+    couponCode: coupon?.code,
+    discountRate: coupon?.rate,
+  });
+  if (!result.ok) {
+    if (result.couponExhausted) return { ok: false, error: COUPON_EXHAUSTED_ERROR };
+    const size = selectedSize === undefined ? "" : ` «${selectedSize}»`;
+    return {
+      ok: false,
+      error: `متأسفانه سایز انتخابی${size} از «${result.outOfStock}» دیگر موجود نیست.`,
+    };
+  }
+  for (const path of ["/admin/orders", "/admin", "/profile"]) revalidatePath(path);
+  return { ok: true, data: result.order };
+}
+
 export async function checkCouponAction(
   code: string,
   subtotal: number,
@@ -41,7 +66,7 @@ export async function checkCouponAction(
   return findApplicableCoupon(code, subtotal);
 }
 
-// 🧾 Product name/price/coupon rate are all re-read server-side; the client never supplies the numbers.
+// Read product prices and coupon rates on the server.
 export async function createOrderAction(
   values: CheckoutValues,
 ): Promise<ActionResult<AdminOrder>> {
@@ -50,13 +75,12 @@ export async function createOrderAction(
     phone: phoneDigits(values.phone),
     postalCode: toEnDigits(values.postalCode).replace(/\D/g, ""),
   });
-  if (!parsed.success)
-    return { ok: false, error: "اطلاعات سفارش را کامل کنید." };
+  if (!parsed.success) return { ok: false, error: "اطلاعات سفارش را کامل کنید." };
 
   const user = await requireSessionUser();
   if (!user) return { ok: false, error: AUTH_ERROR };
 
-  // 🔐 Server-side gate mirrors the client's — an order can't ship without a complete profile.
+  // Server-side gate mirrors the client's — an order can't ship without a complete profile.
   const profile = await getSessionUser();
   if (!profile || getMissingShippingFields(profile).length) {
     return { ok: false, error: PROFILE_INCOMPLETE_ERROR };
@@ -64,57 +88,41 @@ export async function createOrderAction(
 
   try {
     const product = await getProductById(parsed.data.productId);
-    // 🙈 An admin-hidden product 404s on its PDP — it must not stay purchasable here either.
+    // An admin-hidden product 404s on its PDP — it must not stay purchasable here either.
     if (!product || !product.visible)
       return { ok: false, error: "این محصول دیگر موجود نیست." };
 
     const unit = resolvePrice(product, await getCampaign()).price;
     const subtotal = unit * parsed.data.qty;
-    const coupon = parsed.data.couponCode
-      ? await findApplicableCoupon(parsed.data.couponCode, subtotal)
-      : null;
-
-    const result = await createOrder({
-      userId: user.id,
-      customer: user.name,
-      phone: parsed.data.phone,
-      city: parsed.data.city,
-      address: parsed.data.address,
-      postalCode: parsed.data.postalCode,
-      items: [
-        {
-          id: product.id,
-          name: product.name,
-          img: product.img,
-          size: parsed.data.size,
-          qty: parsed.data.qty,
-          price: unit,
-        },
-      ],
-      couponCode: coupon?.code,
-      discountRate: coupon?.rate,
-      idempotencyKey: parsed.data.idempotencyKey,
-    });
-
-    if (!result.ok) {
-      if (result.couponExhausted)
-        return { ok: false, error: COUPON_EXHAUSTED_ERROR };
-      return {
-        ok: false,
-        error: `متأسفانه سایز انتخابی «${parsed.data.size}» از «${result.outOfStock}» دیگر موجود نیست.`,
-      };
-    }
-
-    revalidatePath("/admin/orders");
-    revalidatePath("/admin");
-    revalidatePath("/profile");
-    return { ok: true, data: result.order };
+    return await submitOrder(
+      {
+        userId: user.id,
+        customer: user.name,
+        phone: parsed.data.phone,
+        city: parsed.data.city,
+        address: parsed.data.address,
+        postalCode: parsed.data.postalCode,
+        items: [
+          {
+            id: product.id,
+            name: product.name,
+            img: product.img,
+            size: parsed.data.size,
+            qty: parsed.data.qty,
+            price: unit,
+          },
+        ],
+        couponCode: parsed.data.couponCode,
+        idempotencyKey: parsed.data.idempotencyKey,
+      },
+      subtotal,
+      parsed.data.size,
+    );
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
   }
 }
 
-// 🛒 Every cart line becomes one order, submitted together — same server-authoritative shape as createOrderAction.
 export async function createCartOrderAction(
   values: CartCheckoutValues,
 ): Promise<ActionResult<AdminOrder>> {
@@ -123,8 +131,7 @@ export async function createCartOrderAction(
     phone: phoneDigits(values.phone),
     postalCode: toEnDigits(values.postalCode).replace(/\D/g, ""),
   });
-  if (!parsed.success)
-    return { ok: false, error: "اطلاعات سفارش را کامل کنید." };
+  if (!parsed.success) return { ok: false, error: "اطلاعات سفارش را کامل کنید." };
 
   const user = await requireSessionUser();
   if (!user) return { ok: false, error: AUTH_ERROR };
@@ -141,7 +148,7 @@ export async function createCartOrderAction(
 
     for (const line of parsed.data.items) {
       const product = await getProductById(line.productId);
-      // 🙈 Same as the buy-now path — admin-hidden must not stay purchasable through a stale cart.
+      // Same as the buy-now path — admin-hidden must not stay purchasable through a stale cart.
       if (!product || !product.visible) {
         return {
           ok: false,
@@ -160,36 +167,20 @@ export async function createCartOrderAction(
       subtotal += unit * line.qty;
     }
 
-    const coupon = parsed.data.couponCode
-      ? await findApplicableCoupon(parsed.data.couponCode, subtotal)
-      : null;
-
-    const result = await createOrder({
-      userId: user.id,
-      customer: user.name,
-      phone: parsed.data.phone,
-      city: parsed.data.city,
-      address: parsed.data.address,
-      postalCode: parsed.data.postalCode,
-      items,
-      couponCode: coupon?.code,
-      discountRate: coupon?.rate,
-      idempotencyKey: parsed.data.idempotencyKey,
-    });
-
-    if (!result.ok) {
-      if (result.couponExhausted)
-        return { ok: false, error: COUPON_EXHAUSTED_ERROR };
-      return {
-        ok: false,
-        error: `متأسفانه سایز انتخابی از «${result.outOfStock}» دیگر موجود نیست.`,
-      };
-    }
-
-    revalidatePath("/admin/orders");
-    revalidatePath("/admin");
-    revalidatePath("/profile");
-    return { ok: true, data: result.order };
+    return await submitOrder(
+      {
+        userId: user.id,
+        customer: user.name,
+        phone: parsed.data.phone,
+        city: parsed.data.city,
+        address: parsed.data.address,
+        postalCode: parsed.data.postalCode,
+        items,
+        couponCode: parsed.data.couponCode,
+        idempotencyKey: parsed.data.idempotencyKey,
+      },
+      subtotal,
+    );
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
   }

@@ -2,8 +2,6 @@
 
 import dynamic from "next/dynamic";
 
-// 🪶 Interaction-only widgets, each in its own deferred chunk — all fixed or
-// null until used, so late arrival can't shift layout
 const ClickProgress = dynamic(
   () => import("./click-progress").then((m) => m.ClickProgress),
   { ssr: false },
@@ -22,7 +20,7 @@ const ChatWidget = dynamic(
   { ssr: false },
 );
 
-// ✨ Keep storefront helpers ready without visual fallback swaps. 🪶
+// Keep storefront helpers ready without visual fallback swaps.
 export function StorefrontEnhancements() {
   return (
     <>

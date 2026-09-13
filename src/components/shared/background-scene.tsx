@@ -193,8 +193,7 @@ function LightAtelier() {
           y="548"
           fill="#0e2a47"
           fillOpacity="0.14"
-          // 🖋️ System serif — a watermark doesn't need the webfont, and
-          // Chrome would block its LCP paint on the font download
+          // Use a system font so the watermark cannot delay LCP.
           fontFamily="Georgia, 'Times New Roman', serif"
           fontSize="268"
           fontWeight="700"

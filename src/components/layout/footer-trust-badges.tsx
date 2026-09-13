@@ -2,10 +2,9 @@ import Image from "next/image";
 import { ShieldCheck } from "lucide-react";
 import { cn, shell } from "@/lib/utils";
 
-// 🔗 NOTE: replace each href with the verification URL issued for this domain
-// (e.g. https://trustseal.enamad.ir/?id=…&Code=… and the samandehi logo link).
+// Replace badge links with verification URLs issued for this domain.
 
-/** 🛡️ Official Iranian e-commerce trust seals. */
+/** Official Iranian e-commerce trust seals. */
 export function FooterTrustBadges() {
   return (
     <div className="border-t border-white/10">

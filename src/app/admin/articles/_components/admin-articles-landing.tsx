@@ -37,15 +37,14 @@ export function AdminArticlesLanding({
   allTags: ContentTag[];
 }) {
   const [draft, setDraft] = useState<ArticleDraft | null>(null);
-  // 📡 Live while browsing the list; paused while the editor is open so a
-  // background tick can never surprise an in-progress draft.
+  // Pause polling while editing to preserve unsaved changes.
   const [live, , refreshLive] = usePolling(
     getAdminArticlesAction,
     POLL_MS,
     { articles: initialArticles, tags: initialTags },
     !draft,
   );
-  // 🏷️ Local tag edits layer over the polled list; reset on editor close
+  // Local tag edits layer over the polled list; reset on editor close
   const [tagLayer, setTagLayer] = useState<ContentTag[] | null>(null);
   const tags = tagLayer ?? live.tags;
 
@@ -63,7 +62,7 @@ export function AdminArticlesLanding({
         onTagCreated={(tag) =>
           setTagLayer((current) => {
             const base = current ?? live.tags;
-            // 🔁 createTagAction upserts — skip local duplicates by slug
+            // createTagAction upserts — skip local duplicates by slug
             return base.some((t) => t.slug === tag.slug)
               ? base
               : [...base, tag];

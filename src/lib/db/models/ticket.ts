@@ -1,7 +1,6 @@
 import "server-only";
 import { Schema, model, models, type Model } from "mongoose";
 
-// 🎫 The app's only "contact us" channel; shared by the profile support tab and /admin/messages.
 export type TicketStatus = "open" | "pending" | "answered" | "closed";
 export type TicketCategory =
   "order" | "return" | "sizing" | "quality" | "other";
@@ -19,7 +18,7 @@ export type TicketDoc = {
   status: TicketStatus;
   category: TicketCategory;
   priority: TicketPriority;
-  // 🔢 Human-friendly serial (#1001); optional since rows created before this existed predate it.
+  // Human-friendly serial (#1001); optional since rows created before this existed predate it.
   number?: number;
   assigneeId?: string;
   assigneeName?: string;
@@ -48,7 +47,7 @@ const ticketSchema = new Schema<TicketDoc>(
       enum: ["open", "pending", "answered", "closed"],
       default: "open",
     },
-    // 🗂️ Optional-with-default so pre-existing rows stay valid.
+    // Optional-with-default so pre-existing rows stay valid.
     category: {
       type: String,
       enum: ["order", "return", "sizing", "quality", "other"],
@@ -67,7 +66,7 @@ const ticketSchema = new Schema<TicketDoc>(
   { timestamps: true },
 );
 
-// 🔔 Backs the sidebar badge count and the assignee filter.
+// Backs the sidebar badge count and the assignee filter.
 ticketSchema.index({ status: 1 });
 ticketSchema.index({ assigneeId: 1 });
 ticketSchema.index({ number: 1 }, { unique: true, sparse: true });

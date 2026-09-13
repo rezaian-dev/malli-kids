@@ -11,7 +11,7 @@ import { getMyFavoritesAction } from "@/lib/shop/favorites-actions";
 
 const FavoritesStoreCtx = createContext<FavoritesStore | null>(null);
 
-// 💛 Server-seeded; swaps only on real client-side sign-in/out
+// Server-seeded; swaps only on real client-side sign-in/out
 export function FavoritesStoreProvider({
   children,
   initialFavorites,

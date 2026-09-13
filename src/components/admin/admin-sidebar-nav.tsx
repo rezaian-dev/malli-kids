@@ -13,8 +13,7 @@ export function routeIsActive(path: string, href: string) {
   return href === "/admin" ? path === "/admin" : path.startsWith(href);
 }
 
-/** 🧭 The grouped admin nav list, shared by the desktop sidebar and the
- *  mobile drawer. */
+/** The grouped admin nav list, shared by the desktop sidebar and the mobile drawer. */
 export function AdminSidebarNav({
   onNavigate,
   counts,

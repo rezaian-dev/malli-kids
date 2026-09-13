@@ -34,12 +34,7 @@ export const SEO = {
 
 type PageType = "website" | "article";
 type PageSchemaType =
-  | "WebPage"
-  | "AboutPage"
-  | "ContactPage"
-  | "CollectionPage"
-  | "FAQPage"
-  | "Article";
+  "WebPage" | "AboutPage" | "ContactPage" | "CollectionPage" | "FAQPage" | "Article";
 
 type PageMetadataInput = {
   title?: string;
@@ -76,7 +71,7 @@ type ItemListEntry = {
   image?: string;
 };
 
-// 🌐 Read the public site URL from env with a safe local fallback.
+// Read the public site URL from env with a safe local fallback.
 export function getSiteUrl() {
   const candidates = [
     process.env.NEXT_PUBLIC_SITE_URL,
@@ -93,13 +88,13 @@ export function getSiteUrl() {
   return "http://localhost:3000";
 }
 
-// 🔗 Build absolute URLs for canonicals, JSON-LD and sitemap entries.
+// Build absolute URLs for canonicals, JSON-LD and sitemap entries.
 export function absoluteUrl(path = "/") {
   const safePath = path.startsWith("/") ? path : `/${path}`;
   return new URL(safePath, `${getSiteUrl()}/`).toString();
 }
 
-// 🖼️ Keep OG images consistent and explicit.
+// Keep OG images consistent and explicit.
 function buildOgImage(
   image: string = SEO.defaultImage,
   alt: string = SEO.defaultImageAlt,
@@ -118,38 +113,25 @@ function buildOgImage(
   } as const;
 }
 
-// 🛡️ Keep robots rules consistent across public and private pages.
+// Keep robots rules consistent across public and private pages.
 function buildRobots(noIndex = false): Metadata["robots"] {
-  if (noIndex) {
-    return {
-      index: false,
-      follow: false,
-      nocache: true,
-      googleBot: {
-        index: false,
-        follow: false,
-        noimageindex: true,
-        "max-image-preview": "none",
-        "max-snippet": -1,
-        "max-video-preview": -1,
-      },
-    };
-  }
-
+  const index = !noIndex;
   return {
-    index: true,
-    follow: true,
+    index,
+    follow: index,
+    ...(noIndex ? { nocache: true } : {}),
     googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
+      index,
+      follow: index,
+      ...(noIndex ? { noimageindex: true } : {}),
+      "max-image-preview": noIndex ? "none" : "large",
       "max-snippet": -1,
       "max-video-preview": -1,
     },
   };
 }
 
-// 🧩 One short metadata shape for public routes.
+// One short metadata shape for public routes.
 export function buildMetadata({
   title,
   description = SEO.defaultDescription,
@@ -192,15 +174,13 @@ export function buildMetadata({
   };
 }
 
-// 🏠 Root metadata owns the global defaults and metadataBase.
+// Root metadata owns the global defaults and metadataBase.
 export function getRootMetadata(): Metadata {
   return {
+    ...buildMetadata({ imageAlt: SEO.defaultImageAlt }),
     metadataBase: new URL(getSiteUrl()),
     title: { default: SEO.defaultTitle, template: SEO.titleTemplate },
-    description: SEO.defaultDescription,
     applicationName: SEO.siteNameFa,
-    alternates: { canonical: "/" },
-    robots: buildRobots(false),
     referrer: "origin-when-cross-origin",
     category: "shopping",
     creator: SEO.siteNameFa,
@@ -212,21 +192,6 @@ export function getRootMetadata(): Metadata {
       icon: [{ url: "/icon.png", sizes: "512x512", type: "image/png" }],
       apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
       shortcut: ["/icon.png"],
-    },
-    openGraph: {
-      title: SEO.defaultTitle,
-      description: SEO.defaultDescription,
-      url: "/",
-      siteName: SEO.siteNameFa,
-      locale: SEO.locale,
-      type: "website",
-      images: [buildOgImage()],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: SEO.defaultTitle,
-      description: SEO.defaultDescription,
-      images: [SEO.defaultImage],
     },
     appleWebApp: {
       capable: true,
@@ -241,7 +206,7 @@ export function getRootMetadata(): Metadata {
   };
 }
 
-// 🏷️ Organization schema for the whole storefront.
+// Organization schema for the whole storefront.
 export function organizationSchema() {
   return {
     "@context": "https://schema.org",
@@ -263,7 +228,7 @@ export function organizationSchema() {
   };
 }
 
-// 🔎 Website schema exposes the catalog search entry point.
+// Website schema exposes the catalog search entry point.
 export function websiteSchema() {
   return {
     "@context": "https://schema.org",
@@ -280,7 +245,7 @@ export function websiteSchema() {
   };
 }
 
-// 📄 Generic page schema for public informational pages.
+// Generic page schema for public informational pages.
 export function pageSchema({
   title,
   description = SEO.defaultDescription,
@@ -303,7 +268,7 @@ export function pageSchema({
   };
 }
 
-// 🧭 Breadcrumb schema helps search engines read the page path.
+// Breadcrumb schema helps search engines read the page path.
 export function breadcrumbSchema(items: BreadcrumbItem[]) {
   return {
     "@context": "https://schema.org",
@@ -317,7 +282,7 @@ export function breadcrumbSchema(items: BreadcrumbItem[]) {
   };
 }
 
-// 🛒 ItemList schema supports collection and landing pages.
+// ItemList schema supports collection and landing pages.
 export function itemListSchema(items: ItemListEntry[], title?: string) {
   return {
     "@context": "https://schema.org",
@@ -333,7 +298,7 @@ export function itemListSchema(items: ItemListEntry[], title?: string) {
   };
 }
 
-// ❓ FAQ schema powers rich FAQ results.
+// FAQ schema powers rich FAQ results.
 export function faqSchema(items: FaqItem[]) {
   return {
     "@context": "https://schema.org",
@@ -349,7 +314,7 @@ export function faqSchema(items: FaqItem[]) {
   };
 }
 
-// ☎️ Contact page schema keeps business contact details explicit.
+// Contact page schema keeps business contact details explicit.
 export function contactPageSchema() {
   return {
     "@context": "https://schema.org",
@@ -372,11 +337,8 @@ export function contactPageSchema() {
   };
 }
 
-// 🛍️ Ratings only from real visible reviews — Google disallows self-serving ones
-export function productSchema(
-  product: Product,
-  reviews: { rate: number }[] = [],
-) {
+// Ratings only from real visible reviews — Google disallows self-serving ones
+export function productSchema(product: Product, reviews: { rate: number }[] = []) {
   const url = absoluteUrl(pdpHref(product.id));
   const aggregateRating = reviews.length
     ? {
@@ -422,17 +384,11 @@ export function productSchema(
   };
 }
 
-// 📰 Article schema covers editorial content pages.
+// Article schema covers editorial content pages.
 export function articleSchema(
   article: Pick<
     JournalArticle,
-    | "slug"
-    | "title"
-    | "excerpt"
-    | "cover"
-    | "publishedAt"
-    | "updatedAt"
-    | "tags"
+    "slug" | "title" | "excerpt" | "cover" | "publishedAt" | "updatedAt" | "tags"
   >,
 ) {
   const image = article.cover || SEO.defaultImage;
@@ -447,7 +403,7 @@ export function articleSchema(
     inLanguage: "fa-IR",
     datePublished: article.publishedAt,
     dateModified: article.updatedAt,
-    // 🏷️ Real content taxonomy, not padded — distinct from the page's meta-keywords tag.
+    // Real content taxonomy, not padded — distinct from the page's meta-keywords tag.
     ...(article.tags.length
       ? { keywords: article.tags.map((t) => t.name).join(", ") }
       : {}),
@@ -491,10 +447,7 @@ function clipMeta(value: string, max: number) {
   if (text.length <= max) return text;
   const cut = text.slice(0, max - 1);
   const space = cut.lastIndexOf(" ");
-  const base = (space > 24 ? cut.slice(0, space) : cut).replace(
-    /[،,؛.\s]+$/u,
-    "",
-  );
+  const base = (space > 24 ? cut.slice(0, space) : cut).replace(/[،,؛.\s]+$/u, "");
   return `${base}…`;
 }
 

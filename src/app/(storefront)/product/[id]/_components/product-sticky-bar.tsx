@@ -5,8 +5,6 @@ import { ShoppingBag } from "lucide-react";
 import { formatToman } from "@/lib/locale/fa";
 import { Button } from "@/components/ui/button";
 
-// 📱 Bottom purchase bar on small screens, once the buy button scrolls out
-// (IntersectionObserver, no scroll polling)
 export function ProductStickyBar({
   observeId,
   name,

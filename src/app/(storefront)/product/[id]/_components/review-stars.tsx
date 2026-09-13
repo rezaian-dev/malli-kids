@@ -2,8 +2,7 @@ import { Star } from "lucide-react";
 import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
-// ⭐ onDark is for cards that stay navy in both themes — the reactive
-// colors would barely show there
+// Use fixed colors on cards that stay dark in both themes.
 export function ReviewStars({
   n,
   className = "size-3.5",

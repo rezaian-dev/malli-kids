@@ -12,7 +12,7 @@ export async function getFavoriteIds(userId: string): Promise<number[]> {
   }
 }
 
-// 💛 Adds/removes id from the wishlist and returns the updated list.
+// Adds/removes id from the wishlist and returns the updated list.
 export async function toggleFavorite(userId: string, id: number): Promise<number[]> {
   await connectMongoose();
   const current = await getFavoriteIds(userId);

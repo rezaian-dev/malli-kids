@@ -11,8 +11,7 @@ import type { FestiveBanner } from "@/types";
 import { getAllBanners } from "./data";
 import { bannerPatchSchema, type BannerPatch } from "./schemas";
 
-/** 🔄 Polled from `AdminBannersLanding` — banner edits show up without a
- *  manual reload. */
+/** Polled from `AdminBannersLanding` — banner edits show up without a manual reload. */
 export async function getAllBannersAction(): Promise<FestiveBanner[]> {
   const admin = await requireAdmin();
   if (!admin) return [];
@@ -24,7 +23,7 @@ const AUTH_ERROR = "برای این کار باید ادمین وارد شده �
 
 function revalidateBanners() {
   revalidatePath("/admin/banners");
-  // 🎉 Bust FESTIVE_BANNER_TAG — routes render dynamically, no route cache
+  // Bust FESTIVE_BANNER_TAG — routes render dynamically, no route cache
   revalidateTag(FESTIVE_BANNER_TAG, "max");
 }
 
@@ -41,7 +40,7 @@ export async function updateBannerAction(
   try {
     await connectMongoose();
 
-    // 📌 Pinning unpins every other, atomically on the collection
+    // Pinning unpins every other, atomically on the collection
     if (parsed.data.pinned) {
       await FestiveBannerModel.updateMany(
         { _id: { $ne: id } },

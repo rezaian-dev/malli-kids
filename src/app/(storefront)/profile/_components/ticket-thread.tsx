@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import type { Ticket } from "@/lib/shop/tickets";
 import { replyTicketAsUserAction } from "../_lib/ticket-actions";
 
-/** 💬 An expanded ticket's reply thread + the "reply as user" composer. */
+/** An expanded ticket's reply thread + the "reply as user" composer. */
 export function TicketThread({
   ticket,
   onSent,

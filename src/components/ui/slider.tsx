@@ -13,7 +13,7 @@ function Slider({
   max = 100,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Root>) {
-  // 🎚️ Derive thumb count from the current controlled value.
+  // Derive thumb count from the current controlled value.
   const values = React.useMemo(
     () =>
       Array.isArray(value)

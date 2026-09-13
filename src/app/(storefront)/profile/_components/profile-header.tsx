@@ -11,7 +11,7 @@ import { removeAvatarAction, updateAvatarAction } from "../_lib/avatar-actions";
 import { AVATAR_MAX_BYTES } from "../_lib/schemas";
 import type { User } from "@/types";
 
-/** 🪪 Avatar (with upload + remove), name/contact, and the logout button. */
+/** Avatar (with upload + remove), name/contact, and the logout button. */
 export function ProfileHeader({ user }: { user: User }) {
   const { updateUser, logout } = useAuth();
   const [avatarBusy, setAvatarBusy] = useState(false);
@@ -60,8 +60,7 @@ export function ProfileHeader({ user }: { user: User }) {
         toast.error(result.error);
         return;
       }
-      // 🩹 Set the removed avatar locally — the action's return drops
-      // explicit undefined keys, so a merge would no-op the delete
+      // Explicitly clear the local avatar; undefined fields are omitted in transport.
       updateUser({ avatar: undefined });
       toast.success("عکس پروفایل حذف شد ✅");
     } finally {

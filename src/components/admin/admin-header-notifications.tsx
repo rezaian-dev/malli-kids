@@ -13,7 +13,7 @@ import {
 import type { AdminNotifCounts } from "@/lib/admin/notif-counts";
 import { toFaDigits } from "@/lib/locale/fa";
 
-/** 🔔 The header bell — pending orders, open tickets, waiting chats, hidden reviews. */
+/** The header bell — pending orders, open tickets, waiting chats, hidden reviews. */
 export function AdminHeaderNotifications({
   counts,
 }: {

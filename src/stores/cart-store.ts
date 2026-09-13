@@ -13,12 +13,12 @@ type CartState = {
 
 export type CartStore = ReturnType<typeof createCartStore>;
 
-// 🛒 A cart line is identified by product + size together, never id alone.
+// A cart line is identified by product + size together, never id alone.
 function sameLine(item: CartItem, id: number, size: string) {
   return item.id === id && item.size === size;
 }
 
-// 🪶 Pure cart math — no auth gating, no persistence IO
+// Pure cart math — no auth gating, no persistence IO
 export function createCartStore(initialCart: CartItem[]) {
   return createStore<CartState>()((set) => ({
     cart: initialCart,

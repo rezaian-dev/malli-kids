@@ -1,15 +1,13 @@
 import { CATS } from "@/lib/constants";
 import { SEASONS } from "@/lib/data/products";
 
-// 🎯 Category/season matches become filters, never a query= param — faceted URLs stay indexable.
-
 const TYPE_CATS = new Set(["سیسمونی", "لباس مشاغل", "اکسسوری", "دستدوز"]);
 
 const CAT_ALIASES: Record<string, string> = {
   "دستدوز خاص": "دستدوز",
 };
 
-// 🧠 Product keywords, not categories — only combine into a facet with a category token.
+// Product keywords, not categories — only combine into a facet with a category token.
 const KEYWORD_CATS: Record<string, string> = {
   پالتو: "دخترانه",
   پیراهن: "دخترانه",
@@ -54,14 +52,14 @@ function resolveShopSearchIntent(raw: string): {
   const q = normalizeShopText(trimmed);
   if (!q) return { q: "" };
 
-  // ✅ Exact category name (or alias) → pure category filter.
+  // Exact category name (or alias) → pure category filter.
   const exactCat = matchShopCategory(q);
   if (exactCat) return { cat: exactCat, q: "" };
 
-  // ✅ Exact season → pure season filter.
+  // Exact season → pure season filter.
   if ((SEASONS as readonly string[]).includes(q)) return { season: q, q: "" };
 
-  // 🧩 Compound intent: an explicit category token always wins.
+  // Compound intent: an explicit category token always wins.
   const tokens = q.split(" ");
   if (tokens.length > 1) {
     const cats = tokens.map(matchShopCategory);
@@ -80,7 +78,6 @@ function resolveShopSearchIntent(raw: string): {
     const isUnresolvedToken = (index: number) =>
       !cats[index] && !seasons[index] && !keywords[index];
 
-    // ✅ Every token maps to a known facet — treat the phrase as a filtered collection, not free text.
     if (tokens.every((_, index) => !isUnresolvedToken(index))) {
       const hasCategoryToken = cats.some(Boolean) || keywords.some(Boolean);
 
@@ -93,7 +90,7 @@ function resolveShopSearchIntent(raw: string): {
         };
       }
 
-      // 🔍 Only seasons + synonyms — keep the keyword as search text, lift the season into a facet.
+      // Only seasons + synonyms — keep the keyword as search text, lift the season into a facet.
       const rest = tokens.filter((_, index) => keywords[index]);
       return { season: firstSeason, q: rest.join(" ") };
     }
@@ -126,7 +123,7 @@ export function shopHrefFromSearch(raw: string) {
   return query ? `/shop?${query}` : "/shop";
 }
 
-// 🏷️ Direct category URL (used by the home quick-search chips).
+// Direct category URL (used by the home quick-search chips).
 export function shopCategoryHref(cat: string) {
   const params = new URLSearchParams();
   if (cat && cat !== "همه") params.set("category", cat);

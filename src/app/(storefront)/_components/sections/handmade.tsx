@@ -6,8 +6,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { getAllProducts } from "@/lib/shop/products";
 
 export async function Handmade() {
-  // 🧊 Live, cached catalog (see `page.tsx`'s own comment) — not the static
-  // seed array, so a hidden/edited product never lingers here.
+  // Use the live catalog so admin edits appear here.
   const products = (await getAllProducts()).filter((product) => product.visible);
 
   return (

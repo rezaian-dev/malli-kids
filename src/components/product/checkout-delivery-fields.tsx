@@ -1,7 +1,5 @@
 import { TextField } from "@/components/form";
 
-// ♿ The delivery quartet shared by both checkout dialogs, reading the same
-// useCheckoutDeliveryForm context
 export function DeliveryFields() {
   return (
     <>

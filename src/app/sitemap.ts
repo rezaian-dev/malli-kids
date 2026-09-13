@@ -123,7 +123,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  // 🛡️ Build-safe: if DB unavailable (Pars build without MONGODB_URI/auth), sitemap still builds.
+  // Build-safe: if DB unavailable (Pars build without MONGODB_URI/auth), sitemap still builds.
   const [productsResult, articlesResult] = await Promise.allSettled([
     getAllProducts(),
     loadPublishedArticles(),
@@ -139,14 +139,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = productsResult.status === "fulfilled" ? productsResult.value : [];
   const articles = articlesResult.status === "fulfilled" ? articlesResult.value : [];
 
-  // 🙈 A hidden product's PDP now 404s (see `product/[id]/page.tsx`) — never
-  // list a URL here that would 404 for the crawler that follows it.
+  // Exclude hidden products because their pages return 404.
   const productRoutes: MetadataRoute.Sitemap = products
     .filter((product) => product.visible)
     .map((product) => ({
       url: absoluteUrl(pdpHref(product.id)),
-      // 🕒 Real last-write time when available — "always now" teaches
-      // crawlers to discount the sitemap
+      // Use the actual last-write time.
       lastModified: product.updatedAt ?? now,
       changeFrequency: "weekly",
       priority: 0.75,

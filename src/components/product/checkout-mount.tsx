@@ -6,7 +6,7 @@ import { useIdlePreloadMount } from "@/hooks/use-idle-preload-mount";
 
 const loadCheckoutDialog = () => import("./checkout-dialog");
 
-// 🧾 Lazy mount the checkout dialog only once it matters. ✨
+// Lazy mount the checkout dialog only once it matters.
 const CheckoutDialog = dynamic(
   () => loadCheckoutDialog().then((m) => m.CheckoutDialog),
   { ssr: false },

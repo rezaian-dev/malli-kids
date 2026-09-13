@@ -8,8 +8,6 @@ import { NoticesBell } from "./notices-bell";
 import { CartSheet } from "./cart-sheet";
 import { MobileNav } from "./mobile-nav";
 
-// 🪪 user arrives server-resolved and seeded — the real auth UI renders on
-// the first paint, no skeleton swap after mount
 function HeaderAccountSlot() {
   return (
     <div className="flex h-9 min-w-29 shrink-0 items-center justify-end gap-2.5 min-[360px]:h-10 min-[360px]:min-w-38 min-[400px]:min-w-49 md:h-9 md:min-w-27 lg:h-10 lg:min-w-49">
@@ -19,7 +17,7 @@ function HeaderAccountSlot() {
   );
 }
 
-// ⚡ Keep the header silhouette fixed on refresh. ✨
+// Keep the header silhouette fixed on refresh.
 export function HeaderActions() {
   return (
     <div className="ms-auto flex shrink-0 items-center gap-1.5 min-[360px]:gap-2 md:gap-1.5 lg:gap-2">

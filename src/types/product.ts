@@ -1,4 +1,4 @@
-// 🛍️ Storefront catalog domain model
+// Storefront catalog domain model
 import type { ProductVariant } from "@/lib/shop/inventory";
 
 export type Season = "بهاره" | "تابستانه" | "پاییزه" | "زمستانه";
@@ -29,8 +29,8 @@ export type Product = {
   seoDescription?: string;
   visible: boolean;
   featured: boolean;
-  // 🧵 Admin-curated "complete the look" ids — manual, not algorithmic
+  // Admin-curated "complete the look" ids — manual, not algorithmic
   pairsWith?: number[];
-  // 🕒 Real DB rows only — sitemap's lastModified uses it when present
+  // Real DB rows only — sitemap's lastModified uses it when present
   updatedAt?: string;
 };

@@ -31,7 +31,7 @@ import { buildInventoryColumns } from "./inventory-columns";
 import { buildInventoryRows, type InventoryRow } from "../_lib/rows";
 
 const PER_PAGE = 8;
-// ⚡ Stock moves with every checkout — the fastest content cadence here.
+// Stock moves with every checkout — the fastest content cadence here.
 const POLL_MS = 8_000;
 type StockFilter = "all" | "in-stock" | "low-stock" | "out-of-stock";
 type SortFilter = "default" | "sold" | "price-desc" | "price-asc";

@@ -1,3 +1,2 @@
-// Client-only motion barrel (`motion/react`). Server components must import
-// the zero-JS wrappers directly from `./static` instead.
+// Server components import static wrappers directly from ./static.
 export { EASE_OUT, MotionProvider, TiltCard, MagneticGlow } from "./primitives";

@@ -5,8 +5,7 @@ import { auth } from "./auth";
 import { buildUser } from "./user";
 import type { User } from "@/types";
 
-// 🧊 Caches one session lookup per request across every caller.
-// 🚫 Swallows only BANNED_USER (defense in depth); any other error rethrows.
+// Cache session reads per request; suppress only BANNED_USER.
 export const getSession = cache(async () => {
   try {
     return await auth.api.getSession({ headers: await headers() });
@@ -18,7 +17,7 @@ export const getSession = cache(async () => {
   }
 });
 
-// 👤 Called once in the root layout so useAuth().user is complete on first render.
+// Called once in the root layout so useAuth().user is complete on first render.
 export async function getSessionUser(): Promise<User | null> {
   const session = await getSession();
   if (!session) return null;

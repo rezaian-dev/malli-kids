@@ -1,4 +1,3 @@
-// 💬 Lives here (not in the server-only lib/shop/canned-responses) so client composers can import it freely.
 
 export type CannedResponse = {
   id: string;
@@ -6,7 +5,7 @@ export type CannedResponse = {
   body: string;
 };
 
-// 📦 Shown only when the collection is empty, so composers are never bare.
+// Shown only when the collection is empty, so composers are never bare.
 export const DEFAULT_CANNED_RESPONSES: CannedResponse[] = [
   {
     id: "default-greeting",

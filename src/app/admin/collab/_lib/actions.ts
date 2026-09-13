@@ -10,8 +10,6 @@ import {
 } from "@/lib/shop/collab";
 import type { ActionResult } from "@/lib/action-result";
 
-/** 🔄 Polled from `AdminCollabLanding` — a new request lands in an
- *  already-open tab without a manual reload. */
 export async function getAllCollabRequestsAction(): Promise<CollabRequest[]> {
   const admin = await requireAdmin();
   if (!admin) return [];

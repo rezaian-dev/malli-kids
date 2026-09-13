@@ -7,8 +7,6 @@ import { PRODUCT_GRID } from "@/components/product/card-styles";
 const FILTER_ICON_BADGE =
   "bg-navy text-gold-soft dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl";
 
-// 🦴 Route-segment skeleton mirroring ShopExplorer's shell — no client JS;
-// always the default grid view (searchParams aren't available here)
 export default function ShopLoading() {
   return (
     <div

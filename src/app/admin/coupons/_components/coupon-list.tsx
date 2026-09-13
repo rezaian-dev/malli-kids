@@ -23,8 +23,7 @@ type SortFilter = "default" | "usage" | "discount" | "expiry";
 
 const STAT_LABEL = "text-navy/70 dark:text-wheat text-[9px] font-black";
 
-/** 🎟️ Filterable/paginated coupon grid with an inline active/inactive
- *  switch per card. */
+/** Filterable/paginated coupon grid with an inline active/inactive switch per card. */
 export function CouponList({
   coupons,
   onChanged,

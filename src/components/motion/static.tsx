@@ -1,16 +1,13 @@
 import type * as React from "react";
 
-// 🪶 Zero-JS reveal helpers — plain `<div>`s, no "use client", no
-// motion/react; interactive springs live in `@/components/motion`.
-// ⚡ Entrance animations are gone on purpose: opacity:0 in server HTML
-// made every navigation flash before content popped in.
+// Keep server content visible; entrance fades caused navigation flashes.
 type StaticProps = React.HTMLAttributes<HTMLDivElement> & {
-  // 🩹 Kept for call-site compatibility — ignored
+  // Kept for call-site compatibility — ignored
   delay?: number;
   y?: number;
 };
 
-// 🪶 Renders content instantly
+// Renders content instantly
 export function Reveal({
   children,
   className,
@@ -27,7 +24,7 @@ export function Reveal({
   );
 }
 
-// 👁️ Renders content instantly
+// Renders content instantly
 export function FadeIn({ children, className, delay, ...rest }: StaticProps) {
   void delay;
   return (
@@ -37,7 +34,7 @@ export function FadeIn({ children, className, delay, ...rest }: StaticProps) {
   );
 }
 
-// 🎼 Stagger API kept as plain divs
+// Stagger API kept as plain divs
 export function Stagger({
   children,
   className,
@@ -62,7 +59,7 @@ export function StaggerItem({
   );
 }
 
-// 🧭 Instant page content — no route-change fade, SPA feel
+// Instant page content — no route-change fade, SPA feel
 export function PageReveal({
   children,
   className,
@@ -73,7 +70,7 @@ export function PageReveal({
   return <div className={className}>{children}</div>;
 }
 
-// 🧢 Header renders instantly, fully visible
+// Header renders instantly, fully visible
 export function HeaderEnter({
   children,
   className,

@@ -1,4 +1,3 @@
-// 📏 Single source of truth for size↔height↔age↔chest — /size-guide and the PDP tab both read this.
 export type SizeRow = {
   size: string;
   heightMin: number;
@@ -75,8 +74,6 @@ export const SIZE_TABLE: SizeRow[] = [
   },
 ];
 
-/** 📐 Height (cm) → the smallest size whose range still covers it; taller
- *  than the table's top row just gets the biggest size we carry. */
 export function sizeForHeightCm(heightCm: number): string {
   for (const row of SIZE_TABLE) {
     if (heightCm <= row.heightMax) return row.size;

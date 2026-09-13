@@ -10,7 +10,7 @@ const EMPTY_COUNTS: AdminNotifCounts = {
   pendingReviews: 0,
 };
 
-// 🔄 Polled from AdminShell to keep header/sidebar badges live.
+// Polled from AdminShell to keep header/sidebar badges live.
 export async function getAdminNotifCountsAction(): Promise<AdminNotifCounts> {
   const admin = await requireAdmin();
   if (!admin) return EMPTY_COUNTS;

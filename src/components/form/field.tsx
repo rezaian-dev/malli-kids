@@ -16,8 +16,7 @@ import {
   type Skin,
 } from "./styles";
 
-/** 🧩 Binds a field name to the surrounding `<AppForm>`'s react-hook-form
- *  context. Throws outside a form — every `Field`-based component needs it. */
+/** Fields must be rendered inside AppForm. */
 function useField(name: string) {
   const form = useFormContext();
   if (!form) throw new Error("‹Field› باید داخل <AppForm> قرار بگیرد.");
@@ -54,8 +53,6 @@ export type FieldShellProps = {
   }) => ReactNode;
 };
 
-// 🐚 Shared field chrome — the render-prop child gets the bound field, so
-// field types never call hooks themselves
 export function Field({
   name,
   label,

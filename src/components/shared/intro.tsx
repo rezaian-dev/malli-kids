@@ -50,7 +50,7 @@ export function Intro({
               />
             </StaggerItem>
             {kicker ? (
-              // ♿ brown-mid, not gold — gold-on-white fails 4.5:1 (shared header)
+              // brown-mid, not gold — gold-on-white fails 4.5:1 (shared header)
               <StaggerItem>
                 <p className="text-brown-mid dark:text-gold mt-5 text-[11px] font-black tracking-[0.22em]">
                   {kicker}

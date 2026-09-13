@@ -13,9 +13,7 @@ import { toast } from "@/lib/toast";
 import { signOutAction } from "@/lib/auth/actions";
 import type { User } from "@/types";
 
-// 🔐 Client mirror of the session — seeded server-side, only ever updated
-// after a real server action changed the session; the login dialog rides
-// along because openers react to `user` being null
+// Update client identity only after the server session changes.
 type Ctx = {
   user: User | null;
   authOpen: boolean;
@@ -38,7 +36,7 @@ export function AuthProvider({
   const [user, setUser] = useState(initialUser);
   const [authOpen, setAuthOpen] = useState(false);
 
-  // 🔐 Mirrors an already-created server session into UI state
+  // Mirrors an already-created server session into UI state
   const login = useCallback(
     (nextUser: User) => {
       setUser(nextUser);
@@ -54,7 +52,7 @@ export function AuthProvider({
     [],
   );
 
-  // 🔐 Revokes the server session first, then clears UI state
+  // Revokes the server session first, then clears UI state
   const logout = useCallback(async () => {
     const result = await signOutAction();
     if (!result.ok) {

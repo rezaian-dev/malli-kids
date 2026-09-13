@@ -2,7 +2,7 @@ import { Truck } from "lucide-react";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
-/** 🚚 The free-shipping progress bar shown above the cart line items. */
+/** The free-shipping progress bar shown above the cart line items. */
 export function CartShippingProgress({
   remaining,
   freeShip,

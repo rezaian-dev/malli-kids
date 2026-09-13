@@ -12,7 +12,7 @@ const PERKS = [
   { Icon: Headphones, t: "پشتیبانی مادری", d: "مشاوره سایز، هر روز هفته" },
 ];
 
-/** ✅ The four trust perks strip at the top of the footer. */
+/** The four trust perks strip at the top of the footer. */
 export function FooterPerks() {
   return (
     <div className="border-b border-white/10">

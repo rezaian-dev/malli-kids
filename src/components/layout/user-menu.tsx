@@ -9,8 +9,7 @@ import { cn } from "@/lib/utils";
 import { CLUSTER_H } from "./header-styles";
 import { AccountIcon, TRIGGER_SHELL } from "./account-trigger";
 
-// 🎯 Suspense fallback is the real button — nothing moves while the lazy
-// dropdown chunk streams in; only click-ability wakes up
+// Keep the fallback identical to the loaded trigger.
 const UserAccountMenu = lazy(() => import("./user-account-menu"));
 
 export function UserMenu() {

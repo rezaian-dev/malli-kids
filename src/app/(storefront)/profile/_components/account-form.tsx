@@ -34,7 +34,7 @@ function toValues(user: User): UpdateAccountValues {
   };
 }
 
-// 👤 Seeded via defaultValues, not an effect — never blank-then-filled
+// Seeded via defaultValues, not an effect — never blank-then-filled
 export function AccountForm() {
   const { user, updateUser } = useAuth();
   const form = useAppForm({

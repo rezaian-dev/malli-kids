@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import type { AdminReview } from "@/types";
 import { ReviewStars } from "./review-stars";
 
-/** 🏅 The pinned "featured" (most recent) real review. */
+/** The pinned "featured" (most recent) real review. */
 export function FeaturedReview({ review }: { review: AdminReview }) {
   return (
     <article

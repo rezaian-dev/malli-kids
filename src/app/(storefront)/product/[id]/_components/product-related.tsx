@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { getRelatedProducts } from "@/lib/shop/products";
 import { pdpCard, pdpKicker } from "../_lib/product-chrome";
 
-// 🧵 Own async Server Component so the main panel streams in first
+// Own async Server Component so the main panel streams in first
 export async function ProductRelated({
   cat,
   excludeId,

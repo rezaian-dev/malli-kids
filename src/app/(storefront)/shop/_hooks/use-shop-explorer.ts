@@ -10,7 +10,7 @@ import {
 } from "@/lib/shop/shop-state";
 import type { Product } from "@/types";
 
-/** 🧠 All state, derived data, and URL-sync behind the shop page. */
+/** All state, derived data, and URL-sync behind the shop page. */
 export function useShopExplorer(
   state: ShopState,
   perPage: number,
@@ -50,7 +50,7 @@ export function useShopExplorer(
 
   useEffect(() => setRange([state.min, state.max]), [state.min, state.max]);
 
-  // 🔎 Keep the search input synced with the URL.
+  // Keep the search input synced with the URL.
   useEffect(() => setQuery(state.q), [state.q]);
   const typedQ = query.trim();
 
@@ -67,8 +67,6 @@ export function useShopExplorer(
   const page = Math.min(state.page, pages);
   const slice = filtered.slice((page - 1) * perPage, page * perPage);
 
-  // 🔢 Count of active filters (shown as a badge) — nothing renders these as
-  // removable chips today, so this only needs the count, not chip objects.
   const activeN = [
     state.cat !== "همه",
     state.season !== "همه",

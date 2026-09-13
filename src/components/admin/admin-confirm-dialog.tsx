@@ -17,7 +17,7 @@ import {
 import { toast } from "@/lib/toast";
 import type { ActionResult } from "@/lib/action-result";
 
-// ⚠️ The one confirm-before-destroy pattern for admin delete buttons
+// The one confirm-before-destroy pattern for admin delete buttons
 export function AdminConfirmDialog({
   trigger,
   title,

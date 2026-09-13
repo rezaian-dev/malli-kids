@@ -2,9 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { parseProductRouteId } from "@/lib/data/products";
 
-// 👀 "Recently viewed" — a per-browser cookie, not per-account: no
-// server-side data to leak. Written here because only a Proxy/Route
-// Handler may set cookies, and Proxy runs on every page view for free.
+// Keep recent products in a browser cookie, separate from account data.
 const COOKIE_NAME = "mk_recent";
 const MAX_ITEMS = 10;
 const MAX_AGE = 60 * 60 * 24 * 180; // ~6 months

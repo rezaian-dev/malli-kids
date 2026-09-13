@@ -55,7 +55,7 @@ function fieldClass(error?: string) {
   );
 }
 
-// 🎫 Support panel keeps ticket logic out of the first profile paint.
+// Support panel keeps ticket logic out of the first profile paint.
 export function ProfileSupportPanel() {
   const { user } = useAuth();
   const [tickets, setTickets] = usePolling<Ticket[]>(

@@ -69,8 +69,6 @@ function StatusIcon({ status }: { status: TicketStatus }) {
   return <LockKeyhole className="size-3" />;
 }
 
-/** 🎫 One support ticket — thread, triage (category / priority / assignee),
- *  status flow, and (when open) the reply composer with canned inserts. */
 export function TicketCard({
   ticket,
   replying,
@@ -213,7 +211,7 @@ export function TicketCard({
           ))}
         </div>
 
-        {/* 🗂️ Triage row — category / priority / assignee, each one tap. */}
+        {/* Triage row — category / priority / assignee, each one tap. */}
         <div className="border-navy/6 dark:border-gold/12 mt-4 flex flex-wrap items-center gap-2 border-t pt-3">
           <Select
             value={ticket.category}

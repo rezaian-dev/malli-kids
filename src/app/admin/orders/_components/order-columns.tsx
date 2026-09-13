@@ -5,7 +5,7 @@ import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import type { AdminOrder } from "@/types";
 
-/** 🧱 The orders table column set. */
+/** The orders table column set. */
 export const ORDER_COLUMNS: AdminCol<AdminOrder>[] = [
   {
     key: "id",

@@ -1,15 +1,6 @@
 import Image from "next/image";
 
-/**
- * 🏷️ The "MALLI / <tagline>" mark shared by the admin shell's sidebar and
- * the `/admin/login` screen.
- *
- * ⚠️ Keep the mark's box size and the logo's own padding constant across
- * light/dark — only the box's *background* may change. An earlier version
- * of the login screen dropped the padding and background in dark mode
- * (`dark:bg-transparent dark:p-0`), which left the glyph filling the whole
- * box and reading visibly bigger in dark mode than in light mode.
- */
+/** Keep logo size and padding identical in both themes. */
 export function AdminLogoMark({ tagline }: { tagline: string }) {
   return (
     <div className="flex min-w-0 items-center gap-3">

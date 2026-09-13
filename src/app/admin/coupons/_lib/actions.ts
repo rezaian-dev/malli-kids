@@ -10,8 +10,7 @@ import type { AdminCoupon } from "@/types";
 import { getAllCoupons } from "./data";
 import { couponSchema, type CouponValues } from "./schemas";
 
-/** 🔄 Polled from `AdminCouponsLanding` — creations/toggles show up
- *  without a manual reload. */
+/** Polled from `AdminCouponsLanding` — creations/toggles show up without a manual reload. */
 export async function getAllCouponsAction(): Promise<AdminCoupon[]> {
   const admin = await requireAdmin();
   if (!admin) return [];

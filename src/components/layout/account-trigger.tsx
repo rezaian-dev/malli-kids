@@ -9,7 +9,7 @@ export function Face({
   className,
 }: {
   src?: string;
-  // ♿️ Label only — the fallback shows a person-icon, not an initial
+  // Label only — the fallback shows a person-icon, not an initial
   letter: string;
   className?: string;
 }) {
@@ -17,11 +17,10 @@ export function Face({
     <Avatar
       className={cn(
         "ring-gold dark:ring-gold-soft ring-2",
-        // ✨ Always-on glow, baked into the shared Face so fallback and
-        // hydrated button stay identical
+        // Always-on glow, baked into the shared Face so fallback and hydrated button stay identical
         "shadow-[0_2px_14px_-6px_rgba(193,147,87,.75)]",
         "dark:shadow-[0_2px_14px_-6px_rgba(232,197,122,.5)]",
-        // 🌀 Expanding hover halo — inert outside the trigger's `group`
+        // Expanding hover halo — inert outside the trigger's `group`
         "before:border-gold before:absolute before:inset-0 before:rounded-full before:border-2 before:opacity-0",
         "motion-safe:group-hover:before:animate-ring-pulse dark:before:border-gold-soft",
         className,
@@ -36,10 +35,7 @@ export function Face({
   );
 }
 
-// 🪪 Shell shared by the trigger and its Suspense placeholder — swapping
-// the lazy dropdown in never visibly moves anything.
-// 🖱️ No hover transform: the cursor often sits here right after a page
-// load, so an instant hover-match would animate and "tick".
+// Keep the trigger and loading placeholder the same size.
 export const TRIGGER_SHELL = cn(
   CLUSTER_H,
   ICON_W,
@@ -48,7 +44,7 @@ export const TRIGGER_SHELL = cn(
   "focus-visible:ring-gold/60 focus-visible:ring-2",
 );
 
-// 🚫 Shadow-only hover feedback — transforms would "tick" on refresh
+// Shadow-only hover feedback — transforms would "tick" on refresh
 export function AccountIcon() {
   return (
     <span

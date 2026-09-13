@@ -20,7 +20,7 @@ export function DesktopNav() {
   const path = usePathname();
   const [value, setValue] = useState("");
 
-  // 🧭 Close the open menu as soon as the route changes.
+  // Close the open menu as soon as the route changes.
   useEffect(() => {
     setValue("");
   }, [path]);

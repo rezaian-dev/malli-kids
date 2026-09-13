@@ -5,7 +5,7 @@ import { Popover as PopoverPrimitive } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 
-/** 🪶 Keep popovers non-modal to avoid layout shift. */
+/** Keep popovers non-modal to avoid layout shift. */
 function Popover({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Root>) {

@@ -49,8 +49,7 @@ const SOCIALS = [
   },
 ] as const;
 
-/** 🗂️ Brand+socials / categories / quick links / contact — the four
- *  main footer columns. */
+/** Brand+socials / categories / quick links / contact — the four main footer columns. */
 export function FooterColumns() {
   return (
     <div

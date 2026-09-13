@@ -12,8 +12,7 @@ export async function Reviews() {
     getReviewStats(),
   ]);
 
-  // 🪶 Real reviews only — too few to fill a carousel, so skip the section
-  // instead of padding it with fabricated quotes.
+  // Hide the section when there are too few real reviews.
   if (reviews.length < 2) return null;
 
   return (

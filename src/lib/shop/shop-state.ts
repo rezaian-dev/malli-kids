@@ -59,8 +59,7 @@ export function defaultShopState(): ShopState {
   };
 }
 
-// 🔀 Filter/sort/search/view combos are kept out of the index as faceted near-duplicates.
-// Plain page is not — a paginated page shows genuinely different products and stays indexable.
+// Keep pagination indexable, but exclude other faceted views.
 function hasNonPaginationFilters(state: ShopState) {
   return (
     !!state.q ||
@@ -80,7 +79,7 @@ export function isShopIndexable(state: ShopState) {
 }
 
 export function shopCanonicalHref(state: ShopState) {
-  // 🔗 Plain pagination self-canonicalizes; a filter/sort/search combo canonicalizes to the clean cat+season view.
+  // Canonicalize filtered views to the clean category and season URL.
   if (isShopIndexable(state)) return toShopHref(state);
   return toShopHref({
     ...defaultShopState(),
@@ -99,7 +98,7 @@ export function shopHeading(state: ShopState) {
 }
 
 export function parseShopState(params: Record<string, SearchValue>): ShopState {
-  // 🏷️ `category` is the single, canonical category parameter — one model only.
+  // `category` is the single, canonical category parameter — one model only.
   const cat = readText(params.category);
   const season = readText(params.season);
   const sort = readText(params.sort);
@@ -134,7 +133,7 @@ export function parseShopState(params: Record<string, SearchValue>): ShopState {
   return intentChanged ? { ...next, page: 1 } : next;
 }
 
-// 🎯 Used everywhere a product is tested against ShopState, so the JSON-LD ItemList never disagrees with the UI.
+// Share filtering rules between visible products and structured data.
 function matchesShopState(product: Product, state: ShopState) {
   if (state.cat !== "همه" && product.cat !== state.cat) return false;
   if (state.season !== "همه" && product.season !== state.season) return false;

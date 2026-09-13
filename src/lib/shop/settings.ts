@@ -15,7 +15,7 @@ const DEFAULT_CAMPAIGN: SettingsCampaign = {
   title: "جشنواره ملی‌کیدز",
 };
 
-// 🧊 Tagged so /admin/settings can revalidateTag it on demand, same pattern as PRODUCTS_TAG.
+// Tagged so /admin/settings can revalidateTag it on demand, same pattern as PRODUCTS_TAG.
 export const SITE_SETTINGS_TAG = "site-settings";
 
 export const DEFAULT_SUPPORT_HOURS: SupportHours = {
@@ -24,7 +24,7 @@ export const DEFAULT_SUPPORT_HOURS: SupportHours = {
   label: "شنبه تا پنجشنبه، ۹ صبح تا ۹ شب",
 };
 
-// 🕘 Cached under the same tag as the campaign — one revalidateTag refreshes both.
+// Cached under the same tag as the campaign — one revalidateTag refreshes both.
 export const getSupportHours = unstable_cache(
   async (): Promise<SupportHours> => {
     try {
@@ -40,7 +40,7 @@ export const getSupportHours = unstable_cache(
   { tags: [SITE_SETTINGS_TAG], revalidate: REVALIDATE.merch },
 );
 
-// ⚙️ Identical for every visitor, so it's cached like getActiveBanner.
+// Identical for every visitor, so it's cached like getActiveBanner.
 export const getCampaign = unstable_cache(
   async (): Promise<SettingsCampaign> => {
     try {

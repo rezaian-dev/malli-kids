@@ -4,8 +4,6 @@ import { cn } from "@/lib/utils";
 import { getCompleteTheLook } from "@/lib/shop/products";
 import { pdpCard, pdpKicker } from "../_lib/product-chrome";
 
-// 🧵 Admin-curated outfit (vs ProductRelated's same-category picks);
-// own Suspense-streamed fetch
 export async function ProductCompleteLook({
   pairsWith,
 }: {

@@ -1,4 +1,4 @@
-// 📦 Pure, no DB import — client components can share this math without pulling Mongoose into the bundle.
+// Keep stock math free of database imports for client use.
 
 export type ProductVariant = {
   size: string;
@@ -6,14 +6,12 @@ export type ProductVariant = {
   stock: number;
 };
 
-// 🪶 Shared threshold so "needs attention" means the same thing on the table and the dashboard count.
 const LOW_STOCK_THRESHOLD = 3;
 
 function totalVariantStock(variants: ProductVariant[]): number {
   return variants.reduce((sum, variant) => sum + Math.max(0, variant.stock), 0);
 }
 
-// 🔁 The one place stock gets computed from variants; unvaried products keep their manual boolean.
 export function deriveStock(
   variants: ProductVariant[],
   manualStock: boolean,

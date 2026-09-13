@@ -35,8 +35,7 @@ export function AdminSettingsLanding({
   const [supportLabel, setSupportLabel] = useState(support.label);
   const [pending, startTransition] = useTransition();
 
-  // 🔁 Sync the form when the campaign prop changes after mount — useState
-  // never re-reads its initial value
+  // Refresh local form state when server campaign values change.
   useEffect(() => {
     setActive(campaign.active);
     setPercent(String(campaign.percent));

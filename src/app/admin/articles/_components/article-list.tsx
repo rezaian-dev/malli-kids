@@ -24,7 +24,7 @@ const PER_PAGE = 6;
 type PublishFilter = "all" | "published" | "draft";
 type ArticleSort = "newest" | "oldest" | "title";
 
-/** 📰 The filterable/paginated article list + publish toggle + delete. */
+/** The filterable/paginated article list + publish toggle + delete. */
 export function ArticleList({
   articles,
   onNew,
@@ -177,7 +177,7 @@ export function ArticleList({
             style={{ animationDelay: `${index * 45}ms` }}
           >
             {article.cover ? (
-              /* eslint-disable-next-line @next/next/no-img-element -- 🪶 Admin previews can use saved data URLs. */
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={article.cover}
                 alt={article.title}

@@ -3,7 +3,7 @@ import { Slot } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 
-// 🗂️ The one shared card shell (asChild works like Button's)
+// The one shared card shell (asChild works like Button's)
 function Card({
   className,
   asChild = false,

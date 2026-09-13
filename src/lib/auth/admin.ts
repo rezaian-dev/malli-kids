@@ -7,7 +7,6 @@ import { buildUser } from "./user";
 import { connectMongoClient } from "@/lib/db/mongo-client";
 import type { User } from "@/types";
 
-// 🔐 Bootstrap allowlist: list your email, sign up, restart — you become the first durable admin.
 const ADMIN_EMAILS = new Set(
   (process.env.ADMIN_EMAILS ?? "")
     .split(",")
@@ -15,13 +14,12 @@ const ADMIN_EMAILS = new Set(
     .filter(Boolean),
 );
 
-// 🛡️ Admin access: a persisted server-managed role OR the ADMIN_EMAILS bootstrap allowlist.
+// Admin access: a persisted server-managed role OR the ADMIN_EMAILS bootstrap allowlist.
 export function isAdminUser(user: { role?: string | null; email: string }) {
   return user.role === "admin" || ADMIN_EMAILS.has(user.email.toLowerCase());
 }
 
-// 🔁 Persists a bootstrap admin's role — the plugin checks role, not
-// ADMIN_EMAILS
+// Persists a bootstrap admin's role — the plugin checks role, not ADMIN_EMAILS
 async function syncBootstrapAdminRole(user: {
   id: string;
   email: string;
@@ -31,21 +29,19 @@ async function syncBootstrapAdminRole(user: {
   if (!ADMIN_EMAILS.has(user.email.toLowerCase())) return;
 
   const client = await connectMongoClient();
-  // ⚠️ user.id is a string but _id is an ObjectId — filtering by the bare string matches nothing.
+  // user.id is a string but _id is an ObjectId — filtering by the bare string matches nothing.
   await client
     .db()
     .collection("user")
     .updateOne({ _id: new ObjectId(user.id) }, { $set: { role: "admin" } });
 }
 
-// 🧊 One admin-session lookup per request, off the admin-only cookie
-// (`adminAuth`) — entirely separate from the storefront's getSession() in
-// `session.ts`. A storefront login (or its absence) never affects this.
+// Read only the admin cookie and cache the lookup within the request.
 export const getAdminSession = cache(async () => {
   return adminAuth.api.getSession({ headers: await headers() });
 });
 
-// 🔒 Real /admin authorization boundary; null (not throw) so callers pick their rejection
+// Real /admin authorization boundary; null (not throw) so callers pick their rejection
 export async function requireAdmin(): Promise<User | null> {
   const session = await getAdminSession();
   if (!session?.user || !isAdminUser(session.user)) return null;
@@ -54,9 +50,7 @@ export async function requireAdmin(): Promise<User | null> {
   return buildUser(session.user);
 }
 
-// 🚦 Page-level boundary: no admin session, or a signed-in non-admin →
-// /admin/login either way — this cookie has no storefront-side destination
-// to bounce a non-admin back to.
+// Require an authorized admin session at each protected page.
 export async function requireAdminPage(): Promise<User> {
   const session = await getAdminSession();
   if (!session?.user || !isAdminUser(session.user)) redirect("/admin/login");

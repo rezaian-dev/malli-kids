@@ -6,7 +6,7 @@ import { PriceTag } from "./price-tag";
 import { ProductCardList } from "./product-card-list";
 import { ProductCardGrid } from "./product-card-grid";
 
-// 🪶 Server-first card with tiny client actions.
+// Server-first card with tiny client actions.
 export function ProductCard({
   p,
   view,
@@ -18,11 +18,11 @@ export function ProductCard({
   p: Product;
   view: "grid" | "list";
   aboveFold?: boolean;
-  // 🎬 Only stack mode animates; the first render is instant (no refresh flash)
+  // Only stack mode animates; the first render is instant (no refresh flash)
   animate?: boolean;
-  // 🃏 Grid position — only for the slight stack-mode stagger
+  // Grid position — only for the slight stack-mode stagger
   index?: number;
-  // 🃏 Card-deck mode for filter re-layout (grid view)
+  // Card-deck mode for filter re-layout (grid view)
   stack?: boolean;
 }) {
   const href = pdpHref(p.id);
@@ -33,8 +33,7 @@ export function ProductCard({
   };
 
   const sold = (
-    // ♿ brown-mid, not gold: gold-on-white card text is ~2.2:1, below the
-    // 4.5:1 minimum. Dark mode (gold-on-slate) already passes, untouched.
+    // Use darker text on light cards to meet contrast requirements.
     <p
       className="m-0 mt-1.5 inline-flex flex-row items-center gap-1.5 text-[11px] leading-none font-extrabold text-brown-mid dark:text-gold-soft"
     >
@@ -56,12 +55,10 @@ export function ProductCard({
     sold,
     price,
     imageProps,
-    // ⚡ Above-the-fold (LCP) cards never animate, even in stack mode
+    // Above-the-fold (LCP) cards never animate, even in stack mode
     animate: animate ?? !aboveFold,
   };
 
-  // 🃏 stack/index are grid-view-only; the explicit branch keeps both cards'
-  // props shape identical
   return view === "list" ? (
     <ProductCardList {...cardProps} />
   ) : (

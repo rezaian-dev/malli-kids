@@ -7,8 +7,7 @@ import { buildMetadata, itemListSchema } from "@/lib/seo";
 import { Badge } from "@/components/ui/badge";
 import { ArticlesList } from "./_components/articles-list";
 
-// 🔎 ?tag= filters in place; canonical stays "/articles" for every view.
-// ⚠️ Segment config must be a literal — Turbopack static-extracts it
+// Keep the canonical URL independent of the tag filter.
 export const revalidate = 3600;
 
 export const metadata = buildMetadata({

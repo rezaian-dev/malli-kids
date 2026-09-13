@@ -22,8 +22,7 @@ type AdminFilterBarProps = {
   className?: string;
 };
 
-/** 🔎 The search box + reset button + filter-select slot that opens
- *  every admin list page. */
+/** The search box + reset button + filter-select slot that opens every admin list page. */
 export function AdminFilterBar({
   children,
   search,

@@ -13,7 +13,7 @@ import type { Product } from "@/types";
 import { getProductsByIdsAction } from "@/lib/shop/products-actions";
 import { PROFILE_CARD } from "./profile-shared";
 
-// 💛 Wishlist panel loads only when the user opens it.
+// Wishlist panel loads only when the user opens it.
 export function ProfileWishlistPanel() {
   const { ids } = useFavorites();
   const [products, setProducts] = useState<Product[]>([]);

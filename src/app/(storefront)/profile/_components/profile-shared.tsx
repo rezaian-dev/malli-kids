@@ -1,7 +1,7 @@
 import { Loader2 } from "lucide-react";
 export const PROFILE_CARD = "mt-5 space-y-5 rounded-3xl p-5 sm:p-7 border border-navy/10 bg-white dark:border-gold/35 dark:bg-dusk";
 
-// 🪶 Small skeleton while each profile panel hydrates.
+// Small skeleton while each profile panel hydrates.
 export function ProfilePanelFallback({
   title,
   text = "در حال آماده‌سازی این بخش…",

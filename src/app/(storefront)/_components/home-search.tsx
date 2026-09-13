@@ -18,7 +18,7 @@ const ERROR_TEXT = "mt-2 text-xs font-bold text-rose-200";
 
 type Hit = Awaited<ReturnType<typeof searchProductsPreviewAction>>[number];
 
-// 🔎 Tiny home search without form-runtime overhead.
+// Tiny home search without form-runtime overhead.
 export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -28,7 +28,7 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
   const [loading, setLoading] = useState(false);
   const q = query.trim();
 
-  // 🔎 Real catalog lookup, debounced so every keystroke doesn't hit the DB.
+  // Real catalog lookup, debounced so every keystroke doesn't hit the DB.
   useEffect(() => {
     if (q.length < MIN_QUERY) {
       setHits([]);
@@ -53,7 +53,7 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
     };
   }, [q]);
 
-  // 🔎 The one real "search happened" moment — never keystrokes
+  // The one real "search happened" moment — never keystrokes
   function runSearch(value: string) {
     const next = value.trim();
 

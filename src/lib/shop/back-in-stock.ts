@@ -3,13 +3,11 @@ import { BackInStockModel } from "@/lib/db/models/back-in-stock";
 import { ProductModel } from "@/lib/db/models/product";
 import { createNotification } from "@/lib/shop/notifications";
 
-// 🔔 size is normalized to "" for a legacy/unsized product (the whole product, not one variant).
-
 function normalizeSize(size?: string): string {
   return size ?? "";
 }
 
-// 📋 Lets the PDP render "🔔 مشترک شدید" instead of offering to subscribe twice.
+// Lets the PDP render " مشترک شدید" instead of offering to subscribe twice.
 export async function getSubscribedSizes(
   userId: string,
   productId: number,
@@ -21,7 +19,7 @@ export async function getSubscribedSizes(
   return docs.map((d) => d.size);
 }
 
-// 🙋 Upsert: resubmitting the same (user, product, size) is a no-op, not a duplicate-key error.
+// Upsert: resubmitting the same (user, product, size) is a no-op, not a duplicate-key error.
 export async function requestBackInStock(
   userId: string,
   productId: number,
@@ -35,8 +33,7 @@ export async function requestBackInStock(
   );
 }
 
-// 📣 One-shot: a matched request is deleted once notified, so shoppers must ask again next time.
-// 🤐 Fire-and-forget — a failure here must never turn a successful restock into a reported failure.
+// Notify once; a delivery failure must not fail the restock operation.
 export async function notifyBackInStock(
   productId: number,
   size?: string,
@@ -68,6 +65,6 @@ export async function notifyBackInStock(
 
     await BackInStockModel.deleteMany({ productId, size: normalizedSize });
   } catch {
-    // 🤐 Never let this fail the real stock mutation.
+    // Never let this fail the real stock mutation.
   }
 }

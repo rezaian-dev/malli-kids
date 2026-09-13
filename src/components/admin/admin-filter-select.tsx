@@ -18,7 +18,7 @@ export type AdminFilterOption = {
   count?: number;
 };
 
-/** 🎚️ One labeled dropdown filter, dropped inside `<AdminFilterBar>`. */
+/** One labeled dropdown filter, dropped inside `<AdminFilterBar>`. */
 export function AdminFilterSelect({
   label,
   value,
@@ -48,10 +48,7 @@ export function AdminFilterSelect({
           className="dark:bg-navy-deep/45 h-11 rounded-xl bg-white shadow-none"
           aria-label={label}
         >
-          {/* 🔢 Explicit children (label only, no count) instead of letting
-              Radix mirror the selected SelectItem's own content here — that
-              mirrored content used to include the count badge below, which
-              broke the trigger's text onto two lines in its limited width. */}
+          {/* Show only the label so the count badge cannot wrap the trigger. */}
           <SelectValue placeholder={placeholder ?? label}>
             {selected?.label}
           </SelectValue>

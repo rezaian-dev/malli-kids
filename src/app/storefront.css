@@ -1,12 +1,9 @@
-/* 🛍️ Storefront-only Tailwind entry — per-route-group compilation keeps
-   admin CSS out (see admin.css); never import from an admin file */
+/* Storefront utilities stay separate from admin CSS. */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./theme.css";
 
-/* 👤 Standalone entrance/exit for this one dropdown — !important is the
-   only reliable win over the base animate utilities; Radix Presence waits
-   for the exit before unmounting, no timer needed */
+/* Radix Presence waits for the exit animation before unmounting. */
 .account-menu-panel[data-state="open"] {
   animation: userMenuIn 0.22s cubic-bezier(0.22, 1, 0.32, 1) both !important;
 }
@@ -20,7 +17,6 @@
   }
 }
 
-/* 🚫 No admin imports from storefront code — excluding admin keeps its
-   exclusive utilities out of storefront CSS */
+/* Exclude admin utilities from the storefront stylesheet. */
 @source not "./admin";
 @source not "../components/admin";

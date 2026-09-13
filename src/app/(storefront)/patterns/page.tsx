@@ -2,7 +2,7 @@ import { Intro } from "@/components/shared/intro";
 import { ProductCatalog } from "@/components/product";
 import { buildMetadata } from "@/lib/seo";
 
-// 📦 Used only on this page — no other route reads this catalog.
+// Used only on this page — no other route reads this catalog.
 const PATTERNS = [
   {
     tag: "مجلسی",

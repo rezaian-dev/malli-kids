@@ -12,7 +12,7 @@ const STARS = [
   { top: "66%", left: "91%", size: "size-1.5", delay: ".45s" },
 ];
 
-// ✨ Ambient festival-strip decor — reduced-motion-gated, never shifts layout
+// Ambient festival-strip decor — reduced-motion-gated, never shifts layout
 export function FestiveDecor({ tone = "dark" }: { tone?: "dark" | "light" }) {
   const light = tone === "light";
   return (
@@ -72,8 +72,6 @@ export function FestiveDecor({ tone = "dark" }: { tone?: "dark" | "light" }) {
           style={{ top: s.top, left: s.left, animationDelay: s.delay }}
         />
       ))}
-      {/* ── 3D foreground clusters (roomy screens only; they paint behind the
-          content row, so even where they meet the text it reads as depth) ── */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-y-0 start-0 hidden w-44 md:block"

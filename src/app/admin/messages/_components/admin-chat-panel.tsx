@@ -72,7 +72,7 @@ const CHAT_STATUS: Record<ChatStatus, { label: string; cls: string }> = {
 
 type StatusFilter = "all" | ChatStatus;
 
-// 💬 Live-chat inbox + open thread; the parent owns the one list poll
+// Live-chat inbox + open thread; the parent owns the one list poll
 export function AdminChatPanel({
   conversations,
   setConversations,
@@ -320,7 +320,7 @@ function AdminChatThread({
   const conversation = data?.conversation ?? null;
   const messages = useMemo(() => data?.messages ?? [], [data]);
 
-  // 👀 Open thread counts as read — clear admin unread on screen
+  // Open thread counts as read — clear admin unread on screen
   useEffect(() => {
     if (!conversation || conversation.adminUnreadCount === 0) return;
     const last = messages[messages.length - 1];

@@ -9,7 +9,7 @@ import type { AdminReview } from "@/types";
 const ACTION_BUTTON_BASE =
   "inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl px-3 text-[10px] font-black transition hover:-translate-y-0.5";
 
-/** ⭐ One customer review — publish/unpublish and delete. */
+/** One customer review — publish/unpublish and delete. */
 export function ReviewCard({
   review,
   selected,

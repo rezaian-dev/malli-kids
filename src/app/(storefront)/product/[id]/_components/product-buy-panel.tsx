@@ -52,7 +52,7 @@ const SHIP_ITEM =
   "border-navy/8 dark:border-gold/20 px-2 py-3.5 text-center not-last:border-e";
 const SHIP_ICON = "text-gold mx-auto mb-1 size-4";
 
-// 📏 Variant-tracked products offer their own sizes (disabled at zero stock)
+// Variant-tracked products offer their own sizes (disabled at zero stock)
 function useSizeOptions(product: Product) {
   return useMemo(() => {
     if (!product.variants.length) {
@@ -82,7 +82,7 @@ export function ProductBuyPanel({
   const router = useRouter();
   const sizeOptions = useSizeOptions(product);
 
-  // 📏 Suggest the child's height-mapped size when this product offers it
+  // Suggest the child's height-mapped size when this product offers it
   const heightCm = user?.childHeightCm
     ? parseFaNumber(user.childHeightCm)
     : NaN;
@@ -105,7 +105,7 @@ export function ProductBuyPanel({
   const [qty, setQty] = useState(1);
   const [checkout, setCheckout] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
-  // 🔔 Subscribed sizes — server-seeded, grown locally on subscribe
+  // Subscribed sizes — server-seeded, grown locally on subscribe
   const [subscribed, setSubscribed] = useState(subscribedSizes);
 
   const selectedAvailable =
@@ -125,7 +125,7 @@ export function ProductBuyPanel({
       return;
     }
 
-    // 📦 COD needs phone/address/postal code — hard gate, re-checked server-side
+    // COD needs phone/address/postal code — hard gate, re-checked server-side
     const missing = getMissingShippingFields(user);
     if (missing.length) {
       toast.error("لطفاً پروفایل خود را تکمیل کنید", {
@@ -141,10 +141,10 @@ export function ProductBuyPanel({
     setCheckout(true);
   }
 
-  // 🛒 Shared by the main CTA and the mobile sticky bar
+  // Shared by the main CTA and the mobile sticky bar
   function handleAddToCart() {
     if (!canOrder) return toast("این سایز ناموجود است");
-    // 🔐 addToCart gates guests itself; celebrate only on real adds
+    // addToCart gates guests itself; celebrate only on real adds
     if (addToCart(product.id, size, qty))
       toast(`${toFaDigits(qty)} عدد سایز ${size} به سبد اضافه شد`);
   }

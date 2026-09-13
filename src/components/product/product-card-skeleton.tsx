@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-// 🦴 Same shell/aspect/padding as the real card — the grid never shifts
+// Same shell/aspect/padding as the real card — the grid never shifts
 export function ProductCardGridSkeleton() {
   return (
     <div

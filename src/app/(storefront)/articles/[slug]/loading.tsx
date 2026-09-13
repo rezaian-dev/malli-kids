@@ -1,7 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-/** 🦴 Mirrors `ArticleView`'s header (crumb/tag/title) + cover + body shape
- *  — this route had no loading state at all before. */
 export default function ArticleLoading() {
   return (
     <article

@@ -21,8 +21,7 @@ const BIG_BASE = [
   },
 ];
 
-// 🔢 A live count per category, not a hand-typed number — "به‌زودی" until
-// the catalog actually has something to count.
+// Show counts from the live catalog.
 function modelCountLabel(n: number) {
   return n > 0 ? `${toFaDigits(n)} مدل فعال` : "به‌زودی مدل‌های جدید";
 }

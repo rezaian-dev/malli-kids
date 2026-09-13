@@ -13,8 +13,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { ICON_BTN, PANEL } from "./header-styles";
 
-// 🪶 The panel (line items, summary, checkout) loads only when the sheet
-// opens — the header keeps just this trigger button in the initial bundle.
+// Load the cart body only when the sheet opens.
 const CartSheetBody = dynamic(
   () => import("./cart-sheet-body").then((m) => m.CartSheetBody),
   { ssr: false },
@@ -26,12 +25,9 @@ export function CartSheet() {
   const removeCartItem = useCartStore((state) => state.removeCartItem);
   const clearCart = useCartStore((state) => state.clearCart);
   const { campaign } = useCampaign();
-  // 🧮 A plain reduce over the cart — cheap enough (a handful of line
-  // items) that memoizing it buys nothing.
   const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
   const empty = cartCount === 0;
-  // 🛍️ Controlled (not just `<SheetTrigger>` uncontrolled) so a successful
-  // whole-cart checkout can close the sheet itself — see `onSuccess` below.
+  // Control the sheet so successful checkout can close it.
   const [sheetOpen, setSheetOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
@@ -67,8 +63,7 @@ export function CartSheet() {
               empty && "hidden",
             )}
           >
-            {/* 🎬 هر بار تعدادِ سبد عوض می‌شود، رقمِ جدید با یک فنرِ کوچک
-                از پایین می‌جهد داخل — به جای پرشِ خشکِ متن. */}
+            {/* تغییر تعداد سبد با یک انیمیشن کوتاه نمایش داده می‌شود. */}
             <motion.span
               key={cartCount}
               initial={{ y: 10, opacity: 0, scale: 0.4 }}

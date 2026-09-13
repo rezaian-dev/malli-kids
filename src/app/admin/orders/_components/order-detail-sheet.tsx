@@ -32,8 +32,7 @@ function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }) {
   );
 }
 
-/** 📦 The order-detail side sheet — line items, totals, and a status
- *  changer. */
+/** The order-detail side sheet — line items, totals, and a status changer. */
 export function OrderDetailSheet({
   order,
   onOpenChange,

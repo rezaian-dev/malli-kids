@@ -7,10 +7,9 @@ import { OrderModel } from "@/lib/db/models/order";
 import { faDate } from "@/lib/locale/fa";
 import type { AdminCustomer } from "@/types";
 
-// 👥 Better Auth users + Profile + order aggregation — no separate
-// customers model
+// Better Auth users + Profile + order aggregation — no separate customers model
 export async function getAllCustomers(): Promise<AdminCustomer[]> {
-  // 🔑 `adminAuth`, not the storefront `auth` — see admin-auth.ts.
+  // `adminAuth`, not the storefront `auth` — see admin-auth.ts.
   const { users } = await adminAuth.api.listUsers({
     headers: await headers(),
     query: { limit: 500, sortBy: "createdAt", sortDirection: "desc" },

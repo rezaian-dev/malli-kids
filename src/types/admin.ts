@@ -1,4 +1,4 @@
-// 🛠️ Admin-panel domain model — shapes returned by admin actions/data
+// Admin-panel domain model — shapes returned by admin actions/data
 
 export type OrderStatus =
   "جدید" | "در حال آماده‌سازی" | "ارسال‌شده" | "تحویل‌شده" | "مرجوعی";
@@ -83,7 +83,7 @@ export type AdminArticle = {
 
   cover?: string;
   published: boolean;
-  // 🏷️ `Tag.slug` references — see `ArticleDoc.tags`.
+  // `Tag.slug` references — see `ArticleDoc.tags`.
   tags: string[];
   date: string;
 };

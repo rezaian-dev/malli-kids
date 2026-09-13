@@ -17,7 +17,7 @@ import { OrderCard } from "./order-card";
 
 const POLL_MS = 20_000;
 
-// 📦 Orders panel stays isolated from the default profile bundle.
+// Orders panel stays isolated from the default profile bundle.
 export function ProfileOrdersPanel() {
   const { user } = useAuth();
   const [orders] = usePolling<AdminOrder[]>(

@@ -114,7 +114,7 @@ export function HomeQuotes({ reviews }: { reviews: AdminReview[] }) {
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex max-w-full flex-wrap items-center gap-1.5">
           {Array.from({ length: n }).map((_, k) => (
-            // ♿ Tiny dot, full 24×24 tap target underneath
+            // Tiny dot, full 24×24 tap target underneath
             <button
               key={k}
               type="button"

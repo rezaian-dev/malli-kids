@@ -1,7 +1,7 @@
 import type { ChatConversation, ChatMessage } from "./chat";
 import { CHAT_MESSAGE_MAX_LEN } from "./chat";
 
-// 🧩 Shared input-cleaning helpers and response shape for both customer and admin chat actions.
+// Shared input-cleaning helpers and response shape for both customer and admin chat actions.
 
 export const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 
@@ -10,7 +10,7 @@ export type ChatThread = {
   messages: ChatMessage[];
 };
 
-// 🧭 Context only; accepted only in the shape a real path has.
+// Context only; accepted only in the shape a real path has.
 export function cleanPage(page: unknown): string | undefined {
   if (typeof page !== "string") return undefined;
   const trimmed = page.trim().slice(0, 120);

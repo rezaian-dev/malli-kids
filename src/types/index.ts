@@ -1,4 +1,4 @@
-// 📦 Barrel for shared domain types; component-local types stay colocated
+// Barrel for shared domain types; component-local types stay colocated
 
 export * from "./product";
 export * from "./user";

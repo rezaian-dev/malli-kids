@@ -27,13 +27,13 @@ const STATUS: { label: string; key: keyof ShopState; hint: string }[] = [
 
 const PRICE_STEP = 50_000;
 
-// ♿ brown-mid in light mode — gold-on-white fails 4.5:1; dark keeps gold
+// brown-mid in light mode — gold-on-white fails 4.5:1; dark keeps gold
 const SECTION_LABEL =
   "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-brown-mid dark:text-gold uppercase";
 
 const FILTER_CHIP = "h-auto rounded-full border px-3.5 py-1.5 text-xs font-black border-navy/12 bg-white text-navy/70 hover:border-gold/50 hover:bg-sand hover:text-navy data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] data-[state=on]:hover:bg-navy data-[state=on]:hover:text-ivory dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50 dark:hover:bg-navy-light dark:hover:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep dark:data-[state=on]:hover:bg-gold dark:data-[state=on]:hover:text-navy-deep";
 
-// 🎚️ Filters shared by the desktop sidebar and the mobile sheet
+// Filters shared by the desktop sidebar and the mobile sheet
 export function ShopFilters({
   state,
   query,
@@ -51,13 +51,13 @@ export function ShopFilters({
   range: [number, number];
   onRangeChange: (range: [number, number]) => void;
   push: (next: Partial<ShopState>) => void;
-  /** 📱 Called after a category pick — the mobile sheet uses this to close itself. */
+  /** Called after a category pick — the mobile sheet uses this to close itself. */
   onCategoryPick?: () => void;
 }) {
   const searchId = useId();
   return (
     <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-5">
-      {/* 🔎 Search */}
+      {/* Search */}
       <div className="space-y-2.5">
         <label htmlFor={searchId} className={SECTION_LABEL}>
           <Search className="size-3.5" /> جستجو

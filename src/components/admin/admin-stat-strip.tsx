@@ -18,7 +18,7 @@ const STAT_TONES: Record<NonNullable<AdminStatItem["tone"]>, string> = {
   blue: "bg-sky-500/10 text-sky-700 dark:bg-sky-400/12 dark:text-sky-300",
 };
 
-/** 📊 The 2–4 KPI tiles at the top of most admin list pages. */
+/** The 2–4 KPI tiles at the top of most admin list pages. */
 export function AdminStatStrip({
   items,
   className,

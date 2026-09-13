@@ -1,6 +1,4 @@
 
-/** ♿ Visually hidden until focused — lets keyboard/screen-reader users jump
- *  straight past the header/sidebar chrome to the page's real content. */
 export function SkipLink({ targetId = "main-content" }: { targetId?: string }) {
   return (
     <a

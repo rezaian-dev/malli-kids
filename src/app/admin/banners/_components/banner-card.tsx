@@ -45,8 +45,7 @@ function BannerField({
   );
 }
 
-/** 📣 One occasion banner — pin/active switches and its inline-editable
- *  copy fields. */
+/** One occasion banner — pin/active switches and its inline-editable copy fields. */
 export function BannerCard({
   banner,
   onUpdate,

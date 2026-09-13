@@ -2,7 +2,7 @@ import type { ComponentProps } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-/** 🏷️ A labeled input + inline error, used across the new-coupon form. */
+/** A labeled input + inline error, used across the new-coupon form. */
 export function CouponField({
   id,
   label,

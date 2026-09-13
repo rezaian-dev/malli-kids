@@ -42,7 +42,7 @@ function BannerFrame({
         )}
         aria-hidden
       />
-      {/* 📐 h-14 / sm:h-15 — keep `HeaderSpacer` in sync (banner + bar + gap). */}
+      {/* h-14 / sm:h-15 — keep `HeaderSpacer` in sync (banner + bar + gap). */}
       <div className="relative mx-auto flex h-14 max-w-7xl items-center justify-center gap-x-4 overflow-hidden px-3 text-center whitespace-nowrap sm:h-15 sm:justify-between sm:px-6">
         {children}
       </div>
@@ -50,8 +50,7 @@ function BannerFrame({
   );
 }
 
-// 🚫 No hover transforms — the parked cursor would replay them as a tick
-// on every refresh; feedback is brightness/shadow/underline only
+// Avoid hover transforms that replay under a parked cursor.
 export function FestiveBannerBody() {
   const { campaign, banner } = useCampaign();
 

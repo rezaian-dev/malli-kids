@@ -1,10 +1,6 @@
 import type { NextConfig } from "next";
 
-// 🔐 Nonce-free CSP keeps static rendering intact; script/style unsafe-inline
-// is the accepted trade-off. OSM tiles (img-src) power the profile map — not
-// Esri, which geo-blocks sanctioned countries and forced a VPN just to load
-// it — the OSM embed iframe (frame-src) is the contact map, and worker-src
-// blob: is the avatar uploader's compression worker.
+// Inline scripts/styles are allowed to preserve static rendering.
 const isDev = process.env.NODE_ENV !== "production";
 const cspHeader = `
   default-src 'self';
@@ -29,7 +25,7 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  // 🌍 geolocation=(self) for the profile map's GPS button; all else denied
+  // geolocation=(self) for the profile map's GPS button; all else denied
   {
     key: "Permissions-Policy",
     value: "geolocation=(self), camera=(), microphone=(), payment=()",
@@ -41,13 +37,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // 🧪 Next's gzip leaks drain listeners under concurrency; the host
-  // compresses at the edge anyway
+  // Compression is handled by the host.
   compress: false,
-  // 🔐 Allow local and Arena preview origins in dev.
+  // Allow local and Arena preview origins in dev.
   allowedDevOrigins: ["*.e2b.app", "127.0.0.1", "localhost"],
-  // 🎯 Keep admin/storefront CSS split (`cssChunking: "graph"`).
-  // 🖥️ Pars host limits build workers to 2 — match it to avoid OOM and keep `Collecting page data using 2 workers`
+  // Keep separate CSS chunks and two build workers.
   experimental: {
     cssChunking: "graph",
     cpus: 2,
@@ -60,8 +54,5 @@ const nextConfig: NextConfig = {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
 };
-
-// 💡 On slow disks, junction .next to fast storage rather than enabling
-// experimental.turbopackFileSystemCacheForDev (loud banner, slow cold rebuilds).
 
 export default nextConfig;

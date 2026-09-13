@@ -1,6 +1,6 @@
 import "server-only";
 
-// 🪶 Shared by every "generate a unique slug" action; slugify rules stay in each caller.
+// Shared by every "generate a unique slug" action; slugify rules stay in each caller.
 export async function uniqueSlugAgainst(
   model: { exists(filter: { slug: string }): Promise<unknown> },
   base: string,

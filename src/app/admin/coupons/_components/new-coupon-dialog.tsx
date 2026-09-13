@@ -73,7 +73,7 @@ function validateCouponForm(values: CouponFormValues): CouponFormErrors {
   return errors;
 }
 
-// ➕ Validates locally, hands a ready AdminCoupon to the caller
+// Validates locally, hands a ready AdminCoupon to the caller
 export function NewCouponDialog({
   open,
   existingCodes,

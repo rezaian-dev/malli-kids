@@ -26,8 +26,6 @@ const TITLES = {
 } as const;
 type View = keyof typeof TITLES;
 
-// 🔐 Auth dialog: login/register tabs, plus a "forgot password" step that
-// swaps in over the login tab (not a third tab — it isn't a sign-in method).
 export function AuthModal() {
   const { authOpen, setAuthOpen } = useAuth();
   const [view, setView] = useState<View>("login");

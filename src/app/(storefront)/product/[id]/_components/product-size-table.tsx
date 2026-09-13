@@ -24,8 +24,7 @@ export function ProductSizeTable({
   highlightSize = "۹۸",
   highlightLabel = "پیشنهادی",
 }: {
-  /** 🎯 Which row to call out — the store's most-picked size by default, or
-   *  a size recommended from the shopper's own child profile when known. */
+  /** Prefer the child's recommended size over the store default. */
   highlightSize?: string;
   highlightLabel?: string;
 }) {

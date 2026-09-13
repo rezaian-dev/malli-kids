@@ -20,7 +20,7 @@ const ORDER_TONE: Record<OrderStatus, string> = {
 
 const STAGE_ICONS = [Wallet, Package, Truck, Home] as const;
 
-/** 📦 One order — items, total, and the delivery-stage tracker. */
+/** One order — items, total, and the delivery-stage tracker. */
 export function OrderCard({ order }: { order: AdminOrder }) {
   const stage = stageIndex(order.status);
 

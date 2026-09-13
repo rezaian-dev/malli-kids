@@ -13,19 +13,17 @@ import {
 } from "motion/react";
 import { cn } from "@/lib/utils";
 
-// 🎬 One easing curve site-wide, matching the brand's CSS
+// One easing curve site-wide, matching the brand's CSS
 export const EASE_OUT: Easing = [0.22, 1, 0.32, 1];
 
-// 🪶 Inert reveal helpers live in ./static (zero JS); only interactive
-// springs stay in this client module.
-// ♿ MotionConfig must sit in a client component — the root layout is server
+// Keep interactive motion in this client module.
 export function MotionProvider({ children }: { children: React.ReactNode }) {
   return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }
 
 const TILT_SPRING = { stiffness: 300, damping: 22, mass: 0.6 } as const;
 
-// 🪄 Mouse-driven 3D tilt + tracking glare; pointer-only, reduced-motion safe
+// Mouse-driven 3D tilt + tracking glare; pointer-only, reduced-motion safe
 export function TiltCard({
   children,
   className,
@@ -103,8 +101,6 @@ function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
 }
 
-// 🧲 Button pulls toward the cursor with a tracking glow — hero CTAs only;
-// inert on touch and reduced-motion
 export function MagneticGlow({
   children,
   className,

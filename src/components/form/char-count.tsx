@@ -2,7 +2,7 @@ import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import { COUNT_TEXT } from "./styles";
 
-/** 🔢 The "N / max" (or "over by N") counter under a text/textarea field. */
+/** The "N / max" (or "over by N") counter under a text/textarea field. */
 export function CharCount({
   value,
   max,

@@ -1,6 +1,6 @@
 import { LogOut } from "lucide-react";
 
-/** 👋 Sidebar/mobile-drawer logout button. */
+/** Sidebar/mobile-drawer logout button. */
 export function AdminAccountFooter({ onLogout }: { onLogout: () => void }) {
   return (
     <div className="border-navy/8 dark:border-gold/14 border-t p-3">

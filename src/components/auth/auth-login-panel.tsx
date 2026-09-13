@@ -27,8 +27,6 @@ const METHOD_BTN =
 const METHOD_BTN_ON =
   "bg-navy text-ivory shadow-sm dark:bg-gold dark:text-navy-deep dark:shadow-gold/40";
 
-/** 🔑 Email + password *or* phone OTP — a small segmented switch on top of
- *  the login tab decides which; both end at the same `login()` call. */
 export function LoginPanel({ onForgot }: { onForgot: () => void }) {
   const [method, setMethod] = useState<"password" | "otp">("password");
 
@@ -66,7 +64,7 @@ export function LoginPanel({ onForgot }: { onForgot: () => void }) {
   );
 }
 
-/** 🔑 Email + password sign-in — the original login form, unchanged. */
+/** Email + password sign-in — the original login form, unchanged. */
 function PasswordLoginPanel({ onForgot }: { onForgot: () => void }) {
   const { login } = useAuth();
   const [show, setShow] = useState(false);

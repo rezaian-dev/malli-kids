@@ -1,6 +1,5 @@
 import type { OrderStatus } from "@/types";
 
-// 🧭 Pure, no DB import — client components share this without pulling Mongoose into the bundle.
 export const ORDER_FLOW: OrderStatus[] = [
   "جدید",
   "در حال آماده‌سازی",
@@ -16,7 +15,7 @@ export const ORDER_STAGES = [
   "تحویل",
 ] as const;
 
-// 🔒 Forward one step only, or drop to مرجوعی (terminal) from any non-terminal state
+// Forward one step only, or drop to مرجوعی (terminal) from any non-terminal state
 export const ORDER_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   جدید: ["در حال آماده‌سازی", "مرجوعی"],
   "در حال آماده‌سازی": ["ارسال‌شده", "مرجوعی"],

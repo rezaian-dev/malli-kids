@@ -6,7 +6,7 @@ import { ArticleModel, type ArticleDoc } from "@/lib/db/models/article";
 import { faDate } from "@/lib/locale/fa";
 import { getAllTags, type ContentTag } from "@/lib/tags";
 
-// 🧊 Cached like the product catalog; admin writes revalidate this tag.
+// Cached like the product catalog; admin writes revalidate this tag.
 export const ARTICLES_TAG = "articles";
 
 export type JournalArticle = {
@@ -17,14 +17,14 @@ export type JournalArticle = {
   body: string;
   cover?: string;
   date?: string;
-  // 🏷️ A deleted tag's slug silently drops out instead of rendering blank.
+  // A deleted tag's slug silently drops out instead of rendering blank.
   tags: ContentTag[];
-  // 🕒 ISO 8601 for schema.org, not the Jalali display string above.
+  // ISO 8601 for schema.org, not the Jalali display string above.
   publishedAt: string;
   updatedAt: string;
 };
 
-// 🔐 Allowlist sanitizer: this HTML renders via dangerouslySetInnerHTML.
+// Allowlist sanitizer: this HTML renders via dangerouslySetInnerHTML.
 const ARTICLE_SANITIZE_OPTIONS: sanitizeHtmlLib.IOptions = {
   allowedTags: [
     "p",
@@ -55,17 +55,17 @@ const ARTICLE_SANITIZE_OPTIONS: sanitizeHtmlLib.IOptions = {
     img: ["src", "alt", "title"],
     "*": ["style"],
   },
-  // ✍️ Only text-align passes — no CSS-injection surface.
+  // Only text-align passes — no CSS-injection surface.
   allowedStyles: {
     "*": { "text-align": [/^(left|right|center|justify)$/] },
   },
   allowedSchemesByTag: {
     a: ["http", "https"],
-    // 🖼️ Cover/inline images are stored as compressed data URLs.
+    // Cover/inline images are stored as compressed data URLs.
     img: ["http", "https", "data"],
   },
   transformTags: {
-    // 🔗 Forces noopener noreferrer on every link — closes reverse-tabnabbing.
+    // Forces noopener noreferrer on every link — closes reverse-tabnabbing.
     a: sanitizeHtmlLib.simpleTransform(
       "a",
       { rel: "noopener noreferrer", target: "_blank" },
@@ -101,7 +101,6 @@ async function tagLookup(): Promise<Map<string, ContentTag>> {
   return new Map(tags.map((t) => [t.slug, t]));
 }
 
-// 📰 Newest first — build-safe: returns [] when DB/auth unavailable so `next build` never crashes.
 export const loadPublishedArticles = unstable_cache(
   async (): Promise<JournalArticle[]> => {
     try {

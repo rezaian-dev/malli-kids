@@ -6,7 +6,7 @@ import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useErrorRetry } from "@/hooks/use-error-retry";
 
-// 🧯 Segment error boundary — layout (header/footer) stays mounted.
+// Segment error boundary — layout (header/footer) stays mounted.
 export default function StorefrontError({
   error,
   reset,
