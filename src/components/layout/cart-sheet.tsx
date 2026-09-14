@@ -1,21 +1,32 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/providers/cart-store-provider";
 import { useCampaign } from "@/providers/campaign-provider";
 import { toFaDigits } from "@/lib/locale/fa";
+import { getProductsByIdsAction } from "@/lib/shop/products-actions";
+import type { Product } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { ICON_BTN, PANEL } from "./header-styles";
 
-// Load the cart body only when the sheet opens.
+// The sheet body's JS chunk + product data used to be fetched only once the
+// sheet opened. Radix unmounts SheetContent while closed, so both the chunk
+// download AND the price/product fetch used to happen *after* the open
+// animation had already started — the panel would slide in empty, then the
+// rows would pop in a beat later. That double-motion is the "stuck / ticks
+// mid-open" feeling. Fix: warm the chunk and fetch the product data here, in
+// the trigger, which stays mounted regardless of open state — by the time
+// the sheet actually opens, the body's first render already has everything
+// it needs, so nothing shifts after the animation starts.
+const loadCartSheetBody = () => import("./cart-sheet-body");
 const CartSheetBody = dynamic(
-  () => import("./cart-sheet-body").then((m) => m.CartSheetBody),
+  () => loadCartSheetBody().then((m) => m.CartSheetBody),
   { ssr: false },
 );
 
@@ -30,6 +41,31 @@ export function CartSheet() {
   // Control the sheet so successful checkout can close it.
   const [sheetOpen, setSheetOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+
+  // Pre-fetch products whenever the cart itself changes (not when the sheet
+  // opens), so the data is already sitting there by the time the user clicks.
+  const [products, setProducts] = useState<Product[]>([]);
+  const idsKey = cart.map((item) => item.id).join(",");
+  const chunkWarmed = useRef(false);
+
+  useEffect(() => {
+    if (!idsKey) {
+      setProducts([]);
+      return;
+    }
+    if (!chunkWarmed.current) {
+      chunkWarmed.current = true;
+      loadCartSheetBody();
+    }
+    let active = true;
+    getProductsByIdsAction(cart.map((item) => item.id)).then((list) => {
+      if (active) setProducts(list);
+    });
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idsKey]);
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -86,6 +122,7 @@ export function CartSheet() {
           cart={cart}
           cartCount={cartCount}
           campaign={campaign}
+          products={products}
           checkoutOpen={checkoutOpen}
           onCheckoutOpenChange={setCheckoutOpen}
           onQtyChange={setCartQty}

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowLeft,
@@ -15,7 +14,6 @@ import type { CartItem } from "@/stores/cart-store";
 import type { StoredCampaign } from "@/lib/storefront-state";
 import { resolvePrice } from "@/lib/shop/pricing";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
-import { getProductsByIdsAction } from "@/lib/shop/products-actions";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
 import type { Product } from "@/types";
 import { Badge } from "@/components/ui/badge";
@@ -35,11 +33,15 @@ import { CartSummary } from "./cart-summary";
 import { CartEmptyState } from "./cart-empty-state";
 import { CartCheckoutMount } from "./cart-checkout-mount";
 
-// Lazy-loaded sheet body — prices refresh on every open, not every page
+// Lazy-loaded sheet body. `products` is fetched by the always-mounted
+// CartSheet trigger (keyed on the cart contents) and handed down already
+// resolved, so this component's first render — which is also the sheet's
+// first open frame — never has to wait on a network round trip.
 export function CartSheetBody({
   cart,
   cartCount,
   campaign,
+  products,
   checkoutOpen,
   onCheckoutOpenChange,
   onQtyChange,
@@ -50,6 +52,7 @@ export function CartSheetBody({
   cart: CartItem[];
   cartCount: number;
   campaign: StoredCampaign;
+  products: Product[];
   checkoutOpen: boolean;
   onCheckoutOpenChange: (open: boolean) => void;
   onQtyChange: (id: number, size: string, qty: number) => void;
@@ -58,20 +61,6 @@ export function CartSheetBody({
   onCheckoutSuccess: () => void;
 }) {
   const empty = cartCount === 0;
-  const [products, setProducts] = useState<Product[]>([]);
-  const idsKey = cart.map((item) => item.id).join(",");
-
-  // Pay-per-open fetch — re-runs if the cart changes mid-open
-  useEffect(() => {
-    let active = true;
-    getProductsByIdsAction(cart.map((item) => item.id)).then((list) => {
-      if (active) setProducts(list);
-    });
-    return () => {
-      active = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idsKey]);
 
   const rows = cart
     .map((item) => {
