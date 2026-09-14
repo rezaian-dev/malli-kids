@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { announceProfileTab, profileTabHref } from "@/lib/profile-nav";
 import { AccountIcon, Face, TRIGGER_SHELL } from "./account-trigger";
+import { WalletLink } from "./wallet-link";
 
 const MENU_ITEM = "rounded-lg py-2.5 font-bold";
 
@@ -50,26 +51,19 @@ export default function UserAccountMenu({
         sideOffset={12}
         className="account-menu-panel border-gold bg-paper z-80 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[22px] border p-0 dark:border-gold/50 dark:bg-dusk"
       >
-        <div
-          className="flex items-center gap-3 px-4 py-3.5 border-gold from-navy to-navy-mid border-b bg-linear-to-br dark:border-gold/40"
-        >
-          <Face
-            src={user.avatar}
-            letter={first.charAt(0)}
-            className="size-12 text-lg"
-          />
+        <div className="flex items-center gap-3 px-4 py-3.5 border-gold from-navy to-navy-mid border-b bg-linear-to-br dark:border-gold/40">
+          <Face src={user.avatar} letter={first.charAt(0)} className="size-12 text-lg" />
           <div className="min-w-0">
-            <p className="m-0 truncate text-[15px] font-black text-white">
-              {name}
-            </p>
-            <p
-              className="mt-1 inline-flex items-center gap-1.5 text-gold-soft text-[11px] font-bold"
-            >
+            <p className="m-0 truncate text-[15px] font-black text-white">{name}</p>
+            <p className="mt-1 inline-flex items-center gap-1.5 text-gold-soft text-[11px] font-bold">
               <Phone className="size-3.5" />
               <span dir="ltr">{user.phone?.trim() || "شماره ثبت نشده"}</span>
             </p>
           </div>
         </div>
+        <DropdownMenuItem asChild className="p-0 focus:bg-transparent">
+          <WalletLink menu />
+        </DropdownMenuItem>
         <div className="flex flex-col px-3 py-2">
           <DropdownMenuItem asChild className={MENU_ITEM}>
             <Link

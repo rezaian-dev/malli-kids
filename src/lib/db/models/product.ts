@@ -34,6 +34,7 @@ export type ProductDoc = {
   // Admin-curated "complete the look" pairing — a list of other product ids.
   pairsWith?: number[];
   updatedAt: Date;
+  stockRestorations?: string[];
 };
 
 const productVariantSchema = new Schema<ProductVariant>(
@@ -67,6 +68,7 @@ const productSchema = new Schema<ProductDoc>(
     stock: { type: Boolean, default: true },
     variants: { type: [productVariantSchema], default: [] },
     pairsWith: { type: [Number], default: [] },
+    stockRestorations: { type: [String], default: undefined, select: false },
     sold: { type: Number, default: 0 },
     desc: { type: String, required: true },
     seoTitle: String,
@@ -83,5 +85,4 @@ productSchema.pre("save", function () {
 });
 
 export const ProductModel: Model<ProductDoc> =
-  (models.Product as Model<ProductDoc>) ||
-  model<ProductDoc>("Product", productSchema);
+  (models.Product as Model<ProductDoc>) || model<ProductDoc>("Product", productSchema);

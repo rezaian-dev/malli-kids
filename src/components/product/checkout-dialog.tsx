@@ -52,8 +52,7 @@ export function CheckoutDialog({
   } = useCheckoutDeliveryForm({ open, user, subtotal });
 
   // Match the server's post-discount shipping calculation.
-  const shipping =
-    subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
+  const shipping = subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
 
   async function submitOrder(values: DeliveryValues) {
     if (!user) return;
@@ -73,9 +72,7 @@ export function CheckoutDialog({
     }
 
     onOpenChange(false);
-    toast(
-      `سفارش ${result.data.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`,
-    );
+    toast(`سفارش ${result.data.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`);
   }
 
   return (
@@ -89,9 +86,7 @@ export function CheckoutDialog({
           <BadgeCheck className="text-gold size-5" /> ثبت سفارش
         </DialogTitle>
 
-        <div
-          className="flex items-center gap-3 rounded-2xl p-3 border-navy/10 border bg-white dark:border-gold/25 dark:bg-navy-deep/50"
-        >
+        <div className="flex items-center gap-3 rounded-2xl p-3 border-navy/10 border bg-white dark:border-gold/25 dark:bg-navy-deep/50">
           <Image
             src={product.img}
             alt=""
@@ -105,9 +100,7 @@ export function CheckoutDialog({
               سایز {size} × {toFaDigits(qty)}
             </p>
           </div>
-          <span className="text-gold text-sm font-black">
-            {formatToman(subtotal)}
-          </span>
+          <span className="text-gold text-sm font-black">{formatToman(subtotal)}</span>
         </div>
 
         <div className="text-navy/70 dark:text-wheat space-y-1 text-xs font-bold">
@@ -117,9 +110,7 @@ export function CheckoutDialog({
           </p>
           <p className="flex justify-between">
             <span>ارسال</span>
-            <span>
-              {shipping ? `${formatToman(shipping)} تومان` : "رایگان 🎉"}
-            </span>
+            <span>{shipping ? `${formatToman(shipping)} تومان` : "رایگان 🎉"}</span>
           </p>
           {discount ? (
             <p className="flex justify-between text-emerald-600 dark:text-emerald-300">
@@ -188,13 +179,11 @@ export function CheckoutDialog({
             تأیید و ثبتِ سفارش
           </SubmitButton>
         </AppForm>
-        <p
-          className="text-center text-[10px] leading-5 font-bold text-navy/70 dark:text-wheat"
-        >
-          پرداخت در این نسخه هنگامِ تحویل، دربِ خانه انجام می‌شود.
+        <p className="text-center text-[10px] leading-5 font-bold text-navy/70 dark:text-wheat">
+          درگاه آنلاین هنوز فعال نیست؛ پرداخت با هماهنگی پشتیبانی انجام و پس از دریافت وجه
+          توسط مدیر تأیید می‌شود.
           <br />
-          شمارهٔ موبایل فقط برای تماس در صورت نیاز است؛ پشتیبانی فقط از طریق
-          تیکت در سایت.
+          شمارهٔ موبایل فقط برای تماس در صورت نیاز است؛ پشتیبانی فقط از طریق تیکت در سایت.
         </p>
       </DialogContent>
     </Dialog>

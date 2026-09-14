@@ -23,17 +23,41 @@ export async function findApplicableCoupon(
 }
 
 // Reserve atomically before creating the order; release on failure.
-export async function reserveCouponUsage(code: string): Promise<boolean> {
+export async function reserveCouponUsage(code: string): Promise<string | null> {
   await connectMongoose();
   const updated = await CouponModel.findOneAndUpdate(
     { code, active: true, $expr: { $lt: ["$used", "$cap"] } },
     { $inc: { used: 1 } },
   ).lean();
-  return updated !== null;
+  return updated?._id.toString() ?? null;
 }
 
 // Gives back a reservation whose order never got written.
-export async function releaseCouponUsage(code: string): Promise<void> {
+export async function releaseCouponUsage(reservationId: string): Promise<void> {
   await connectMongoose();
-  await CouponModel.updateOne({ code }, { $inc: { used: -1 } });
+  await CouponModel.updateOne(
+    { _id: reservationId, used: { $gt: 0 } },
+    { $inc: { used: -1 } },
+  );
+}
+
+export async function releaseCancelledCoupon(
+  reservationId: string,
+  orderKey: string,
+): Promise<void> {
+  await connectMongoose();
+  await CouponModel.updateOne(
+    { _id: reservationId, releasedOrders: { $ne: orderKey } },
+    [
+      {
+        $set: {
+          used: { $max: [0, { $subtract: [{ $ifNull: ["$used", 0] }, 1] }] },
+          releasedOrders: {
+            $setUnion: [{ $ifNull: ["$releasedOrders", []] }, [orderKey]],
+          },
+        },
+      },
+    ],
+    { updatePipeline: true },
+  );
 }

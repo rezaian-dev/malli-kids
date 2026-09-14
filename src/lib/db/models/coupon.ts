@@ -10,6 +10,7 @@ export type CouponDoc = {
   active: boolean;
   min: number;
   until: string;
+  releasedOrders?: string[];
 };
 
 const couponSchema = new Schema<CouponDoc>(
@@ -23,10 +24,10 @@ const couponSchema = new Schema<CouponDoc>(
     min: { type: Number, default: 0 },
     // Jalali "YYYY/MM/DD" — a business date, not an event timestamp, so it stays a plain string.
     until: { type: String, required: true },
+    releasedOrders: { type: [String], default: undefined, select: false },
   },
   { timestamps: true },
 );
 
 export const CouponModel: Model<CouponDoc> =
-  (models.Coupon as Model<CouponDoc>) ||
-  model<CouponDoc>("Coupon", couponSchema);
+  (models.Coupon as Model<CouponDoc>) || model<CouponDoc>("Coupon", couponSchema);

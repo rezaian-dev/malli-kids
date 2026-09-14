@@ -56,8 +56,7 @@ export function CartCheckoutDialog({
     deliveryPayload,
   } = useCheckoutDeliveryForm({ open, user, subtotal });
 
-  const shipping =
-    subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
+  const shipping = subtotal - discount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
   const itemCount = rows.reduce((sum, { item }) => sum + item.qty, 0);
 
   async function submitOrder(values: DeliveryValues) {
@@ -81,9 +80,7 @@ export function CartCheckoutDialog({
 
     onOpenChange(false);
     onSuccess();
-    toast(
-      `سفارش ${result.data.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`,
-    );
+    toast(`سفارش ${result.data.id} ثبت شد؛ از تب «سفارش‌های من» پیگیری کنید ✅`);
   }
 
   return (
@@ -112,9 +109,7 @@ export function CartCheckoutDialog({
                   className="size-12 shrink-0 rounded-xl object-cover"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-black">
-                    {product.name}
-                  </p>
+                  <p className="truncate text-[13px] font-black">{product.name}</p>
                   <p className="text-navy/70 dark:text-wheat mt-0.5 text-[11px] font-bold">
                     سایز {item.size} × {toFaDigits(item.qty)}
                   </p>
@@ -133,9 +128,7 @@ export function CartCheckoutDialog({
             </p>
             <p className="flex justify-between">
               <span>ارسال</span>
-              <span>
-                {shipping ? `${formatToman(shipping)} تومان` : "رایگان 🎉"}
-              </span>
+              <span>{shipping ? `${formatToman(shipping)} تومان` : "رایگان 🎉"}</span>
             </p>
             {discount ? (
               <p className="flex justify-between text-emerald-600 dark:text-emerald-300">
@@ -206,13 +199,11 @@ export function CartCheckoutDialog({
           </AppForm>
         </div>
 
-        <p
-          className="text-center text-[10px] leading-5 font-bold text-navy/70 dark:text-wheat"
-        >
-          پرداخت در این نسخه هنگامِ تحویل، دربِ خانه انجام می‌شود.
+        <p className="text-center text-[10px] leading-5 font-bold text-navy/70 dark:text-wheat">
+          درگاه آنلاین هنوز فعال نیست؛ پرداخت با هماهنگی پشتیبانی انجام و پس از دریافت وجه
+          توسط مدیر تأیید می‌شود.
           <br />
-          شمارهٔ موبایل فقط برای تماس در صورت نیاز است؛ پشتیبانی فقط از طریق
-          تیکت در سایت.
+          شمارهٔ موبایل فقط برای تماس در صورت نیاز است؛ پشتیبانی فقط از طریق تیکت در سایت.
         </p>
       </DialogContent>
     </Dialog>

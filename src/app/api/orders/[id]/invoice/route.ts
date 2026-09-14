@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth/session";
 import { getAdminSession, isAdminUser } from "@/lib/auth/admin";
 import { getOrderForRequester } from "@/lib/shop/orders";
 import { generateInvoicePdf } from "@/lib/shop/invoice";
+import { hasVerifiedPayment } from "@/lib/shop/order-status";
 import { rateLimit, rateLimitError } from "@/lib/rate-limit";
 import {
   isServiceUnavailable,
@@ -54,7 +55,7 @@ export async function GET(
     if (!order) {
       return NextResponse.json({ error: NOT_FOUND_ERROR }, { status: 404 });
     }
-    if (order.pay !== "پرداخت‌شده") {
+    if (!hasVerifiedPayment(order.payment, order.total)) {
       return NextResponse.json({ error: UNPAID_ERROR }, { status: 402 });
     }
 

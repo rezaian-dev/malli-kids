@@ -10,6 +10,8 @@ export type AuditAction =
   | "customer.unban"
   | "customer.remove"
   | "order.status"
+  | "order.payment"
+  | "order.cancel"
   | "banner.publish"
   | "coupon.active"
   | "product.price"

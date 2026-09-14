@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
@@ -10,10 +11,9 @@ import { usePolling } from "@/hooks/use-polling";
 import { getMyChatUnreadAction } from "@/lib/shop/chat-actions";
 
 // The heavy window downloads only on first open — the bubble is the whole always-on cost
-const ChatWindow = dynamic(
-  () => import("./chat-window").then((m) => m.ChatWindow),
-  { ssr: false },
-);
+const ChatWindow = dynamic(() => import("./chat-window").then((m) => m.ChatWindow), {
+  ssr: false,
+});
 
 const INVITE_DELAY_MS = 5_000;
 // Poll the unread badge only while the chat window is closed.
@@ -24,6 +24,7 @@ const OPENED_KEY = "mk-chat-opened";
 // Require login before opening chat.
 export function ChatWidget() {
   const { user, setAuthOpen } = useAuth();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [invite, setInvite] = useState(false);
   // Open the window the moment a pending guest login lands
@@ -48,10 +49,7 @@ export function ChatWidget() {
   const shown = user ? unread : 0;
 
   useEffect(() => {
-    if (
-      sessionStorage.getItem(DISMISSED_KEY) ||
-      sessionStorage.getItem(OPENED_KEY)
-    ) {
+    if (sessionStorage.getItem(DISMISSED_KEY) || sessionStorage.getItem(OPENED_KEY)) {
       return;
     }
     const id = window.setTimeout(() => setInvite(true), INVITE_DELAY_MS);
@@ -76,6 +74,11 @@ export function ChatWidget() {
     }
   }, [user, openChat]);
 
+  useEffect(() => {
+    window.addEventListener("support:open", openChat);
+    return () => window.removeEventListener("support:open", openChat);
+  }, [openChat]);
+
   function dismissInvite() {
     sessionStorage.setItem(DISMISSED_KEY, "1");
     setInvite(false);
@@ -83,7 +86,7 @@ export function ChatWidget() {
 
   return (
     <>
-      {!open ? (
+      {!open && pathname !== "/profile" ? (
         <Button
           type="button"
           variant="gold"
@@ -112,7 +115,8 @@ export function ChatWidget() {
         </Button>
       ) : null}
 
-      {invite && !open ? (
+      {/* Keep account and financial screens free of unsolicited invitations. */}
+      {invite && !open && pathname !== "/profile" ? (
         <div
           role="status"
           className="fixed inset-s-4 bottom-20 z-65 w-[min(19rem,calc(100vw-2rem))] sm:inset-s-6 sm:bottom-24 rounded-3xl border p-4 shadow-2xl border-gold/40 bg-paper text-navy dark:border-gold/50 dark:bg-dusk dark:text-ivory motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-300"

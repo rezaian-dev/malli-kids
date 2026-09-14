@@ -25,6 +25,7 @@ export const buildUser = cache(
     const profile = await Profile.findOne({ userId: identity.id }).lean();
 
     return {
+      id: identity.id,
       ...splitName(identity.name),
       email: identity.email,
       phone: profile?.phone || identity.phoneNumber || undefined,

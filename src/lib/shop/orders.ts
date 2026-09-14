@@ -1,17 +1,16 @@
 import { unstable_cache } from "next/cache";
 import { REVALIDATE } from "@/lib/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
-import { OrderModel, type OrderDoc } from "@/lib/db/models/order";
+import { OrderModel, type OrderDoc, type StockReservation } from "@/lib/db/models/order";
 import { ProductModel } from "@/lib/db/models/product";
 import { releaseCouponUsage, reserveCouponUsage } from "@/lib/shop/coupons";
-import { canTransitionOrder } from "@/lib/shop/order-status";
-import { deriveStock } from "@/lib/shop/inventory";
+import { canTransitionOrder, hasVerifiedPayment } from "@/lib/shop/order-status";
 import { notifyBackInStock } from "@/lib/shop/back-in-stock";
 import { BRAND, SHIPPING_FEE } from "@/lib/constants";
-import { faDate } from "@/lib/locale/fa";
+import { faDate, faDateTime } from "@/lib/locale/fa";
 import type { AdminOrder, OrderStatus } from "@/types";
 
-function toAdminOrder(doc: OrderDoc & { createdAt: Date }): AdminOrder {
+export function toAdminOrder(doc: OrderDoc & { createdAt: Date }): AdminOrder {
   return {
     id: doc.id,
     userId: doc.userId,
@@ -29,6 +28,15 @@ function toAdminOrder(doc: OrderDoc & { createdAt: Date }): AdminOrder {
     coupon: doc.couponCode,
     status: doc.status,
     pay: doc.pay,
+    paymentVerified: hasVerifiedPayment(doc.payment, doc.total),
+    paidAmount: hasVerifiedPayment(doc.payment, doc.total) ? doc.payment.amount : 0,
+    paymentReference: doc.payment?.reference,
+    paidAt: doc.payment?.confirmedAt ? faDateTime(doc.payment.confirmedAt) : undefined,
+    cancelledAt: doc.cancellation ? faDateTime(doc.cancellation.createdAt) : undefined,
+    cancellationReason: doc.cancellation?.reason,
+    inventoryState: doc.cancellation?.inventoryState,
+    refundedAmount: doc.walletRefund?.amount ?? 0,
+    refundReference: doc.walletRefund?.reference,
     note: doc.note,
   };
 }
@@ -99,32 +107,95 @@ async function decrementVariantStock(
   qty: number,
 ): Promise<boolean> {
   const updated = await ProductModel.findOneAndUpdate(
-    { id: productId, variants: { $elemMatch: { size, stock: { $gte: qty } } } },
-    { $inc: { "variants.$.stock": -qty } },
-    { returnDocument: "after" },
+    {
+      id: productId,
+      variants: { $elemMatch: { size, stock: { $gte: qty } } },
+      $expr: {
+        $eq: [
+          {
+            $size: {
+              $filter: {
+                input: { $ifNull: ["$variants", []] },
+                as: "variant",
+                cond: { $eq: ["$$variant.size", { $literal: size }] },
+              },
+            },
+          },
+          1,
+        ],
+      },
+    },
+    [
+      {
+        $set: {
+          variants: {
+            $map: {
+              input: "$variants",
+              as: "variant",
+              in: {
+                $cond: [
+                  { $eq: ["$$variant.size", { $literal: size }] },
+                  {
+                    $mergeObjects: [
+                      "$$variant",
+                      { stock: { $subtract: ["$$variant.stock", qty] } },
+                    ],
+                  },
+                  "$$variant",
+                ],
+              },
+            },
+          },
+        },
+      },
+      { $set: { stock: { $gt: [{ $sum: "$variants.stock" }, 0] } } },
+    ],
+    { returnDocument: "after", updatePipeline: true },
   );
   if (!updated) return false;
-  await ProductModel.updateOne(
-    { id: productId },
-    { $set: { stock: deriveStock(updated.variants, updated.stock) } },
-  );
   return true;
 }
 
 async function restockVariant(productId: number, size: string, qty: number) {
   const updated = await ProductModel.findOneAndUpdate(
     { id: productId, "variants.size": size },
-    { $inc: { "variants.$.stock": qty } },
+    { $inc: { "variants.$.stock": qty }, $set: { stock: true } },
     { returnDocument: "after" },
   );
-  if (updated) {
-    await ProductModel.updateOne(
-      { id: productId },
-      { $set: { stock: deriveStock(updated.variants, updated.stock) } },
+  if (updated) await notifyBackInStock(productId, size);
+}
+
+// The marker and quantity change share one write, making cancellation retries safe.
+export async function restoreCancelledStock(
+  reservations: StockReservation[],
+  orderKey: string,
+): Promise<boolean> {
+  let complete = true;
+  for (const [index, item] of reservations.entries()) {
+    if (
+      !Number.isSafeInteger(item.qty) ||
+      item.qty < 1 ||
+      !item.size ||
+      !Number.isSafeInteger(item.id)
+    ) {
+      complete = false;
+      continue;
+    }
+    const key = `${orderKey}:${index}`;
+    const updated = await ProductModel.findOneAndUpdate(
+      { id: item.id, "variants.size": item.size, stockRestorations: { $ne: key } },
+      {
+        $inc: { "variants.$.stock": item.qty },
+        $set: { stock: true },
+        $addToSet: { stockRestorations: key },
+      },
+      { returnDocument: "after" },
     );
-    // A return/rollback is a genuine stock increase — notify like any admin restock.
-    await notifyBackInStock(productId, size);
+    if (updated) await notifyBackInStock(item.id, item.size);
+    else if (!(await ProductModel.exists({ id: item.id, stockRestorations: key })))
+      complete = false;
   }
+  return complete;
 }
 
 // Restocks variant stock on cancel/return; legacy unsized products are skipped
@@ -146,17 +217,33 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   if (input.idempotencyKey) {
     const existing = await OrderModel.findOne({
       idempotencyKey: input.idempotencyKey,
+      userId: input.userId,
     }).lean();
     if (existing) return { ok: true, order: toAdminOrder(existing) };
   }
 
-  const reservedStock: { id: number; size: string; qty: number }[] = [];
-  let couponReserved = false;
+  const subtotal = input.items.reduce((total, item) => total + item.price * item.qty, 0);
+  const discount = Math.round(subtotal * (input.discountRate ?? 0));
+  const afterDiscount = subtotal - discount;
+  const shipping = afterDiscount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
+  const total = afterDiscount + shipping;
+
+  if (
+    ![subtotal, discount, shipping, total].every(
+      (amount) => Number.isSafeInteger(amount) && amount >= 0,
+    )
+  ) {
+    throw new Error("Invalid order amount");
+  }
+
+  const reservedStock: StockReservation[] = [];
+  let couponReservationId: string | null = null;
 
   async function rollback() {
-    if (couponReserved && input.couponCode) {
-      couponReserved = false;
-      await releaseCouponUsage(input.couponCode);
+    if (couponReservationId) {
+      const reservationId = couponReservationId;
+      couponReservationId = null;
+      await releaseCouponUsage(reservationId);
     }
     for (const { id, size, qty } of reservedStock) await restockVariant(id, size, qty);
   }
@@ -175,18 +262,12 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
   // Reserve coupon usage before writing the order.
   if (input.couponCode) {
-    couponReserved = await reserveCouponUsage(input.couponCode);
-    if (!couponReserved) {
+    couponReservationId = await reserveCouponUsage(input.couponCode);
+    if (!couponReservationId) {
       await rollback();
       return { ok: false, outOfStock: "", couponExhausted: true };
     }
   }
-
-  const subtotal = input.items.reduce((total, item) => total + item.price * item.qty, 0);
-  const discount = Math.round(subtotal * (input.discountRate ?? 0));
-  const afterDiscount = subtotal - discount;
-  const shipping = afterDiscount >= BRAND.freeShipFrom ? 0 : SHIPPING_FEE;
-  const total = afterDiscount + shipping;
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
@@ -205,8 +286,10 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
         shipping,
         total,
         couponCode: input.couponCode,
+        couponReservationId: couponReservationId ?? undefined,
+        stockReservations: reservedStock,
         status: "جدید",
-        pay: "پرداخت‌شده",
+        pay: "در انتظار",
       });
 
       return { ok: true, order: toAdminOrder(doc.toObject()) };
@@ -219,6 +302,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       if (input.idempotencyKey && isDuplicateKeyError(error)) {
         const existing = await OrderModel.findOne({
           idempotencyKey: input.idempotencyKey,
+          userId: input.userId,
         }).lean();
         // The winner holds the one real reservation; this loser's was rolled back
         if (existing) return { ok: true, order: toAdminOrder(existing) };
@@ -234,7 +318,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
 export type SetOrderStatusResult =
   | { ok: true; order: AdminOrder }
-  | { ok: false; error: "not-found" | "invalid-transition" };
+  | { ok: false; error: "not-found" | "invalid-transition" | "conflict" };
 
 // The real enforcement boundary for ORDER_TRANSITIONS; restocks variant stock on a return.
 export async function setOrderStatus(
@@ -244,16 +328,18 @@ export async function setOrderStatus(
   await connectMongoose();
   const current = await OrderModel.findOne({ id }).lean();
   if (!current) return { ok: false, error: "not-found" };
+  if (status === "لغوشده" && current.status !== status)
+    return { ok: false, error: "invalid-transition" };
   if (!canTransitionOrder(current.status, status)) {
     return { ok: false, error: "invalid-transition" };
   }
 
   const doc = await OrderModel.findOneAndUpdate(
-    { id },
+    { id, status: current.status },
     { $set: { status } },
     { returnDocument: "after" },
   ).lean();
-  if (!doc) return { ok: false, error: "not-found" };
+  if (!doc) return { ok: false, error: "conflict" };
 
   if (status === "مرجوعی" && current.status !== "مرجوعی") {
     await restockOrderItems(current.items);
@@ -268,7 +354,9 @@ export const getHappyCustomerCount = unstable_cache(
     try {
       await connectMongoose();
       const ids = await OrderModel.distinct("userId", {
-        status: { $ne: "مرجوعی" },
+        status: { $nin: ["مرجوعی", "لغوشده"] },
+        pay: "پرداخت‌شده",
+        "payment.confirmedAt": { $exists: true },
       });
       return ids.length;
     } catch (err) {

@@ -1,8 +1,8 @@
 // Admin-panel domain model — shapes returned by admin actions/data
 
 export type OrderStatus =
-  "جدید" | "در حال آماده‌سازی" | "ارسال‌شده" | "تحویل‌شده" | "مرجوعی";
-export type PayStatus = "پرداخت‌شده" | "در انتظار" | "ناموفق";
+  "جدید" | "در حال آماده‌سازی" | "ارسال‌شده" | "تحویل‌شده" | "مرجوعی" | "لغوشده";
+export type PayStatus = "پرداخت‌شده" | "در انتظار" | "ناموفق" | "بازگشت به کیف پول";
 
 type AdminOrderItem = {
   id: number;
@@ -30,6 +30,15 @@ export type AdminOrder = {
   coupon?: string;
   status: OrderStatus;
   pay: PayStatus;
+  paymentVerified?: boolean;
+  paidAmount?: number;
+  paymentReference?: string;
+  paidAt?: string;
+  cancelledAt?: string;
+  cancellationReason?: string;
+  inventoryState?: "pending" | "done" | "review";
+  refundedAmount?: number;
+  refundReference?: string;
   note?: string;
 };
 

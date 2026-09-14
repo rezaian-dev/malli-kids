@@ -17,39 +17,39 @@ export function usePolling<T>(
 ): [T, Dispatch<SetStateAction<T>>, () => void] {
   const [data, setData] = useState(initial);
   const fetcherRef = useRef(fetcher);
+  const version = useRef(0);
   fetcherRef.current = fetcher;
 
-  // Stable by design — safe from listeners without re-subscribing
   const refresh = useCallback(() => {
-    fetcherRef.current().then((next) => setData(next));
+    const request = ++version.current;
+    fetcherRef
+      .current()
+      .then((next) => {
+        if (request === version.current) setData(next);
+      })
+      .catch(() => {});
+  }, []);
+
+  // A completed mutation invalidates older polling responses.
+  const update = useCallback<Dispatch<SetStateAction<T>>>((next) => {
+    version.current++;
+    setData(next);
   }, []);
 
   useEffect(() => {
     if (!enabled) return;
-    let active = true;
-
-    function run() {
-      fetcherRef.current().then((next) => {
-        if (active) setData(next);
-      });
-    }
-
-    run();
-    const id = setInterval(() => {
-      if (document.visibilityState === "visible") run();
-    }, intervalMs);
-
-    function onVisible() {
-      if (document.visibilityState === "visible") run();
-    }
+    refresh();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    const timer = setInterval(onVisible, intervalMs);
     document.addEventListener("visibilitychange", onVisible);
-
     return () => {
-      active = false;
-      clearInterval(id);
+      version.current++;
+      clearInterval(timer);
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [intervalMs, enabled]);
+  }, [intervalMs, enabled, refresh]);
 
-  return [data, setData, refresh];
+  return [data, update, refresh];
 }

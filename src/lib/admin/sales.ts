@@ -1,3 +1,4 @@
+import { isRevenueOrder } from "@/lib/shop/order-status";
 import type { AdminOrder } from "@/types";
 import { toFaDigits } from "@/lib/locale/fa";
 import { jalaliParts } from "@/lib/locale/jalali";
@@ -39,7 +40,7 @@ export type SalesPoint = {
 /** Paid, non-returned orders with a parseable date — the honest revenue base. */
 function revenueOrders(orders: AdminOrder[]) {
   return orders
-    .filter((o) => o.pay === "پرداخت‌شده" && o.status !== "مرجوعی")
+    .filter(isRevenueOrder)
     .map((o) => ({ o, p: parseJalali(o.date) }))
     .filter((x): x is { o: AdminOrder; p: Parsed } => x.p !== null);
 }

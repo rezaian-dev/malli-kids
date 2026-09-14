@@ -27,8 +27,7 @@ import { TicketThread } from "./ticket-thread";
 
 const TICKET_STATUS_CLS: Record<TicketStatus, string> = {
   open: "bg-gold/15 text-gold dark:bg-gold/20 dark:text-gold-light",
-  pending:
-    "bg-amber-500/10 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300",
+  pending: "bg-amber-500/10 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300",
   answered:
     "bg-emerald-500/10 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-300",
   closed: "bg-navy/8 text-navy/70 dark:bg-white/10 dark:text-ivory/70",
@@ -70,9 +69,7 @@ export function ProfileSupportPanel() {
   const [message, setMessage] = useState("");
   const [category, setCategory] = useState<TicketCategory>("other");
   const [priority, setPriority] = useState<TicketPriority>("normal");
-  const [errors, setErrors] = useState<{ subject?: string; message?: string }>(
-    {},
-  );
+  const [errors, setErrors] = useState<{ subject?: string; message?: string }>({});
   const [submitting, setSubmitting] = useState(false);
 
   function refresh() {
@@ -84,10 +81,8 @@ export function ProfileSupportPanel() {
   async function submit() {
     if (submitting) return;
     const next: { subject?: string; message?: string } = {};
-    if (subject.trim().length < 3)
-      next.subject = "موضوع باید حداقل ۳ حرف باشد.";
-    if (message.trim().length < 10)
-      next.message = "پیام باید حداقل ۱۰ حرف باشد.";
+    if (subject.trim().length < 3) next.subject = "موضوع باید حداقل ۳ حرف باشد.";
+    if (message.trim().length < 10) next.message = "پیام باید حداقل ۱۰ حرف باشد.";
     setErrors(next);
     if (Object.keys(next).length) return;
 
@@ -138,6 +133,14 @@ export function ProfileSupportPanel() {
         ) : null}
       </div>
 
+      <Button
+        type="button"
+        variant="outline"
+        className="w-fit rounded-full border-gold/25 text-navy dark:text-ivory"
+        onClick={() => window.dispatchEvent(new Event("support:open"))}
+      >
+        <Headphones className="size-4 text-gold-deep dark:text-gold" /> گفتگو با پشتیبانی
+      </Button>
       {compose ? (
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -145,9 +148,7 @@ export function ProfileSupportPanel() {
               <span className={FIELD_LABEL}>دسته‌بندی</span>
               <select
                 value={category}
-                onChange={(event) =>
-                  setCategory(event.target.value as TicketCategory)
-                }
+                onChange={(event) => setCategory(event.target.value as TicketCategory)}
                 className={cn(fieldClass(), "h-11")}
               >
                 {TICKET_CATEGORY_VALUES.map((value) => (
@@ -161,9 +162,7 @@ export function ProfileSupportPanel() {
               <span className={FIELD_LABEL}>اولویت</span>
               <select
                 value={priority}
-                onChange={(event) =>
-                  setPriority(event.target.value as TicketPriority)
-                }
+                onChange={(event) => setPriority(event.target.value as TicketPriority)}
                 className={cn(fieldClass(), "h-11")}
               >
                 {TICKET_PRIORITY_VALUES.map((value) => (
@@ -190,7 +189,11 @@ export function ProfileSupportPanel() {
               className={cn(fieldClass(errors.subject), "h-11")}
             />
             {errors.subject ? (
-              <p id="ticket-subject-error" role="alert" className="text-rose text-xs font-bold">
+              <p
+                id="ticket-subject-error"
+                role="alert"
+                className="text-rose text-xs font-bold"
+              >
                 {errors.subject}
               </p>
             ) : null}
@@ -211,7 +214,11 @@ export function ProfileSupportPanel() {
               className={cn(fieldClass(errors.message), "min-h-32 py-3")}
             />
             {errors.message ? (
-              <p id="ticket-message-error" role="alert" className="text-rose text-xs font-bold">
+              <p
+                id="ticket-message-error"
+                role="alert"
+                className="text-rose text-xs font-bold"
+              >
                 {errors.message}
               </p>
             ) : null}
@@ -240,18 +247,12 @@ export function ProfileSupportPanel() {
           </div>
         </div>
       ) : tickets.length === 0 ? (
-        <div
-          className="mt-6 rounded-2xl border border-dashed px-6 py-10 text-center border-navy/15 dark:border-gold/25"
-        >
+        <div className="mt-6 rounded-2xl border border-dashed px-6 py-10 text-center border-navy/15 dark:border-gold/25">
           <Headphones className="text-gold mx-auto size-9" />
-          <p className="text-navy dark:text-ivory mt-3 font-black">
-            هنوز تیکتی ندارید
-          </p>
-          <p
-            className="mx-auto mt-1 max-w-xs text-xs leading-6 text-navy/70 dark:text-wheat"
-          >
-            مشاوره سایز، پیگیری سفارش یا هر سوال دیگر — تیکت بسازید تا همین‌جا
-            پاسخ بگیرید.
+          <p className="text-navy dark:text-ivory mt-3 font-black">هنوز تیکتی ندارید</p>
+          <p className="mx-auto mt-1 max-w-xs text-xs leading-6 text-navy/70 dark:text-wheat">
+            مشاوره سایز، پیگیری سفارش یا هر سوال دیگر — تیکت بسازید تا همین‌جا پاسخ
+            بگیرید.
           </p>
         </div>
       ) : (
@@ -270,18 +271,12 @@ export function ProfileSupportPanel() {
                   aria-expanded={open}
                 >
                   <span className="min-w-0">
-                    <span
-                      className="block truncate text-sm font-black text-navy dark:text-ivory"
-                    >
+                    <span className="block truncate text-sm font-black text-navy dark:text-ivory">
                       {ticket.subject}
                     </span>
-                    <span
-                      className="mt-0.5 block text-[10px] font-bold text-navy/70 dark:text-wheat"
-                    >
+                    <span className="mt-0.5 block text-[10px] font-bold text-navy/70 dark:text-wheat">
                       {toFaDigits(
-                        ticket.number
-                          ? `#${ticket.number}`
-                          : `#${ticket.id.slice(-6)}`,
+                        ticket.number ? `#${ticket.number}` : `#${ticket.id.slice(-6)}`,
                       )}{" "}
                       · {TICKET_CATEGORY_LABEL[ticket.category]} ·{" "}
                       <span className={PRIORITY_CLS[ticket.priority]}>
@@ -299,9 +294,7 @@ export function ProfileSupportPanel() {
                     {TICKET_STATUS_META[ticket.status].customer}
                   </span>
                 </button>
-                {open ? (
-                  <TicketThread ticket={ticket} onSent={refresh} />
-                ) : null}
+                {open ? <TicketThread ticket={ticket} onSent={refresh} /> : null}
               </li>
             );
           })}

@@ -1,6 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { CancelOrderDialog } from "@/components/shared/cancel-order-dialog";
+import { toast } from "@/lib/toast";
+import { requestErrorMessage } from "@/lib/action-result";
+import { OrderPaymentPanel } from "./order-payment-panel";
+import { adminCancelOrderAction, retryOrderInventoryAction } from "../_lib/actions";
 import { FileDown, RotateCcw } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -21,9 +28,7 @@ function Row({ k, v, strong }: { k: string; v: string; strong?: boolean }) {
       <span className="text-navy/70 dark:text-wheat">{k}</span>
       <span
         className={
-          strong
-            ? "text-navy dark:text-ivory font-black"
-            : "text-navy dark:text-ivory"
+          strong ? "text-navy dark:text-ivory font-black" : "text-navy dark:text-ivory"
         }
       >
         {v}
@@ -37,11 +42,16 @@ export function OrderDetailSheet({
   order,
   onOpenChange,
   onStatusChange,
+  onChanged,
+  busy,
 }: {
   order: AdminOrder | null;
   onOpenChange: (open: boolean) => void;
   onStatusChange: (status: OrderStatus) => void;
+  onChanged: (order: AdminOrder) => void;
+  busy?: boolean;
 }) {
+  const [restoring, setRestoring] = useState(false);
   return (
     <Sheet open={!!order} onOpenChange={onOpenChange}>
       <SheetContent
@@ -51,15 +61,13 @@ export function OrderDetailSheet({
         {order ? (
           <>
             <SheetHeader className="pe-12 text-start">
-              <SheetTitle className="text-navy dark:text-ivory">
-                جزئیات سفارش
-              </SheetTitle>
+              <SheetTitle className="text-navy dark:text-ivory">جزئیات سفارش</SheetTitle>
               <SheetDescription className="text-navy/70 dark:text-wheat" dir="ltr">
                 {order.id}
               </SheetDescription>
             </SheetHeader>
 
-            {order.pay === "پرداخت‌شده" ? (
+            {order.paymentVerified ? (
               <div className="px-4">
                 <a
                   href={`/api/orders/${order.id}/invoice`}
@@ -72,9 +80,7 @@ export function OrderDetailSheet({
               </div>
             ) : null}
 
-            <div
-              className="mx-4 rounded-2xl border bg-white/70 p-3 border-navy/8 dark:border-gold/14 dark:bg-white/[0.035]"
-            >
+            <div className="mx-4 rounded-2xl border bg-white/70 p-3 border-navy/8 dark:border-gold/14 dark:bg-white/[0.035]">
               <p className="font-black">{order.customer}</p>
               <p className="text-navy/70 dark:text-wheat mt-1 text-xs" dir="ltr">
                 {order.phone}
@@ -90,6 +96,43 @@ export function OrderDetailSheet({
               </p>
             </div>
 
+            <OrderPaymentPanel key={order.id} order={order} onChanged={onChanged} />
+            {order.status === "لغوشده" && order.inventoryState !== "done" ? (
+              <div className="mx-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs leading-7 text-amber-800 dark:text-amber-200">
+                {order.inventoryState === "review"
+                  ? "موجودی این سفارش قدیمی یا تغییرکرده نیاز به بررسی دستی دارد؛ این بررسی فقط مربوط به کالاست."
+                  : "لغو سفارش ثبت شده، اما بازگردانی موجودی کامل نشده است؛ دوباره بررسی کنید."}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="mt-2 w-full"
+                  disabled={restoring}
+                  onClick={async () => {
+                    setRestoring(true);
+                    try {
+                      const result = await retryOrderInventoryAction(order.id);
+                      if (!result.ok) toast.error(result.error);
+                      else {
+                        onChanged(result.data);
+                        toast.info(
+                          result.data.inventoryState === "done"
+                            ? "موجودی بررسی و بازگردانی شد."
+                            : "موجودی نیاز به بررسی دستی دارد.",
+                        );
+                      }
+                    } catch {
+                      toast.error(requestErrorMessage());
+                    } finally {
+                      setRestoring(false);
+                    }
+                  }}
+                >
+                  <RotateCcw className="size-3.5" />{" "}
+                  {restoring ? "در حال بررسی…" : "بررسی بازگردانی موجودی"}
+                </Button>
+              </div>
+            ) : null}
             <Separator className="bg-navy/8 dark:bg-gold/15" />
             <ul className="space-y-2 px-4">
               {order.items.map((item) => (
@@ -117,14 +160,9 @@ export function OrderDetailSheet({
               ))}
             </ul>
 
-            <div
-              className="mx-4 space-y-2 rounded-2xl p-4 text-xs bg-navy/[0.035] dark:bg-white/[0.035]"
-            >
+            <div className="mx-4 space-y-2 rounded-2xl p-4 text-xs bg-navy/[0.035] dark:bg-white/[0.035]">
               <Row k="جمع کالا" v={formatToman(order.subtotal)} />
-              <Row
-                k="تخفیف"
-                v={order.discount ? formatToman(order.discount) : "—"}
-              />
+              <Row k="تخفیف" v={order.discount ? formatToman(order.discount) : "—"} />
               <Row
                 k="ارسال"
                 v={order.shipping ? formatToman(order.shipping) : "رایگان"}
@@ -134,26 +172,36 @@ export function OrderDetailSheet({
             </div>
 
             <div className="px-4 pb-5">
-              {order.status === "مرجوعی" ? (
+              {order.status === "مرجوعی" || order.status === "لغوشده" ? (
                 <p className="text-rose flex items-center gap-1.5 text-[10px] font-bold">
-                  <RotateCcw className="size-3" /> این سفارش در وضعیت مرجوعی
-                  قرار دارد و دیگر قابل تغییر نیست.
+                  <RotateCcw className="size-3" /> این سفارش نهایی شده و وضعیت آن قابل
+                  تغییر نیست.
                 </p>
               ) : (
                 <>
-                  <AdminFilterSelect
-                    label="تغییر وضعیت سفارش"
-                    value={order.status}
-                    onValueChange={(value) => onStatusChange(value as OrderStatus)}
-                    options={[
-                      { value: order.status, label: order.status },
-                      ...ORDER_TRANSITIONS[order.status].map((item) => ({
-                        value: item,
-                        label: item,
-                      })),
-                    ]}
-                    className="w-full xl:w-full"
-                  />
+                  <fieldset disabled={busy} className="min-w-0" aria-busy={busy}>
+                    <AdminFilterSelect
+                      label="تغییر وضعیت سفارش"
+                      value={order.status}
+                      onValueChange={(value) => onStatusChange(value as OrderStatus)}
+                      options={[
+                        { value: order.status, label: order.status },
+                        ...ORDER_TRANSITIONS[order.status].map((item) => ({
+                          value: item,
+                          label: item,
+                        })),
+                      ]}
+                      className="w-full xl:w-full"
+                    />
+                  </fieldset>
+                  <div className="mt-3">
+                    <CancelOrderDialog
+                      admin
+                      order={order}
+                      action={adminCancelOrderAction}
+                      onChanged={onChanged}
+                    />
+                  </div>
                   <p className="text-navy/60 dark:text-wheat/70 mt-2 text-[10px] font-bold">
                     فقط وضعیت‌های مجاز از وضعیت فعلی قابل انتخاب‌اند.
                   </p>

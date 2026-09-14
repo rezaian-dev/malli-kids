@@ -26,6 +26,8 @@ const ACTION_LABEL: Record<string, string> = {
   "customer.unban": "رفع مسدودی کاربر",
   "customer.remove": "حذف کاربر",
   "order.status": "تغییر وضعیت سفارش",
+  "order.payment": "تأیید دریافت وجه",
+  "order.cancel": "لغو سفارش و بازگشت وجه",
   "banner.publish": "انتشار بنر",
   "coupon.active": "فعال/غیرفعال‌سازی کد تخفیف",
   "product.price": "تغییر قیمت محصول",

@@ -24,17 +24,19 @@ const ProfileOrdersPanel = dynamic(
     loading: () => <ProfilePanelFallback title="سفارش‌های من" />,
   },
 );
+const ProfileWalletPanel = dynamic(
+  () => import("./profile-wallet-panel").then((mod) => mod.ProfileWalletPanel),
+  { ssr: false, loading: () => <ProfilePanelFallback title="کیف پول من" /> },
+);
 const ProfileWishlistPanel = dynamic(
-  () =>
-    import("./profile-wishlist-panel").then((mod) => mod.ProfileWishlistPanel),
+  () => import("./profile-wishlist-panel").then((mod) => mod.ProfileWishlistPanel),
   {
     ssr: false,
     loading: () => <ProfilePanelFallback title="علاقه‌مندی‌ها" />,
   },
 );
 const ProfileSupportPanel = dynamic(
-  () =>
-    import("./profile-support-panel").then((mod) => mod.ProfileSupportPanel),
+  () => import("./profile-support-panel").then((mod) => mod.ProfileSupportPanel),
   {
     ssr: false,
     loading: () => <ProfilePanelFallback title="پشتیبانی" />,
@@ -45,6 +47,7 @@ function readHashTab(): ProfileTab {
   if (typeof window === "undefined") return "info";
   const value = window.location.hash.replace("#", "");
   return value === "orders" ||
+    value === "wallet" ||
     value === "wishlist" ||
     value === "support" ||
     value === "info"
@@ -82,9 +85,7 @@ export function ProfileView() {
         <h1 className="text-navy dark:text-linen mb-3 text-2xl font-black">
           حساب کاربری
         </h1>
-        <p className="text-navy/70 mb-6">
-          برای دیدن سفارش‌ها و اطلاعات حساب وارد شوید.
-        </p>
+        <p className="text-navy/70 mb-6">برای دیدن سفارش‌ها و اطلاعات حساب وارد شوید.</p>
         <Button
           type="button"
           variant="navy"
@@ -112,7 +113,8 @@ export function ProfileView() {
       <ProfileTabs active={tab} onChange={go} />
 
       {tab === "info" ? <ProfileInfoPanel /> : null}
-      {tab === "orders" ? <ProfileOrdersPanel /> : null}
+      {tab === "orders" ? <ProfileOrdersPanel key={user.id ?? user.email} /> : null}
+      {tab === "wallet" ? <ProfileWalletPanel key={user.id ?? user.email} /> : null}
       {tab === "wishlist" ? <ProfileWishlistPanel /> : null}
       {tab === "support" ? <ProfileSupportPanel /> : null}
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { Banknote, Clock3, PackageCheck, ShoppingBag } from "lucide-react";
 
 import {
@@ -11,12 +11,13 @@ import {
   AdminTable,
 } from "@/components/admin";
 import { Pagination } from "@/components/ui/pagination";
-import { ORDER_FLOW } from "@/lib/shop/order-status";
+import { ORDER_FLOW, isRevenueOrder } from "@/lib/shop/order-status";
 import { usePagination } from "@/hooks/use-pagination";
 import { usePolling } from "@/hooks/use-polling";
 import { notifyAdminMutation } from "@/lib/admin/live";
 import { formatToman } from "@/lib/locale/fa";
 import { toast } from "@/lib/toast";
+import { requestErrorMessage } from "@/lib/action-result";
 import type { AdminOrder, OrderStatus } from "@/types";
 import { getAllOrdersAction, setOrderStatusAction } from "../_lib/actions";
 import { ORDER_COLUMNS } from "./order-columns";
@@ -28,27 +29,35 @@ const POLL_MS = 8_000;
 type StatusFilter = "all" | OrderStatus;
 type SortFilter = "newest" | "amount-desc" | "amount-asc" | "items";
 
-export function AdminOrdersLanding({
-  orders: initialOrders,
-}: {
-  orders: AdminOrder[];
-}) {
-  const [all, , refreshOrders] = usePolling(
+export function AdminOrdersLanding({ orders: initialOrders }: { orders: AdminOrder[] }) {
+  const [all, setAll, refreshOrders] = usePolling(
     getAllOrdersAction,
     POLL_MS,
     initialOrders,
   );
-  const [, startTransition] = useTransition();
+  const [pending, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [city, setCity] = useState("all");
   const [sort, setSort] = useState<SortFilter>("newest");
   const [open, setOpen] = useState<AdminOrder | null>(null);
+  useEffect(() => {
+    setOpen((current) =>
+      current ? (all.find((order) => order.id === current.id) ?? current) : null,
+    );
+  }, [all]);
+
+  function applyOrder(order: AdminOrder) {
+    setAll((current) => current.map((item) => (item.id === order.id ? order : item)));
+    setOpen(order);
+    refreshOrders();
+    notifyAdminMutation();
+  }
 
   const cities = useMemo(
     () =>
-      Array.from(new Set(all.map((order) => order.city).filter(Boolean))).sort(
-        (a, b) => a.localeCompare(b, "fa"),
+      Array.from(new Set(all.map((order) => order.city).filter(Boolean))).sort((a, b) =>
+        a.localeCompare(b, "fa"),
       ),
     [all],
   );
@@ -84,12 +93,11 @@ export function AdminOrdersLanding({
     Number(city !== "all") +
     Number(sort !== "newest");
   const totalSales = all
-    .filter((order) => order.status !== "مرجوعی")
+    .filter(isRevenueOrder)
     .reduce((sum, order) => sum + order.total, 0);
   const newCount = all.filter((order) => order.status === "جدید").length;
   const inProgress = all.filter(
-    (order) =>
-      order.status === "در حال آماده‌سازی" || order.status === "ارسال‌شده",
+    (order) => order.status === "در حال آماده‌سازی" || order.status === "ارسال‌شده",
   ).length;
   const completed = all.filter((order) => order.status === "تحویل‌شده").length;
 
@@ -117,7 +125,7 @@ export function AdminOrdersLanding({
             tone: "emerald",
           },
           {
-            label: "ارزش سفارش‌ها",
+            label: "پرداخت تأییدشده",
             value: `${formatToman(totalSales)} ت`,
             Icon: Banknote,
             tone: "blue",
@@ -186,19 +194,23 @@ export function AdminOrdersLanding({
       <OrderDetailSheet
         order={open}
         onOpenChange={(value) => !value && setOpen(null)}
+        onChanged={applyOrder}
+        busy={pending}
         onStatusChange={(next) => {
-          if (!open) return;
+          if (!open || pending) return;
           const current = open;
-          setOpen({ ...current, status: next });
           startTransition(async () => {
-            const result = await setOrderStatusAction(current.id, next);
-            if (result.ok) {
-              toast.success("وضعیت سفارش تغییر کرد", { description: next });
-              refreshOrders();
-              notifyAdminMutation();
-            } else {
-              setOpen(current);
-              toast.error(result.error);
+            try {
+              const result = await setOrderStatusAction(current.id, next);
+              if (result.ok) {
+                applyOrder(result.data);
+                toast.success("وضعیت سفارش تغییر کرد", { description: next });
+              } else {
+                refreshOrders();
+                toast.error(result.error);
+              }
+            } catch {
+              toast.error(requestErrorMessage());
             }
           });
         }}

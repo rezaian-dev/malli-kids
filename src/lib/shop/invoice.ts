@@ -31,11 +31,13 @@ const PAY_LABEL: Record<OrderDoc["pay"], string> = {
   پرداخت‌شده: "پرداخت‌شده",
   "در انتظار": "در انتظار پرداخت",
   ناموفق: "پرداخت ناموفق",
+  "بازگشت به کیف پول": "بازگشت به کیف پول",
 };
 const PAY_TONE: Record<OrderDoc["pay"], string> = {
   پرداخت‌شده: "#0f7a4d",
   "در انتظار": "#b8893f",
   ناموفق: "#c22b4d",
+  "بازگشت به کیف پول": "#0f7a4d",
 };
 
 function escapeHtml(value: string): string {
@@ -307,6 +309,8 @@ function renderInvoiceHtml(order: OrderDoc & { createdAt: Date }): string {
       <span class="status-pill"><span class="dot"></span>وضعیتِ پرداخت: ${PAY_LABEL[order.pay]}</span>
       <span>وضعیتِ سفارش: ${escapeHtml(order.status)}</span>
     </div>
+
+    ${order.walletRefund ? `<div class="card" style="margin-top:18px"><h3>بازگشت وجه</h3><p>${formatToman(order.walletRefund.amount)} تومان به کیف پول مشتری افزوده شده است.</p><p dir="ltr">${escapeHtml(order.walletRefund.reference)}</p></div>` : ""}
 
     <div class="foot">
       <span>${escapeHtml(BRAND.nameFa)} — ${escapeHtml(BRAND.phoneFa)}</span>

@@ -48,9 +48,7 @@ export const ORDER_COLUMNS: AdminCol<AdminOrder>[] = [
     align: "center",
     hideTablet: true,
     render: (order) => (
-      <span className="text-navy/70 dark:text-wheat whitespace-nowrap">
-        {order.date}
-      </span>
+      <span className="text-navy/70 dark:text-wheat whitespace-nowrap">{order.date}</span>
     ),
   },
   {
@@ -70,6 +68,30 @@ export const ORDER_COLUMNS: AdminCol<AdminOrder>[] = [
     render: (order) => (
       <span className="text-gold-deep dark:text-gold-soft font-black whitespace-nowrap">
         {formatToman(order.total)} ت
+      </span>
+    ),
+  },
+  {
+    key: "pay",
+    title: "پرداخت",
+    width: "9rem",
+    align: "center",
+    render: (order) => (
+      <span
+        className={cn(
+          "inline-block rounded-full px-2 py-1 text-[10px] font-bold",
+          order.paymentVerified
+            ? "bg-emerald-500/8 text-emerald-700 dark:text-emerald-300"
+            : "bg-gold/10 text-gold-deep dark:text-gold-soft",
+        )}
+      >
+        {order.refundedAmount
+          ? "به کیف پول برگشت"
+          : order.paymentVerified
+            ? "تأییدشده"
+            : order.pay === "پرداخت‌شده"
+              ? "نیاز به بررسی"
+              : "در انتظار تأیید"}
       </span>
     ),
   },

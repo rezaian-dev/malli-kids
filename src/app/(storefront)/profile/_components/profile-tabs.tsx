@@ -1,4 +1,4 @@
-import { Headphones, Heart, Pencil, ShoppingBag } from "lucide-react";
+import { Headphones, Heart, Pencil, ShoppingBag, WalletCards } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ProfileTab } from "@/lib/profile-nav";
 
@@ -6,6 +6,7 @@ export type { ProfileTab };
 
 const TABS = [
   { id: "orders", label: "سفارش‌های من", Icon: ShoppingBag },
+  { id: "wallet", label: "کیف پول من", Icon: WalletCards },
   { id: "wishlist", label: "علاقه‌مندی‌ها", Icon: Heart },
   { id: "support", label: "پشتیبانی", Icon: Headphones },
   { id: "info", label: "اطلاعات حساب", Icon: Pencil },

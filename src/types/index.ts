@@ -5,3 +5,5 @@ export * from "./user";
 export * from "./festive";
 export * from "./pagination";
 export * from "./admin";
+
+export * from "./wallet";

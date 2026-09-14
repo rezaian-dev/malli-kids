@@ -1,6 +1,7 @@
 // Authenticated customer profile (account area, checkout prefill).
 
 export type User = {
+  id?: string;
   firstName: string;
   lastName?: string;
   email: string;

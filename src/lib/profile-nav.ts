@@ -1,5 +1,5 @@
 // Dispatch hashchange after Link's pushState navigation.
-export type ProfileTab = "info" | "orders" | "wishlist" | "support";
+export type ProfileTab = "info" | "orders" | "wallet" | "wishlist" | "support";
 
 export const PROFILE_TAB_EVENT = "profile:tab";
 

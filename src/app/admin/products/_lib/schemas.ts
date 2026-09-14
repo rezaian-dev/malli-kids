@@ -31,7 +31,14 @@ export const productSchema = z.object({
   images: z.array(z.string().min(1)).min(1).max(6),
   stock: z.boolean(),
   // Empty for legacy/unsized products — stock keeps its old meaning
-  variants: z.array(productVariantSchema).max(40).default([]),
+  variants: z
+    .array(productVariantSchema)
+    .max(40)
+    .default([])
+    .refine(
+      (rows) => new Set(rows.map((row) => row.size)).size === rows.length,
+      "سایز تکراری مجاز نیست.",
+    ),
   // Accept zero-based product IDs and limit manual pairings.
   pairsWith: z.array(z.number().int().min(0)).max(6).default([]),
   seoTitle: z.string().trim().max(70).optional(),

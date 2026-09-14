@@ -21,7 +21,29 @@ export async function getAllCustomers(): Promise<AdminCustomer[]> {
     Profile.find({ userId: { $in: userIds } }).lean(),
     OrderModel.aggregate<{ _id: string; orders: number; spent: number }>([
       { $match: { userId: { $in: userIds } } },
-      { $group: { _id: "$userId", orders: { $sum: 1 }, spent: { $sum: "$total" } } },
+      {
+        $group: {
+          _id: "$userId",
+          orders: { $sum: 1 },
+          spent: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ["$pay", "پرداخت‌شده"] },
+                    { $ne: ["$status", "لغوشده"] },
+                    { $ne: ["$status", "مرجوعی"] },
+                    { $ne: [{ $type: "$payment.confirmedAt" }, "missing"] },
+                    { $eq: ["$payment.amount", "$total"] },
+                  ],
+                },
+                "$total",
+                0,
+              ],
+            },
+          },
+        },
+      },
     ]),
   ]);
 

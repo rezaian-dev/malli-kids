@@ -1,5 +1,7 @@
 "use client";
 
+import { isRevenueOrder } from "@/lib/shop/order-status";
+
 import Image from "next/image";
 
 import Link from "next/link";
@@ -37,9 +39,7 @@ export function DashboardLanding({
     activeCustomers: initialCustomers,
   });
   const { orders, products, activeCustomers } = live;
-  const sales = orders
-    .filter((o) => o.pay === "پرداخت‌شده" && o.status !== "مرجوعی")
-    .reduce((s, o) => s + o.total, 0);
+  const sales = orders.filter(isRevenueOrder).reduce((s, o) => s + o.total, 0);
   const avg = orders.length ? Math.round(sales / orders.length) : 0;
   // Variant-aware attention: per-size stock, boolean fallback for legacy
   const low = products.reduce((count, p) => {
@@ -77,9 +77,7 @@ export function DashboardLanding({
           sizes="100vw"
           className="absolute inset-0 size-full object-cover opacity-20"
         />
-        <div
-          className="absolute inset-0 from-navy-deep via-navy-deep/90 to-navy/75 bg-linear-to-l"
-        />
+        <div className="absolute inset-0 from-navy-deep via-navy-deep/90 to-navy/75 bg-linear-to-l" />
         <div className="relative grid gap-4 p-5 sm:grid-cols-2 sm:p-7 xl:grid-cols-4">
           <Stat
             t="فروش این ماه"
@@ -114,9 +112,7 @@ export function DashboardLanding({
 
         {/* Category share */}
         <section className={cn(adminGlassCard, "p-5 sm:p-6")}>
-          <h2 className="text-navy dark:text-ivory mb-5 font-black">
-            سهم دسته‌ها
-          </h2>
+          <h2 className="text-navy dark:text-ivory mb-5 font-black">سهم دسته‌ها</h2>
           {["دخترانه", "پسرانه", "سیسمونی", "دستدوز"].map((c, i) => {
             const n = products.filter((p) => p.cat === c).length;
             const pct = Math.round((n / Math.max(1, products.length)) * 100);
@@ -198,9 +194,7 @@ export function DashboardLanding({
             width: "9rem",
             align: "center",
             render: (order) => (
-              <span className={HIGHLIGHT_TEXT}>
-                {formatToman(order.total)} ت
-              </span>
+              <span className={HIGHLIGHT_TEXT}>{formatToman(order.total)} ت</span>
             ),
           },
           {
@@ -209,9 +203,7 @@ export function DashboardLanding({
             width: "8rem",
             align: "center",
             render: (order) => (
-              <Badge
-                className={cn("rounded-lg border-0", statusTone(order.status))}
-              >
+              <Badge className={cn("rounded-lg border-0", statusTone(order.status))}>
                 {order.status}
               </Badge>
             ),
@@ -238,9 +230,7 @@ function Stat({
   warn?: boolean;
 }) {
   return (
-    <article
-      className="rounded-[22px] border p-4 backdrop-blur-sm max-[639px]:rounded-[19px] border-gold/20 bg-navy-deep/55"
-    >
+    <article className="rounded-[22px] border p-4 backdrop-blur-sm max-[639px]:rounded-[19px] border-gold/20 bg-navy-deep/55">
       <div className="flex items-start justify-between">
         <p className="text-wheat text-[11px] font-black">{t}</p>
         <span
