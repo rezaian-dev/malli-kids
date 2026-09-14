@@ -10,11 +10,10 @@ import { formatToman } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
 export function WalletLink({
-  menu = false,
   className,
   onClick,
   ...props
-}: Omit<ComponentProps<typeof Link>, "href"> & { menu?: boolean }) {
+}: Omit<ComponentProps<typeof Link>, "href">) {
   const { user } = useAuth();
   const { data, loading, error } = useWallet();
   if (!user) return null;
@@ -23,6 +22,7 @@ export function WalletLink({
     : loading
       ? "در حال دریافت…"
       : "موجودی در دسترس نیست";
+
   return (
     <Link
       {...props}
@@ -36,41 +36,26 @@ export function WalletLink({
       className={cn(
         className,
         "group border-gold/25 text-navy dark:text-ivory focus-visible:ring-gold/60 items-center border outline-none transition-colors focus-visible:ring-2",
-        menu
-          ? "from-gold/15 to-gold/5 mx-3 mt-3 flex gap-3 rounded-2xl bg-linear-to-l px-3 py-3 hover:bg-gold/15 dark:from-gold/12 dark:to-transparent"
-          : "hidden h-9 w-21 shrink-0 gap-1.5 rounded-full bg-gold/8 px-2 min-[480px]:inline-flex md:hidden lg:inline-flex lg:h-10 hover:bg-gold/15",
+        "from-gold/15 to-gold/5 mx-3 mt-3 flex gap-3 rounded-2xl bg-linear-to-l px-3 py-3 hover:bg-gold/15 dark:from-gold/12 dark:to-transparent",
       )}
     >
-      <span
-        className={cn(
-          "text-gold-deep dark:text-gold shrink-0",
-          menu && "bg-gold/15 grid size-9 place-items-center rounded-xl",
-        )}
-      >
-        <Wallet className={menu ? "size-4.5" : "size-4"} />
+      <span className="text-gold-deep dark:text-gold bg-gold/15 grid size-9 shrink-0 place-items-center rounded-xl">
+        <Wallet className="size-4.5" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className={cn("block font-bold", menu ? "text-[11px]" : "text-[9px]")}>
-          کیف پول من
-        </span>
+        <span className="block text-[11px] font-bold">کیف پول من</span>
         {loading && !data ? (
           <span
             aria-hidden
             className="bg-gold/20 mt-1 block h-2 w-10 rounded-full motion-safe:animate-pulse"
           />
         ) : (
-          <span
-            className={cn(
-              "mt-0.5 block truncate font-black",
-              menu ? "text-xs" : "text-[9px]",
-            )}
-            dir="rtl"
-          >
-            {data ? (menu ? balance : `${formatToman(data.balance)} ت`) : "—"}
+          <span className="mt-0.5 block truncate text-xs font-black" dir="rtl">
+            {data ? balance : "—"}
           </span>
         )}
       </span>
-      {menu ? <ArrowUpLeft className="text-gold-deep dark:text-gold size-4" /> : null}
+      <ArrowUpLeft className="text-gold-deep dark:text-gold size-4" />
     </Link>
   );
 }

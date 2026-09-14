@@ -62,7 +62,7 @@ export default function UserAccountMenu({
           </div>
         </div>
         <DropdownMenuItem asChild className="p-0 focus:bg-transparent">
-          <WalletLink menu />
+          <WalletLink />
         </DropdownMenuItem>
         <div className="flex flex-col px-3 py-2">
           <DropdownMenuItem asChild className={MENU_ITEM}>
