@@ -121,66 +121,75 @@ export function ProductGallery({
             </span>
           ) : null}
         </div>
-        <SliderArrow
-          chevron
-          direction="prev"
-          label="قبلی"
-          onClick={() => go(slide - 1, -1)}
-          className="absolute inset-s-3 top-1/2 z-10 -translate-y-1/2"
-        />
-        <SliderArrow
-          chevron
-          direction="next"
-          label="بعدی"
-          onClick={() => go(slide + 1, 1)}
-          className="absolute inset-e-3 top-1/2 z-10 -translate-y-1/2"
-        />
-        <div className="absolute inset-x-0 bottom-7 z-10 flex justify-center gap-1.5">
-          {images.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              aria-label={`اسلاید ${i + 1}`}
-              onClick={() => go(i, i > slide ? 1 : -1)}
-              className="flex h-6 min-w-6 items-center justify-center rounded-full transition-transform duration-150 motion-safe:hover:scale-125 motion-safe:active:scale-90"
-            >
-              <span
+        {multi ? (
+          <>
+            <SliderArrow
+              chevron
+              direction="prev"
+              label="قبلی"
+              onClick={() => go(slide - 1, -1)}
+              className="absolute inset-s-3 top-1/2 z-10 -translate-y-1/2"
+            />
+            <SliderArrow
+              chevron
+              direction="next"
+              label="بعدی"
+              onClick={() => go(slide + 1, 1)}
+              className="absolute inset-e-3 top-1/2 z-10 -translate-y-1/2"
+            />
+          </>
+        ) : null}
+        {multi ? (
+          <div className="absolute inset-x-0 bottom-7 z-10 flex justify-center gap-1.5">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`اسلاید ${i + 1}`}
+                aria-current={i === slide || undefined}
+                onClick={() => go(i, i > slide ? 1 : -1)}
+                className="flex h-6 min-w-6 items-center justify-center rounded-full transition-transform duration-150 motion-safe:hover:scale-125 motion-safe:active:scale-90"
+              >
+                <span
+                  className={cn(
+                    "h-2 rounded-full transition-[width,background-color] duration-300",
+                    i === slide ? "bg-gold w-6" : "w-2 bg-white/70",
+                  )}
+                />
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+      {multi ? (
+        <div className={cn(pdpCard, "mt-3 p-2")}>
+          <div className="flex gap-2 overflow-x-auto pb-0.5">
+            {images.map((src, i) => (
+              <button
+                key={src}
+                type="button"
+                onClick={() => go(i, i > slide ? 1 : -1)}
+                aria-label={`تصویر ${i + 1} ${name}`}
+                aria-current={i === slide || undefined}
                 className={cn(
-                  "h-2 rounded-full transition-[width,background-color] duration-300",
-                  i === slide ? "bg-gold w-6" : "w-2 bg-white/70",
+                  "size-14 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 motion-safe:hover:-translate-y-0.5 sm:size-18 sm:rounded-2xl",
+                  i === slide
+                    ? "border-gold ring-gold/30 ring-2"
+                    : "border-navy/10 dark:border-gold/20 opacity-70 hover:opacity-100",
                 )}
-              />
-            </button>
-          ))}
+              >
+                <Image
+                  src={src}
+                  alt=""
+                  width={96}
+                  height={96}
+                  className="size-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className={cn(pdpCard, "mt-3 p-2")}>
-        <div className="flex gap-2 overflow-x-auto pb-0.5">
-          {images.map((src, i) => (
-            <button
-              key={src}
-              type="button"
-              onClick={() => go(i, i > slide ? 1 : -1)}
-              aria-label={`تصویر ${i + 1} ${name}`}
-              aria-current={i === slide || undefined}
-              className={cn(
-                "size-14 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 motion-safe:hover:-translate-y-0.5 sm:size-18 sm:rounded-2xl",
-                i === slide
-                  ? "border-gold ring-gold/30 ring-2"
-                  : "border-navy/10 dark:border-gold/20 opacity-70 hover:opacity-100",
-              )}
-            >
-              <Image
-                src={src}
-                alt=""
-                width={96}
-                height={96}
-                className="size-full object-cover"
-              />
-            </button>
-          ))}
-        </div>
-      </div>
+      ) : null}
     </div>
   );
 }

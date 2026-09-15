@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Gift, Ticket } from "lucide-react";
 import { useCampaign } from "@/providers/campaign-provider";
 import { toFaDigits } from "@/lib/locale/fa";
-import { cn } from "@/lib/utils";
+import { cn, isSafeHref } from "@/lib/utils";
 import type { FestiveTheme } from "@/types";
 import { FestiveDecor } from "./festive-decor";
 import { Gem3D, Gift3D } from "./festive-ornaments";
@@ -117,7 +117,8 @@ export function FestiveBannerBody() {
             </span>
           ) : null}
           <Link
-            href={banner.href}
+            // Rows predating href validation fall back to the shop.
+            href={isSafeHref(banner.href) ? banner.href : "/shop"}
             prefetch={false}
             className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-black transition-[filter,box-shadow] duration-200 sm:px-6 sm:text-[13px] from-gold-light via-gold to-gold-deep text-navy-deep bg-linear-to-b shadow-[0_10px_22px_-8px_rgba(130,88,31,.8),inset_0_1px_0_rgb(255_255_255/.65),inset_0_-2px_4px_rgb(4_20_39/.3)] hover:shadow-[0_12px_26px_-8px_rgba(130,88,31,.9),inset_0_1px_0_rgb(255_255_255/.65),inset_0_-2px_4px_rgb(4_20_39/.3)] hover:brightness-110 active:brightness-95"
           >

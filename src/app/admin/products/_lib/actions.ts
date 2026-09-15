@@ -27,6 +27,11 @@ export async function getAllProductsAction(): Promise<Product[]> {
 
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 const AUTH_ERROR = "برای این کار باید ادمین وارد شده باشید.";
+// The UI bulk-selects visible rows (dozens); reject oversized payloads outright.
+const MAX_BULK_ITEMS = 200;
+const TOO_MANY_ERROR = "تعداد موارد انتخاب‌شده بیش از حد مجاز است.";
+// Parity with productSchema — variant quantities above this are data entry errors.
+const MAX_VARIANT_STOCK = 100_000;
 
 function revalidateCatalog() {
   revalidatePath("/admin/products");
@@ -149,7 +154,9 @@ export async function removeProductAction(id: number): Promise<ActionResult> {
   }
 }
 
-// Legacy boolean toggle — still the whole story for variant-less products
+// Legacy boolean toggle — still the whole story for variant-less products.
+// For sized products the boolean stays derived: a manual flag that disagrees
+// with the variants would desynchronize availability, so recompute instead.
 export async function setProductStockAction(
   id: number,
   stock: boolean,
@@ -159,9 +166,15 @@ export async function setProductStockAction(
 
   try {
     await connectMongoose();
-    await ProductModel.updateOne({ id }, { $set: { stock } });
+    const doc = await ProductModel.findOne({ id })
+      .select("variants stock")
+      .lean();
+    if (!doc) return { ok: false, error: "محصول پیدا نشد." };
+    const next =
+      doc.variants.length > 0 ? deriveStock(doc.variants, doc.stock) : stock;
+    await ProductModel.updateOne({ id }, { $set: { stock: next } });
     revalidateCatalog();
-    if (stock) await notifyBackInStock(id);
+    if (next) await notifyBackInStock(id);
     return { ok: true };
   } catch {
     return { ok: false, error: FALLBACK_ERROR };
@@ -174,7 +187,7 @@ export async function setVariantStockAction(
   size: string,
   stock: number,
 ): Promise<ActionResult> {
-  if (!Number.isInteger(stock) || stock < 0)
+  if (!Number.isInteger(stock) || stock < 0 || stock > MAX_VARIANT_STOCK)
     return { ok: false, error: FALLBACK_ERROR };
 
   const admin = await requireAdmin();
@@ -189,9 +202,12 @@ export async function setVariantStockAction(
     );
     if (!updated) return { ok: false, error: "این تنوع پیدا نشد." };
 
+    // Recompute from live variants — deriving from the just-read document
+    // could clobber a purchase that lands between the two writes.
     await ProductModel.updateOne(
       { id },
-      { $set: { stock: deriveStock(updated.variants, updated.stock) } },
+      [{ $set: { stock: { $gt: [{ $sum: "$variants.stock" }, 0] } } }],
+      { updatePipeline: true },
     );
 
     revalidateCatalog();
@@ -202,29 +218,47 @@ export async function setVariantStockAction(
   }
 }
 
-// Same quantity on one size across several products (e.g. a shipment)
+// Same quantity on one size across several products (e.g. a shipment).
+// All-or-nothing on malformed entries: a silent skip would leave the admin
+// believing every row applied.
 export async function bulkSetVariantStockAction(
   updates: { id: number; size: string; stock: number }[],
 ): Promise<ActionResult> {
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
   if (!updates.length) return { ok: true };
+  if (updates.length > MAX_BULK_ITEMS)
+    return { ok: false, error: TOO_MANY_ERROR };
+  const malformed = updates.some(
+    (update) =>
+      !Number.isInteger(update.id) ||
+      typeof update.size !== "string" ||
+      update.size.trim().length < 1 ||
+      update.size.trim().length > 20 ||
+      !Number.isInteger(update.stock) ||
+      update.stock < 0 ||
+      update.stock > MAX_VARIANT_STOCK,
+  );
+  if (malformed) return { ok: false, error: FALLBACK_ERROR };
 
   try {
     await connectMongoose();
     for (const { id, size, stock } of updates) {
-      if (!Number.isInteger(stock) || stock < 0) continue;
+      // Stored sizes are trimmed at write time — match on the trimmed key.
+      const sizeKey = size.trim();
       const updated = await ProductModel.findOneAndUpdate(
-        { id, "variants.size": size },
+        { id, "variants.size": sizeKey },
         { $set: { "variants.$.stock": stock } },
         { new: true },
       );
       if (updated) {
+        // Recompute from live variants (see setVariantStockAction).
         await ProductModel.updateOne(
           { id },
-          { $set: { stock: deriveStock(updated.variants, updated.stock) } },
+          [{ $set: { stock: { $gt: [{ $sum: "$variants.stock" }, 0] } } }],
+          { updatePipeline: true },
         );
-        if (stock > 0) await notifyBackInStock(id, size);
+        if (stock > 0) await notifyBackInStock(id, sizeKey);
       }
     }
     revalidateCatalog();
@@ -241,6 +275,9 @@ export async function bulkSetProductVisibilityAction(
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
   if (!ids.length) return { ok: true };
+  if (ids.length > MAX_BULK_ITEMS) return { ok: false, error: TOO_MANY_ERROR };
+  if (ids.some((id) => !Number.isInteger(id)))
+    return { ok: false, error: FALLBACK_ERROR };
 
   try {
     await connectMongoose();
@@ -259,6 +296,9 @@ export async function bulkSetProductFeaturedAction(
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
   if (!ids.length) return { ok: true };
+  if (ids.length > MAX_BULK_ITEMS) return { ok: false, error: TOO_MANY_ERROR };
+  if (ids.some((id) => !Number.isInteger(id)))
+    return { ok: false, error: FALLBACK_ERROR };
 
   try {
     await connectMongoose();
@@ -276,17 +316,20 @@ export async function bulkRemoveProductsAction(
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
   if (!ids.length) return { ok: true };
+  if (ids.length > MAX_BULK_ITEMS) return { ok: false, error: TOO_MANY_ERROR };
+  if (ids.some((id) => !Number.isInteger(id)))
+    return { ok: false, error: FALLBACK_ERROR };
 
   try {
     await connectMongoose();
-    await ProductModel.deleteMany({ id: { $in: ids } });
+    const removed = await ProductModel.deleteMany({ id: { $in: ids } });
     revalidateCatalog();
     await logAudit({
       actor: admin,
       action: "product.remove",
       targetType: "product",
       targetId: ids.join(","),
-      summary: `${ids.length} محصول به‌صورت گروهی حذف شد`,
+      summary: `${removed.deletedCount} محصول به‌صورت گروهی حذف شد`,
     });
     return { ok: true };
   } catch {

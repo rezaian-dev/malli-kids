@@ -94,19 +94,30 @@ export function absoluteUrl(path = "/") {
   return new URL(safePath, `${getSiteUrl()}/`).toString();
 }
 
+// Crawlers fetch metadata/structured-data images over HTTP — data: URLs are
+// neither fetchable nor valid there, and would bloat <head> by ~1MB per page.
+export function crawlableImage(
+  image: string | undefined,
+  fallback: string,
+): string {
+  if (!image || image.startsWith("data:")) return fallback;
+  return image;
+}
+
 // Keep OG images consistent and explicit.
 function buildOgImage(
   image: string = SEO.defaultImage,
   alt: string = SEO.defaultImageAlt,
 ) {
-  const isDefault = image === SEO.defaultImage;
+  const safe = crawlableImage(image, SEO.defaultImage);
+  const isDefault = safe === SEO.defaultImage;
   return {
-    url: image,
+    url: safe,
     alt,
     type:
-      image.endsWith(".jpg") || image.endsWith(".jpeg")
+      safe.endsWith(".jpg") || safe.endsWith(".jpeg")
         ? "image/jpeg"
-        : image.endsWith(".webp")
+        : safe.endsWith(".webp")
           ? "image/webp"
           : "image/png",
     ...(isDefault ? { width: SEO.ogWidth, height: SEO.ogHeight } : {}),
@@ -149,6 +160,7 @@ export function buildMetadata({
     TITLE_MAX,
   );
   const fullImageAlt = imageAlt ?? ogTitle;
+  const safeImage = crawlableImage(image, SEO.defaultImage);
 
   return {
     title: toMetadataTitle(title, absoluteTitle),
@@ -163,13 +175,13 @@ export function buildMetadata({
       siteName: SEO.siteNameFa,
       locale: SEO.locale,
       type,
-      images: [buildOgImage(image, fullImageAlt)],
+      images: [buildOgImage(safeImage, fullImageAlt)],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description: desc,
-      images: [image],
+      images: [safeImage],
     },
   };
 }
@@ -358,7 +370,7 @@ export function productSchema(product: Product, reviews: { rate: number }[] = []
     "@type": "Product",
     name: product.name,
     description: product.desc,
-    image: [absoluteUrl(product.img)],
+    image: [absoluteUrl(crawlableImage(product.img, SEO.defaultImage))],
     url,
     sku: `MK-${product.id}`,
     category: product.cat,
@@ -391,7 +403,7 @@ export function articleSchema(
     "slug" | "title" | "excerpt" | "cover" | "publishedAt" | "updatedAt" | "tags"
   >,
 ) {
-  const image = article.cover || SEO.defaultImage;
+  const image = crawlableImage(article.cover, SEO.defaultImage);
 
   return {
     "@context": "https://schema.org",

@@ -43,7 +43,7 @@ export function ProductReviewForm({
   }
 
   async function onValid(values: typeof reviewDefaults) {
-    const result = await submitReviewAction(product.id, product.name, values);
+    const result = await submitReviewAction(product.id, values);
     if (!result.ok) {
       toast.error(result.error);
       return;

@@ -118,6 +118,14 @@ function CartEmptySheet() {
   );
 }
 
+// Explicit hydration contract — an incomplete or failed cart must never look ready.
+export type CartHydrationStatus =
+  | "idle"
+  | "loading"
+  | "success"
+  | "partial"
+  | "error";
+
 export function CartSheet() {
   const cart = useCartStore((state) => state.cart);
   const setCartQty = useCartStore((state) => state.setCartQty);
@@ -133,8 +141,9 @@ export function CartSheet() {
   // Pre-fetch products whenever the cart itself changes (not when the sheet
   // opens), so the data is already sitting there by the time the user clicks.
   const [products, setProducts] = useState<Product[]>([]);
-  const [productsReady, setProductsReady] = useState(() => cart.length === 0);
-  const [productsError, setProductsError] = useState(false);
+  const [hydrationStatus, setHydrationStatus] = useState<CartHydrationStatus>(
+    () => (cart.length === 0 ? "success" : "idle"),
+  );
   const [productsReloadKey, setProductsReloadKey] = useState(0);
   const idsKey = cart.map((item) => item.id).join(",");
   const chunkWarmed = useRef(false);
@@ -142,30 +151,32 @@ export function CartSheet() {
   useEffect(() => {
     if (!idsKey) {
       setProducts([]);
-      setProductsError(false);
-      setProductsReady(true);
+      setHydrationStatus("success");
       return;
     }
     if (!chunkWarmed.current) {
       chunkWarmed.current = true;
       loadCartSheetBody();
     }
-    setProductsReady(false);
-    setProductsError(false);
+    setHydrationStatus("loading");
     let active = true;
-    getProductsByIdsAction(cart.map((item) => item.id))
+    // A product can appear on several lines (sizes) — compare unique ids.
+    const requestedIds = [...new Set(cart.map((item) => item.id))];
+    getProductsByIdsAction(requestedIds)
       .then((list) => {
         if (!active) return;
-        setProducts(list);
-        setProductsError(false);
+        // Admin-hidden products fail server checkout too — surface them as
+        // unavailable now instead of letting checkout discover it later.
+        const usable = list.filter((product) => product.visible);
+        const returnedIds = new Set(usable.map((product) => product.id));
+        const complete = requestedIds.every((id) => returnedIds.has(id));
+        setProducts(usable);
+        setHydrationStatus(complete ? "success" : "partial");
       })
       .catch(() => {
         if (!active) return;
         setProducts([]);
-        setProductsError(true);
-      })
-      .finally(() => {
-        if (active) setProductsReady(true);
+        setHydrationStatus("error");
       });
     return () => {
       active = false;
@@ -235,8 +246,7 @@ export function CartSheet() {
             cartCount={cartCount}
             campaign={campaign}
             products={products}
-            productsReady={productsReady}
-            productsError={productsError}
+            hydrationStatus={hydrationStatus}
             onRetryProducts={() => setProductsReloadKey((key) => key + 1)}
             checkoutOpen={checkoutOpen}
             onCheckoutOpenChange={setCheckoutOpen}

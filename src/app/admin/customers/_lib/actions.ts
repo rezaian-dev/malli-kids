@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { adminAuth } from "@/lib/auth/admin-auth";
-import { requireAdmin, getAdminSession } from "@/lib/auth/admin";
+import { requireAdmin, getAdminSession, isBootstrapAdmin } from "@/lib/auth/admin";
 import { logAudit } from "@/lib/admin/audit";
 import type { ActionResult } from "@/lib/action-result";
 import type { AdminCustomer } from "@/types";
@@ -21,6 +21,8 @@ const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تل
 const PROTECTED_ERROR = "حساب مدیر محافظت‌شده است.";
 const LAST_ADMIN_ERROR = "امکان تنزل آخرین ادمین وجود ندارد؛ حداقل یک ادمین باید بماند.";
 const SELF_DEMOTE_ERROR = "نمی‌توانید سطح دسترسی خودتان را تغییر دهید.";
+const BOOTSTRAP_DEMOTE_ERROR =
+  "این حساب در فهرست ادمین‌های محیطی تعریف شده و فقط از همان‌جا قابل حذف است؛ تنزل از اینجا بی‌اثر می‌ماند.";
 
 async function guardTarget(userId: string) {
   const target = await adminAuth.api
@@ -152,6 +154,9 @@ export async function demoteAdminAction(userId: string): Promise<ActionResult> {
     if (!target) return { ok: false, error: FALLBACK_ERROR };
     if (target.role !== "admin")
       return { ok: false, error: "این کاربر ادمین نیست." };
+    if (isBootstrapAdmin(target.email ?? "")) {
+      return { ok: false, error: BOOTSTRAP_DEMOTE_ERROR };
+    }
 
     if ((await countAdmins()) <= 1) return { ok: false, error: LAST_ADMIN_ERROR };
 

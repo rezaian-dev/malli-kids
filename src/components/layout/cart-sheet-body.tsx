@@ -32,18 +32,20 @@ import { CartShippingProgress } from "./cart-shipping-progress";
 import { CartSummary } from "./cart-summary";
 import { CartEmptyState } from "./cart-empty-state";
 import { CartCheckoutMount } from "./cart-checkout-mount";
+import type { CartHydrationStatus } from "./cart-sheet";
 
 // Lazy-loaded sheet body. `products` is fetched by the always-mounted
 // CartSheet trigger (keyed on the cart contents) and handed down already
 // resolved, so this component's first render — which is also the sheet's
 // first open frame — never has to wait on a network round trip.
+// Checkout mounts only on "success": partial hydration (deleted/hidden lines)
+// and failed hydration both block it until resolved.
 export function CartSheetBody({
   cart,
   cartCount,
   campaign,
   products,
-  productsReady,
-  productsError,
+  hydrationStatus,
   onRetryProducts,
   checkoutOpen,
   onCheckoutOpenChange,
@@ -56,8 +58,7 @@ export function CartSheetBody({
   cartCount: number;
   campaign: StoredCampaign;
   products: Product[];
-  productsReady: boolean;
-  productsError: boolean;
+  hydrationStatus: CartHydrationStatus;
   onRetryProducts: () => void;
   checkoutOpen: boolean;
   onCheckoutOpenChange: (open: boolean) => void;
@@ -139,7 +140,7 @@ export function CartSheetBody({
 
       {empty ? (
         <CartEmptyState />
-      ) : !productsReady ? (
+      ) : hydrationStatus === "idle" || hydrationStatus === "loading" ? (
         // Skeleton list while the cart's product fetch is still in flight.
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
           <div className="h-2.5 animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
@@ -153,7 +154,7 @@ export function CartSheetBody({
             <div className="h-3 w-2/3 animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
           </div>
         </div>
-      ) : productsError ? (
+      ) : hydrationStatus === "error" ? (
         <div
           role="alert"
           className="min-h-0 flex-1 flex flex-col items-center justify-center gap-3 px-6 py-10 text-center"
@@ -246,13 +247,13 @@ export function CartSheetBody({
 
       <SheetFooter className="border-navy/10 dark:border-gold/20 gap-2 border-t px-5 py-4">
         {!empty ? (
-          !productsReady ? (
+          hydrationStatus === "idle" || hydrationStatus === "loading" ? (
             // Same footprint so the footer doesn't shift when the total lands.
             <div
               aria-hidden
               className="h-12 w-full animate-pulse rounded-2xl bg-sand dark:bg-dusk-soft"
             />
-          ) : !productsError && !hasMissingItems ? (
+          ) : hydrationStatus === "success" ? (
             <Button
               type="button"
               className="h-12 w-full rounded-2xl text-sm font-black bg-gold text-navy-deep hover:bg-gold-light motion-safe:hover:shadow-gold/30 motion-safe:hover:shadow-lg"
@@ -293,7 +294,7 @@ export function CartSheetBody({
         ) : null}
       </SheetFooter>
 
-      {!productsError && !hasMissingItems ? (
+      {hydrationStatus === "success" ? (
         <CartCheckoutMount
           open={checkoutOpen}
           onOpenChange={onCheckoutOpenChange}

@@ -250,7 +250,13 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
   for (const item of input.items) {
     const product = await ProductModel.findOne({ id: item.id }).lean();
-    if (!product?.variants?.length) continue;
+    // Deleted or admin-hidden after the checkout validation — fail like an
+    // out-of-stock line instead of ordering a phantom product.
+    if (!product || product.visible === false) {
+      await rollback();
+      return { ok: false, outOfStock: item.name };
+    }
+    if (!product.variants?.length) continue;
 
     const decremented = await decrementVariantStock(item.id, item.size, item.qty);
     if (!decremented) {
@@ -262,7 +268,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
   // Reserve coupon usage before writing the order.
   if (input.couponCode) {
-    couponReservationId = await reserveCouponUsage(input.couponCode);
+    couponReservationId = await reserveCouponUsage(input.couponCode, subtotal);
     if (!couponReservationId) {
       await rollback();
       return { ok: false, outOfStock: "", couponExhausted: true };

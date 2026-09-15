@@ -146,6 +146,10 @@ const orderSchema = new Schema<OrderDoc>(
 
 // Refund snapshots are immutable through application actions and indexed per owner.
 orderSchema.index({ userId: 1, "walletRefund.createdAt": -1 });
+// Serves the profile order history ({userId} + newest-first).
+orderSchema.index({ userId: 1, createdAt: -1 });
+// Serves the admin orders list (newest-first across all owners).
+orderSchema.index({ createdAt: -1 });
 orderSchema.index(
   { "payment.method": 1, "payment.reference": 1 },
   {

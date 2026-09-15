@@ -10,7 +10,14 @@ function readEnv(name: string): string {
 
 const url = readEnv("UPSTASH_REDIS_REST_URL");
 const token = readEnv("UPSTASH_REDIS_REST_TOKEN");
-export const redisConfigured = Boolean(url || token);
+// Both halves are required — a half-configured client can only throw at
+// runtime, so report it as unconfigured (memory limits) and say so loudly.
+export const redisConfigured = Boolean(url && token);
+if (!redisConfigured && (url || token)) {
+  console.error(
+    "[redis] Partial configuration (URL or token missing) — using memory limits.",
+  );
+}
 const KEY_PREFIX = "malli-kids:auth:";
 let client: Redis | undefined;
 
@@ -76,29 +83,37 @@ const INCREMENT_WINDOW = `
   return count
 `;
 
+function makeSecondaryStorage(prefix: string): SecondaryStorage {
+  return {
+    get: (key) => withRedis((redis) => redis.get(prefix + key)),
+    getAndDelete: (key) => withRedis((redis) => redis.getdel(prefix + key)),
+    set: (key, value, ttl) =>
+      withRedis((redis) =>
+        ttl
+          ? redis.set(prefix + key, value, { ex: ttl })
+          : redis.set(prefix + key, value),
+      ),
+    delete: async (key) => {
+      await withRedis((redis) => redis.del(prefix + key));
+    },
+    increment: (key, ttl) =>
+      withRedis(async (redis) => {
+        const count = await redis.eval<[number], number>(
+          INCREMENT_WINDOW,
+          [prefix + key],
+          [ttl],
+        );
+        if (!Number.isSafeInteger(count) || count < 1)
+          throw new Error("Invalid Redis counter");
+        return count;
+      }),
+  };
+}
+
 export const authSecondaryStorage: SecondaryStorage | undefined = redisConfigured
-  ? {
-      get: (key) => withRedis((redis) => redis.get(KEY_PREFIX + key)),
-      getAndDelete: (key) => withRedis((redis) => redis.getdel(KEY_PREFIX + key)),
-      set: (key, value, ttl) =>
-        withRedis((redis) =>
-          ttl
-            ? redis.set(KEY_PREFIX + key, value, { ex: ttl })
-            : redis.set(KEY_PREFIX + key, value),
-        ),
-      delete: async (key) => {
-        await withRedis((redis) => redis.del(KEY_PREFIX + key));
-      },
-      increment: (key, ttl) =>
-        withRedis(async (redis) => {
-          const count = await redis.eval<[number], number>(
-            INCREMENT_WINDOW,
-            [KEY_PREFIX + key],
-            [ttl],
-          );
-          if (!Number.isSafeInteger(count) || count < 1)
-            throw new Error("Invalid Redis counter");
-          return count;
-        }),
-    }
+  ? makeSecondaryStorage(KEY_PREFIX)
   : undefined;
+
+// Separate prefix — admin and storefront limiters must never share counters.
+export const adminAuthSecondaryStorage: SecondaryStorage | undefined =
+  redisConfigured ? makeSecondaryStorage(`${KEY_PREFIX}admin:`) : undefined;

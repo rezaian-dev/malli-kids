@@ -20,6 +20,9 @@ const backInStockSchema = new Schema<BackInStockDoc>(
 
 // One pending request per (user, product, size) — resubmitting is a no-op.
 backInStockSchema.index({ userId: 1, productId: 1, size: 1 }, { unique: true });
+// Serves notifyBackInStock ({productId, size}) — the unique index above leads
+// with userId, so it cannot serve this product-first lookup.
+backInStockSchema.index({ productId: 1, size: 1 });
 
 export const BackInStockModel: Model<BackInStockDoc> =
   (models.BackInStock as Model<BackInStockDoc>) ||

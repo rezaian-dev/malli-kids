@@ -20,3 +20,12 @@
 /* Exclude admin utilities from the storefront stylesheet. */
 @source not "./admin";
 @source not "../components/admin";
+
+/* Keep the chat bubble clear of the PDP sticky bar (0.75 + 2.75 + 0.75 = 4.25rem
+   of bar plus the safe area, with a 1rem gap) while the bar is visible.
+   Mobile only — the bar itself is sm:hidden. */
+@media (max-width: 639.98px) {
+  body[data-pdp-bar="1"] .chat-fab {
+    bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  }
+}

@@ -28,7 +28,8 @@ export const productSchema = z.object({
   disc: z.string().trim().max(20).optional(),
   badge: z.string().trim().max(20).optional(),
   desc: z.string().trim().min(15).max(800),
-  images: z.array(z.string().min(1)).min(1).max(6),
+  // Client compresses to ≤0.8MB per image (~1.1MB base64) — 2MB is headroom, not a target.
+  images: z.array(z.string().min(1).max(2_000_000)).min(1).max(6),
   stock: z.boolean(),
   // Empty for legacy/unsized products — stock keeps its old meaning
   variants: z

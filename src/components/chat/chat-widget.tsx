@@ -30,6 +30,13 @@ export function ChatWidget() {
   // Open the window the moment a pending guest login lands
   const pendingOpen = useRef(false);
   const prevUnread = useRef(0);
+  const fabRef = useRef<HTMLButtonElement>(null);
+  // Return focus to the bubble when the window closes (APG dialog behavior).
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (wasOpen.current && !open) fabRef.current?.focus();
+    wasOpen.current = open;
+  }, [open ]);
 
   // Badge count only while the window is closed and signed in
   const [unread] = usePolling<number>(
@@ -88,6 +95,7 @@ export function ChatWidget() {
     <>
       {!open && pathname !== "/profile" ? (
         <Button
+          ref={fabRef}
           type="button"
           variant="gold"
           size="icon-lg"
@@ -99,7 +107,7 @@ export function ChatWidget() {
           aria-expanded={open}
           aria-controls="support-chat-window"
           onClick={openChat}
-          className="shadow-gold/40 fixed inset-s-4 bottom-4 z-65 size-14 rounded-full shadow-lg sm:inset-s-6 sm:bottom-6 motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-105 motion-safe:active:scale-95"
+          className="chat-fab shadow-gold/40 fixed inset-s-4 bottom-4 z-65 size-14 rounded-full shadow-lg sm:inset-s-6 sm:bottom-6 motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:scale-105 motion-safe:active:scale-95"
         >
           <MessageCircle className="size-6" />
           {shown > 0 ? (

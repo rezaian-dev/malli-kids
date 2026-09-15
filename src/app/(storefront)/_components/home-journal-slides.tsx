@@ -9,10 +9,13 @@ export async function HomeJournalSlides() {
 
   return (
     <>
-      {articles.map((a) => (
+      {articles.map((a, k) => (
         <div
           className="box-border min-w-0 shrink-0 basis-[86%] pe-5 sm:basis-1/2 lg:basis-1/3"
           key={a.slug}
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`اسلاید ${k + 1} از ${articles.length}`}
         >
           <Link
             href={`/articles/${a.slug}`}

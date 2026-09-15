@@ -20,7 +20,7 @@ import { toast } from "@/lib/toast";
 import { requestErrorMessage } from "@/lib/action-result";
 import type { AdminOrder, OrderStatus } from "@/types";
 import { getAllOrdersAction, setOrderStatusAction } from "../_lib/actions";
-import { ORDER_COLUMNS } from "./order-columns";
+import { orderColumns } from "./order-columns";
 import { OrderDetailSheet } from "./order-detail-sheet";
 
 const PER_PAGE = 6;
@@ -183,7 +183,7 @@ export function AdminOrdersLanding({ orders: initialOrders }: { orders: AdminOrd
       </AdminFilterBar>
 
       <AdminTable<AdminOrder>
-        cols={ORDER_COLUMNS}
+        cols={orderColumns(setOpen)}
         rows={pg.pageItems}
         empty="سفارشی مطابق فیلترهای انتخابی وجود ندارد."
         onRowClick={setOpen}

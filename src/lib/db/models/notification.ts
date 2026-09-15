@@ -13,13 +13,18 @@ export type NotificationDoc = {
 
 const notificationSchema = new Schema<NotificationDoc>(
   {
-    userId: { type: String, required: true, index: true },
+    userId: { type: String, required: true },
     kind: { type: String, required: true, enum: ["ticket", "order", "system", "restock"] },
     text: { type: String, required: true },
     read: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
+
+// Serves getNotificationsForUser ({userId} + newest-first); the userId prefix
+// keeps plain owner lookups indexed. Ops note: drop the legacy `userId_1`
+// index once this deploys — autoIndex creates, never removes.
+notificationSchema.index({ userId: 1, createdAt: -1 });
 
 export const NotificationModel: Model<NotificationDoc> =
   (models.Notification as Model<NotificationDoc>) ||

@@ -35,8 +35,14 @@ export async function createTicketAction(input: {
   if (input.subject.trim().length < 3) {
     return { ok: false, error: "موضوع باید حداقل ۳ حرف باشد." };
   }
+  if (input.subject.trim().length > 120) {
+    return { ok: false, error: "موضوع نباید بیشتر از ۱۲۰ حرف باشد." };
+  }
   if (input.message.trim().length < 10) {
     return { ok: false, error: "پیام باید حداقل ۱۰ حرف باشد." };
+  }
+  if (input.message.trim().length > 5000) {
+    return { ok: false, error: "پیام نباید بیشتر از ۵۰۰۰ حرف باشد." };
   }
 
   const user = await requireSessionUser();
@@ -66,6 +72,8 @@ export async function replyTicketAsUserAction(
   text: string,
 ): Promise<ActionResult> {
   if (text.trim().length < 2) return { ok: false, error: "پیام را بنویسید." };
+  if (text.trim().length > 5000)
+    return { ok: false, error: "پیام نباید بیشتر از ۵۰۰۰ حرف باشد." };
 
   const userId = await requireUserId();
   if (!userId) return { ok: false, error: AUTH_ERROR };

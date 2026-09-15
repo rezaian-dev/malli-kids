@@ -19,6 +19,12 @@ export function isAdminUser(user: { role?: string | null; email: string }) {
   return user.role === "admin" || ADMIN_EMAILS.has(user.email.toLowerCase());
 }
 
+// Bootstrap allowlist membership survives demotion (requireAdmin re-syncs the
+// persisted role), so callers must refuse these accounts instead of pretending.
+export function isBootstrapAdmin(email: string) {
+  return ADMIN_EMAILS.has(email.toLowerCase());
+}
+
 // Persists a bootstrap admin's role — the plugin checks role, not ADMIN_EMAILS
 async function syncBootstrapAdminRole(user: {
   id: string;

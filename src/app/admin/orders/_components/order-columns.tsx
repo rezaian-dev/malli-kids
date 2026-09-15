@@ -5,16 +5,24 @@ import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import type { AdminOrder } from "@/types";
 
-/** The orders table column set. */
-export const ORDER_COLUMNS: AdminCol<AdminOrder>[] = [
+/** Orders table columns. `onOpen` wires keyboard access to the row detail. */
+export function orderColumns(
+  onOpen: (order: AdminOrder) => void,
+): AdminCol<AdminOrder>[] {
+  return [
   {
     key: "id",
     title: "شناسه سفارش",
     width: "8.5rem",
     render: (order) => (
-      <span className="text-gold-deep dark:text-gold-soft font-black" dir="ltr">
+      <button
+        type="button"
+        onClick={() => onOpen(order)}
+        className="text-gold-deep dark:text-gold-soft font-black hover:underline underline-offset-4"
+        dir="ltr"
+      >
         {order.id}
-      </span>
+      </button>
     ),
   },
   {
@@ -106,4 +114,5 @@ export const ORDER_COLUMNS: AdminCol<AdminOrder>[] = [
       </Badge>
     ),
   },
-];
+  ];
+}

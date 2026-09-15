@@ -17,7 +17,7 @@ export const getSession = cache(async () => {
   }
 });
 
-// Called once in the root layout so useAuth().user is complete on first render.
+// Called once in the storefront layout so useAuth().user is complete on first render.
 export async function getSessionUser(): Promise<User | null> {
   const session = await getSession();
   if (!session) return null;

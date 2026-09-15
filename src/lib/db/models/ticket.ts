@@ -70,6 +70,8 @@ const ticketSchema = new Schema<TicketDoc>(
 ticketSchema.index({ status: 1 });
 ticketSchema.index({ assigneeId: 1 });
 ticketSchema.index({ number: 1 }, { unique: true, sparse: true });
+// Serves getTicketsForUser ({userId} + newest-first).
+ticketSchema.index({ userId: 1, updatedAt: -1 });
 
 export const TicketModel: Model<TicketDoc> =
   (models.Ticket as Model<TicketDoc>) ||

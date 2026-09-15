@@ -136,6 +136,25 @@ export function AdminMessagesLanding({
     );
   }
 
+  // APG tabs: automatic activation (the panel swaps with no latency), roving
+  // Tab stop, arrows/Home/End. Visual order is RTL (first tab at the right),
+  // so ArrowLeft moves forward through the tab order.
+  const TAB_ORDER: SupportTab[] = ["tickets", "chat"];
+  function onTabKeyDown(event: { key: string; preventDefault: () => void }) {
+    const idx = TAB_ORDER.indexOf(tab);
+    let next: SupportTab | null = null;
+    if (event.key === "ArrowLeft")
+      next = TAB_ORDER[(idx + 1) % TAB_ORDER.length];
+    else if (event.key === "ArrowRight")
+      next = TAB_ORDER[(idx + TAB_ORDER.length - 1) % TAB_ORDER.length];
+    else if (event.key === "Home") next = TAB_ORDER[0];
+    else if (event.key === "End") next = TAB_ORDER[TAB_ORDER.length - 1];
+    else return;
+    event.preventDefault();
+    selectTab(next);
+    document.getElementById(`support-tab-${next}`)?.focus();
+  }
+
   // Tickets arrive newest-first; "oldest" just reverses
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("fa");
@@ -296,7 +315,9 @@ export function AdminMessagesLanding({
           id="support-tab-tickets"
           aria-selected={tab === "tickets"}
           aria-controls="support-panel-tickets"
+          tabIndex={tab === "tickets" ? 0 : -1}
           onClick={() => selectTab("tickets")}
+          onKeyDown={onTabKeyDown}
           className={cn(
             "flex h-11 flex-1 items-center justify-center gap-2 rounded-xl text-sm font-black transition-colors",
             tab === "tickets"
@@ -314,7 +335,9 @@ export function AdminMessagesLanding({
           id="support-tab-chat"
           aria-selected={tab === "chat"}
           aria-controls="support-panel-chat"
+          tabIndex={tab === "chat" ? 0 : -1}
           onClick={() => selectTab("chat")}
+          onKeyDown={onTabKeyDown}
           className={cn(
             "flex h-11 flex-1 items-center justify-center gap-2 rounded-xl text-sm font-black transition-colors",
             tab === "chat"

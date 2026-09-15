@@ -11,6 +11,9 @@ import { getAllReviews } from "./data";
 
 const FALLBACK_ERROR = "خطایی رخ داد؛ کمی بعد دوباره تلاش کنید.";
 const AUTH_ERROR = "برای این کار باید ادمین وارد شده باشید.";
+// The UI bulk-selects visible rows (dozens); reject oversized payloads outright.
+const MAX_BULK_ITEMS = 200;
+const TOO_MANY_ERROR = "تعداد موارد انتخاب‌شده بیش از حد مجاز است.";
 
 export async function getAllReviewsAction(): Promise<AdminReview[]> {
   const admin = await requireAdmin();
@@ -70,6 +73,7 @@ export async function bulkSetReviewsVisibleAction(
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
   if (!ids.length) return { ok: true };
+  if (ids.length > MAX_BULK_ITEMS) return { ok: false, error: TOO_MANY_ERROR };
 
   try {
     await connectMongoose();
@@ -85,17 +89,18 @@ export async function bulkRemoveReviewsAction(ids: string[]): Promise<ActionResu
   const admin = await requireAdmin();
   if (!admin) return { ok: false, error: AUTH_ERROR };
   if (!ids.length) return { ok: true };
+  if (ids.length > MAX_BULK_ITEMS) return { ok: false, error: TOO_MANY_ERROR };
 
   try {
     await connectMongoose();
-    await ReviewModel.deleteMany({ _id: { $in: ids } });
+    const removed = await ReviewModel.deleteMany({ _id: { $in: ids } });
     revalidateReviews();
     await logAudit({
       actor: admin,
       action: "review.remove",
       targetType: "review",
       targetId: ids.join(","),
-      summary: `${ids.length} نظر به‌صورت گروهی حذف شد`,
+      summary: `${removed.deletedCount} نظر به‌صورت گروهی حذف شد`,
     });
     return { ok: true };
   } catch {

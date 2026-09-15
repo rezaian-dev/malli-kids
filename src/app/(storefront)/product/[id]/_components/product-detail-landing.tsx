@@ -5,7 +5,7 @@ import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getSession } from "@/lib/auth/session";
-import { productSchema } from "@/lib/seo";
+import { breadcrumbSchema, productSchema } from "@/lib/seo";
 import { getVisibleReviewsForProduct, hasPurchased } from "@/lib/shop/reviews";
 import { getSubscribedSizes } from "@/lib/shop/back-in-stock";
 import { cn, shell } from "@/lib/utils";
@@ -51,6 +51,14 @@ export async function ProductDetailLanding({
   return (
     <>
       <JsonLd data={productSchema(product, reviews)} />
+      {/* Mirrors the visible breadcrumb trail below, verbatim. */}
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "خانه", path: "/" },
+          { name: "فروشگاه", path: "/shop" },
+          { name: product.name, path: canonicalPath },
+        ])}
+      />
       <div className={cn(wash.silk, "pb-2")}>
         <div className={shell}>
           <Breadcrumb

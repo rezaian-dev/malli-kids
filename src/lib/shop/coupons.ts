@@ -4,7 +4,7 @@ import { isJalaliPast } from "@/lib/locale/jalali";
 
 export type AppliedCoupon = { code: string; rate: number };
 
-// This is a pre-check; reserveCouponUsage enforces the cap atomically.
+// This is a pre-check; reserveCouponUsage re-enforces the terms atomically.
 export async function findApplicableCoupon(
   rawCode: string,
   subtotal: number,
@@ -23,10 +23,23 @@ export async function findApplicableCoupon(
 }
 
 // Reserve atomically before creating the order; release on failure.
-export async function reserveCouponUsage(code: string): Promise<string | null> {
+// Re-enforces the pre-check (active/rate/min/cap) inside the atomic write, so an
+// admin edit landing between the check and the reserve cannot grant a code whose
+// terms no longer apply. (Expiry stays pre-check-only: `until` is a free-form
+// Jalali string, not safely comparable inside a query filter.)
+export async function reserveCouponUsage(
+  code: string,
+  subtotal: number,
+): Promise<string | null> {
   await connectMongoose();
   const updated = await CouponModel.findOneAndUpdate(
-    { code, active: true, $expr: { $lt: ["$used", "$cap"] } },
+    {
+      code,
+      active: true,
+      rate: { $gt: 0 },
+      min: { $lte: subtotal },
+      $expr: { $lt: ["$used", "$cap"] },
+    },
     { $inc: { used: 1 } },
   ).lean();
   return updated?._id.toString() ?? null;

@@ -51,6 +51,20 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
   const [announcement, setAnnouncement] = useState("");
   const [hours, setHours] = useState<SupportHours | null>(null);
   const [stars, setStars] = useState(0);
+  const starRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  // APG radiogroup keyboard support. Layout is RTL (star 1 at the right):
+  // ArrowLeft moves toward higher values, ArrowRight toward lower.
+  function onStarsKeyDown(event: { key: string; preventDefault: () => void }) {
+    let next: number | null = null;
+    if (event.key === "ArrowLeft") next = Math.min(5, stars + 1);
+    else if (event.key === "ArrowRight") next = Math.max(1, stars - 1);
+    else if (event.key === "Home") next = 1;
+    else if (event.key === "End") next = 5;
+    else return;
+    event.preventDefault();
+    setStars(next);
+    starRefs.current[next - 1]?.focus();
+  }
   const [ratingNote, setRatingNote] = useState("");
   const [ratingSending, setRatingSending] = useState(false);
   const [escalating, setEscalating] = useState(false);
@@ -449,7 +463,20 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
                   role="radio"
                   aria-checked={stars === value}
                   aria-label={`${toFaDigits(value)} از ۵`}
+                  ref={(node) => {
+                    starRefs.current[value - 1] = node;
+                  }}
+                  tabIndex={
+                    stars === 0
+                      ? value === 1
+                        ? 0
+                        : -1
+                      : stars === value
+                        ? 0
+                        : -1
+                  }
                   onClick={() => setStars(value)}
+                  onKeyDown={onStarsKeyDown}
                   className="grid size-9 place-items-center rounded-full transition-transform motion-safe:hover:scale-110"
                 >
                   <Star

@@ -4,6 +4,7 @@ import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { getAuthMongoClient } from "@/lib/db/mongo-client";
+import { adminAuthSecondaryStorage, redisConfigured } from "@/lib/redis";
 
 // Share identities, but keep admin sessions and cookies separate.
 const db = (await getAuthMongoClient()).db();
@@ -22,8 +23,11 @@ export const adminAuth = betterAuth({
     enabled: true,
     disableSignUp: true,
   },
+  // Share brute-force limits across processes when Redis is configured.
+  secondaryStorage: adminAuthSecondaryStorage,
   // Brute-force login guard, same shape as the storefront instance.
   rateLimit: {
+    storage: redisConfigured ? "secondary-storage" : "memory",
     customRules: {
       "/sign-in/email": { window: 60, max: 5 },
     },

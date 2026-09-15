@@ -462,6 +462,9 @@
     --animate-pin-lift: none;
     --animate-pin-float: none;
   }
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Theme vars */
@@ -553,7 +556,9 @@ html:not(.dark) .text-destructive {
   html {
     /* Plain-CSS — the root layout imports this file without utilities */
     max-width: 100%;
-    overflow-x: hidden;
+    /* `clip` (not `hidden`) so the root never becomes a scroll container —
+       matches the `main` rule below. */
+    overflow-x: clip;
     scroll-behavior: smooth;
     /* Fixed-header height — keep in sync with `HeaderSpacer` */
     scroll-padding-top: 112px;
@@ -593,7 +598,7 @@ html:not(.dark) .text-destructive {
     color: var(--color-navy);
     min-height: 100dvh;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: var(--font-vazir), Vazirmatn, Tahoma, sans-serif;

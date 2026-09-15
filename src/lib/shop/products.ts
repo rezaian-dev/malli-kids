@@ -100,6 +100,20 @@ export const getProductsByIds = unstable_cache(
   { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
 );
 
+// Hydrates client-held id lists (cart, wishlist). Unlike readProducts, an
+// infrastructure failure rejects instead of resolving [] — callers must be able
+// to tell "product gone" from "fetch failed". Rejections are never cached, so a
+// retry can succeed; successful reads cache like the rest of the catalog.
+export const getHydratedProductsByIds = unstable_cache(
+  async (ids: number[]): Promise<Product[]> => {
+    if (!ids.length) return [];
+    await connectMongoose();
+    return (await ProductModel.find({ id: { $in: ids } }).lean()).map(toProduct);
+  },
+  ["hydrated-products-by-ids"],
+  { tags: [PRODUCTS_TAG], revalidate: REVALIDATE.catalog },
+);
+
 export const getRelatedProducts = unstable_cache(
   (cat: string, excludeId: number, limit = 4) =>
     readProducts(

@@ -20,9 +20,12 @@ export function ProfileWishlistPanel() {
 
   useEffect(() => {
     let active = true;
-    getProductsByIdsAction(ids).then((list) => {
-      if (active) setProducts(list);
-    });
+    // A failed hydration keeps the previous list — ids stay in the store for the next visit.
+    getProductsByIdsAction(ids)
+      .then((list) => {
+        if (active) setProducts(list);
+      })
+      .catch(() => {});
     return () => {
       active = false;
     };

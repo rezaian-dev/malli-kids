@@ -13,6 +13,8 @@
   ],
   "scripts": {
     "build": "next build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "start": "next start -p 3143"
   },
   "dependencies": {
@@ -62,7 +64,8 @@
     "@types/sanitize-html": "^2.16.1",
     "postcss": "8.5.26",
     "tailwindcss": "4.3.3",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^3.2.7"
   },
   "engines": {
     "node": ">=22.12.0"

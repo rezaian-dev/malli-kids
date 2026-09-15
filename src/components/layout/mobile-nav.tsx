@@ -57,7 +57,9 @@ export function MobileNav() {
         showCloseButton={false}
         className={cn(PANEL, "w-[min(20rem,90vw)]")}
       >
-        <SheetHeader className={cn(PANEL_HEAD, "relative py-4 pe-14")}>
+        <SheetHeader
+          className={cn(PANEL_HEAD, "relative shrink-0 py-4 pe-14")}
+        >
           <SheetClose
             asChild
             className="absolute inset-e-3.5 top-1/2 -translate-y-1/2"
@@ -78,7 +80,7 @@ export function MobileNav() {
 
         <nav
           aria-label="منوی موبایل"
-          className="flex flex-col overflow-y-auto px-3 py-2"
+          className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-2"
         >
           <SheetClose asChild>
             <Link

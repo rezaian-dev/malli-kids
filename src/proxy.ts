@@ -20,9 +20,6 @@ function readIds(request: NextRequest): number[] {
 }
 
 export function proxy(request: NextRequest) {
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-malli-pathname", request.nextUrl.pathname);
-
   const match = /^\/product\/([^/]+)/.exec(request.nextUrl.pathname);
   const id = match ? parseProductRouteId(match[1]) : Number.NaN;
   const isPrefetch =
@@ -30,7 +27,7 @@ export function proxy(request: NextRequest) {
     request.headers.get("purpose") === "prefetch";
 
   if (!Number.isFinite(id) || isPrefetch) {
-    return NextResponse.next({ request: { headers: requestHeaders } });
+    return NextResponse.next();
   }
 
   const existing = readIds(request);
@@ -39,7 +36,7 @@ export function proxy(request: NextRequest) {
     MAX_ITEMS,
   );
 
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  const response = NextResponse.next();
   response.cookies.set(COOKIE_NAME, JSON.stringify(next), {
     maxAge: MAX_AGE,
     sameSite: "lax",
