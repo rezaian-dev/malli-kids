@@ -133,13 +133,16 @@ export function CartSheet() {
   // Pre-fetch products whenever the cart itself changes (not when the sheet
   // opens), so the data is already sitting there by the time the user clicks.
   const [products, setProducts] = useState<Product[]>([]);
-  const [productsReady, setProductsReady] = useState(true);
+  const [productsReady, setProductsReady] = useState(() => cart.length === 0);
+  const [productsError, setProductsError] = useState(false);
+  const [productsReloadKey, setProductsReloadKey] = useState(0);
   const idsKey = cart.map((item) => item.id).join(",");
   const chunkWarmed = useRef(false);
 
   useEffect(() => {
     if (!idsKey) {
       setProducts([]);
+      setProductsError(false);
       setProductsReady(true);
       return;
     }
@@ -148,13 +151,18 @@ export function CartSheet() {
       loadCartSheetBody();
     }
     setProductsReady(false);
+    setProductsError(false);
     let active = true;
     getProductsByIdsAction(cart.map((item) => item.id))
       .then((list) => {
-        if (active) setProducts(list);
+        if (!active) return;
+        setProducts(list);
+        setProductsError(false);
       })
       .catch(() => {
-        // Keep whatever is on screen; the next cart change retries.
+        if (!active) return;
+        setProducts([]);
+        setProductsError(true);
       })
       .finally(() => {
         if (active) setProductsReady(true);
@@ -163,7 +171,7 @@ export function CartSheet() {
       active = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idsKey]);
+  }, [idsKey, productsReloadKey]);
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -228,6 +236,8 @@ export function CartSheet() {
             campaign={campaign}
             products={products}
             productsReady={productsReady}
+            productsError={productsError}
+            onRetryProducts={() => setProductsReloadKey((key) => key + 1)}
             checkoutOpen={checkoutOpen}
             onCheckoutOpenChange={setCheckoutOpen}
             onQtyChange={setCartQty}

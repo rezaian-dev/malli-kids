@@ -43,6 +43,8 @@ export function CartSheetBody({
   campaign,
   products,
   productsReady,
+  productsError,
+  onRetryProducts,
   checkoutOpen,
   onCheckoutOpenChange,
   onQtyChange,
@@ -55,6 +57,8 @@ export function CartSheetBody({
   campaign: StoredCampaign;
   products: Product[];
   productsReady: boolean;
+  productsError: boolean;
+  onRetryProducts: () => void;
   checkoutOpen: boolean;
   onCheckoutOpenChange: (open: boolean) => void;
   onQtyChange: (id: number, size: string, qty: number) => void;
@@ -63,6 +67,9 @@ export function CartSheetBody({
   onCheckoutSuccess: () => void;
 }) {
   const empty = cartCount === 0;
+  const availableIds = new Set(products.map((product) => product.id));
+  const missingItems = cart.filter((item) => !availableIds.has(item.id));
+  const hasMissingItems = missingItems.length > 0;
 
   const rows = cart
     .map((item) => {
@@ -146,15 +153,63 @@ export function CartSheetBody({
             <div className="h-3 w-2/3 animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
           </div>
         </div>
+      ) : productsError ? (
+        <div
+          role="alert"
+          className="min-h-0 flex-1 flex flex-col items-center justify-center gap-3 px-6 py-10 text-center"
+        >
+          <span className="bg-rose/10 text-rose grid size-14 place-items-center rounded-2xl">
+            <ShoppingBag className="size-7" />
+          </span>
+          <div>
+            <p className="text-sm font-black">سبد خرید بارگذاری نشد</p>
+            <p className="text-navy/70 dark:text-wheat mt-1 text-xs leading-6">
+              کالاهای سبد را نتوانستیم دریافت کنیم؛ سفارش بدون بررسی کامل ادامه پیدا نمی‌کند.
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-11 rounded-full px-5"
+            onClick={onRetryProducts}
+          >
+            تلاش مجدد
+          </Button>
+        </div>
       ) : (
         <>
-          <CartShippingProgress
-            remaining={BRAND.freeShipFrom - subtotal}
-            freeShip={freeShip}
-            progress={progress}
-          />
+          {!hasMissingItems ? (
+            <CartShippingProgress
+              remaining={BRAND.freeShipFrom - subtotal}
+              freeShip={freeShip}
+              progress={progress}
+            />
+          ) : null}
 
           <div className="min-h-0 flex-1 scrollbar-thin space-y-2.5 overflow-y-auto px-4 py-4">
+            {hasMissingItems ? (
+              <div
+                role="alert"
+                className="border-rose/25 bg-rose/8 text-navy dark:text-ivory rounded-2xl border px-3.5 py-3"
+              >
+                <p className="text-rose text-xs font-black">
+                  {toFaDigits(missingItems.length)} قلم از سبد دیگر در دسترس نیست.
+                </p>
+                <p className="text-navy/70 dark:text-wheat mt-1 text-[11px] leading-6">
+                  برای جلوگیری از ثبت سفارش ناقص، ابتدا اقلام ناموجود را حذف کنید.
+                </p>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="text-rose hover:bg-rose/10 hover:text-rose mt-2 h-10 rounded-full px-3 text-[11px] font-black"
+                  onClick={() =>
+                    missingItems.forEach((item) => onRemove(item.id, item.size))
+                  }
+                >
+                  حذف اقلام ناموجود
+                </Button>
+              </div>
+            ) : null}
             {/* پس از حذف، ردیف‌ها با layout جای خالی را پر می‌کنند. */}
             <AnimatePresence initial={false} mode="popLayout">
               {rows.map(({ item, product, unitPrice, originalPrice }) => (
@@ -179,17 +234,25 @@ export function CartSheetBody({
             </AnimatePresence>
           </div>
 
-          <CartSummary
-            subtotal={subtotal}
-            shipping={shipping}
-            freeShip={freeShip}
-          />
+          {!hasMissingItems ? (
+            <CartSummary
+              subtotal={subtotal}
+              shipping={shipping}
+              freeShip={freeShip}
+            />
+          ) : null}
         </>
       )}
 
       <SheetFooter className="border-navy/10 dark:border-gold/20 gap-2 border-t px-5 py-4">
         {!empty ? (
-          productsReady ? (
+          !productsReady ? (
+            // Same footprint so the footer doesn't shift when the total lands.
+            <div
+              aria-hidden
+              className="h-12 w-full animate-pulse rounded-2xl bg-sand dark:bg-dusk-soft"
+            />
+          ) : !productsError && !hasMissingItems ? (
             <Button
               type="button"
               className="h-12 w-full rounded-2xl text-sm font-black bg-gold text-navy-deep hover:bg-gold-light motion-safe:hover:shadow-gold/30 motion-safe:hover:shadow-lg"
@@ -198,13 +261,7 @@ export function CartSheetBody({
               <BadgeCheck className="size-4.5" /> تکمیل خرید —{" "}
               {formatToman(subtotal + shipping)} تومان
             </Button>
-          ) : (
-            // Same footprint so the footer doesn't shift when the total lands.
-            <div
-              aria-hidden
-              className="h-12 w-full animate-pulse rounded-2xl bg-sand dark:bg-dusk-soft"
-            />
-          )
+          ) : null
         ) : null}
 
         <SheetClose asChild>
@@ -236,12 +293,14 @@ export function CartSheetBody({
         ) : null}
       </SheetFooter>
 
-      <CartCheckoutMount
-        open={checkoutOpen}
-        onOpenChange={onCheckoutOpenChange}
-        rows={rows}
-        onSuccess={onCheckoutSuccess}
-      />
+      {!productsError && !hasMissingItems ? (
+        <CartCheckoutMount
+          open={checkoutOpen}
+          onOpenChange={onCheckoutOpenChange}
+          rows={rows}
+          onSuccess={onCheckoutSuccess}
+        />
+      ) : null}
     </>
   );
 }

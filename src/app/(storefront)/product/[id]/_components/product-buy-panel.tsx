@@ -227,53 +227,58 @@ export function ProductBuyPanel({
               </Badge>
             ) : null}
           </div>
-          <div className="mt-6 mb-2.5 flex items-center justify-between gap-2">
-            <p
-              className="flex items-center gap-1.5 text-xs font-black text-navy dark:text-ivory"
-            >
-              <Ruler className="text-gold size-4" /> انتخاب سایز
-            </p>
-            <button
-              type="button"
-              onClick={() => setSizeGuideOpen(true)}
-              className="flex items-center gap-1 text-[11px] font-bold underline underline-offset-2 text-navy/70 hover:text-gold dark:text-wheat dark:hover:text-gold-light"
-            >
-              <Info className="size-3.5" /> راهنمای سایز
-            </button>
-          </div>
-          {recommendedSize ? (
-            <p
-              className="mb-2.5 rounded-xl px-3 py-2 text-[11px] font-bold bg-gold/10 text-gold-deep dark:bg-gold/15 dark:text-gold-soft"
-            >
-              📏 پیشنهاد سایز برای {user?.childName || "کوچولوی شما"}: سایز{" "}
-              {recommendedSize}
-            </p>
-          ) : null}
-          <div className="flex flex-wrap gap-2">
-            {sizeOptions.map(({ size: s, available }) => (
-              <button
-                key={s}
-                type="button"
-                disabled={!available}
-                onClick={() => setSize(s)}
-                className={cn(
-                  "relative min-h-10 min-w-10 rounded-xl border-2 px-2.5 py-2 text-[11px] font-bold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95 sm:px-3.5 sm:text-xs",
-                  !available && "cursor-not-allowed line-through opacity-40",
-                  size === s
-                    ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep motion-safe:hover:shadow-md"
-                    : "border-navy/10 text-navy/70 hover:border-navy/30 dark:border-gold/30 dark:text-ivory dark:hover:border-gold/60",
-                )}
+          <fieldset className="mt-6">
+            <legend className="sr-only">انتخاب سایز</legend>
+            <div className="mb-2.5 flex items-center justify-between gap-2">
+              <p
+                aria-hidden="true"
+                className="flex items-center gap-1.5 text-xs font-black text-navy dark:text-ivory"
               >
-                {s}
-                {s === recommendedSize ? (
-                  <span
-                    aria-hidden
-                    className="bg-gold absolute -inset-e-1 -top-1 size-2 rounded-full"
-                  />
-                ) : null}
+                <Ruler className="text-gold size-4" /> انتخاب سایز
+              </p>
+              <button
+                type="button"
+                onClick={() => setSizeGuideOpen(true)}
+                className="flex items-center gap-1 text-[11px] font-bold underline underline-offset-2 text-navy/70 hover:text-gold dark:text-wheat dark:hover:text-gold-light"
+              >
+                <Info className="size-3.5" /> راهنمای سایز
               </button>
-            ))}
-          </div>
+            </div>
+            {recommendedSize ? (
+              <p
+                className="mb-2.5 rounded-xl px-3 py-2 text-[11px] font-bold bg-gold/10 text-gold-deep dark:bg-gold/15 dark:text-gold-soft"
+              >
+                📏 پیشنهاد سایز برای {user?.childName || "کوچولوی شما"}: سایز{" "}
+                {recommendedSize}
+              </p>
+            ) : null}
+            <div className="flex flex-wrap gap-2">
+              {sizeOptions.map(({ size: s, available }) => (
+                <button
+                  key={s}
+                  type="button"
+                  aria-pressed={size === s}
+                  disabled={!available}
+                  onClick={() => setSize(s)}
+                  className={cn(
+                    "relative min-h-10 min-w-10 rounded-xl border-2 px-2.5 py-2 text-[11px] font-bold transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 motion-safe:active:scale-95 sm:px-3.5 sm:text-xs",
+                    !available && "cursor-not-allowed line-through opacity-40",
+                    size === s
+                      ? "border-navy bg-navy text-ivory dark:border-gold dark:bg-gold dark:text-navy-deep motion-safe:hover:shadow-md"
+                      : "border-navy/10 text-navy/70 hover:border-navy/30 dark:border-gold/30 dark:text-ivory dark:hover:border-gold/60",
+                  )}
+                >
+                  {s}
+                  {s === recommendedSize ? (
+                    <span
+                      aria-hidden
+                      className="bg-gold absolute -inset-e-1 -top-1 size-2 rounded-full"
+                    />
+                  ) : null}
+                </button>
+              ))}
+            </div>
+          </fieldset>
           <div className="mt-6 flex items-center justify-between gap-4">
             <p className="text-navy dark:text-ivory text-xs font-black">
               تعداد
