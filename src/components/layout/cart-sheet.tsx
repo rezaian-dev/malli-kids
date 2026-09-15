@@ -1,30 +1,34 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ShoppingBag } from "lucide-react";
+import { ArrowLeft, ShoppingBag, XIcon } from "lucide-react";
 import { useCartStore } from "@/providers/cart-store-provider";
 import { useCampaign } from "@/providers/campaign-provider";
-import { useIdlePreloadMount } from "@/hooks/use-idle-preload-mount";
 import { toFaDigits } from "@/lib/locale/fa";
 import { getProductsByIdsAction } from "@/lib/shop/products-actions";
 import type { Product } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { CartEmptyState } from "./cart-empty-state";
 import { cn } from "@/lib/utils";
-import { ICON_BTN, PANEL } from "./header-styles";
+import { ICON_BTN, PANEL, PANEL_HEAD } from "./header-styles";
 
-// The sheet body's JS chunk + product data used to be fetched only once the
-// sheet opened. Radix unmounts SheetContent while closed, so both the chunk
-// download AND the price/product fetch used to happen *after* the open
-// animation had already started — the panel would slide in empty, then the
-// rows would pop in a beat later. That double-motion is the "stuck / ticks
-// mid-open" feeling. Fix: warm the chunk and fetch the product data here, in
-// the trigger, which stays mounted regardless of open state — by the time
-// the sheet actually opens, the body's first render already has everything
-// it needs, so nothing shifts after the animation starts.
+// Keep the non-empty body and checkout flow out of the initial mobile bundle.
+// Product data and the body chunk are warmed while the cart has items; an empty
+// cart uses the lightweight static panel below and never waits for that chunk.
 const loadCartSheetBody = () => import("./cart-sheet-body");
 const CartSheetBody = dynamic(
   () => loadCartSheetBody().then((m) => m.CartSheetBody),
@@ -65,6 +69,52 @@ function CartBodyLoading() {
         <div className="h-11 rounded-2xl bg-sand dark:bg-dusk-soft" />
       </div>
     </div>
+  );
+}
+
+function CartEmptySheet() {
+  return (
+    <>
+      <SheetHeader className={cn(PANEL_HEAD, "relative pe-14")}>
+        <SheetClose
+          asChild
+          className="absolute inset-e-3.5 top-1/2 -translate-y-1/2"
+        >
+          <Button
+            size="icon-sm"
+            variant="ghost"
+            aria-label="بستن سبد خرید"
+            className="rounded-full text-cream transition-transform duration-300 ease-out hover:scale-105 hover:bg-white/15 hover:text-gold-light"
+          >
+            <XIcon className="size-5 text-current" />
+          </Button>
+        </SheetClose>
+        <SheetTitle className="text-cream flex items-center gap-2 text-start text-base font-black">
+          <span className="bg-gold text-navy-deep grid size-9 place-items-center rounded-2xl">
+            <ShoppingBag className="size-4.5" />
+          </span>
+          سبد خرید
+        </SheetTitle>
+        <SheetDescription className="text-gold-soft text-start text-[11px] font-bold">
+          گالری ملی‌کیدز
+        </SheetDescription>
+      </SheetHeader>
+
+      <CartEmptyState />
+
+      <SheetFooter className="border-navy/10 dark:border-gold/20 gap-2 border-t px-5 py-4">
+        <SheetClose asChild>
+          <Button
+            asChild
+            className="h-11 w-full rounded-2xl bg-navy text-xs font-black text-cream hover:bg-navy-mid dark:bg-gold dark:text-navy-deep dark:hover:bg-gold-light"
+          >
+            <Link href="/shop">
+              مشاهدهٔ کالکشن <ArrowLeft className="size-4" />
+            </Link>
+          </Button>
+        </SheetClose>
+      </SheetFooter>
+    </>
   );
 }
 
@@ -115,11 +165,6 @@ export function CartSheet() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idsKey]);
 
-  // The chunk warm above only fires once the cart is non-empty, so visitors
-  // who open an empty cart first would still pay for the chunk on open.
-  // Warm it during idle too — the first open stays instant either way.
-  useIdlePreloadMount(sheetOpen, loadCartSheetBody);
-
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
@@ -130,6 +175,9 @@ export function CartSheet() {
               ? "سبد خرید (خالی)"
               : `سبد خرید (${toFaDigits(cartCount)} قلم)`
           }
+          onPointerDown={() => {
+            if (!empty) loadCartSheetBody();
+          }}
           className={cn(
             ICON_BTN,
             "group relative border-2 transition-colors",
@@ -171,22 +219,26 @@ export function CartSheet() {
         showCloseButton={false}
         className={cn(PANEL, "flex w-[min(24rem,94vw)] flex-col")}
       >
-        <CartSheetBody
-          cart={cart}
-          cartCount={cartCount}
-          campaign={campaign}
-          products={products}
-          productsReady={productsReady}
-          checkoutOpen={checkoutOpen}
-          onCheckoutOpenChange={setCheckoutOpen}
-          onQtyChange={setCartQty}
-          onRemove={removeCartItem}
-          onClear={clearCart}
-          onCheckoutSuccess={() => {
-            clearCart();
-            setSheetOpen(false);
-          }}
-        />
+        {empty ? (
+          <CartEmptySheet />
+        ) : (
+          <CartSheetBody
+            cart={cart}
+            cartCount={cartCount}
+            campaign={campaign}
+            products={products}
+            productsReady={productsReady}
+            checkoutOpen={checkoutOpen}
+            onCheckoutOpenChange={setCheckoutOpen}
+            onQtyChange={setCartQty}
+            onRemove={removeCartItem}
+            onClear={clearCart}
+            onCheckoutSuccess={() => {
+              clearCart();
+              setSheetOpen(false);
+            }}
+          />
+        )}
       </SheetContent>
     </Sheet>
   );
