@@ -56,7 +56,7 @@ export function ShopFilters({
 }) {
   const searchId = useId();
   return (
-    <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-5">
+    <div className="min-h-0 flex-1 scrollbar-thin overscroll-contain space-y-6 overflow-y-auto px-4 py-5">
       {/* Search */}
       <div className="space-y-2.5">
         <label htmlFor={searchId} className={SECTION_LABEL}>

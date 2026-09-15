@@ -38,10 +38,12 @@ function Diamond() {
 export function Breadcrumb({
   items,
   schema = true,
+  animate = true,
   className,
 }: {
   items: CrumbItem[];
   schema?: boolean;
+  animate?: boolean;
   className?: string;
 }) {
   const emittable =
@@ -68,8 +70,8 @@ export function Breadcrumb({
                     </li>
                   ) : null}
                   <li
-                    className="animate-crumb-in flex min-w-0"
-                    style={{ animationDelay: `${i * 90}ms` }}
+                    className={cn(animate && "animate-crumb-in", "flex min-w-0")}
+                    style={animate ? { animationDelay: `${i * 90}ms` } : undefined}
                   >
                     {last ? (
                       <span

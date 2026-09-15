@@ -40,6 +40,7 @@ export function ShopExplorer({
       {/* The server already emits the breadcrumb schema. */}
       <Breadcrumb
         schema={false}
+        animate={false}
         items={[
           { name: "خانه", path: "/" },
           { name: "فروشگاه", path: "/shop" },
@@ -70,7 +71,7 @@ export function ShopExplorer({
         {/* Desktop sidebar filter */}
         <aside
           aria-label="فیلتر محصولات"
-          className="sticky top-30 hidden overflow-hidden rounded-[28px] shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col border-navy/10 bg-sand-deep/60 border dark:border-gold/40 dark:bg-filter-night"
+          className="sticky top-30 hidden h-[calc(100dvh-7.5rem)] min-h-0 max-h-[calc(100dvh-7.5rem)] overflow-hidden rounded-[28px] border border-navy/10 bg-sand-deep/60 shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col dark:border-gold/40 dark:bg-filter-night"
         >
           <div
             className="flex items-center justify-between gap-3 border-b px-4 py-4 border-navy/8 bg-white/70 dark:border-gold/20 dark:bg-navy-dark/60"
