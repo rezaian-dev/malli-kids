@@ -1,0 +1,8 @@
+---
+deployment:
+  tasks:
+    - export APPROOT=/home/mallikid/malli-kids
+    - cd "$APPROOT" && /usr/bin/env npm ci
+    - cd "$APPROOT" && /usr/bin/env npm run build
+    - /bin/mkdir -p "$APPROOT/tmp"
+    - /usr/bin/touch "$APPROOT/tmp/restart.txt"
