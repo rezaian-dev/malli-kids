@@ -22,7 +22,7 @@ const RATE_ERROR = "تعداد درخواست‌های دانلود فاکتور
 
 // Allow only paid orders owned by the customer or accessed by an admin.
 export async function GET(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {

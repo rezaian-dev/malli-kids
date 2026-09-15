@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { errorMessage } from "@/lib/action-result";
 import { REVALIDATE } from "@/lib/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { OrderModel, type OrderDoc, type StockReservation } from "@/lib/db/models/order";
@@ -368,7 +369,7 @@ export const getHappyCustomerCount = unstable_cache(
     } catch (err) {
       console.warn(
         "[orders] getHappyCustomerCount failed — returning 0:",
-        (err as Error).message,
+        errorMessage(err),
       );
       return 0;
     }

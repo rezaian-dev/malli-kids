@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { errorMessage } from "@/lib/action-result";
 import { REVALIDATE } from "@/lib/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { SearchTermModel } from "@/lib/db/models/search-term";
@@ -48,7 +49,7 @@ export const getTopSearchTerms = unstable_cache(
       const padding = FALLBACK_TERMS.filter((term) => !real.includes(term));
       return [...real, ...padding].slice(0, limit);
     } catch (err) {
-      console.warn("[search-terms] getTopSearchTerms failed — returning fallback:", (err as Error).message);
+      console.warn("[search-terms] getTopSearchTerms failed — returning fallback:", errorMessage(err));
       return FALLBACK_TERMS.slice(0, limit);
     }
   },

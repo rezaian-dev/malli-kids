@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 
+import { errorMessage } from "@/lib/action-result";
 import { parseProductRouteId, pdpHref, productRouteParam } from "@/lib/data/products";
 import { getAllProducts, getProductById } from "@/lib/shop/products";
 import { buildMetadata } from "@/lib/seo";
@@ -20,7 +21,7 @@ export async function generateStaticParams() {
   } catch (err) {
     console.warn(
       "[product/[id]] generateStaticParams failed — skipping prerender:",
-      (err as Error).message,
+      errorMessage(err),
     );
     return [];
   }
@@ -39,7 +40,7 @@ export async function generateMetadata({
   } catch (err) {
     console.warn(
       `[product/[id]] generateMetadata("${id}") failed:`,
-      (err as Error).message,
+      errorMessage(err),
     );
     product = null;
   }
@@ -76,7 +77,7 @@ export default async function ProductPage({
   } catch (err) {
     console.warn(
       `[product/[id]] ProductPage find failed for "${id}":`,
-      (err as Error).message,
+      errorMessage(err),
     );
     product = null;
   }

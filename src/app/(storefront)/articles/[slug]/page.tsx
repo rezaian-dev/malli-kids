@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { errorMessage } from "@/lib/action-result";
 import { findPublishedArticle, loadPublishedArticles } from "@/lib/articles";
 import { JsonLd } from "@/components/shared/json-ld";
 import { articleSchema, breadcrumbSchema, buildMetadata } from "@/lib/seo";
@@ -19,7 +20,7 @@ export async function generateStaticParams() {
   } catch (err) {
     console.warn(
       "[articles/[slug]] generateStaticParams failed — skipping prerender:",
-      (err as Error).message,
+      errorMessage(err),
     );
     return [];
   }
@@ -45,7 +46,7 @@ export async function generateMetadata({
   } catch (err) {
     console.warn(
       `[articles/[slug]] generateMetadata("${slug}") failed:`,
-      (err as Error).message,
+      errorMessage(err),
     );
     article = undefined;
   }
@@ -85,7 +86,7 @@ export default async function ArticlePage({
   } catch (err) {
     console.warn(
       `[articles/[slug]] ArticlePage find failed for "${decoded}":`,
-      (err as Error).message,
+      errorMessage(err),
     );
     article = undefined;
   }

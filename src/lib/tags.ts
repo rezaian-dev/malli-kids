@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { errorMessage } from "@/lib/action-result";
 import { REVALIDATE } from "@/lib/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { TagModel } from "@/lib/db/models/tag";
@@ -28,7 +29,7 @@ export const getAllTags = unstable_cache(
     } catch (err) {
       console.warn(
         "[tags] getAllTags failed — returning empty:",
-        (err as Error).message,
+        errorMessage(err),
       );
       return [];
     }

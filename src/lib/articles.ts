@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { errorMessage } from "@/lib/action-result";
 import { REVALIDATE } from "@/lib/cache";
 import sanitizeHtmlLib from "sanitize-html";
 import { connectMongoose } from "@/lib/db/mongoose";
@@ -113,7 +114,7 @@ export const loadPublishedArticles = unstable_cache(
     } catch (err) {
       console.warn(
         "[articles] loadPublishedArticles failed — returning empty (build without DB):",
-        (err as Error).message,
+        errorMessage(err),
       );
       return [];
     }
@@ -134,7 +135,7 @@ export const findPublishedArticle = unstable_cache(
     } catch (err) {
       console.warn(
         `[articles] findPublishedArticle("${slug}") failed — returning undefined:`,
-        (err as Error).message,
+        errorMessage(err),
       );
       return undefined;
     }

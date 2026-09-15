@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { errorMessage } from "@/lib/action-result";
 import { REVALIDATE } from "@/lib/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
 import {
@@ -37,7 +38,7 @@ export const getActiveBanner = unstable_cache(
       const docs = await FestiveBannerModel.find({ active: true }).lean();
       return pickBanner(docs.map(toFestiveBanner));
     } catch (err) {
-      console.warn("[banners] getActiveBanner failed — returning null:", (err as Error).message);
+      console.warn("[banners] getActiveBanner failed — returning null:", errorMessage(err));
       return null;
     }
   },

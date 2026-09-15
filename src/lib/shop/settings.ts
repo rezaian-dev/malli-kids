@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { errorMessage } from "@/lib/action-result";
 import { REVALIDATE } from "@/lib/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
 import {
@@ -32,7 +33,7 @@ export const getSupportHours = unstable_cache(
       const doc = await SettingsModel.findOne({ key: "site" }).lean();
       return doc?.support ?? DEFAULT_SUPPORT_HOURS;
     } catch (err) {
-      console.warn("[settings] getSupportHours failed — returning default:", (err as Error).message);
+      console.warn("[settings] getSupportHours failed — returning default:", errorMessage(err));
       return DEFAULT_SUPPORT_HOURS;
     }
   },
@@ -48,7 +49,7 @@ export const getCampaign = unstable_cache(
       const doc = await SettingsModel.findOne({ key: "site" }).lean();
       return doc?.campaign ?? DEFAULT_CAMPAIGN;
     } catch (err) {
-      console.warn("[settings] getCampaign failed — returning default:", (err as Error).message);
+      console.warn("[settings] getCampaign failed — returning default:", errorMessage(err));
       return DEFAULT_CAMPAIGN;
     }
   },

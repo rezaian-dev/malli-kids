@@ -19,6 +19,14 @@ export function isServiceUnavailable(error: unknown): boolean {
   );
 }
 
+// Safe message extraction for logs — catch bindings are `unknown`, and a bare
+// `(err as Error).message` throws on non-Error values.
+export function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return "Unknown error";
+}
+
 export function requestErrorMessage(): string {
   if (typeof navigator !== "undefined" && navigator.onLine === false) {
     return "اتصال اینترنت دستگاه قطع است. پس از اتصال، دوباره تلاش کنید.";

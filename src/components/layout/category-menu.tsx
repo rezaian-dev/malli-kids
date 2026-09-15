@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft, LayoutGrid } from "lucide-react";
 import { CAT_LINKS } from "@/lib/data/nav";
 import { navIcon } from "@/lib/data/nav-icons";
+import { toFaDigits } from "@/lib/locale/fa";
 import { Badge } from "@/components/ui/badge";
 import {
   NavigationMenuContent,
@@ -54,7 +55,7 @@ export function CategoryMenu() {
               دسته‌بندی کالکشن
             </p>
             <Badge className="bg-gold/20 text-gold-soft rounded-full border-0 text-[10px] font-bold">
-              {CAT_LINKS.length.toLocaleString("fa-IR")} دسته فعال
+              {toFaDigits(CAT_LINKS.length)} دسته فعال
             </Badge>
           </div>
 

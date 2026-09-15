@@ -14,6 +14,7 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { CartStoreProvider } from "@/providers/cart-store-provider";
 import { FavoritesStoreProvider } from "@/providers/favorites-store-provider";
 import { CampaignProvider } from "@/providers/campaign-provider";
+import { errorMessage } from "@/lib/action-result";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { readStoreBootstrap } from "@/lib/storefront-state";
 import { getSession, getSessionUser } from "@/lib/auth/session";
@@ -49,7 +50,7 @@ export default async function StorefrontLayout({
   ]).catch((err) => {
     console.warn(
       "[layout] campaign/banner load failed — using defaults:",
-      (err as Error).message,
+      errorMessage(err),
     );
     return [null, null] as const;
   });

@@ -1,6 +1,7 @@
 // Shared reads for storefront and admin; writes live in admin/products/_lib/actions.ts.
 
 import { unstable_cache } from "next/cache";
+import { errorMessage } from "@/lib/action-result";
 import { REVALIDATE } from "@/lib/cache";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { ProductModel, type ProductDoc } from "@/lib/db/models/product";
@@ -78,7 +79,7 @@ export const getProductById = unstable_cache(
     } catch (err) {
       console.warn(
         `[products] getProductById(${id}) failed — returning null:`,
-        (err as Error).message,
+        errorMessage(err),
       );
       return null;
     }
@@ -166,7 +167,7 @@ export async function searchProductsPreview(
   } catch (err) {
     console.warn(
       "[products] searchProductsPreview failed — returning empty:",
-      (err as Error).message,
+      errorMessage(err),
     );
     return [];
   }

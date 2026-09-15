@@ -1,3 +1,4 @@
+import { errorMessage } from "@/lib/action-result";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { Profile } from "@/lib/db/models/profile";
 
@@ -7,7 +8,7 @@ export async function getFavoriteIds(userId: string): Promise<number[]> {
     const doc = await Profile.findOne({ userId }).lean();
     return doc?.favorites ?? [];
   } catch (err) {
-    console.warn("[favorites] getFavoriteIds failed — returning empty:", (err as Error).message);
+    console.warn("[favorites] getFavoriteIds failed — returning empty:", errorMessage(err));
     return [];
   }
 }
