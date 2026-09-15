@@ -17,11 +17,13 @@ export function WalletLink({
   const { user } = useAuth();
   const { data, loading, error } = useWallet();
   if (!user) return null;
-  const balance = data
-    ? `${formatToman(data.balance)} تومان`
+  // A wallet we could not read still has to read as "empty", never as a dash.
+  const balance = formatToman(data?.balance ?? 0) + " تومان";
+  const statusLabel = data
+    ? balance
     : loading
       ? "در حال دریافت…"
-      : "موجودی در دسترس نیست";
+      : `موجودی: ${balance}`;
 
   return (
     <Link
@@ -31,8 +33,8 @@ export function WalletLink({
         onClick?.(event);
         if (!event.defaultPrevented) announceProfileTab("wallet");
       }}
-      aria-label={`کیف پول من؛ ${balance}`}
-      title={error || balance}
+      aria-label={`کیف پول من؛ ${statusLabel}`}
+      title={error || statusLabel}
       className={cn(
         className,
         "group border-gold/25 text-navy dark:text-ivory focus-visible:ring-gold/60 items-center border outline-none transition-colors focus-visible:ring-2",
@@ -51,7 +53,7 @@ export function WalletLink({
           />
         ) : (
           <span className="mt-0.5 block truncate text-xs font-black" dir="rtl">
-            {data ? balance : "—"}
+            {balance}
           </span>
         )}
       </span>
