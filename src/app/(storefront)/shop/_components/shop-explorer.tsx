@@ -126,7 +126,7 @@ export function ShopExplorer({
             sortLabel={shop.sortLabel}
             sortPopOpen={shop.sortPopOpen}
             onSortPopOpenChange={shop.setSortPopOpen}
-            onOpenMobileFilters={() => shop.setFilterOpen(true)}
+            onOpenMobileFilters={shop.openMobileFilters}
             onOpenMobileSort={() => shop.setSortOpen(true)}
             push={shop.push}
           />
@@ -161,14 +161,14 @@ export function ShopExplorer({
                     فیلتر کالکشن
                   </SheetTitle>
                   <SheetDescription className="text-navy/70 dark:text-gold-soft mt-0.5 text-[10px]">
-                    {shop.activeN
-                      ? `${toFaDigits(shop.activeN)} مورد فعال`
+                    {shop.mobileActiveN
+                      ? `${toFaDigits(shop.mobileActiveN)} مورد فعال`
                       : "بدون فیلتر"}
                   </SheetDescription>
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
-                {shop.activeN ? (
+                {shop.mobileActiveN ? (
                   <Button
                     type="button"
                     variant="ghost"
@@ -194,23 +194,22 @@ export function ShopExplorer({
           </SheetHeader>
           <Separator className="bg-navy/8 dark:bg-gold/20" />
           <ShopFilters
-            state={state}
-            query={shop.query}
-            onQueryChange={shop.setQuery}
-            onCommitQuery={shop.commitQuery}
-            range={shop.range}
-            onRangeChange={shop.setRange}
-            push={shop.push}
-            onCategoryPick={() => shop.setFilterOpen(false)}
+            state={shop.mobileFilterState}
+            query={shop.mobileFilterState.q}
+            onQueryChange={shop.setMobileQuery}
+            onCommitQuery={shop.commitMobileQuery}
+            range={[shop.mobileFilterState.min, shop.mobileFilterState.max]}
+            onRangeChange={shop.setMobileRange}
+            push={shop.updateMobileFilter}
           />
           <div className="border-navy/10 dark:border-gold/25 border-t p-3">
             <Button
               type="button"
               variant="navy"
               className="h-12 w-full font-black"
-              onClick={() => shop.setFilterOpen(false)}
+              onClick={shop.applyMobileFilters}
             >
-              نمایش {toFaDigits(shop.filtered.length)} کالا
+              نمایش {toFaDigits(shop.mobileFilteredCount)} کالا
             </Button>
           </div>
         </SheetContent>
