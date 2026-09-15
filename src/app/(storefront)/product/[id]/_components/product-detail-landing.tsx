@@ -67,6 +67,7 @@ export async function ProductDetailLanding({
               { name: "فروشگاه", path: "/shop" },
               { name: product.name, path: canonicalPath },
             ]}
+            schema={false}
             className="mb-4 sm:mb-8"
           />
 

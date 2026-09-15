@@ -268,7 +268,8 @@ export function pageSchema({
     "@context": "https://schema.org",
     "@type": type,
     name: title,
-    headline: title,
+    // `headline` belongs to Article-like types only — not WebPage/CollectionPage.
+    ...(type === "Article" ? { headline: title } : {}),
     description,
     url: absoluteUrl(path),
     inLanguage: "fa-IR",
