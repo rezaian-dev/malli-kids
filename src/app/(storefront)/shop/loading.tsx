@@ -1,9 +1,17 @@
-import { Search, SlidersHorizontal, Tag } from "lucide-react";
+import {
+  ArrowUpDown,
+  LayoutGrid,
+  List,
+  Search,
+  SlidersHorizontal,
+  Tag,
+} from "lucide-react";
 import { CATS } from "@/lib/constants";
 import { SEASONS } from "@/lib/data/products";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { ProductCardGridSkeleton } from "@/components/product/product-card-skeleton";
 import { PRODUCT_GRID } from "@/components/product/card-styles";
+import { cn } from "@/lib/utils";
 
 const FILTER_ICON_BADGE =
   "bg-navy text-gold-soft dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl";
@@ -18,11 +26,24 @@ const STATUS = [
   ["جدید", "تازه به گالری رسیده"],
 ] as const;
 
-function StaticChipGroup({ items }: { items: readonly string[] }) {
+function StaticChipGroup({
+  items,
+  selected = "همه",
+}: {
+  items: readonly string[];
+  selected?: string;
+}) {
   return (
     <div className="flex flex-wrap justify-start gap-1.5">
       {items.map((item) => (
-        <span key={item} className={FILTER_CHIP}>
+        <span
+          key={item}
+          className={cn(
+            FILTER_CHIP,
+            item === selected &&
+              "border-transparent bg-gold text-navy-deep dark:bg-gold dark:text-navy-deep",
+          )}
+        >
           {item}
         </span>
       ))}
@@ -34,7 +55,7 @@ function StaticFilterPanel() {
   return (
     <div
       aria-hidden
-      className="min-h-0 flex-1 scrollbar-thin space-y-6 overflow-y-auto px-4 py-5"
+      className="space-y-6 px-4 py-5"
     >
       <div className="space-y-2.5">
         <p className={SECTION_LABEL}>
@@ -103,10 +124,20 @@ function StaticFilterPanel() {
             (label, index) => (
               <span
                 key={label}
-                className={`flex h-auto flex-col rounded-2xl border border-gold/20 bg-navy-mid px-3 py-2.5 text-right text-ivory ${index === 0 ? "col-span-2" : ""}`}
+                className={cn(
+                  "flex h-auto flex-col rounded-2xl border px-3 py-2.5 text-right",
+                  index === 0
+                    ? "col-span-2 border-gold bg-gold text-navy-deep"
+                    : "border-gold/20 bg-navy-mid text-ivory",
+                )}
               >
                 <span className="text-xs font-black">{label}</span>
-                <span className="mt-0.5 text-[10px] font-bold text-wheat">
+                <span
+                  className={cn(
+                    "mt-0.5 text-[10px] font-bold",
+                    index === 0 ? "text-navy/70" : "text-wheat",
+                  )}
+                >
                   {index === 0 ? "بدون محدودیت" : "بازه قیمت"}
                 </span>
               </span>
@@ -126,17 +157,31 @@ function StaticToolbar() {
           کالکشن پوشاک کودک
         </h1>
         <p className="mt-1 text-xs font-normal text-navy/70 dark:text-wheat">
-          در حال دریافت کالاها…
+          ۰ مدل در کالکشن
         </p>
       </div>
       <div className="flex flex-wrap items-center gap-2" aria-hidden>
         <span className="flex h-10 items-center gap-1.5 rounded-full bg-navy px-4 text-xs font-black text-ivory lg:hidden">
           <SlidersHorizontal className="size-4" /> فیلتر
         </span>
-        <span className="flex h-10 items-center gap-1.5 rounded-full border border-navy/12 bg-sand px-4 text-xs font-black text-navy dark:border-gold/40 dark:bg-dusk-mid dark:text-linen">
-          جدیدترین
+        <span className="hidden min-w-44 items-center justify-between gap-1.5 rounded-full border border-navy/12 bg-sand px-4 py-2.5 text-xs font-black text-navy dark:border-gold/40 dark:bg-dusk-mid dark:text-linen lg:flex">
+          <span className="flex items-center gap-1.5">
+            <ArrowUpDown className="size-4 text-gold-soft" /> جدیدترین
+          </span>
         </span>
-        <span className="size-9 rounded-full border border-navy/10 bg-sand dark:border-gold/30 dark:bg-dusk-mid" />
+        <span className="flex min-w-0 flex-1 items-center justify-between gap-1.5 rounded-full border border-navy/12 bg-sand px-3 py-2.5 text-xs font-black text-navy dark:border-gold/40 dark:bg-dusk-mid dark:text-linen xs:min-w-36 xs:flex-none lg:hidden">
+          <span className="flex items-center gap-1.5">
+            <ArrowUpDown className="size-4 text-gold-soft" /> جدیدترین
+          </span>
+        </span>
+        <span className="inline-flex rounded-full border border-navy/10 bg-sand p-0.5 dark:border-gold/30 dark:bg-dusk-mid">
+          <span className="grid size-9 place-items-center rounded-full bg-navy text-ivory dark:bg-gold dark:text-navy-deep">
+            <LayoutGrid className="size-4" />
+          </span>
+          <span className="grid size-9 place-items-center rounded-full text-navy/70 dark:text-wheat">
+            <List className="size-4" />
+          </span>
+        </span>
       </div>
     </div>
   );
@@ -160,7 +205,7 @@ export default function ShopLoading() {
       <div className="grid items-start gap-5 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-7">
         <aside
           aria-label="فیلتر محصولات"
-          className="sticky top-30 hidden h-[calc(100dvh-7.5rem)] min-h-0 max-h-[calc(100dvh-7.5rem)] overflow-hidden rounded-[28px] border border-navy/10 bg-sand-deep/60 shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col dark:border-gold/40 dark:bg-filter-night"
+          className="sticky top-30 hidden self-start overflow-hidden rounded-[28px] border border-navy/10 bg-sand-deep/60 shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col dark:border-gold/40 dark:bg-filter-night"
         >
           <div className="flex shrink-0 items-center gap-2.5 border-b border-navy/8 bg-white/70 px-4 py-4 dark:border-gold/20 dark:bg-navy-dark/60">
             <span className={FILTER_ICON_BADGE}>

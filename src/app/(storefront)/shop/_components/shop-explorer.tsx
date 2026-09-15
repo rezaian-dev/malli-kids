@@ -71,7 +71,7 @@ export function ShopExplorer({
         {/* Desktop sidebar filter */}
         <aside
           aria-label="فیلتر محصولات"
-          className="sticky top-30 hidden h-[calc(100dvh-7.5rem)] min-h-0 max-h-[calc(100dvh-7.5rem)] overflow-hidden rounded-[28px] border border-navy/10 bg-sand-deep/60 shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col dark:border-gold/40 dark:bg-filter-night"
+          className="sticky top-30 hidden self-start overflow-hidden rounded-[28px] border border-navy/10 bg-sand-deep/60 shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col dark:border-gold/40 dark:bg-filter-night"
         >
           <div
             className="flex items-center justify-between gap-3 border-b px-4 py-4 border-navy/8 bg-white/70 dark:border-gold/20 dark:bg-navy-dark/60"
@@ -113,6 +113,7 @@ export function ShopExplorer({
             range={shop.range}
             onRangeChange={shop.setRange}
             push={shop.push}
+            scrollable={false}
           />
         </aside>
 

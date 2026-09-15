@@ -43,6 +43,7 @@ export function ShopFilters({
   onRangeChange,
   push,
   onCategoryPick,
+  scrollable = true,
 }: {
   state: ShopState;
   query: string;
@@ -53,10 +54,18 @@ export function ShopFilters({
   push: (next: Partial<ShopState>) => void;
   /** Called after a category pick — the mobile sheet uses this to close itself. */
   onCategoryPick?: () => void;
+  /** Desktop keeps the full filter panel in normal page flow; mobile scrolls inside the sheet. */
+  scrollable?: boolean;
 }) {
   const searchId = useId();
   return (
-    <div className="min-h-0 flex-1 scrollbar-thin overscroll-contain space-y-6 overflow-y-auto px-4 py-5">
+    <div
+      className={cn(
+        "space-y-6 px-4 py-5",
+        scrollable &&
+          "min-h-0 flex-1 scrollbar-thin overscroll-contain overflow-y-auto",
+      )}
+    >
       {/* Search */}
       <div className="space-y-2.5">
         <label htmlFor={searchId} className={SECTION_LABEL}>
