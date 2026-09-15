@@ -16,9 +16,9 @@ import { cn } from "@/lib/utils";
 const FILTER_ICON_BADGE =
   "bg-navy text-gold-soft dark:bg-gold dark:text-navy-deep grid size-10 place-items-center rounded-2xl";
 const FILTER_CHIP =
-  "rounded-full border border-gold/25 bg-navy-mid px-3.5 py-1.5 text-xs font-black text-wheat";
+  "rounded-full border border-navy/12 bg-white px-3.5 py-1.5 text-xs font-black text-navy/70 dark:border-gold/25 dark:bg-navy-mid dark:text-wheat";
 const SECTION_LABEL =
-  "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-gold uppercase";
+  "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-brown-mid dark:text-gold uppercase";
 const STATUS = [
   ["فقط موجود", "کالاهای آمادهٔ ارسال"],
   ["تخفیف‌دار", "دارای قیمت ویژه"],
@@ -41,7 +41,7 @@ function StaticChipGroup({
           className={cn(
             FILTER_CHIP,
             item === selected &&
-              "border-transparent bg-gold text-navy-deep dark:bg-gold dark:text-navy-deep",
+              "border-transparent bg-navy text-ivory dark:bg-gold dark:text-navy-deep",
           )}
         >
           {item}
@@ -61,7 +61,7 @@ function StaticFilterPanel() {
         <p className={SECTION_LABEL}>
           <Search className="size-3.5" /> جستجو
         </p>
-        <div className="flex h-12 items-center gap-2 rounded-2xl border border-gold/30 bg-navy-mid px-4 text-sm font-bold text-wheat">
+        <div className="flex h-12 items-center gap-2 rounded-2xl border border-navy/12 bg-white px-4 text-sm font-bold text-navy placeholder:text-navy/70 dark:border-gold/30 dark:bg-navy-mid dark:text-wheat">
           <Search className="size-4 text-gold" />
           <span>پیراهن، سیسمونی…</span>
         </div>
@@ -87,17 +87,17 @@ function StaticFilterPanel() {
           {STATUS.map(([label, hint]) => (
             <div
               key={label}
-              className="flex items-center justify-between gap-3 rounded-2xl border border-gold/20 bg-navy-mid/60 px-3.5 py-2.5"
+              className="flex items-center justify-between gap-3 rounded-2xl border border-navy/8 bg-white px-3.5 py-2.5 dark:border-gold/20 dark:bg-navy-mid/60"
             >
               <span className="min-w-0">
-                <span className="block text-[13px] font-extrabold text-ivory">
+                <span className="block text-[13px] font-extrabold text-navy dark:text-ivory">
                   {label}
                 </span>
-                <span className="block text-[10.5px] font-bold text-wheat">
+                <span className="block text-[10.5px] font-bold text-navy/70 dark:text-wheat">
                   {hint}
                 </span>
               </span>
-              <span className="relative h-6 w-11 shrink-0 rounded-full border border-white/15 bg-white/10">
+              <span className="relative h-6 w-11 shrink-0 rounded-full border border-navy/15 bg-navy/10 dark:border-white/15 dark:bg-white/10">
                 <span className="absolute end-0.5 top-0.5 size-5 rounded-full bg-white shadow" />
               </span>
             </div>
@@ -107,15 +107,15 @@ function StaticFilterPanel() {
 
       <div className="space-y-3">
         <p className={SECTION_LABEL}>بازه قیمت</p>
-        <div className="rounded-2xl border border-gold/20 bg-navy-mid/60 p-4">
-          <div className="mb-4 flex items-center justify-between text-xs font-black text-ivory">
-            <span className="rounded-lg bg-dusk-soft px-2.5 py-1">۰ تومان</span>
-            <span className="text-[10px] font-bold text-wheat">تومان</span>
-            <span className="rounded-lg bg-dusk-soft px-2.5 py-1">
+        <div className="rounded-2xl border border-navy/8 bg-white p-4 dark:border-gold/20 dark:bg-navy-mid/60">
+          <div className="mb-4 flex items-center justify-between text-xs font-black text-navy dark:text-ivory">
+            <span className="rounded-lg bg-sand px-2.5 py-1 dark:bg-dusk-soft">۰ تومان</span>
+            <span className="text-[10px] font-bold text-navy/70 dark:text-wheat">تومان</span>
+            <span className="rounded-lg bg-sand px-2.5 py-1 dark:bg-dusk-soft">
               ۴٬۰۰۰٬۰۰۰+
             </span>
           </div>
-          <div className="h-2 rounded-full bg-navy-deep">
+          <div className="h-2 rounded-full bg-navy/12 dark:bg-navy-deep/70">
             <div className="h-2 w-full rounded-full bg-linear-to-l from-gold to-gold-light" />
           </div>
         </div>
@@ -128,14 +128,16 @@ function StaticFilterPanel() {
                   "flex h-auto flex-col rounded-2xl border px-3 py-2.5 text-right",
                   index === 0
                     ? "col-span-2 border-gold bg-gold text-navy-deep"
-                    : "border-gold/20 bg-navy-mid text-ivory",
+                    : "border-navy/8 bg-white text-navy dark:border-gold/20 dark:bg-navy-mid dark:text-ivory",
                 )}
               >
                 <span className="text-xs font-black">{label}</span>
                 <span
                   className={cn(
                     "mt-0.5 text-[10px] font-bold",
-                    index === 0 ? "text-navy/70" : "text-wheat",
+                    index === 0
+                      ? "text-navy/70"
+                      : "text-navy/70 dark:text-wheat",
                   )}
                 >
                   {index === 0 ? "بدون محدودیت" : "بازه قیمت"}
