@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/providers/cart-store-provider";
 import { useCampaign } from "@/providers/campaign-provider";
+import { useIdlePreloadMount } from "@/hooks/use-idle-preload-mount";
 import { toFaDigits } from "@/lib/locale/fa";
 import { getProductsByIdsAction } from "@/lib/shop/products-actions";
 import type { Product } from "@/types";
@@ -27,8 +28,45 @@ import { ICON_BTN, PANEL } from "./header-styles";
 const loadCartSheetBody = () => import("./cart-sheet-body");
 const CartSheetBody = dynamic(
   () => loadCartSheetBody().then((m) => m.CartSheetBody),
-  { ssr: false },
+  {
+    ssr: false,
+    // Skeleton keeps the panel from opening empty while the chunk loads.
+    loading: () => <CartBodyLoading />,
+  },
 );
+
+// Shown inside the panel until the deferred body chunk is ready.
+function CartBodyLoading() {
+  return (
+    <div className="flex h-full flex-col gap-4 p-4" aria-hidden>
+      <div className="animate-pulse space-y-2">
+        <div className="h-4 w-32 rounded-full bg-sand dark:bg-dusk-soft" />
+        <div className="h-3 w-48 rounded-full bg-sand dark:bg-dusk-soft" />
+      </div>
+
+      <div className="animate-pulse space-y-2.5">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div
+            key={i}
+            className="flex gap-3 rounded-2xl border border-navy/8 bg-white p-2.5 sm:p-3 dark:border-gold/20 dark:bg-navy-mid/70"
+          >
+            <div className="size-16 shrink-0 rounded-xl bg-sand sm:size-20 dark:bg-dusk" />
+            <div className="min-w-0 flex-1 space-y-2 py-1.5">
+              <div className="h-3 w-2/3 rounded-full bg-sand dark:bg-dusk-soft" />
+              <div className="h-2.5 w-1/3 rounded-full bg-sand dark:bg-dusk-soft" />
+              <div className="h-5 w-24 rounded-full bg-sand dark:bg-dusk-soft" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="animate-pulse mt-auto space-y-2">
+        <div className="h-12 rounded-2xl bg-sand dark:bg-dusk-soft" />
+        <div className="h-11 rounded-2xl bg-sand dark:bg-dusk-soft" />
+      </div>
+    </div>
+  );
+}
 
 export function CartSheet() {
   const cart = useCartStore((state) => state.cart);
@@ -45,27 +83,42 @@ export function CartSheet() {
   // Pre-fetch products whenever the cart itself changes (not when the sheet
   // opens), so the data is already sitting there by the time the user clicks.
   const [products, setProducts] = useState<Product[]>([]);
+  const [productsReady, setProductsReady] = useState(true);
   const idsKey = cart.map((item) => item.id).join(",");
   const chunkWarmed = useRef(false);
 
   useEffect(() => {
     if (!idsKey) {
       setProducts([]);
+      setProductsReady(true);
       return;
     }
     if (!chunkWarmed.current) {
       chunkWarmed.current = true;
       loadCartSheetBody();
     }
+    setProductsReady(false);
     let active = true;
-    getProductsByIdsAction(cart.map((item) => item.id)).then((list) => {
-      if (active) setProducts(list);
-    });
+    getProductsByIdsAction(cart.map((item) => item.id))
+      .then((list) => {
+        if (active) setProducts(list);
+      })
+      .catch(() => {
+        // Keep whatever is on screen; the next cart change retries.
+      })
+      .finally(() => {
+        if (active) setProductsReady(true);
+      });
     return () => {
       active = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idsKey]);
+
+  // The chunk warm above only fires once the cart is non-empty, so visitors
+  // who open an empty cart first would still pay for the chunk on open.
+  // Warm it during idle too — the first open stays instant either way.
+  useIdlePreloadMount(sheetOpen, loadCartSheetBody);
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -123,6 +176,7 @@ export function CartSheet() {
           cartCount={cartCount}
           campaign={campaign}
           products={products}
+          productsReady={productsReady}
           checkoutOpen={checkoutOpen}
           onCheckoutOpenChange={setCheckoutOpen}
           onQtyChange={setCartQty}

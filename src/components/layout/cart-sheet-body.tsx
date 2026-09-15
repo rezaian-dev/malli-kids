@@ -42,6 +42,7 @@ export function CartSheetBody({
   cartCount,
   campaign,
   products,
+  productsReady,
   checkoutOpen,
   onCheckoutOpenChange,
   onQtyChange,
@@ -53,6 +54,7 @@ export function CartSheetBody({
   cartCount: number;
   campaign: StoredCampaign;
   products: Product[];
+  productsReady: boolean;
   checkoutOpen: boolean;
   onCheckoutOpenChange: (open: boolean) => void;
   onQtyChange: (id: number, size: string, qty: number) => void;
@@ -130,6 +132,20 @@ export function CartSheetBody({
 
       {empty ? (
         <CartEmptyState />
+      ) : !productsReady ? (
+        // Skeleton list while the cart's product fetch is still in flight.
+        <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
+          <div className="h-2.5 animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
+          <div className="space-y-2.5">
+            {Array.from({ length: Math.min(cartCount, 3) }).map((_, i) => (
+              <CartLineSkeleton key={i} />
+            ))}
+          </div>
+          <div className="space-y-2 pt-1">
+            <div className="h-3 w-1/2 animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
+            <div className="h-3 w-2/3 animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
+          </div>
+        </div>
       ) : (
         <>
           <CartShippingProgress
@@ -173,14 +189,22 @@ export function CartSheetBody({
 
       <SheetFooter className="border-navy/10 dark:border-gold/20 gap-2 border-t px-5 py-4">
         {!empty ? (
-          <Button
-            type="button"
-            className="h-12 w-full rounded-2xl text-sm font-black bg-gold text-navy-deep hover:bg-gold-light motion-safe:hover:shadow-gold/30 motion-safe:hover:shadow-lg"
-            onClick={() => onCheckoutOpenChange(true)}
-          >
-            <BadgeCheck className="size-4.5" /> تکمیل خرید —{" "}
-            {formatToman(subtotal + shipping)} تومان
-          </Button>
+          productsReady ? (
+            <Button
+              type="button"
+              className="h-12 w-full rounded-2xl text-sm font-black bg-gold text-navy-deep hover:bg-gold-light motion-safe:hover:shadow-gold/30 motion-safe:hover:shadow-lg"
+              onClick={() => onCheckoutOpenChange(true)}
+            >
+              <BadgeCheck className="size-4.5" /> تکمیل خرید —{" "}
+              {formatToman(subtotal + shipping)} تومان
+            </Button>
+          ) : (
+            // Same footprint so the footer doesn't shift when the total lands.
+            <div
+              aria-hidden
+              className="h-12 w-full animate-pulse rounded-2xl bg-sand dark:bg-dusk-soft"
+            />
+          )
         ) : null}
 
         <SheetClose asChild>
@@ -219,5 +243,19 @@ export function CartSheetBody({
         onSuccess={onCheckoutSuccess}
       />
     </>
+  );
+}
+
+// Placeholder row shown while the cart's product fetch is still in flight
+function CartLineSkeleton() {
+  return (
+    <div className="flex gap-3 rounded-2xl border border-navy/8 bg-white p-2.5 sm:p-3 dark:border-gold/20 dark:bg-navy-mid/70">
+      <div className="size-16 shrink-0 animate-pulse rounded-xl bg-sand sm:size-20 dark:bg-dusk" />
+      <div className="min-w-0 flex-1 animate-pulse space-y-2 py-1.5">
+        <div className="h-3 w-2/3 rounded-full bg-sand dark:bg-dusk-soft" />
+        <div className="h-2.5 w-1/3 rounded-full bg-sand dark:bg-dusk-soft" />
+        <div className="h-5 w-24 rounded-full bg-sand dark:bg-dusk-soft" />
+      </div>
+    </div>
   );
 }
