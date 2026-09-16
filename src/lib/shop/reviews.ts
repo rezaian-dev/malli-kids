@@ -1,3 +1,4 @@
+import { errorMessage } from "@/lib/action-result";
 import { connectMongoose } from "@/lib/db/mongoose";
 import { ReviewModel, type ReviewDoc } from "@/lib/db/models/review";
 import { OrderModel } from "@/lib/db/models/order";
@@ -53,22 +54,38 @@ export async function getVisibleReviewsForProduct(productName: string): Promise<
 
 // Recent, well-rated reviews across every product, for the homepage testimonials.
 export async function getFeaturedReviews(limit = 5): Promise<AdminReview[]> {
-  await connectMongoose();
-  const docs = await ReviewModel.find({ visible: true, rate: { $gte: 4 } })
-    .sort({ createdAt: -1 })
-    .limit(limit)
-    .lean();
-  return docs.map(toAdminReview);
+  try {
+    await connectMongoose();
+    const docs = await ReviewModel.find({ visible: true, rate: { $gte: 4 } })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+    return docs.map(toAdminReview);
+  } catch (err) {
+    console.warn(
+      "[reviews] getFeaturedReviews failed — returning empty:",
+      errorMessage(err),
+    );
+    return [];
+  }
 }
 
 export type ReviewStats = { avg: number; count: number };
 
 // Site-wide average rating and count, for the homepage's aggregate stat block.
 export async function getReviewStats(): Promise<ReviewStats> {
-  await connectMongoose();
-  const [agg] = await ReviewModel.aggregate<{ avg: number; count: number }>([
-    { $match: { visible: true } },
-    { $group: { _id: null, avg: { $avg: "$rate" }, count: { $sum: 1 } } },
-  ]);
-  return { avg: agg ? Math.round(agg.avg * 10) / 10 : 0, count: agg?.count ?? 0 };
+  try {
+    await connectMongoose();
+    const [agg] = await ReviewModel.aggregate<{ avg: number; count: number }>([
+      { $match: { visible: true } },
+      { $group: { _id: null, avg: { $avg: "$rate" }, count: { $sum: 1 } } },
+    ]);
+    return { avg: agg ? Math.round(agg.avg * 10) / 10 : 0, count: agg?.count ?? 0 };
+  } catch (err) {
+    console.warn(
+      "[reviews] getReviewStats failed — returning empty:",
+      errorMessage(err),
+    );
+    return { avg: 0, count: 0 };
+  }
 }

@@ -66,18 +66,27 @@ function AccordionTrigger({
 function AccordionContent({
   className,
   children,
+  animate = true,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+}: React.ComponentProps<typeof AccordionPrimitive.Content> & {
+  /** Keep an initially open item from animating during the first paint. */
+  animate?: boolean;
+}) {
   return (
     <AccordionPrimitive.Content
       data-slot="accordion-content"
-      className="overflow-hidden text-sm motion-safe:data-open:animate-[accordionDown_0.42s_cubic-bezier(0.22,1,0.32,1)] motion-safe:data-closed:animate-[accordionUp_0.3s_cubic-bezier(0.4,0,0.2,1)]"
+      className={cn(
+        "overflow-hidden text-sm",
+        animate &&
+          "motion-safe:data-open:animate-[accordionDown_0.42s_cubic-bezier(0.22,1,0.32,1)] motion-safe:data-closed:animate-[accordionUp_0.3s_cubic-bezier(0.4,0,0.2,1)]",
+      )}
       {...props}
     >
       <div
         className={cn(
           "h-(--radix-accordion-content-height) pt-0 pb-2.5",
-          "motion-safe:animate-fade-up [&_a]:hover:text-foreground [&_a]:underline [&_a]:underline-offset-3 [&_p:not(:last-child)]:mb-4",
+          animate && "motion-safe:animate-fade-up",
+          "[&_a]:hover:text-foreground [&_a]:underline [&_a]:underline-offset-3 [&_p:not(:last-child)]:mb-4",
           className,
         )}
       >

@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { FAQ } from "../_lib/content";
 import { toFaDigits } from "@/lib/locale/fa";
 import {
@@ -8,8 +11,16 @@ import {
 } from "@/components/ui/accordion";
 
 export function Faq() {
+  const [hasInteracted, setHasInteracted] = useState(false);
+
   return (
-    <Accordion type="single" collapsible defaultValue="0" className="gap-3">
+    <Accordion
+      type="single"
+      collapsible
+      defaultValue="0"
+      onValueChange={() => setHasInteracted(true)}
+      className="gap-3"
+    >
       {FAQ.map((f, i) => (
         <AccordionItem
           key={f.q}
@@ -26,7 +37,10 @@ export function Faq() {
             </span>
             <span className="flex-1">{f.q}</span>
           </AccordionTrigger>
-          <AccordionContent className="text-navy/70 dark:text-khaki px-3 pb-4 text-sm leading-7">
+          <AccordionContent
+            animate={hasInteracted}
+            className="text-navy/70 dark:text-khaki px-3 pb-4 text-sm leading-7"
+          >
             {f.a}
           </AccordionContent>
         </AccordionItem>
