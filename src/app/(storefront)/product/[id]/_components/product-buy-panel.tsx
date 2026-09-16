@@ -17,6 +17,7 @@ import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { parseFaNumber } from "@/lib/digits";
 import { toast } from "@/lib/toast";
 import { getMissingShippingFields } from "@/lib/shop/shipping";
+import { authHref, currentPathWithSearch } from "@/lib/auth/redirect";
 import { resolvePrice } from "@/lib/shop/pricing";
 import { sizeForHeightCm } from "@/lib/data/sizing";
 import { useAuth } from "@/providers/auth-provider";
@@ -76,7 +77,7 @@ export function ProductBuyPanel({
   product: Product;
   subscribedSizes: string[];
 }) {
-  const { user, setAuthOpen } = useAuth();
+  const { user } = useAuth();
   const { campaign } = useCampaign();
   const addToCart = useAddToCart();
   const router = useRouter();
@@ -120,7 +121,7 @@ export function ProductBuyPanel({
   function openCheckout() {
     if (!canOrder) return toast("این سایز ناموجود است");
     if (!user) {
-      setAuthOpen(true);
+      router.push(authHref(currentPathWithSearch()));
       toast("برای ثبت سفارش اول وارد شوید");
       return;
     }

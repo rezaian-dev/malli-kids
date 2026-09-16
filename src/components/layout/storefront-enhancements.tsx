@@ -11,19 +11,12 @@ const BackToTop = dynamic(
   () => import("./back-to-top").then((m) => m.BackToTop),
   { ssr: false },
 );
-const AuthModalMount = dynamic(
-  () =>
-    import("@/components/auth/auth-modal-mount").then((m) => m.AuthModalMount),
-  { ssr: false },
-);
-
 // Keep storefront helpers ready without visual fallback swaps.
 export function StorefrontEnhancements() {
   return (
     <>
       <ClickProgress />
       <BackToTop />
-      <AuthModalMount />
       <ChatWidget />
     </>
   );

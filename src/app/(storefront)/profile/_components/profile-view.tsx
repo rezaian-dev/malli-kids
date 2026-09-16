@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { ProfilePanelFallback } from "./profile-shared";
 import { ProfileHeader } from "./profile-header";
 import { ProfileTabs, type ProfileTab } from "./profile-tabs";
+import { authHref } from "@/lib/auth/redirect";
 import { PROFILE_TAB_EVENT } from "@/lib/profile-nav";
 
 const ProfileInfoPanel = dynamic(
@@ -57,7 +59,8 @@ function readHashTab(): ProfileTab {
 
 // Profile shell stays light and loads each panel on demand.
 export function ProfileView() {
-  const { user, setAuthOpen } = useAuth();
+  const { user } = useAuth();
+  const router = useRouter();
   const [tab, setTab] = useState<ProfileTab>("info");
 
   useEffect(() => {
@@ -90,7 +93,7 @@ export function ProfileView() {
           type="button"
           variant="navy"
           size="pill"
-          onClick={() => setAuthOpen(true)}
+          onClick={() => router.push(authHref("/profile"))}
         >
           ورود | ثبت‌نام
         </Button>

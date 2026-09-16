@@ -1,9 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageCircle, X } from "lucide-react";
+import { authHref, currentPathWithSearch } from "@/lib/auth/redirect";
 import { useAuth } from "@/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { toFaDigits } from "@/lib/locale/fa";
@@ -23,12 +24,12 @@ const OPENED_KEY = "mk-chat-opened";
 
 // Require login before opening chat.
 export function ChatWidget() {
-  const { user, setAuthOpen } = useAuth();
+  const { user } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const [invite, setInvite] = useState(false);
-  // Open the window the moment a pending guest login lands
-  const pendingOpen = useRef(false);
   const prevUnread = useRef(0);
   const fabRef = useRef<HTMLButtonElement>(null);
   // Return focus to the bubble when the window closes (APG dialog behavior).
@@ -59,27 +60,40 @@ export function ChatWidget() {
     if (sessionStorage.getItem(DISMISSED_KEY) || sessionStorage.getItem(OPENED_KEY)) {
       return;
     }
-    const id = window.setTimeout(() => setInvite(true), INVITE_DELAY_MS);
+    const id = window.setTimeout(() => {
+      if (!sessionStorage.getItem(DISMISSED_KEY) && !sessionStorage.getItem(OPENED_KEY)) {
+        setInvite(true);
+      }
+    }, INVITE_DELAY_MS);
     return () => window.clearTimeout(id);
   }, []);
 
   const openChat = useCallback(() => {
     if (!user) {
-      pendingOpen.current = true;
-      setAuthOpen(true);
+      const returnUrl = new URL(currentPathWithSearch(), window.location.origin);
+      returnUrl.searchParams.set("mk-chat", "1");
+      router.push(
+        authHref(`${returnUrl.pathname}${returnUrl.search}${returnUrl.hash}`),
+      );
       return;
     }
     sessionStorage.setItem(OPENED_KEY, "1");
     setInvite(false);
     setOpen(true);
-  }, [user, setAuthOpen]);
+  }, [router, user]);
 
   useEffect(() => {
-    if (user && pendingOpen.current) {
-      pendingOpen.current = false;
-      openChat();
-    }
-  }, [user, openChat]);
+    if (!user || searchParams.get("mk-chat") !== "1") return;
+    const returnUrl = new URL(window.location.href);
+    returnUrl.searchParams.delete("mk-chat");
+    sessionStorage.setItem(OPENED_KEY, "1");
+    setInvite(false);
+    setOpen(true);
+    router.replace(
+      `${returnUrl.pathname}${returnUrl.search}${returnUrl.hash}`,
+      { scroll: false },
+    );
+  }, [router, searchParams, user]);
 
   useEffect(() => {
     window.addEventListener("support:open", openChat);

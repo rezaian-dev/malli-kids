@@ -1,11 +1,13 @@
 "use client";
 
 import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Bell, BellRing } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { authHref, currentPathWithSearch } from "@/lib/auth/redirect";
 import { pdpCtaButton } from "../_lib/product-chrome";
 import { requestBackInStockAction } from "../_lib/back-in-stock-actions";
 
@@ -21,12 +23,13 @@ export function BackInStockButton({
   subscribed: boolean;
   onSubscribed: () => void;
 }) {
-  const { user, setAuthOpen } = useAuth();
+  const { user } = useAuth();
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   function handleClick() {
     if (!user) {
-      setAuthOpen(true);
+      router.push(authHref(currentPathWithSearch()));
       toast.error("برای دریافت اطلاع‌رسانی، اول وارد حساب‌تان شوید");
       return;
     }

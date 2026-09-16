@@ -16,8 +16,6 @@ import type { User } from "@/types";
 // Update client identity only after the server session changes.
 type Ctx = {
   user: User | null;
-  authOpen: boolean;
-  setAuthOpen: (open: boolean) => void;
   login: (user: User) => void;
   updateUser: (patch: Partial<User>) => void;
   logout: () => Promise<void>;
@@ -34,7 +32,6 @@ export function AuthProvider({
 }) {
   const router = useRouter();
   const [user, setUser] = useState(initialUser);
-  const [authOpen, setAuthOpen] = useState(false);
   const [serverUser, setServerUser] = useState(initialUser);
 
   // RSC refresh preserves this provider. Accept a new server snapshot before
@@ -49,7 +46,6 @@ export function AuthProvider({
   const login = useCallback(
     (nextUser: User) => {
       setUser(nextUser);
-      setAuthOpen(false);
       router.refresh();
     },
     [router],
@@ -69,13 +65,12 @@ export function AuthProvider({
       return;
     }
     setUser(null);
-    setAuthOpen(false);
     router.refresh();
   }, [router]);
 
   return (
     <AuthCtx.Provider
-      value={{ user, authOpen, setAuthOpen, login, updateUser, logout }}
+      value={{ user, login, updateUser, logout }}
     >
       {children}
     </AuthCtx.Provider>

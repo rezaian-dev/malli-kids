@@ -5,7 +5,11 @@ import { AuthProvider } from "./auth-provider";
 import { UserMenu } from "@/components/layout/user-menu";
 import type { User } from "@/types";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: vi.fn() }),
+  usePathname: () => "/",
+  useSearchParams: () => new URLSearchParams(),
+}));
 vi.mock("@/lib/auth/actions", () => ({ signOutAction: vi.fn() }));
 vi.mock("@/lib/shop/wallet-actions", () => ({ getWalletAction: vi.fn() }));
 

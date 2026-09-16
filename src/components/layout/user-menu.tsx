@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { LogIn } from "lucide-react";
+import { authHref } from "@/lib/auth/redirect";
 import { useAuth } from "@/providers/auth-provider";
 import { fullName, givenName } from "@/lib/text/name";
 import { Button } from "@/components/ui/button";
@@ -10,12 +13,15 @@ import { CLUSTER_H } from "./header-styles";
 import UserAccountMenu from "./user-account-menu";
 
 export function UserMenu() {
-  const { user, setAuthOpen, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const next = `${pathname}${searchParams.toString() ? `?${searchParams}` : ""}`;
 
   if (!user) {
     return (
       <Button
-        onClick={() => setAuthOpen(true)}
+        asChild
         className={cn(
           CLUSTER_H,
           "shrink-0 gap-1.5 px-2.5 min-[400px]:px-3 md:px-2.5 lg:px-4",
@@ -23,11 +29,13 @@ export function UserMenu() {
           "focus-visible:ring-gold/60 focus-visible:ring-2",
         )}
       >
-        <LogIn className="size-4 shrink-0" />
-        <span className="whitespace-nowrap">
-          ورود
-          <span className="hidden min-[360px]:inline"> | ثبت‌نام</span>
-        </span>
+        <Link href={authHref(next)}>
+          <LogIn className="size-4 shrink-0" />
+          <span className="whitespace-nowrap">
+            ورود
+            <span className="hidden min-[360px]:inline"> | ثبت‌نام</span>
+          </span>
+        </Link>
       </Button>
     );
   }

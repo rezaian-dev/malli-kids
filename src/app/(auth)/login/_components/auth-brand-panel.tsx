@@ -1,35 +1,43 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { Truck, ShieldCheck, Smartphone, Star } from "lucide-react";
+import { ShieldCheck, Smartphone, Star, Truck } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-function Perk({ icon, t, d }: { icon: ReactNode; t: string; d: string }) {
+function Perk({ icon, title, detail }: { icon: ReactNode; title: string; detail: string }) {
   return (
     <li className="flex items-center gap-3">
       <span className="text-gold-light flex size-9 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/10">
         {icon}
       </span>
-      <div>
-        <p className="text-sm font-bold text-white">{t}</p>
-        <p className="text-ivory/50 mt-0.5 text-[11px]">{d}</p>
-      </div>
+      <span>
+        <span className="block text-sm font-bold text-white">{title}</span>
+        <span className="text-ivory/55 mt-0.5 block text-[11px]">{detail}</span>
+      </span>
     </li>
   );
 }
 
-export function AuthAside() {
+export function AuthBrandPanel({ className }: { className?: string }) {
   return (
-    <aside className="bg-navy text-ivory relative hidden w-[46%] shrink-0 overflow-hidden rounded-s-[28px] lg:block">
+    <aside
+      dir="rtl"
+      className={cn(
+        "bg-navy text-ivory relative min-h-112 overflow-hidden rounded-l-[30px]",
+        className,
+      )}
+    >
       <Image
         src="/brand/auth-aside.jpg"
         alt=""
         fill
-        sizes="46vw"
+        priority
+        sizes="(min-width: 1024px) 50vw, 0px"
         className="absolute inset-0 size-full object-cover object-[center_18%]"
       />
       <div className="from-navy-deep via-navy-deep/55 absolute inset-0 bg-linear-to-t to-transparent" />
       <div className="border-gold/45 pointer-events-none absolute inset-3 rounded-[22px] border" />
 
-      <div className="relative flex h-full min-h-0 flex-col justify-between p-7 pe-8">
+      <div className="relative flex h-full min-h-112 flex-col justify-between p-7 pe-8 lg:min-h-0">
         <div className="flex items-center gap-3">
           <Image
             src="/brand/logo-white.png"
@@ -64,18 +72,18 @@ export function AuthAside() {
           <ul className="mt-5 space-y-2">
             <Perk
               icon={<Truck className="size-4" />}
-              t="پیگیری سفارش‌ها"
-              d="همهٔ خریدها در حساب شما"
+              title="پیگیری سفارش‌ها"
+              detail="همهٔ خریدها در حساب شما"
             />
             <Perk
               icon={<Smartphone className="size-4" />}
-              t="ورود آسان با پیامک"
-              d="با شمارهٔ موبایل تأییدشده"
+              title="ورود آسان با پیامک"
+              detail="با شمارهٔ موبایل تأییدشده"
             />
             <Perk
               icon={<ShieldCheck className="size-4" />}
-              t="بازیابی امن رمز"
-              d="بدون ارسال رمز فعلی شما"
+              title="بازیابی امن رمز"
+              detail="بدون ارسال رمز فعلی شما"
             />
           </ul>
 
