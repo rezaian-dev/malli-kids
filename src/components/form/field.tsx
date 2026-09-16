@@ -44,6 +44,7 @@ export type FieldShellProps = {
   hideMessage?: boolean;
 
   labelClassName?: string;
+  feedbackClassName?: string;
 
   children: (p: {
     field: ReturnType<typeof useField>["field"];
@@ -65,6 +66,7 @@ export function Field({
   noShell,
   hideMessage,
   labelClassName,
+  feedbackClassName,
   children,
 }: FieldShellProps) {
   const { field, fieldState } = useField(name);
@@ -138,7 +140,12 @@ export function Field({
         </>
       )}
 
-      <div className="min-h-10 max-h-10 overflow-y-auto sm:min-h-5 sm:max-h-5">
+      <div
+        className={cn(
+          "min-h-10 max-h-10 overflow-y-auto sm:min-h-5 sm:max-h-5",
+          feedbackClassName,
+        )}
+      >
         {showMsg ? (
           <p id={`${id}-msg`} role="alert" className={cn("m-0", ERROR_TEXT)}>
             <CircleAlert aria-hidden="true" className="mt-0.5 size-3 shrink-0" />

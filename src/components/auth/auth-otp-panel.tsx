@@ -20,7 +20,12 @@ import {
   type OtpRequestValues,
   type OtpVerifyValues,
 } from "@/lib/auth/schemas";
-import { reportAuthError, SUBMIT_NAVY, useCooldown } from "./auth-shared";
+import {
+  AUTH_FIELD_FEEDBACK,
+  reportAuthError,
+  SUBMIT_NAVY,
+  useCooldown,
+} from "./auth-shared";
 import { OtpBoxes } from "./auth-code-input";
 import { CodeStepActions } from "./auth-code-actions";
 
@@ -67,6 +72,7 @@ export function OtpLoginPanel() {
   if (!phone)
     return (
       <AppForm
+        feedbackHeight="compact"
         form={phoneForm}
         onSubmit={sendCode}
         ariaLabel="ورود با کد پیامکی"
@@ -78,6 +84,7 @@ export function OtpLoginPanel() {
           ندارید، بعد از تأیید شماره حساب ساخته می‌شود.
         </p>
         <InsetField
+          feedbackClassName={AUTH_FIELD_FEEDBACK}
           name="phone"
           label="شمارهٔ موبایل"
           icon={<Smartphone className="size-4" />}
@@ -97,6 +104,7 @@ export function OtpLoginPanel() {
 
   return (
     <AppForm
+      feedbackHeight="compact"
       form={codeForm}
       onSubmit={verify}
       ariaLabel="تأیید کد پیامکی"

@@ -11,6 +11,11 @@ describe("auth redirects", () => {
     );
   });
 
+  it("does not add a redundant root return query", () => {
+    expect(authHref()).toBe("/login");
+    expect(authHref("/")).toBe("/login");
+  });
+
   it("rejects external, ambiguous, and login-loop destinations", () => {
     expect(safeAuthReturnPath("https://example.com")).toBe("/");
     expect(safeAuthReturnPath("//example.com")).toBe("/");

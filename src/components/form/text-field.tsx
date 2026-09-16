@@ -24,6 +24,7 @@ export type TextFieldProps = {
   required?: boolean;
 
   showCount?: boolean;
+  feedbackClassName?: string;
 };
 
 export function TextField({
@@ -43,6 +44,7 @@ export function TextField({
   trailing,
   required,
   showCount,
+  feedbackClassName,
 }: TextFieldProps) {
   return (
     <Field
@@ -54,6 +56,7 @@ export function TextField({
       className={className}
       icon={icon}
       trailing={trailing}
+      feedbackClassName={feedbackClassName}
     >
       {({ field, invalid, id, describedBy }) => (
         <>

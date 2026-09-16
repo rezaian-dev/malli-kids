@@ -25,7 +25,7 @@ export function AuthPage({ initialView }: { initialView: "login" | "register" })
   return (
     <section
       dir="rtl"
-      className="bg-paper text-navy flex min-w-0 flex-col px-5 py-6 sm:px-10 sm:py-9 lg:px-12 lg:py-10 dark:bg-dusk dark:text-ivory"
+      className="bg-paper text-navy relative z-10 flex min-h-dvh min-w-0 flex-col px-5 py-2 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-500 sm:px-8 sm:py-5 lg:px-10 lg:py-2 xl:px-12 dark:bg-dusk dark:text-ivory"
     >
       <header className="flex items-center justify-between gap-4">
         <Link
@@ -49,14 +49,14 @@ export function AuthPage({ initialView }: { initialView: "login" | "register" })
         </Link>
       </header>
 
-      <div className="mx-auto w-full max-w-md flex-1 pt-9 sm:pt-12 lg:pt-14">
+      <div className="mx-auto w-full max-w-md flex-1 pt-4 sm:pt-5 lg:pt-2">
         <p className="text-gold-deep dark:text-gold-light text-[11px] font-black tracking-[0.22em]">
           MALLI KIDS / ATELIER ACCOUNT
         </p>
-        <h1 className="mt-3 text-[clamp(1.65rem,4vw,2.35rem)] leading-tight font-black">
+        <h1 className="mt-2 text-[clamp(1.65rem,4vw,2.35rem)] leading-tight font-black">
           {TITLES[view]}
         </h1>
-        <p className="text-navy/70 dark:text-linen/70 mt-3 max-w-md text-sm leading-7">
+        <p className="text-navy/70 dark:text-linen/70 mt-2 max-w-md text-sm leading-6">
           ورود، ساخت حساب یا بازیابی رمز با شمارهٔ موبایل تأییدشده.
         </p>
 
@@ -64,13 +64,13 @@ export function AuthPage({ initialView }: { initialView: "login" | "register" })
           <button
             type="button"
             onClick={() => setView("login")}
-            className="text-gold-deep dark:text-gold-light mt-5 inline-flex min-h-10 items-center gap-1 rounded-full px-1 text-xs font-bold focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+            className="text-gold-deep dark:text-gold-light mt-4 inline-flex min-h-10 items-center gap-1 rounded-full px-1 text-xs font-bold focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
           >
             <ArrowRight className="size-3.5" /> بازگشت به ورود
           </button>
         ) : (
           <div
-            className="bg-sand ring-navy/5 dark:bg-navy-deep/70 mt-7 grid grid-cols-2 gap-1 rounded-2xl p-1 ring-1 dark:ring-white/10"
+            className="bg-sand ring-navy/5 dark:bg-navy-deep/70 mt-4 grid grid-cols-2 gap-1 rounded-2xl p-1 ring-1 dark:ring-white/10"
             role="tablist"
             aria-label="نوع حساب"
           >
@@ -109,7 +109,7 @@ export function AuthPage({ initialView }: { initialView: "login" | "register" })
           </div>
         )}
 
-        <div className={cn("min-w-0", view === "forgot" ? "mt-5" : "mt-7")}>
+        <div className={cn("min-w-0", view === "forgot" ? "mt-3" : "mt-4")}>
           <section
             id="login-panel"
             role="tabpanel"
@@ -137,7 +137,7 @@ export function AuthPage({ initialView }: { initialView: "login" | "register" })
         </div>
       </div>
 
-      <p className="text-navy/55 dark:text-linen/55 mx-auto mt-8 w-full max-w-md text-center text-[10px] leading-5 sm:mt-10">
+      <p className="text-navy/55 dark:text-linen/55 mx-auto mt-2 w-full max-w-md text-center text-[10px] leading-5 sm:mt-4 lg:mt-2">
         با ادامه، شرایط استفاده و حریم خصوصی ملی‌کیدز را می‌پذیرید.
       </p>
     </section>

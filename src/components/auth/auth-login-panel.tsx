@@ -20,7 +20,7 @@ import {
   signInSchema,
   type SignInValues,
 } from "@/lib/auth/schemas";
-import { reportAuthError, SUBMIT_NAVY } from "./auth-shared";
+import { AUTH_FIELD_FEEDBACK, reportAuthError, SUBMIT_NAVY } from "./auth-shared";
 
 const METHOD_BTN =
   "inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-[12px] font-extrabold transition-colors text-navy/70 hover:text-navy dark:text-linen/70 dark:hover:text-ivory";
@@ -31,7 +31,7 @@ export function LoginPanel({ onForgot }: { onForgot: () => void }) {
   const [method, setMethod] = useState<"password" | "otp">("password");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div
         className="bg-sand ring-navy/5 dark:bg-navy-deep/70 grid grid-cols-2 gap-1 rounded-2xl p-1 ring-1 dark:ring-white/10"
         role="group"
@@ -88,13 +88,15 @@ function PasswordLoginPanel({ onForgot }: { onForgot: () => void }) {
 
   return (
     <AppForm
+      feedbackHeight="compact"
       form={form}
       onSubmit={onValid}
       ariaLabel="ورود با رمز عبور"
-      className="space-y-3.5"
+      className="space-y-3"
       shakeSignal={shakeSignal}
     >
       <InsetField
+        feedbackClassName={AUTH_FIELD_FEEDBACK}
         name="email"
         label="ایمیل"
         icon={<Mail className="size-4" />}
@@ -107,6 +109,7 @@ function PasswordLoginPanel({ onForgot }: { onForgot: () => void }) {
       />
 
       <InsetField
+        feedbackClassName={AUTH_FIELD_FEEDBACK}
         name="password"
         label="رمز عبور"
         icon={<Lock className="size-4" />}

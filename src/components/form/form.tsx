@@ -78,6 +78,7 @@ export type AppFormProps<T extends FieldValues> = {
   busy?: boolean;
   onInvalid?: (errors: FieldErrors<T>) => void;
   resetOnSubmit?: boolean;
+  feedbackHeight?: "default" | "compact";
 };
 
 export function AppForm<T extends FieldValues>({
@@ -96,6 +97,7 @@ export function AppForm<T extends FieldValues>({
   shakeSignal,
   busy,
   resetOnSubmit,
+  feedbackHeight = "default",
 }: AppFormProps<T>) {
   const element = useRef<HTMLFormElement>(null);
   const submitting = useRef(false);
@@ -199,10 +201,14 @@ export function AppForm<T extends FieldValues>({
         }}
       >
         <div
-          className={cn(
-            "min-h-[4.125rem]",
-            serverError && "max-h-[4.125rem] overflow-y-auto",
-          )}
+          className={
+            feedbackHeight === "compact"
+              ? "min-h-12 max-h-12 overflow-y-auto"
+              : cn(
+                  "min-h-[4.125rem]",
+                  serverError && "max-h-[4.125rem] overflow-y-auto",
+                )
+          }
           aria-live="polite"
         >
           {serverError ? (

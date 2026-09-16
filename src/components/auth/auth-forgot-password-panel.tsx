@@ -29,7 +29,12 @@ import {
 } from "@/lib/auth/schemas";
 import { OtpBoxes } from "./auth-code-input";
 import { CodeStepActions } from "./auth-code-actions";
-import { reportAuthError, SUBMIT_GOLD, useCooldown } from "./auth-shared";
+import {
+  AUTH_FIELD_FEEDBACK,
+  reportAuthError,
+  SUBMIT_GOLD,
+  useCooldown,
+} from "./auth-shared";
 
 export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
   const [step, setStep] = useState<"phone" | "reset" | "done">("phone");
@@ -96,6 +101,7 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
   if (step === "phone")
     return (
       <AppForm
+        feedbackHeight="compact"
         form={phoneForm}
         onSubmit={sendCode}
         ariaLabel="فراموشی رمز عبور"
@@ -107,6 +113,7 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
           تعیین رمز جدید پیامک می‌شود؛ رمز فعلی هرگز ارسال نمی‌شود.
         </p>
         <InsetField
+          feedbackClassName={AUTH_FIELD_FEEDBACK}
           name="phone"
           label="شمارهٔ موبایل"
           icon={<Smartphone className="size-4" />}
@@ -139,6 +146,7 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
 
   return (
     <AppForm
+      feedbackHeight="compact"
       form={resetForm}
       onSubmit={submitReset}
       ariaLabel="تعیین رمز جدید"
@@ -173,6 +181,7 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
         )}
       </Field>
       <InsetField
+        feedbackClassName={AUTH_FIELD_FEEDBACK}
         name="password"
         label="رمز عبور جدید"
         icon={<Lock className="size-4" />}
@@ -197,6 +206,7 @@ export function ForgotPasswordPanel({ onBack }: { onBack: () => void }) {
         }
       />
       <InsetField
+        feedbackClassName={AUTH_FIELD_FEEDBACK}
         name="confirmPassword"
         label="تکرار رمز عبور"
         icon={<Lock className="size-4" />}

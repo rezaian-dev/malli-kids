@@ -47,6 +47,9 @@ export function reportAuthError<T extends FieldValues>(
   form.setError(field, { type: "server", message: result.error });
 }
 
+// Reserve one stable feedback line so validation never pushes the page geometry.
+export const AUTH_FIELD_FEEDBACK = "min-h-5 max-h-5";
+
 export const SUBMIT_NAVY =
   "h-12 w-full gap-2 rounded-full font-black transition-transform active:scale-99 bg-navy text-ivory shadow-[0_10px_24px_-12px] shadow-navy/60 hover:bg-navy-mid dark:bg-gold dark:text-navy-deep dark:shadow-gold/40 dark:hover:bg-gold-light";
 export const SUBMIT_GOLD =

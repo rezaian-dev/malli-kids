@@ -22,7 +22,7 @@ export function AuthBrandPanel({ className }: { className?: string }) {
     <aside
       dir="rtl"
       className={cn(
-        "bg-navy text-ivory relative min-h-112 overflow-hidden rounded-l-[30px]",
+        "bg-navy text-ivory relative min-h-dvh overflow-hidden motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-700",
         className,
       )}
     >
@@ -30,14 +30,13 @@ export function AuthBrandPanel({ className }: { className?: string }) {
         src="/brand/auth-aside.jpg"
         alt=""
         fill
-        priority
         sizes="(min-width: 1024px) 50vw, 0px"
         className="absolute inset-0 size-full object-cover object-[center_18%]"
       />
       <div className="from-navy-deep via-navy-deep/55 absolute inset-0 bg-linear-to-t to-transparent" />
       <div className="border-gold/45 pointer-events-none absolute inset-3 rounded-[22px] border" />
 
-      <div className="relative flex h-full min-h-112 flex-col justify-between p-7 pe-8 lg:min-h-0">
+      <div className="relative flex min-h-dvh flex-col justify-between p-7 pe-8 lg:p-10 xl:p-14">
         <div className="flex items-center gap-3">
           <Image
             src="/brand/logo-white.png"

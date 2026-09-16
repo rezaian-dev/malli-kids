@@ -30,7 +30,12 @@ import {
   type SignUpValues,
   type OtpVerifyValues,
 } from "@/lib/auth/schemas";
-import { reportAuthError, SUBMIT_GOLD, useCooldown } from "./auth-shared";
+import {
+  AUTH_FIELD_FEEDBACK,
+  reportAuthError,
+  SUBMIT_GOLD,
+  useCooldown,
+} from "./auth-shared";
 import { OtpBoxes } from "./auth-code-input";
 import { CodeStepActions } from "./auth-code-actions";
 
@@ -83,6 +88,7 @@ export function RegisterPanel() {
   if (details)
     return (
       <AppForm
+        feedbackHeight="compact"
         form={codeForm}
         onSubmit={complete}
         ariaLabel="تأیید موبایل و ثبت‌نام"
@@ -137,68 +143,75 @@ export function RegisterPanel() {
 
   return (
     <AppForm
+      feedbackHeight="compact"
       form={form}
       onSubmit={sendCode}
       ariaLabel="ثبت‌نام"
-      className="space-y-3.5"
+      className="space-y-3"
       shakeSignal={shakeSignal}
     >
-      <InsetField
-        name="name"
-        label="نام و نام خانوادگی"
-        icon={<User className="size-4" />}
-        autoComplete="name"
-        placeholder="سارا محمدی"
-        required
-      />
-      <InsetField
-        name="email"
-        label="ایمیل"
-        icon={<Mail className="size-4" />}
-        type="email"
-        dir="ltr"
-        autoComplete="email"
-        placeholder="you@mail.com"
-        inputClassName="text-left"
-        required
-      />
-      <InsetField
-        name="phone"
-        label="شمارهٔ موبایل"
-        icon={<Smartphone className="size-4" />}
-        type="tel"
-        dir="ltr"
-        inputMode="tel"
-        autoComplete="tel"
-        placeholder="09123456789"
-        inputClassName="text-left"
-        required
-        hint="برای ورود و بازیابی رمز؛ مالکیت شماره با پیامک تأیید می‌شود."
-      />
-      <InsetField
-        name="password"
-        label="رمز عبور"
-        icon={<Lock className="size-4" />}
-        type={show ? "text" : "password"}
-        dir="ltr"
-        autoComplete="new-password"
-        inputClassName="text-left"
-        required
-        hint="حداقل ۸ نویسه، شامل حرف انگلیسی و عدد"
-        trailing={
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="text-gold hover:bg-gold/10 hover:text-gold size-9 shrink-0"
-            onClick={() => setShow((s) => !s)}
-            aria-pressed={show}
-            aria-label={show ? "پنهان کردن رمز" : "نمایش رمز"}
-          >
-            {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-          </Button>
-        }
-      />
+      <div className="grid gap-x-4 gap-y-3 min-[375px]:grid-cols-2">
+        <InsetField
+          feedbackClassName={AUTH_FIELD_FEEDBACK}
+          name="name"
+          label="نام و نام خانوادگی"
+          icon={<User className="size-4" />}
+          autoComplete="name"
+          placeholder="سارا محمدی"
+          required
+        />
+        <InsetField
+          feedbackClassName={AUTH_FIELD_FEEDBACK}
+          name="email"
+          label="ایمیل"
+          icon={<Mail className="size-4" />}
+          type="email"
+          dir="ltr"
+          autoComplete="email"
+          placeholder="you@mail.com"
+          inputClassName="text-left text-sm"
+          required
+        />
+        <InsetField
+          feedbackClassName={AUTH_FIELD_FEEDBACK}
+          name="phone"
+          label="شمارهٔ موبایل"
+          icon={<Smartphone className="size-4" />}
+          type="tel"
+          dir="ltr"
+          inputMode="tel"
+          autoComplete="tel"
+          placeholder="09123456789"
+          inputClassName="text-left text-sm"
+          required
+          hint="تأیید شماره با پیامک"
+        />
+        <InsetField
+          feedbackClassName={AUTH_FIELD_FEEDBACK}
+          name="password"
+          label="رمز عبور"
+          icon={<Lock className="size-4" />}
+          type={show ? "text" : "password"}
+          dir="ltr"
+          autoComplete="new-password"
+          inputClassName="text-left"
+          required
+          hint="۸ نویسه، حرف و عدد"
+          trailing={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="text-gold hover:bg-gold/10 hover:text-gold size-9 shrink-0"
+              onClick={() => setShow((s) => !s)}
+              aria-pressed={show}
+              aria-label={show ? "پنهان کردن رمز" : "نمایش رمز"}
+            >
+              {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            </Button>
+          }
+        />
+      </div>
       <SubmitButton className={SUBMIT_GOLD} pendingLabel="در حال ارسال کد…">
         دریافت کد و ادامه <ArrowLeft className="size-4" />
       </SubmitButton>

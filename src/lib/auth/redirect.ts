@@ -17,7 +17,10 @@ export function safeAuthReturnPath(value: unknown): string {
 }
 
 export function authHref(next = "/") {
-  return `${AUTH_ROUTE}?next=${encodeURIComponent(safeAuthReturnPath(next))}`;
+  const returnPath = safeAuthReturnPath(next);
+  return returnPath === "/"
+    ? AUTH_ROUTE
+    : `${AUTH_ROUTE}?next=${encodeURIComponent(returnPath)}`;
 }
 
 /** Called only from client event handlers that are already running in a browser. */
