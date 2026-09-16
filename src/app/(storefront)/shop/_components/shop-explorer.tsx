@@ -150,7 +150,7 @@ export function ShopExplorer({
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="inset-y-0 right-0 flex h-dvh !w-[min(94vw,380px)] !max-w-[380px] flex-col gap-0 border-s p-0 border-navy/10 bg-sand-deep dark:border-gold/40 dark:bg-filter-night"
+          className="inset-y-0 right-0 flex h-dvh !w-[min(88vw,360px)] !max-w-[360px] flex-col gap-0 border-s p-0 border-navy/10 bg-sand-deep dark:border-gold/40 dark:bg-filter-night"
         >
           <SheetHeader className="gap-0 p-0">
             <div className="flex min-w-0 items-center justify-between gap-2 px-3 py-3 sm:px-4 sm:py-4">

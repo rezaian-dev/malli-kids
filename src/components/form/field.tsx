@@ -74,7 +74,8 @@ export function Field({
   const message = fieldState.error?.message;
   const shell = noShell ? undefined : SHELL[skin];
   const showMsg = Boolean(message) && !hideMessage;
-  const showHint = !showMsg && Boolean(hint);
+  const hasHint = Boolean(hint);
+  const showHint = !showMsg && hasHint;
 
   const control = children({
     field,
@@ -137,16 +138,18 @@ export function Field({
         </>
       )}
 
-      {showMsg ? (
-        <p id={`${id}-msg`} role="alert" className={cn("m-0", ERROR_TEXT)}>
-          <CircleAlert aria-hidden="true" className="mt-0.5 size-3 shrink-0" />
-          <span className="min-w-0 break-words">{message}</span>
-        </p>
-      ) : showHint ? (
-        <p id={`${id}-hint`} className={HINT_TEXT}>
-          {hint}
-        </p>
-      ) : null}
+      <div className="min-h-10 max-h-10 overflow-y-auto sm:min-h-5 sm:max-h-5">
+        {showMsg ? (
+          <p id={`${id}-msg`} role="alert" className={cn("m-0", ERROR_TEXT)}>
+            <CircleAlert aria-hidden="true" className="mt-0.5 size-3 shrink-0" />
+            <span className="min-w-0 break-words">{message}</span>
+          </p>
+        ) : showHint ? (
+          <p id={`${id}-hint`} className={HINT_TEXT}>
+            {hint}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }

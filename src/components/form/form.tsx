@@ -198,16 +198,24 @@ export function AppForm<T extends FieldValues>({
           }
         }}
       >
-        {serverError ? (
-          <p
-            role="alert"
-            data-form-error
-            tabIndex={-1}
-            className="border-rose/30 bg-rose/5 text-rose scroll-my-3 rounded-xl border px-3 py-2 text-xs leading-6 break-words"
-          >
-            {String(serverError)}
-          </p>
-        ) : null}
+        <div
+          className={cn(
+            "min-h-[4.125rem]",
+            serverError && "max-h-[4.125rem] overflow-y-auto",
+          )}
+          aria-live="polite"
+        >
+          {serverError ? (
+            <p
+              role="alert"
+              data-form-error
+              tabIndex={-1}
+              className="border-rose/30 bg-rose/5 text-rose scroll-my-3 rounded-xl border px-3 py-2 text-xs leading-6 break-words"
+            >
+              {String(serverError)}
+            </p>
+          ) : null}
+        </div>
         {children}
       </form>
     </FormProvider>
