@@ -68,6 +68,10 @@ export async function generateMetadata({
     image: article.cover,
     imageAlt: article.title,
     type: "article",
+    publishedTime: article.publishedAt,
+    modifiedTime: article.updatedAt,
+    section: article.tag,
+    tags: article.tags.map((tag) => tag.name),
     // Real assigned tags only — legitimate metadata, not stuffing
     keywords: [article.tag, ...article.tags.map((t) => t.name)].filter(Boolean),
   });

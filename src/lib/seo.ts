@@ -46,6 +46,10 @@ type PageMetadataInput = {
   noIndex?: boolean;
   type?: PageType;
   absoluteTitle?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  section?: string;
+  tags?: string[];
 };
 
 type PageSchemaInput = {
@@ -71,13 +75,13 @@ type ItemListEntry = {
   image?: string;
 };
 
-// Read the public site URL from env with a safe local fallback.
+// Prefer the canonical production origin so crawlers never receive localhost or a preview URL.
 export function getSiteUrl() {
   const candidates = [
     process.env.NEXT_PUBLIC_SITE_URL,
     process.env.SITE_URL,
+    process.env.BETTER_AUTH_URL,
     process.env.VERCEL_PROJECT_PRODUCTION_URL,
-    process.env.VERCEL_URL,
   ];
 
   for (const candidate of candidates) {
@@ -85,11 +89,12 @@ export function getSiteUrl() {
     if (normalized) return normalized;
   }
 
-  return "http://localhost:3000";
+  return "https://mallikids.ir";
 }
 
-// Build absolute URLs for canonicals, JSON-LD and sitemap entries.
+// Build absolute URLs for canonicals, JSON-LD and social metadata.
 export function absoluteUrl(path = "/") {
+  if (/^https?:\/\//i.test(path)) return new URL(path).toString();
   const safePath = path.startsWith("/") ? path : `/${path}`;
   return new URL(safePath, `${getSiteUrl()}/`).toString();
 }
@@ -104,22 +109,27 @@ export function crawlableImage(
   return image;
 }
 
-// Keep OG images consistent and explicit.
+// Keep social images absolute, crawlable and explicit.
 function buildOgImage(
   image: string = SEO.defaultImage,
   alt: string = SEO.defaultImageAlt,
 ) {
   const safe = crawlableImage(image, SEO.defaultImage);
+  const url = absoluteUrl(safe);
   const isDefault = safe === SEO.defaultImage;
+  const extension = safe.split(/[?#]/, 1)[0].toLowerCase();
+  const type =
+    extension.endsWith(".jpg") || extension.endsWith(".jpeg")
+      ? "image/jpeg"
+      : extension.endsWith(".webp")
+        ? "image/webp"
+        : "image/png";
+
   return {
-    url: safe,
+    url,
     alt,
-    type:
-      safe.endsWith(".jpg") || safe.endsWith(".jpeg")
-        ? "image/jpeg"
-        : safe.endsWith(".webp")
-          ? "image/webp"
-          : "image/png",
+    type,
+    ...(url.startsWith("https://") ? { secureUrl: url } : {}),
     ...(isDefault ? { width: SEO.ogWidth, height: SEO.ogHeight } : {}),
   } as const;
 }
@@ -153,6 +163,10 @@ export function buildMetadata({
   noIndex = false,
   type = "website",
   absoluteTitle = false,
+  publishedTime,
+  modifiedTime,
+  section,
+  tags = [],
 }: PageMetadataInput = {}): Metadata {
   const desc = clipMeta(description, DESC_MAX);
   const ogTitle = clipMeta(
@@ -160,7 +174,7 @@ export function buildMetadata({
     TITLE_MAX,
   );
   const fullImageAlt = imageAlt ?? ogTitle;
-  const safeImage = crawlableImage(image, SEO.defaultImage);
+  const socialImage = buildOgImage(image, fullImageAlt);
 
   return {
     title: toMetadataTitle(title, absoluteTitle),
@@ -171,17 +185,25 @@ export function buildMetadata({
     openGraph: {
       title: ogTitle,
       description: desc,
-      url: path,
+      url: absoluteUrl(path),
       siteName: SEO.siteNameFa,
       locale: SEO.locale,
       type,
-      images: [buildOgImage(safeImage, fullImageAlt)],
+      images: [socialImage],
+      ...(type === "article"
+        ? {
+            publishedTime,
+            modifiedTime,
+            section,
+            tags: tags.length ? dedupe(tags) : undefined,
+          }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description: desc,
-      images: [safeImage],
+      images: [socialImage],
     },
   };
 }

@@ -98,4 +98,34 @@ describe("buildMetadata", () => {
   it("sets the canonical path", () => {
     expect(buildMetadata({ path: "/shop" }).alternates?.canonical).toBe("/shop");
   });
+
+  it("emits absolute social image metadata with the recommended dimensions", () => {
+    const meta = buildMetadata();
+    const openGraphImages = meta.openGraph?.images;
+    const twitterImages = meta.twitter?.images;
+    const image = (Array.isArray(openGraphImages) ? openGraphImages[0] : openGraphImages) as
+      | { url?: string; type?: string; width?: number; height?: number }
+      | undefined;
+    const twitterImage = (Array.isArray(twitterImages) ? twitterImages[0] : twitterImages) as
+      | { url?: string; alt?: string }
+      | undefined;
+
+    expect(image).toMatchObject({
+      url: expect.stringMatching(/\/og\.jpg$/),
+      type: "image/jpeg",
+      width: 1200,
+      height: 630,
+    });
+    expect(String(image?.url)).toMatch(/^https:\/\//);
+    expect(twitterImage).toMatchObject({
+      url: image?.url,
+      alt: SEO.defaultTitle,
+    });
+  });
+
+  it("does not corrupt already-absolute image URLs", () => {
+    expect(absoluteUrl("https://cdn.example.com/image.jpg")).toBe(
+      "https://cdn.example.com/image.jpg",
+    );
+  });
 });
