@@ -43,12 +43,12 @@ const CartSheetBody = dynamic(
 function CartBodyLoading() {
   return (
     <div className="flex h-full flex-col gap-4 p-4" aria-hidden>
-      <div className="animate-pulse space-y-2">
+      <div className="motion-safe:animate-pulse space-y-2">
         <div className="h-4 w-32 rounded-full bg-sand dark:bg-dusk-soft" />
         <div className="h-3 w-48 rounded-full bg-sand dark:bg-dusk-soft" />
       </div>
 
-      <div className="animate-pulse space-y-2.5">
+      <div className="motion-safe:animate-pulse space-y-2.5">
         {Array.from({ length: 2 }).map((_, i) => (
           <div
             key={i}
@@ -64,7 +64,7 @@ function CartBodyLoading() {
         ))}
       </div>
 
-      <div className="animate-pulse mt-auto space-y-2">
+      <div className="motion-safe:animate-pulse mt-auto space-y-2">
         <div className="h-12 rounded-2xl bg-sand dark:bg-dusk-soft" />
         <div className="h-11 rounded-2xl bg-sand dark:bg-dusk-soft" />
       </div>

@@ -81,7 +81,10 @@ export default async function StorefrontLayout({
             <BackgroundScene />
             <Header />
             <HeaderSpacer />
-            <main id="main-content" className="relative z-10 pb-10 sm:pb-16">
+            <main
+              id="main-content"
+              className="relative z-10 min-h-[calc(100dvh-8.75rem)] pb-10 sm:min-h-[calc(100dvh-9.5rem)] sm:pb-16"
+            >
               <PageReveal>{children}</PageReveal>
             </main>
             <Footer />

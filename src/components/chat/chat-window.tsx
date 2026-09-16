@@ -438,9 +438,9 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
               <p className="border-gold/30 bg-gold/10 text-navy dark:text-ivory flex items-center gap-1.5 rounded-2xl rounded-se-md border px-4 py-3 text-[11px] font-bold">
                 پشتیبانی در حال نوشتن
                 <span aria-hidden className="flex gap-0.5">
-                  <span className="bg-gold size-1.5 animate-bounce rounded-full [animation-delay:0ms]" />
-                  <span className="bg-gold size-1.5 animate-bounce rounded-full [animation-delay:150ms]" />
-                  <span className="bg-gold size-1.5 animate-bounce rounded-full [animation-delay:300ms]" />
+                  <span className="bg-gold size-1.5 motion-safe:animate-bounce rounded-full [animation-delay:0ms]" />
+                  <span className="bg-gold size-1.5 motion-safe:animate-bounce rounded-full [animation-delay:150ms]" />
+                  <span className="bg-gold size-1.5 motion-safe:animate-bounce rounded-full [animation-delay:300ms]" />
                 </span>
               </p>
             </div>

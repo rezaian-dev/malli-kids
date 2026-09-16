@@ -13,7 +13,7 @@ export function ProfilePanelFallback({
     <section className={PROFILE_CARD} aria-live="polite" aria-busy="true">
       <div className="flex items-center gap-3">
         <span className="bg-gold/15 text-gold grid size-10 place-items-center rounded-2xl">
-          <Loader2 className="size-5 animate-spin" />
+          <Loader2 className="size-5 motion-safe:animate-spin" />
         </span>
         <div>
           <h2 className="text-navy dark:text-linen text-lg font-black">

@@ -109,7 +109,7 @@ export async function Hero() {
                 className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-8 py-3.5 text-sm font-black transition-[box-shadow,color,background-color] duration-500 sm:px-9 sm:py-4 sm:text-base from-navy via-navy-mid to-navy text-cream ring-gold/40 hover:ring-gold bg-linear-to-l shadow-[0_12px_28px_-8px_rgba(14,42,71,.45)] ring-2 hover:shadow-[0_18px_40px_-10px_rgba(193,147,87,.6)]"
               >
                 <span
-                  className="pointer-events-none absolute -inset-2 animate-pulse rounded-full opacity-70 blur-md bg-gold/25"
+                  className="pointer-events-none absolute -inset-2 motion-safe:animate-pulse rounded-full opacity-70 blur-md bg-gold/25"
                   aria-hidden
                 />
                 <span

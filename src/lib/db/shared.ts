@@ -1,8 +1,16 @@
 import "server-only";
 
 export const MONGODB_URI =
-  process.env.MONGODB_URI || "mongodb://localhost:27017/malli-kids";
+  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/malli-kids";
 export const hasMongooseEnv = !!process.env.MONGODB_URI;
+
+// The optional local fallback must fail fast instead of blocking a request for
+// the driver's 30-second default. Configured databases keep the driver's
+// normal failover window; this only makes the documented no-database fallback
+// usable during local/build-preview runs.
+export const MONGO_CONNECTION_OPTIONS = hasMongooseEnv
+  ? {}
+  : { connectTimeoutMS: 5_000, serverSelectionTimeoutMS: 5_000 };
 
 // Default credentialed URIs to their own database's authSource.
 export function getMongooseUri(): string {

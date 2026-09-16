@@ -75,7 +75,7 @@ export function CodeStepActions({
           aria-busy={pending || undefined}
         >
           {pending ? (
-            <Loader2 className="size-3.5 animate-spin" />
+            <Loader2 className="size-3.5 motion-safe:animate-spin" />
           ) : (
             <RotateCcw className="size-3.5" />
           )}

@@ -92,7 +92,7 @@ export function ProfileHeader({ user }: { user: User }) {
           <label
             className={cn(
               "bg-gold text-navy-deep absolute -bottom-1 -left-1 flex size-9 cursor-pointer items-center justify-center rounded-full",
-              avatarBusy && "animate-pulse opacity-70",
+              avatarBusy && "motion-safe:animate-pulse opacity-70",
             )}
           >
             <Camera className="h-4 w-4" />

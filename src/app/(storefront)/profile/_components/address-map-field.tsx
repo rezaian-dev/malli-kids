@@ -381,7 +381,7 @@ export function AddressMapField() {
                   className="from-sand via-gold-pale/40 to-sand absolute inset-0 flex flex-col items-center justify-center gap-2.5 bg-linear-to-br dark:from-navy-deep dark:via-navy-mid/60 dark:to-navy-deep"
                 >
                   <span className="relative">
-                    <span className="bg-gold/25 absolute inset-0 -m-2 animate-ping rounded-full" />
+                    <span className="bg-gold/25 absolute inset-0 -m-2 motion-safe:animate-ping rounded-full" />
                     <span className="bg-navy text-gold-soft relative grid size-11 place-items-center rounded-full shadow-lg dark:bg-gold dark:text-navy-deep">
                       <MapPin className="size-5" />
                     </span>
@@ -409,7 +409,7 @@ export function AddressMapField() {
                 )}
               >
                 {locating ? (
-                  <span className="border-gold-soft size-3.5 animate-spin rounded-full border-2 border-t-transparent" />
+                  <span className="border-gold-soft size-3.5 motion-safe:animate-spin rounded-full border-2 border-t-transparent" />
                 ) : (
                   <LocateFixed className="size-3.5" />
                 )}

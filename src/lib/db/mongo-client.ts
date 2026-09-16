@@ -3,13 +3,16 @@ import { MongoClient } from "mongodb";
 import {
   cached,
   getMongooseUri,
+  MONGO_CONNECTION_OPTIONS,
   requireBuildDatabase,
   rethrowMongoError,
 } from "./shared";
 
 export const connectMongoClient = cached("_mongoClient", async () => {
   requireBuildDatabase();
-  return new MongoClient(getMongooseUri()).connect().catch(rethrowMongoError);
+  return new MongoClient(getMongooseUri(), MONGO_CONNECTION_OPTIONS)
+    .connect()
+    .catch(rethrowMongoError);
 });
 
 // Authentication modules must load even when the database is unavailable.
@@ -21,5 +24,5 @@ export async function getAuthMongoClient(): Promise<MongoClient> {
       console.error("[auth] Database unavailable; retrying lazily on the next query.");
     }
   }
-  return new MongoClient(getMongooseUri());
+  return new MongoClient(getMongooseUri(), MONGO_CONNECTION_OPTIONS);
 }

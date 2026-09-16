@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -48,6 +48,7 @@ export function EmptyState({
   className?: string;
 }) {
   const t = TONE[tone];
+  const reduceMotion = useReducedMotion();
 
   return (
     <div
@@ -61,16 +62,16 @@ export function EmptyState({
         <motion.span
           aria-hidden
           className="absolute inset-0 rounded-full bg-gold/20"
-          animate={RING_PULSE.animate}
-          transition={RING_PULSE.transition}
+          animate={reduceMotion ? { opacity: 0.35, scale: 1 } : RING_PULSE.animate}
+          transition={reduceMotion ? { duration: 0 } : RING_PULSE.transition}
         />
         <motion.span
           className={cn(
             "relative grid size-14 place-items-center rounded-full",
             t.badge,
           )}
-          animate={FLOAT.animate}
-          transition={FLOAT.transition}
+          animate={reduceMotion ? { y: 0 } : FLOAT.animate}
+          transition={reduceMotion ? { duration: 0 } : FLOAT.transition}
         >
           {icon}
         </motion.span>

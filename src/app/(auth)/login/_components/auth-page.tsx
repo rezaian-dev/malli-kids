@@ -1,11 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { ForgotPasswordPanel } from "@/components/auth/auth-forgot-password-panel";
 import { LoginPanel } from "@/components/auth/auth-login-panel";
 import { RegisterPanel } from "@/components/auth/auth-register-panel";
+import { ModeToggle } from "@/components/shared/mode-toggle";
 import { cn } from "@/lib/utils";
 
 type View = "login" | "register" | "forgot";
@@ -33,6 +35,15 @@ export function AuthPage({ initialView }: { initialView: "login" | "register" })
           className="group flex min-w-0 items-center gap-2 rounded-full px-1 py-1 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
           aria-label="بازگشت به صفحه اصلی ملی‌کیدز"
         >
+          <Image
+            src="/brand/logo.png"
+            alt=""
+            width={44}
+            height={44}
+            sizes="44px"
+            loading="eager"
+            className="size-10 object-contain dark:brightness-0 dark:invert"
+          />
           <span className="font-display leading-none">
             <span className="block text-sm font-bold tracking-[0.2em]">MALLI</span>
             <span className="text-gold-deep dark:text-gold-light mt-1 block text-[10px] tracking-[0.38em]">
@@ -40,13 +51,16 @@ export function AuthPage({ initialView }: { initialView: "login" | "register" })
             </span>
           </span>
         </Link>
-        <Link
-          href="/"
-          className="text-navy/65 dark:text-linen/70 inline-flex min-h-10 items-center gap-1 rounded-full px-2 text-xs font-bold transition-colors hover:text-gold-deep focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
-        >
-          بازگشت به فروشگاه
-          <ArrowRight className="size-3.5" />
-        </Link>
+        <div className="flex items-center gap-1">
+          <ModeToggle className="text-navy dark:text-ivory" />
+          <Link
+            href="/"
+            className="text-navy/65 dark:text-linen/70 inline-flex min-h-10 items-center gap-1 rounded-full px-2 text-xs font-bold transition-colors hover:text-gold-deep focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+          >
+            بازگشت به فروشگاه
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </div>
       </header>
 
       <div className="mx-auto w-full max-w-md flex-1 pt-4 sm:pt-5 lg:pt-2">

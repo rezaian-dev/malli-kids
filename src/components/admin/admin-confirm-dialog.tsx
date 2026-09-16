@@ -66,7 +66,7 @@ export function AdminConfirmDialog({
               confirm();
             }}
           >
-            {pending ? <Loader2 className="size-4 animate-spin" /> : null}
+            {pending ? <Loader2 className="size-4 motion-safe:animate-spin" /> : null}
             {pending ? "در حال انجام…" : confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -521,7 +521,7 @@ function AdminChatThread({
           </span>
         ) : null}
         {conversation?.customerTyping ? (
-          <span className="text-gold-deep dark:text-gold-soft inline-flex animate-pulse items-center gap-1 text-[10px] font-black">
+          <span className="text-gold-deep dark:text-gold-soft inline-flex motion-safe:animate-pulse items-center gap-1 text-[10px] font-black">
             مشتری در حال نوشتن…
           </span>
         ) : null}

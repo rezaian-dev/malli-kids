@@ -36,18 +36,7 @@ export function Header() {
                 sizes="36px"
                 loading="eager"
                 fetchPriority="high"
-                className="size-8 object-contain sm:size-9 dark:hidden"
-              />
-              <Image
-                src="/brand/logo-white.png"
-                alt=""
-                aria-hidden
-                width={36}
-                height={36}
-                sizes="36px"
-                loading="eager"
-                fetchPriority="high"
-                className="hidden size-8 object-contain sm:size-9 dark:block"
+                className="size-8 object-contain sm:size-9 dark:brightness-0 dark:invert"
               />
               <span className="hidden leading-none min-[480px]:block md:hidden lg:block">
                 <span

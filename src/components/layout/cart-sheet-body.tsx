@@ -143,15 +143,15 @@ export function CartSheetBody({
       ) : hydrationStatus === "idle" || hydrationStatus === "loading" ? (
         // Skeleton list while the cart's product fetch is still in flight.
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
-          <div className="h-2.5 animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
+          <div className="h-2.5 motion-safe:animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
           <div className="space-y-2.5">
             {Array.from({ length: Math.min(cartCount, 3) }).map((_, i) => (
               <CartLineSkeleton key={i} />
             ))}
           </div>
           <div className="space-y-2 pt-1">
-            <div className="h-3 w-1/2 animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
-            <div className="h-3 w-2/3 animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
+            <div className="h-3 w-1/2 motion-safe:animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
+            <div className="h-3 w-2/3 motion-safe:animate-pulse rounded-full bg-sand dark:bg-dusk-soft" />
           </div>
         </div>
       ) : hydrationStatus === "error" ? (
@@ -251,7 +251,7 @@ export function CartSheetBody({
             // Same footprint so the footer doesn't shift when the total lands.
             <div
               aria-hidden
-              className="h-12 w-full animate-pulse rounded-2xl bg-sand dark:bg-dusk-soft"
+              className="h-12 w-full motion-safe:animate-pulse rounded-2xl bg-sand dark:bg-dusk-soft"
             />
           ) : hydrationStatus === "success" ? (
             <Button
@@ -310,8 +310,8 @@ export function CartSheetBody({
 function CartLineSkeleton() {
   return (
     <div className="flex gap-3 rounded-2xl border border-navy/8 bg-white p-2.5 sm:p-3 dark:border-gold/20 dark:bg-navy-mid/70">
-      <div className="size-16 shrink-0 animate-pulse rounded-xl bg-sand sm:size-20 dark:bg-dusk" />
-      <div className="min-w-0 flex-1 animate-pulse space-y-2 py-1.5">
+      <div className="size-16 shrink-0 motion-safe:animate-pulse rounded-xl bg-sand sm:size-20 dark:bg-dusk" />
+      <div className="min-w-0 flex-1 motion-safe:animate-pulse space-y-2 py-1.5">
         <div className="h-3 w-2/3 rounded-full bg-sand dark:bg-dusk-soft" />
         <div className="h-2.5 w-1/3 rounded-full bg-sand dark:bg-dusk-soft" />
         <div className="h-5 w-24 rounded-full bg-sand dark:bg-dusk-soft" />

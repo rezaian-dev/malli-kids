@@ -162,7 +162,7 @@ export function HomeSearch({ popularTerms }: { popularTerms: string[] }) {
             </div>
           ) : loading ? (
             <p className="text-navy/70 dark:text-wheat flex items-center justify-center gap-2 px-5 py-6 text-center text-sm font-bold">
-              <Loader2 className="size-4 animate-spin" /> در حال جستجو…
+              <Loader2 className="size-4 motion-safe:animate-spin" /> در حال جستجو…
             </p>
           ) : hits.length === 0 ? (
             <p className="text-navy/70 dark:text-wheat px-5 py-6 text-center text-sm font-bold">
