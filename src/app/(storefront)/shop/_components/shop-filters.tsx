@@ -29,9 +29,9 @@ const PRICE_STEP = 50_000;
 
 // brown-mid in light mode — gold-on-white fails 4.5:1; dark keeps gold
 const SECTION_LABEL =
-  "flex items-center gap-1.5 text-[11px] font-black tracking-[0.16em] text-brown-mid dark:text-gold uppercase";
+  "flex items-center gap-1.5 whitespace-nowrap text-[11px] font-black tracking-[0.12em] text-brown-mid uppercase dark:text-gold";
 
-const FILTER_CHIP = "h-auto rounded-full border px-3.5 py-1.5 text-xs font-black border-navy/12 bg-white text-navy/70 hover:border-gold/50 hover:bg-sand hover:text-navy data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] data-[state=on]:hover:bg-navy data-[state=on]:hover:text-ivory dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50 dark:hover:bg-navy-light dark:hover:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep dark:data-[state=on]:hover:bg-gold dark:data-[state=on]:hover:text-navy-deep";
+const FILTER_CHIP = "h-auto whitespace-nowrap rounded-full border border-navy/12 bg-white px-3 py-1.5 text-[11px] font-black text-navy/70 hover:border-gold/50 hover:bg-sand hover:text-navy data-[state=on]:border-transparent data-[state=on]:bg-navy data-[state=on]:text-ivory data-[state=on]:shadow-[0_8px_18px_-10px_rgba(14,42,71,.55)] data-[state=on]:hover:bg-navy data-[state=on]:hover:text-ivory dark:border-gold/25 dark:bg-navy-mid dark:text-wheat dark:hover:border-gold/50 dark:hover:bg-navy-light dark:hover:text-ivory dark:data-[state=on]:bg-gold dark:data-[state=on]:text-navy-deep dark:data-[state=on]:hover:bg-gold dark:data-[state=on]:hover:text-navy-deep sm:px-3.5 sm:text-xs";
 
 // Filters shared by the desktop sidebar and the mobile sheet
 export function ShopFilters({
@@ -61,7 +61,7 @@ export function ShopFilters({
   return (
     <div
       className={cn(
-        "space-y-6 px-4 py-5",
+        "min-w-0 space-y-6 px-4 py-5",
         scrollable &&
           "min-h-0 flex-1 scrollbar-thin overscroll-contain overflow-y-auto",
       )}
@@ -105,7 +105,7 @@ export function ShopFilters({
             push({ cat: c, page: 1 });
             onCategoryPick?.();
           }}
-          className="flex flex-wrap justify-start gap-1.5"
+          className="flex min-w-0 flex-wrap justify-start gap-1.5"
           aria-label="دسته‌بندی"
         >
           {CATS.map((c) => (
@@ -125,7 +125,7 @@ export function ShopFilters({
           type="single"
           value={state.season}
           onValueChange={(sn) => sn && push({ season: sn, page: 1 })}
-          className="flex flex-wrap justify-start gap-1.5"
+          className="flex min-w-0 flex-wrap justify-start gap-1.5"
           aria-label="فصل"
         >
           {["همه", ...SEASONS].map((sn) => (

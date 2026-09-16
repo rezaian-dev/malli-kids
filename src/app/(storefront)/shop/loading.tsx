@@ -204,7 +204,7 @@ export default function ShopLoading() {
         ]}
       />
 
-      <div className="grid items-start gap-5 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-7">
+      <div className="grid items-start gap-5 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-7">
         <aside
           aria-label="فیلتر محصولات"
           className="sticky top-30 hidden self-start overflow-hidden rounded-[28px] border border-navy/10 bg-sand-deep/60 shadow-[0_20px_44px_-28px_rgba(14,42,71,.4)] backdrop-blur-sm lg:flex lg:flex-col dark:border-gold/40 dark:bg-filter-night"

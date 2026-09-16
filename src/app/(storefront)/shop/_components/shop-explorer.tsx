@@ -67,7 +67,7 @@ export function ShopExplorer({
         ]}
       />
 
-      <div className="grid items-start gap-5 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-7">
+      <div className="grid items-start gap-5 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-7">
         {/* Desktop sidebar filter */}
         <aside
           aria-label="فیلتر محصولات"
@@ -150,32 +150,32 @@ export function ShopExplorer({
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="inset-y-0 right-0 flex h-dvh w-[min(88vw,360px)] max-w-90 flex-col gap-0 border-s p-0 sm:max-w-90 border-navy/10 bg-sand-deep dark:border-gold/40 dark:bg-filter-night"
+          className="inset-y-0 right-0 flex h-dvh !w-[min(94vw,380px)] !max-w-[380px] flex-col gap-0 border-s p-0 border-navy/10 bg-sand-deep dark:border-gold/40 dark:bg-filter-night"
         >
           <SheetHeader className="gap-0 p-0">
-            <div className="flex items-center justify-between px-4 py-4">
-              <div className="flex items-center gap-2.5">
-                <span className={FILTER_ICON_BADGE}>
+            <div className="flex min-w-0 items-center justify-between gap-2 px-3 py-3 sm:px-4 sm:py-4">
+              <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
+                <span className={`${FILTER_ICON_BADGE} shrink-0`}>
                   <SlidersHorizontal className="size-4" />
                 </span>
-                <div className="text-right">
-                  <SheetTitle className="text-navy dark:text-ivory text-sm font-black">
+                <div className="min-w-0 text-right">
+                  <SheetTitle className="text-navy dark:text-ivory whitespace-nowrap pe-0 text-[13px] font-black leading-5 sm:text-sm">
                     فیلتر کالکشن
                   </SheetTitle>
-                  <SheetDescription className="text-navy/70 dark:text-gold-soft mt-0.5 text-[10px]">
+                  <SheetDescription className="text-navy/70 dark:text-gold-soft mt-0.5 whitespace-nowrap text-[10px]">
                     {shop.mobileActiveN
                       ? `${toFaDigits(shop.mobileActiveN)} مورد فعال`
                       : "بدون فیلتر"}
                   </SheetDescription>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex shrink-0 items-center gap-1">
                 {shop.mobileActiveN ? (
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="text-gold h-8 rounded-full px-2 text-[11px] font-black"
+                    className="text-gold h-8 shrink-0 whitespace-nowrap rounded-full px-2 text-[11px] font-black"
                     onClick={shop.reset}
                   >
                     پاک کردن
@@ -185,7 +185,7 @@ export function ShopExplorer({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="size-9 rounded-full bg-navy/5 text-navy dark:bg-dusk-mid dark:text-ivory"
+                  className="size-9 shrink-0 rounded-full bg-navy/5 text-navy dark:bg-dusk-mid dark:text-ivory"
                   onClick={() => shop.setFilterOpen(false)}
                   aria-label="بستن"
                 >
