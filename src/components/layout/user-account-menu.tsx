@@ -1,6 +1,6 @@
 "use client";
 
-// Load the account menu only for signed-in visitors.
+// Render the interactive trigger in the initial HTML, without a lazy fallback.
 import Link from "next/link";
 import { Heart, Headphones, LogOut, Phone, Truck, User } from "lucide-react";
 import type { User as UserType } from "@/types";

@@ -42,7 +42,6 @@ const PATTERNS = [
   },
 ];
 
-export const dynamic = "force-static";
 
 export const metadata = buildMetadata({
   title: "الگوهای آماده دوخت",

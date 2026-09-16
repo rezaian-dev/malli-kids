@@ -1,7 +1,6 @@
 import { buildMetadata } from "@/lib/seo";
 import { TermsLanding } from "./_components/terms-landing";
 
-export const dynamic = "force-static";
 
 export const metadata = buildMetadata({
   title: "قوانین و مقررات",

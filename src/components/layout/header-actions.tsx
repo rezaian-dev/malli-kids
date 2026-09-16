@@ -1,5 +1,3 @@
-"use client";
-
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { Separator } from "@/components/ui/separator";
 import { ICON_BTN } from "./header-styles";

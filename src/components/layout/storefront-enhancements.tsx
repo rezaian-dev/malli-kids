@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { ChatWidget } from "@/components/chat/chat-widget";
 
 const ClickProgress = dynamic(
   () => import("./click-progress").then((m) => m.ClickProgress),
@@ -13,10 +14,6 @@ const BackToTop = dynamic(
 const AuthModalMount = dynamic(
   () =>
     import("@/components/auth/auth-modal-mount").then((m) => m.AuthModalMount),
-  { ssr: false },
-);
-const ChatWidget = dynamic(
-  () => import("@/components/chat/chat-widget").then((m) => m.ChatWidget),
   { ssr: false },
 );
 

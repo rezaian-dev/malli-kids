@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft, ShoppingBag, XIcon } from "lucide-react";
 import { useCartStore } from "@/providers/cart-store-provider";
 import { useCampaign } from "@/providers/campaign-provider";
@@ -208,7 +208,6 @@ export function CartSheet() {
             className="size-5 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
           />
 
-          {}
           <Badge
             aria-hidden
             className={cn(
@@ -220,14 +219,16 @@ export function CartSheet() {
             )}
           >
             {/* تغییر تعداد سبد با یک انیمیشن کوتاه نمایش داده می‌شود. */}
-            <motion.span
-              key={cartCount}
-              initial={{ y: 10, opacity: 0, scale: 0.4 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              transition={{ type: "spring", stiffness: 500, damping: 22 }}
-            >
-              {cartCount > 99 ? "+۹۹" : toFaDigits(cartCount)}
-            </motion.span>
+            <AnimatePresence initial={false}>
+              <motion.span
+                key={cartCount}
+                initial={{ y: 10, opacity: 0, scale: 0.4 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 22 }}
+              >
+                {cartCount > 99 ? "+۹۹" : toFaDigits(cartCount)}
+              </motion.span>
+            </AnimatePresence>
           </Badge>
         </Button>
       </SheetTrigger>

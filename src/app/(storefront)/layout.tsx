@@ -34,6 +34,9 @@ const TOP_LOADER = {
   zIndex: 9999,
 } as const;
 
+// Request-aware storefront shell (default dynamic="auto"). Do not force-static
+// child pages: that empties cookies/headers for this layout as well. Public data
+// keeps its independent unstable_cache lifetimes; session reads are request-only.
 // Shared storefront shell for every public page.
 // Owns the storefront session/cart/campaign bootstrap so /admin never pays
 // for providers and fetches it never consumes.

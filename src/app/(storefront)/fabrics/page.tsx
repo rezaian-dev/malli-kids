@@ -42,7 +42,6 @@ const FABRICS = [
   },
 ];
 
-export const dynamic = "force-static";
 
 export const metadata = buildMetadata({
   title: "پارچه‌های کالکشن",

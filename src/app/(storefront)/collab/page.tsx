@@ -1,6 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
 import { CollabLanding } from "./_components/collab-landing";
-export const dynamic = "force-static";
 
 export const metadata = buildMetadata({
   title: "همکاری با ما",

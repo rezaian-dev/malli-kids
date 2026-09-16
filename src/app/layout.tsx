@@ -68,7 +68,6 @@ export default function RootLayout({
           vazir.className,
           "text-navy dark:text-ivory min-h-dvh antialiased data-scroll-locked:mr-0!",
         )}
-        suppressHydrationWarning
       >
         {/* reducedMotion="user" respects prefers-reduced-motion */}
         <MotionProvider>

@@ -1,5 +1,5 @@
 import { BadgeCheck, Star } from "lucide-react";
-import { HomeQuotesMount } from "../home-quotes-mount";
+import { HomeQuotes } from "../home-quotes";
 import { OrnLeaf } from "../home-ornaments";
 import { wash } from "@/components/shared/section-wash";
 import { cn } from "@/lib/utils";
@@ -75,7 +75,7 @@ export async function Reviews() {
             </div>
           </div>
         </div>
-        <HomeQuotesMount reviews={reviews} />
+        <HomeQuotes reviews={reviews} />
       </div>
     </section>
   );

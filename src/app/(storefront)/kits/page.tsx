@@ -42,7 +42,6 @@ const KITS = [
   },
 ];
 
-export const dynamic = "force-static";
 
 export const metadata = buildMetadata({
   title: "کیت‌های آماده دوخت",

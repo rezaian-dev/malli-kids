@@ -1,6 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
 import { SizeGuideLanding } from "./_components/size-guide-landing";
-export const dynamic = "force-static";
 
 export const metadata = buildMetadata({
   title: "راهنمای سایز",

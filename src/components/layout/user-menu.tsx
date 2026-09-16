@@ -1,16 +1,13 @@
 "use client";
 
-import { lazy, Suspense } from "react";
 import { LogIn } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 import { fullName, givenName } from "@/lib/text/name";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CLUSTER_H } from "./header-styles";
-import { AccountIcon, TRIGGER_SHELL } from "./account-trigger";
 
-// Keep the fallback identical to the loaded trigger.
-const UserAccountMenu = lazy(() => import("./user-account-menu"));
+import UserAccountMenu from "./user-account-menu";
 
 export function UserMenu() {
   const { user, setAuthOpen, logout } = useAuth();
@@ -39,21 +36,6 @@ export function UserMenu() {
   const name = fullName(user.firstName, user.lastName);
 
   return (
-    <Suspense
-      fallback={
-        <div
-          aria-hidden
-          tabIndex={-1}
-          className={cn(
-            TRIGGER_SHELL,
-            "pointer-events-none flex items-center justify-center",
-          )}
-        >
-          <AccountIcon />
-        </div>
-      }
-    >
-      <UserAccountMenu user={user} first={first} name={name} logout={logout} />
-    </Suspense>
+    <UserAccountMenu user={user} first={first} name={name} logout={logout} />
   );
 }

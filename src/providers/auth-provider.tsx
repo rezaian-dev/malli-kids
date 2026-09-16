@@ -35,6 +35,15 @@ export function AuthProvider({
   const router = useRouter();
   const [user, setUser] = useState(initialUser);
   const [authOpen, setAuthOpen] = useState(false);
+  const [serverUser, setServerUser] = useState(initialUser);
+
+  // RSC refresh preserves this provider. Accept a new server snapshot before
+  // children render, not in an effect after a stale identity has been painted.
+  // Local updates below represent successful actions, never session discovery.
+  if (initialUser !== serverUser) {
+    setServerUser(initialUser);
+    setUser(initialUser);
+  }
 
   // Mirrors an already-created server session into UI state
   const login = useCallback(

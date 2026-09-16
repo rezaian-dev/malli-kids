@@ -48,7 +48,7 @@ export function HomeQuotes({ reviews }: { reviews: AdminReview[] }) {
     [autoplay.current],
   );
   const [i, setI] = useState(0);
-  const [n, setN] = useState(0);
+
   // Latched when focus enters the carousel (APG: rotation must not resume
   // without an explicit play action); cleared only by the rotation toggle.
   const [paused, setPaused] = useState(false);
@@ -59,7 +59,6 @@ export function HomeQuotes({ reviews }: { reviews: AdminReview[] }) {
   const onSelect = useCallback(() => {
     if (!embla) return;
     setI(embla.selectedScrollSnap());
-    setN(embla.scrollSnapList().length);
   }, [embla]);
 
   useEffect(() => {
@@ -106,7 +105,7 @@ export function HomeQuotes({ reviews }: { reviews: AdminReview[] }) {
           >
             {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
           </button>
-          {Array.from({ length: n }).map((_, k) => (
+          {Array.from({ length: reviews.length }).map((_, k) => (
             // Tiny dot, full 24×24 tap target underneath
             <button
               key={k}

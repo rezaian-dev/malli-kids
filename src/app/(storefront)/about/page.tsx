@@ -3,8 +3,6 @@ import { Intro } from "@/components/shared/intro";
 import { ABOUT } from "./_lib/content";
 import { buildMetadata } from "@/lib/seo";
 
-export const dynamic = "force-static";
-
 export const metadata = buildMetadata({
   title: "درباره ما",
   description: "آتلیه پوشاک کودک با دوخت ایرانی و پارچه‌های امن.",

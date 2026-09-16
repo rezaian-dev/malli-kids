@@ -42,7 +42,6 @@ const TUTORIALS = [
   },
 ];
 
-export const dynamic = "force-static";
 
 export const metadata = buildMetadata({
   title: "آموزش‌های آتلیه",

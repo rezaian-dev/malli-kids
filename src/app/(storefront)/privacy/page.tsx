@@ -1,6 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
 import { PrivacyLanding } from "./_components/privacy-landing";
-export const dynamic = "force-static";
 
 export const metadata = buildMetadata({
   title: "حریم خصوصی",

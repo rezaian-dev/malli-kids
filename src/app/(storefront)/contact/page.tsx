@@ -1,6 +1,5 @@
 import { buildMetadata } from "@/lib/seo";
 import { ContactLanding } from "./_components/contact-landing";
-export const dynamic = "force-static";
 
 export const metadata = buildMetadata({
   title: "تماس با ما",

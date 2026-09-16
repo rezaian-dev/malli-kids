@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Newspaper } from "lucide-react";
-import { HomeJournalMount } from "../home-journal-mount";
+import { HomeJournal } from "../home-journal";
 import { HomeJournalSlides } from "../home-journal-slides";
 import { OrnStitch } from "../home-ornaments";
 import { wash } from "@/components/shared/section-wash";
@@ -42,9 +42,9 @@ export async function Stories() {
           </Link>
         </div>
         {hasArticles ? (
-          <HomeJournalMount>
+          <HomeJournal>
             <HomeJournalSlides />
-          </HomeJournalMount>
+          </HomeJournal>
         ) : (
           <EmptyState
             icon={<Newspaper className="size-6" />}
