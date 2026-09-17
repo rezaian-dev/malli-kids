@@ -14,7 +14,8 @@ const vazir = localFont({
   src: "../fonts/Vazirmatn-Variable.woff2",
   weight: "100 900",
   variable: "--font-vazir",
-  display: "swap",
+  // Avoid a late Persian-font replacement changing already-painted text geometry.
+  display: "optional",
 });
 
 const playfair = localFont({

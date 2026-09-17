@@ -8,19 +8,9 @@ import { STORAGE } from "@/lib/constants";
 import {
   cartScopeOf,
   cartStorageKey,
-  sanitizeCart,
+  readClientCartCookie,
   writeJsonCookie,
 } from "@/lib/storefront-state";
-
-// Generic reader — every key safely falls back on corruption
-function readLocalCart(scope: string, current: CartItem[]): CartItem[] {
-  try {
-    const raw = window.localStorage.getItem(cartStorageKey(scope));
-    return raw === null ? current : sanitizeCart(JSON.parse(raw));
-  } catch {
-    return current;
-  }
-}
 
 // Sweep the pre-namespacing shared `malli_cart` key once
 function clearLegacyCartStorage() {
@@ -34,7 +24,8 @@ function clearLegacyCartStorage() {
 
 const CartStoreCtx = createContext<CartStore | null>(null);
 
-// Start from SSR cookies, then restore and persist this account’s local cart.
+// The request cookie seeds SSR and remains authoritative. localStorage is only a mirror,
+// so browser storage can never replace an already-painted server cart after hydration.
 export function CartStoreProvider({
   children,
   initialCart,
@@ -53,16 +44,21 @@ export function CartStoreProvider({
 
   useEffect(() => {
     clearLegacyCartStorage();
-    store.setState({ cart: readLocalCart(scopeRef.current, store.getState().cart) });
+    try {
+      window.localStorage.setItem(
+        cartStorageKey(scopeRef.current),
+        JSON.stringify(store.getState().cart),
+      );
+    } catch {}
     readyRef.current = true;
   }, [store]);
 
-  // Login/logout swaps to the new identity's cart immediately
+  // Login/logout reads the same scoped cookie that the next server render reads.
   useEffect(() => {
     const nextScope = cartScopeOf(user);
     if (nextScope === scopeRef.current) return;
     scopeRef.current = nextScope;
-    store.setState({ cart: readLocalCart(nextScope, []) });
+    store.setState({ cart: readClientCartCookie(nextScope) });
   }, [user, store]);
 
   useEffect(

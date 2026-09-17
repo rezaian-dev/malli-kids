@@ -128,6 +128,25 @@ function sanitizeBanner(value: unknown): BannerItem | null {
   };
 }
 
+// Parse the same scoped cookie representation on either side of the RSC boundary.
+// The cookie is the cart authority because it is available to the server's first render.
+export function readCartCookie(value: string | undefined): StoredCartItem[] {
+  return sanitizeCart(parseJson(value, []));
+}
+
+export function readClientCartCookie(scope: string): StoredCartItem[] {
+  if (typeof document === "undefined") return [];
+
+  const name = cartStorageKey(scope);
+  const prefix = `${name}=`;
+  const value = document.cookie
+    .split(/;\s*/)
+    .find((part) => part.startsWith(prefix))
+    ?.slice(prefix.length);
+
+  return readCartCookie(value);
+}
+
 // Server-fetched values from the caller; only cart bootstraps from its cookie
 export function readStoreBootstrap(
   getCookie: (name: string) => string | undefined,
@@ -138,7 +157,7 @@ export function readStoreBootstrap(
   const cartCookie = getCookie(cartStorageKey(cartScopeOf(user)));
 
   return {
-    cart: sanitizeCart(parseJson(cartCookie, [])),
+    cart: readCartCookie(cartCookie),
     campaign: sanitizeCampaign(campaign),
     banner: sanitizeBanner(banner),
   };

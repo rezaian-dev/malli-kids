@@ -43,8 +43,22 @@ export function useShopExplorer(
   const [sortOpen, setSortOpen] = useState(false);
   const [sortPopOpen, setSortPopOpen] = useState(false);
   const [query, setQuery] = useState(state.q);
+  const [querySource, setQuerySource] = useState(state.q);
+  const rangeSource = `${state.min}:${state.max}`;
   const [range, setRange] = useState<[number, number]>([state.min, state.max]);
+  const [previousRangeSource, setPreviousRangeSource] = useState(rangeSource);
   const [mobileFilterState, setMobileFilterState] = useState<ShopState>(state);
+
+  // URL/RSC state owns committed controls. Reset their local editing drafts during
+  // render so Back/Forward never commits the new results with an old input or range.
+  if (state.q !== querySource) {
+    setQuerySource(state.q);
+    setQuery(state.q);
+  }
+  if (rangeSource !== previousRangeSource) {
+    setPreviousRangeSource(rangeSource);
+    setRange([state.min, state.max]);
+  }
 
   // Keep quick consecutive filter clicks from being built on a stale server state.
   const latestState = useRef(state);
@@ -87,11 +101,6 @@ export function useShopExplorer(
       router.replace(href, { scroll: false });
     }
   }, [router, state]);
-
-  useEffect(() => setRange([state.min, state.max]), [state.min, state.max]);
-
-  // Keep the search input synced with the URL.
-  useEffect(() => setQuery(state.q), [state.q]);
 
   // Mobile filters are edited locally and committed once from the apply button.
   useEffect(() => {

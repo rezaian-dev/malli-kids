@@ -27,7 +27,7 @@ export function AuthPage({ initialView }: { initialView: "login" | "register" })
   return (
     <section
       dir="rtl"
-      className="bg-paper text-navy relative z-10 flex min-h-dvh min-w-0 flex-col px-5 py-2 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-500 sm:px-8 sm:py-5 lg:px-10 lg:py-2 xl:px-12 dark:bg-dusk dark:text-ivory"
+      className="bg-paper text-navy relative z-10 flex min-h-dvh min-w-0 flex-col px-5 py-2 sm:px-8 sm:py-5 lg:px-10 lg:py-2 xl:px-12 dark:bg-dusk dark:text-ivory"
     >
       <header className="flex items-center justify-between gap-4">
         <Link

@@ -22,7 +22,7 @@ export function AuthBrandPanel({ className }: { className?: string }) {
     <aside
       dir="rtl"
       className={cn(
-        "bg-navy text-ivory relative min-h-dvh overflow-hidden motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-700",
+        "bg-navy text-ivory relative min-h-dvh overflow-hidden",
         className,
       )}
     >
