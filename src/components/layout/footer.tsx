@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Code2 } from "lucide-react";
 import { cn, shell } from "@/lib/utils";
 import { FadeIn, Reveal } from "@/components/motion/static";
 import { FooterPerks } from "./footer-perks";
@@ -48,10 +47,25 @@ export function Footer() {
               href={DEVELOPER_URL}
               target="_blank"
               rel="noreferrer"
-              className="text-cream/45 hover:text-gold-light inline-flex items-center gap-1.5 transition-colors"
+              dir="rtl"
+              aria-label="وب‌سایت محمدرضا رضاییان، طراح و توسعه‌دهندهٔ ملی‌کیدز؛ باز شدن در پنجرهٔ جدید"
+              className="group inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-sm px-1 py-2 text-right"
             >
-              <Code2 className="size-3.5" aria-hidden />
-              طراحی و توسعه: رضاییان
+              <span className="text-cream/65 text-xs font-medium">
+                طراحی و توسعه
+              </span>
+              <span
+                aria-hidden
+                className="bg-gold/70 h-px w-3 shrink-0"
+              />
+              <span className="inline-flex items-baseline gap-1.5">
+                <span className="relative pb-1 text-base leading-none font-extrabold text-cream group-hover:text-gold-light group-focus-visible:text-gold-light after:bg-gold/75 after:absolute after:inset-x-0 after:bottom-0 after:h-px">
+                  محمدرضا
+                </span>
+                <span className="text-cream/70 text-xs font-medium">
+                  رضاییان
+                </span>
+              </span>
             </a>
             <span className="font-display text-gold/80 tracking-[0.28em]">
               MALLI KIDS
