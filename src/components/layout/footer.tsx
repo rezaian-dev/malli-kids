@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Signature } from "lucide-react";
 import { cn, shell } from "@/lib/utils";
 import { FadeIn, Reveal } from "@/components/motion/static";
 import { FooterPerks } from "./footer-perks";
@@ -49,21 +50,29 @@ export function Footer() {
               rel="noreferrer"
               dir="rtl"
               aria-label="وب‌سایت محمدرضا رضاییان، طراح و توسعه‌دهندهٔ ملی‌کیدز؛ باز شدن در پنجرهٔ جدید"
-              className="group inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-sm px-1 py-2 text-right"
+              className="group inline-flex shrink-0 items-center gap-3 whitespace-nowrap rounded-sm px-1 py-2 text-right"
             >
-              <span className="text-cream/65 text-xs font-medium">
-                طراحی و توسعه
-              </span>
               <span
                 aria-hidden
-                className="bg-gold/70 h-px w-3 shrink-0"
-              />
-              <span className="inline-flex items-baseline gap-1.5">
-                <span className="relative pb-1 text-base leading-none font-extrabold text-cream group-hover:text-gold-light group-focus-visible:text-gold-light after:bg-gold/75 after:absolute after:inset-x-0 after:bottom-0 after:h-px">
-                  محمدرضا
+                className="inline-flex shrink-0 items-center gap-1.5 text-gold-light"
+              >
+                <Signature className="size-5" strokeWidth={1.5} />
+                <span className="border-gold/40 border-s ps-1.5 text-xs font-bold text-cream/85">
+                  م.ر
                 </span>
-                <span className="text-cream/70 text-xs font-medium">
-                  رضاییان
+              </span>
+              <span className="flex min-w-0 flex-col items-start gap-1">
+                <span className="text-cream/65 inline-flex items-center gap-2 text-xs font-medium">
+                  طراحی و توسعه
+                  <span aria-hidden className="bg-gold/70 h-px w-4 shrink-0" />
+                </span>
+                <span className="inline-flex items-baseline gap-1.5">
+                  <span className="relative pb-1 text-lg leading-none font-black text-cream group-hover:text-gold-light group-focus-visible:text-gold-light after:bg-gold/75 after:absolute after:inset-x-0 after:bottom-0 after:h-px">
+                    محمدرضا
+                  </span>
+                  <span className="text-cream/75 text-xs font-medium">
+                    رضاییان
+                  </span>
                 </span>
               </span>
             </a>
