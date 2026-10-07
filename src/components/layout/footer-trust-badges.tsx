@@ -1,8 +1,7 @@
 import Image from "next/image";
 import { ShieldCheck } from "lucide-react";
 import { cn, shell } from "@/lib/utils";
-
-// Replace badge links with verification URLs issued for this domain.
+import { EnamadSeal } from "./enamad-seal";
 
 /** Official Iranian e-commerce trust seals. */
 export function FooterTrustBadges() {
@@ -29,22 +28,7 @@ export function FooterTrustBadges() {
         </div>
 
         <div className="flex items-center gap-3">
-          <a
-            href="https://enamad.ir"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="نماد اعتماد الکترونیکی"
-            className="grid size-20 place-items-center p-2 sm:size-24 sm:p-2.5 hover:ring-gold/50 rounded-2xl bg-white shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5"
-          >
-            <Image
-              src="/brand/enamad.png"
-              alt="نماد اعتماد الکترونیکی"
-              width={466}
-              height={429}
-              sizes="(min-width: 640px) 96px, 80px"
-              className="max-h-full w-auto object-contain"
-            />
-          </a>
+          <EnamadSeal className="hover:ring-gold/50 grid size-20 place-items-center rounded-2xl bg-white p-2 shadow-lg ring-1 ring-white/10 transition hover:-translate-y-0.5 sm:size-24 sm:p-2.5" />
           <a
             href="https://samandehi.ir"
             target="_blank"
