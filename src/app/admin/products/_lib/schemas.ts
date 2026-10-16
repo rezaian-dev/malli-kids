@@ -12,7 +12,10 @@ const productVariantSchema = z.object({
 // Mirrors the client checks — this is the real boundary
 export const productSchema = z.object({
   name: z.string().trim().min(3).max(80),
-  cat: z.enum(CAT_OPTIONS as unknown as [string, ...string[]]),
+  cats: z
+    .array(z.enum(CAT_OPTIONS as unknown as [string, ...string[]]))
+    .min(1, "دسته‌بندی را انتخاب کنید")
+    .refine((items) => new Set(items).size === items.length, "دسته‌بندی تکراری مجاز نیست"),
   gender: z.enum(GENDERS).optional(),
   ageRange: z.string().trim().max(40).optional(),
   slug: z
@@ -22,7 +25,10 @@ export const productSchema = z.object({
     .max(80)
     .regex(/^[a-z0-9-]*$/, "فقط حروف انگلیسی، عدد و خط تیره")
     .optional(),
-  season: z.enum(SEASONS),
+  seasons: z
+    .array(z.enum(SEASONS))
+    .min(1, "زیرشاخه (فصل) را انتخاب کنید")
+    .refine((items) => new Set(items).size === items.length, "فصل تکراری مجاز نیست"),
   price: z.number().int().min(1000).max(500_000_000),
   old: z.number().min(0).max(500_000_000).optional(),
   disc: z.string().trim().max(20).optional(),
@@ -43,7 +49,8 @@ export const productSchema = z.object({
   // Accept zero-based product IDs and limit manual pairings.
   pairsWith: z.array(z.number().int().min(0)).max(6).default([]),
   seoTitle: z.string().trim().max(70).optional(),
-  seoDescription: z.string().trim().max(160).optional(),
+  // No length cap — admins may write SEO copy of any length.
+  seoDescription: z.string().trim().optional(),
   visible: z.boolean().default(true),
   featured: z.boolean().default(false),
 });

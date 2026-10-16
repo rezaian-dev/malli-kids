@@ -1,7 +1,7 @@
 import { CATS, PRICE_CAP, SORTS } from "@/lib/constants";
 import { SEASONS } from "@/lib/data/products";
 import { applyShopSearchIntent } from "@/lib/shop-query";
-import type { Product } from "@/types";
+import { productCats, productSeasons, type Product } from "@/types";
 
 type SearchValue = string | string[] | undefined;
 
@@ -135,8 +135,10 @@ export function parseShopState(params: Record<string, SearchValue>): ShopState {
 
 // Share filtering rules between visible products and structured data.
 function matchesShopState(product: Product, state: ShopState) {
-  if (state.cat !== "همه" && product.cat !== state.cat) return false;
-  if (state.season !== "همه" && product.season !== state.season) return false;
+  const cats = productCats(product);
+  const seasons = productSeasons(product);
+  if (state.cat !== "همه" && !cats.includes(state.cat)) return false;
+  if (state.season !== "همه" && !seasons.includes(state.season as (typeof seasons)[number])) return false;
   if (state.stock && !product.stock) return false;
   if (state.disc && !product.disc && !product.old) return false;
   if (state.hot && product.badge !== "پرفروش") return false;
@@ -145,7 +147,7 @@ function matchesShopState(product: Product, state: ShopState) {
   if (!state.q) return true;
 
   const needle = state.q.toLocaleLowerCase("fa");
-  const haystack = `${product.name} ${product.cat} ${product.season ?? ""}`
+  const haystack = `${product.name} ${cats.join(" ")} ${seasons.join(" ")}`
     .toLocaleLowerCase("fa")
     .trim();
   return haystack.includes(needle);

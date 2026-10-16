@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { ProductCard } from "@/components/product";
 import { OrnStar } from "../home-ornaments";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Product } from "@/types";
+import { productCats, type Product } from "@/types";
 
 const TABS = ["همه", "دخترانه", "پسرانه", "سیسمونی"] as const;
 type FilterTab = (typeof TABS)[number];
@@ -15,7 +15,7 @@ const TRIGGER = "inline-flex min-h-9 items-center justify-center whitespace-nowr
 // Keep one tab panel so shared cards animate without remounting.
 export function StylesFilter({ catalog }: { catalog: Product[] }) {
   const [tab, setTab] = useState<FilterTab>("همه");
-  const items = tab === "همه" ? catalog : catalog.filter((p) => p.cat === tab);
+  const items = tab === "همه" ? catalog : catalog.filter((p) => productCats(p).includes(tab));
 
   return (
     <Tabs value={tab} onValueChange={(v) => setTab(v as FilterTab)} dir="rtl">

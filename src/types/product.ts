@@ -12,6 +12,10 @@ export type Product = {
   images: string[];
   name: string;
   cat: string;
+  // Multi-select values from the admin form; `cat`/`season` stay as the
+  // primary (first) entry for legacy displays and single-value filters.
+  cats?: string[];
+  seasons?: Season[];
   gender?: Gender;
   ageRange?: string;
   slug?: string;
@@ -34,3 +38,17 @@ export type Product = {
   // Real DB rows only — sitemap's lastModified uses it when present
   updatedAt?: string;
 };
+
+export function productCats(product: Pick<Product, "cat" | "cats">): string[] {
+  return product.cats?.length ? product.cats : [product.cat];
+}
+
+export function productSeasons(
+  product: Pick<Product, "season" | "seasons">,
+): Season[] {
+  return product.seasons?.length
+    ? product.seasons
+    : product.season
+      ? [product.season]
+      : [];
+}

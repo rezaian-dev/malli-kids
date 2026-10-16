@@ -21,7 +21,7 @@ import { toFaDigits } from "@/lib/locale/fa";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
-import type { Product } from "@/types";
+import { productCats, productSeasons, type Product, type Season } from "@/types";
 import {
   bulkRemoveProductsAction,
   bulkSetProductFeaturedAction,
@@ -65,11 +65,14 @@ export function AdminProductsLanding({
       .filter((product) => {
         const matchesSearch =
           !term ||
-          `${product.name} ${product.cat} ${product.season ?? ""}`
+          `${product.name} ${productCats(product).join(" ")} ${productSeasons(product).join(" ")}`
             .toLocaleLowerCase("fa")
             .includes(term);
-        const matchesCategory = cat === "همه" || product.cat === cat;
-        const matchesSeason = season === "همه" || product.season === season;
+        const matchesCategory =
+          cat === "همه" || productCats(product).includes(cat);
+        const matchesSeason =
+          season === "همه" ||
+          productSeasons(product).includes(season as Season);
         const matchesStock =
           stock === "all" ||
           (stock === "available" ? product.stock : !product.stock);
@@ -192,7 +195,7 @@ export function AdminProductsLanding({
             count:
               item === "همه"
                 ? products.length
-                : products.filter((product) => product.cat === item).length,
+                : products.filter((product) => productCats(product).includes(item)).length,
           }))}
         />
         <AdminFilterSelect

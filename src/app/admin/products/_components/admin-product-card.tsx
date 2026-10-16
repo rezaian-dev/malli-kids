@@ -7,7 +7,7 @@ import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 import { adminGlassCard } from "@/lib/admin/admin-chrome";
 import type { ActionResult } from "@/lib/action-result";
-import type { Product } from "@/types";
+import { productCats, productSeasons, type Product } from "@/types";
 
 /** One catalog product — thumbnail, price, stock, edit/delete. */
 export function AdminProductCard({
@@ -56,8 +56,10 @@ export function AdminProductCard({
         <div className="min-w-0 flex-1 py-0.5">
           <div className="flex items-center justify-between gap-2">
             <p className="text-gold truncate text-[9px] font-black">
-              {product.cat}
-              {product.season ? ` · ${product.season}` : ""}
+              {productCats(product).join("، ")}
+              {productSeasons(product).length
+                ? ` · ${productSeasons(product).join("، ")}`
+                : ""}
               {!product.visible ? " · پنهان" : ""}
               {product.featured ? " · ویژه" : ""}
             </p>

@@ -45,11 +45,11 @@ type VariantRow = { size: string; color: string; stock: string };
 
 type ProductFormValues = {
   name: string;
-  cat: string;
+  cats: string[];
   gender: string;
   ageRange: string;
   slug: string;
-  season: string;
+  seasons: string[];
   price: string;
   old: string;
   disc: string;
@@ -80,11 +80,11 @@ function toVariantRows(variants: ProductVariant[]): VariantRow[] {
 function getInitialValues(product?: Product): ProductFormValues {
   return {
     name: product?.name ?? "",
-    cat: product?.cat ?? CAT_OPTIONS[0],
+    cats: product?.cats?.length ? product.cats : product?.cat ? [product.cat] : [CAT_OPTIONS[0]],
     gender: product?.gender ?? NO_GENDER,
     ageRange: product?.ageRange ?? "",
     slug: product?.slug ?? "",
-    season: product?.season ?? SEASONS[0],
+    seasons: product?.seasons?.length ? product.seasons : product?.season ? [product.season] : [SEASONS[0]],
     price: product ? String(product.price) : "",
     old: product?.old ? String(product.old) : "",
     disc: product?.disc ?? "",
@@ -108,12 +108,22 @@ function validateProductForm(values: ProductFormValues): ProductFormErrors {
   if (name.length < 3) errors.name = "نام محصول باید حداقل ۳ حرف باشد";
   else if (name.length > 80) errors.name = "نام محصول حداکثر ۸۰ نویسه است";
 
-  if (!CAT_OPTIONS.includes(values.cat as (typeof CAT_OPTIONS)[number])) {
-    errors.cat = "دسته‌بندی را انتخاب کنید";
+  if (
+    values.cats.length === 0 ||
+    values.cats.some(
+      (item) => !CAT_OPTIONS.includes(item as (typeof CAT_OPTIONS)[number]),
+    )
+  ) {
+    errors.cats = "حداقل یک دسته‌بندی را انتخاب کنید";
   }
 
-  if (!SEASONS.includes(values.season as (typeof SEASONS)[number])) {
-    errors.season = "زیرشاخه را انتخاب کنید";
+  if (
+    values.seasons.length === 0 ||
+    values.seasons.some(
+      (item) => !SEASONS.includes(item as (typeof SEASONS)[number]),
+    )
+  ) {
+    errors.seasons = "زیرشاخه (فصل) را انتخاب کنید";
   }
 
   const price = parseFaNumber(values.price);
@@ -208,6 +218,16 @@ export function ProductForm({
     }));
   }
 
+  function toggleMulti(field: "cats" | "seasons", item: string) {
+    const current = values[field];
+    updateValue(
+      field,
+      current.includes(item)
+        ? current.filter((value) => value !== item)
+        : [...current, item],
+    );
+  }
+
   function updateVariant(index: number, patch: Partial<VariantRow>) {
     updateValue(
       "variants",
@@ -287,14 +307,14 @@ export function ProductForm({
 
     const payload = {
       name: values.name.trim(),
-      cat: values.cat,
+      cats: values.cats,
       gender:
         values.gender === NO_GENDER
           ? undefined
           : (values.gender as NonNullable<Product["gender"]>),
       ageRange: values.ageRange.trim() || undefined,
       slug: values.slug.trim().toLowerCase() || undefined,
-      season: values.season as NonNullable<Product["season"]>,
+      seasons: values.seasons as NonNullable<Product["season"]>[],
       price: parseFaNumber(values.price),
       old: values.old.trim() ? parseFaNumber(values.old) : undefined,
       disc: values.disc.trim() || undefined,
@@ -381,57 +401,75 @@ export function ProductForm({
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <label htmlFor="product-cat" className={FIELD_LABEL}>
-                دسته‌بندی
-              </label>
-              <Select
-                value={values.cat}
-                onValueChange={(value) => updateValue("cat", value)}
-                dir="rtl"
+              <span id="product-cat-label" className={FIELD_LABEL}>
+                دسته‌بندی (چندانتخابی)
+              </span>
+              <div
+                role="group"
+                aria-labelledby="product-cat-label"
+                aria-invalid={Boolean(errors.cats) || undefined}
+                className="flex flex-wrap gap-2"
               >
-                <SelectTrigger
-                  id="product-cat"
-                  aria-invalid={Boolean(errors.cat) || undefined}
-                  className={SELECT_TRIGGER}
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent align="start">
-                  {CAT_OPTIONS.map((item) => (
-                    <SelectItem key={item} value={item}>
+                {CAT_OPTIONS.map((item) => {
+                  const selected = values.cats.includes(item);
+                  return (
+                    <button
+                      key={item}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => toggleMulti("cats", item)}
+                      className={cn(
+                        "min-h-11 rounded-2xl border px-4 text-sm font-bold transition",
+                        selected
+                          ? "border-gold bg-gold/15 text-navy dark:text-ivory"
+                          : "border-navy/12 text-navy/70 hover:border-gold/45 dark:border-gold/20 dark:text-wheat",
+                      )}
+                    >
                       {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FieldNote error={errors.cat} />
+                    </button>
+                  );
+                })}
+              </div>
+              <FieldNote
+                error={errors.cats}
+                hint="می‌توانید چند دسته‌بندی انتخاب کنید"
+              />
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="product-season" className={FIELD_LABEL}>
-                زیرشاخه (فصل)
-              </label>
-              <Select
-                value={values.season}
-                onValueChange={(value) => updateValue("season", value)}
-                dir="rtl"
+              <span id="product-season-label" className={FIELD_LABEL}>
+                زیرشاخه (فصل) (چندانتخابی)
+              </span>
+              <div
+                role="group"
+                aria-labelledby="product-season-label"
+                aria-invalid={Boolean(errors.seasons) || undefined}
+                className="flex flex-wrap gap-2"
               >
-                <SelectTrigger
-                  id="product-season"
-                  aria-invalid={Boolean(errors.season) || undefined}
-                  className={SELECT_TRIGGER}
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent align="start">
-                  {SEASONS.map((item) => (
-                    <SelectItem key={item} value={item}>
+                {SEASONS.map((item) => {
+                  const selected = values.seasons.includes(item);
+                  return (
+                    <button
+                      key={item}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => toggleMulti("seasons", item)}
+                      className={cn(
+                        "min-h-11 rounded-2xl border px-4 text-sm font-bold transition",
+                        selected
+                          ? "border-gold bg-gold/15 text-navy dark:text-ivory"
+                          : "border-navy/12 text-navy/70 hover:border-gold/45 dark:border-gold/20 dark:text-wheat",
+                      )}
+                    >
                       {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FieldNote error={errors.season} />
+                    </button>
+                  );
+                })}
+              </div>
+              <FieldNote
+                error={errors.seasons}
+                hint="می‌توانید چند فصل انتخاب کنید"
+              />
             </div>
           </div>
 
@@ -604,9 +642,14 @@ export function ProductForm({
                   onChange={(event) =>
                     updateValue("seoDescription", event.target.value)
                   }
-                  maxLength={160}
                   className="border-navy/12 dark:border-gold/20 min-h-20 rounded-2xl bg-transparent px-4 py-3 text-sm"
                 />
+                <p className="text-navy/70 dark:text-wheat text-[11px] font-bold">
+                  بدون محدودیت — هر تعداد کلمه که لازم است بنویسید
+                  {values.seoDescription.trim()
+                    ? ` (${values.seoDescription.trim().split(/\s+/).length} کلمه)`
+                    : ""}
+                </p>
               </div>
             </div>
           </details>

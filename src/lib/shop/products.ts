@@ -22,6 +22,8 @@ function toProduct(doc: ProductRow): Product {
     images,
     name: doc.name,
     cat: doc.cat,
+    cats: doc.cats?.length ? doc.cats : [doc.cat],
+    seasons: doc.seasons?.length ? doc.seasons : doc.season ? [doc.season] : [],
     gender: doc.gender,
     ageRange: doc.ageRange,
     slug: doc.slug,
@@ -119,7 +121,10 @@ export const getRelatedProducts = unstable_cache(
   (cat: string, excludeId: number, limit = 4) =>
     readProducts(
       () =>
-        ProductModel.find({ cat, id: { $ne: excludeId } })
+        ProductModel.find({
+          $or: [{ cat }, { cats: cat }],
+          id: { $ne: excludeId },
+        })
           .limit(limit)
           .lean(),
       "getRelatedProducts",
@@ -151,7 +156,7 @@ export async function searchProductsPreview(
     const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
     const docs = await ProductModel.find({
       visible: true,
-      $or: [{ name: rx }, { cat: rx }],
+      $or: [{ name: rx }, { cat: rx }, { cats: rx }],
     })
       .limit(limit)
       .select("id img images name cat price")

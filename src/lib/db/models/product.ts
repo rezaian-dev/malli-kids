@@ -10,6 +10,8 @@ export type ProductDoc = {
   images: string[];
   name: string;
   cat: string;
+  cats?: string[];
+  seasons?: Season[];
   // Additive, not a replacement for cat — cat still mixes category/gender today.
   gender?: Gender;
   ageRange?: string;
@@ -56,6 +58,8 @@ const productSchema = new Schema<ProductDoc>(
     },
     name: { type: String, required: true },
     cat: { type: String, required: true },
+    cats: { type: [String], default: [] },
+    seasons: { type: [String], default: [] },
     gender: { type: String, enum: ["دخترانه", "پسرانه", "یونیسکس"] },
     ageRange: String,
     slug: { type: String, unique: true, sparse: true },

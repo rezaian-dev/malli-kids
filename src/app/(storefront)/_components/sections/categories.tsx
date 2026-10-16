@@ -5,6 +5,7 @@ import { OrnLeaf } from "../home-ornaments";
 import { Stagger, StaggerItem } from "@/components/motion/static";
 import { wash } from "@/components/shared/section-wash";
 import { getAllProducts } from "@/lib/shop/products";
+import { productCats } from "@/types";
 import { toFaDigits } from "@/lib/locale/fa";
 import { cn } from "@/lib/utils";
 
@@ -59,7 +60,9 @@ const SEASON_BADGE = "rounded-full border px-2.5 py-1 text-[10px] font-black whi
 export async function Categories() {
   const products = (await getAllProducts()).filter((p) => p.visible);
   const countByCat = new Map<string, number>();
-  for (const p of products) countByCat.set(p.cat, (countByCat.get(p.cat) ?? 0) + 1);
+  for (const p of products)
+    for (const cat of productCats(p))
+      countByCat.set(cat, (countByCat.get(cat) ?? 0) + 1);
 
   const BIG = BIG_BASE.map((card) => ({
     ...card,

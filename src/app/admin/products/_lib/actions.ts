@@ -56,7 +56,14 @@ async function uniqueProductSlug(name: string): Promise<string> {
 
 // findOneAndUpdate skips pre("save") — derive the stock boolean by hand
 function withDerivedStock(values: ProductValues) {
-  return { ...values, stock: deriveStock(values.variants, values.stock) };
+  // Keep the legacy single-value fields in sync with the first selection so
+  // older readers (cards, related, sitemap) keep working unchanged.
+  return {
+    ...values,
+    cat: values.cats[0],
+    season: values.seasons[0],
+    stock: deriveStock(values.variants, values.stock),
+  };
 }
 
 export async function createProductAction(
@@ -73,7 +80,13 @@ export async function createProductAction(
     const id = await nextProductId();
     const slug =
       parsed.data.slug || (await uniqueProductSlug(parsed.data.name));
-    await ProductModel.create({ ...parsed.data, slug, id, rate: 4.8, sold: 0 });
+    await ProductModel.create({
+      ...withDerivedStock(parsed.data),
+      slug,
+      id,
+      rate: 4.8,
+      sold: 0,
+    });
     revalidateCatalog();
     return { ok: true, data: { id } };
   } catch {

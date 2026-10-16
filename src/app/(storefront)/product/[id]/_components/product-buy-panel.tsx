@@ -12,7 +12,7 @@ import {
   Star,
   Truck,
 } from "lucide-react";
-import type { Product } from "@/types";
+import { productCats, productSeasons, type Product } from "@/types";
 import { formatToman, toFaDigits } from "@/lib/locale/fa";
 import { parseFaNumber } from "@/lib/digits";
 import { toast } from "@/lib/toast";
@@ -160,7 +160,7 @@ export function ProductBuyPanel({
       />
 
       <div className={cn(pdpCard, "p-4 sm:p-7")}>
-        <p className={pdpKicker}>{product.cat}</p>
+        <p className={pdpKicker}>{productCats(product).join("، ")}</p>
         <h1
           className="mt-2 text-[clamp(1.25rem,6.4vw,2.25rem)] leading-snug font-black text-navy dark:text-ivory"
         >
@@ -189,11 +189,11 @@ export function ProductBuyPanel({
               {product.stock ? "موجود در آتلیه" : "ناموجود"}
             </Badge>
           </li>
-          {product.season ? (
-            <li>
-              <Badge className={TAG_PILL}>{product.season}</Badge>
+          {productSeasons(product).map((season) => (
+            <li key={season}>
+              <Badge className={TAG_PILL}>{season}</Badge>
             </li>
-          ) : null}
+          ))}
           <li>
             <Badge className={TAG_PILL}>{toFaDigits(product.sold)} فروش</Badge>
           </li>

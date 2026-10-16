@@ -1,7 +1,7 @@
 "use client";
 
 import { Ruler, Sparkles } from "lucide-react";
-import type { AdminReview, Product } from "@/types";
+import { productCats, productSeasons, type AdminReview, type Product } from "@/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { toFaDigits } from "@/lib/locale/fa";
@@ -81,12 +81,16 @@ export function ProductDetailsTabs({
               <ul className="grid grid-cols-2 gap-3 sm:grid-cols-1">
                 <li className={SPEC_ITEM}>
                   <p className={SPEC_LABEL}>دسته‌بندی</p>
-                  <p className={SPEC_VALUE}>{product.cat}</p>
+                  <p className={SPEC_VALUE}>
+                    {productCats(product).join("، ")}
+                  </p>
                 </li>
-                {product.season ? (
+                {productSeasons(product).length ? (
                   <li className={SPEC_ITEM}>
                     <p className={SPEC_LABEL}>فصل</p>
-                    <p className={SPEC_VALUE}>{product.season}</p>
+                    <p className={SPEC_VALUE}>
+                      {productSeasons(product).join("، ")}
+                    </p>
                   </li>
                 ) : null}
                 <li className={SPEC_ITEM}>
