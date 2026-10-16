@@ -35,6 +35,9 @@ export type MultiSelectProps = {
  * - Open/close animations are disabled here so there is no flash or zoom.
  * - The check column is always rendered (empty when unselected), so toggling
  *   an option never shifts its label.
+ * - Clicking/tapping anywhere outside the field (or moving focus away)
+ *   closes the menu; clicks on the trigger itself are excluded so it can
+ *   still toggle the menu open and shut.
  */
 export function MultiSelect({
   id,
@@ -136,6 +139,14 @@ export function MultiSelect({
         sideOffset={4}
         // Keep focus (and therefore the scroll position) exactly where it was.
         onOpenAutoFocus={(event) => event.preventDefault()}
+        // Close on any outside interaction — except the trigger, which toggles.
+        onPointerDownOutside={(event) => {
+          const target = event.target as HTMLElement | null;
+          if (target?.closest?.('[data-slot="multi-select-trigger"]')) return;
+          setOpen(false);
+        }}
+        onFocusOutside={() => setOpen(false)}
+        onEscapeKeyDown={() => setOpen(false)}
         className="w-(--radix-popover-trigger-width) min-w-(--radix-popover-trigger-width) animate-none overflow-hidden rounded-2xl border border-gold/25 p-1 shadow-xl duration-0 data-open:animate-none data-closed:animate-none"
       >
         <div className="max-h-60 overflow-y-auto overscroll-contain p-0.5">
