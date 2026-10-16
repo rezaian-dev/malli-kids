@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { Textarea } from "@/components/ui/textarea";
 import { CATS, GENDERS, SEASONS } from "@/lib/constants";
 import { parseFaNumber } from "@/lib/digits";
@@ -218,16 +219,6 @@ export function ProductForm({
     }));
   }
 
-  function toggleMulti(field: "cats" | "seasons", item: string) {
-    const current = values[field];
-    updateValue(
-      field,
-      current.includes(item)
-        ? current.filter((value) => value !== item)
-        : [...current, item],
-    );
-  }
-
   function updateVariant(index: number, patch: Partial<VariantRow>) {
     updateValue(
       "variants",
@@ -401,35 +392,18 @@ export function ProductForm({
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <span id="product-cat-label" className={FIELD_LABEL}>
+              <label htmlFor="product-cat" className={FIELD_LABEL}>
                 دسته‌بندی (چندانتخابی)
-              </span>
-              <div
-                role="group"
-                aria-labelledby="product-cat-label"
-                aria-invalid={Boolean(errors.cats) || undefined}
-                className="flex flex-wrap gap-2"
-              >
-                {CAT_OPTIONS.map((item) => {
-                  const selected = values.cats.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      aria-pressed={selected}
-                      onClick={() => toggleMulti("cats", item)}
-                      className={cn(
-                        "min-h-11 rounded-2xl border px-4 text-sm font-bold transition",
-                        selected
-                          ? "border-gold bg-gold/15 text-navy dark:text-ivory"
-                          : "border-navy/12 text-navy/70 hover:border-gold/45 dark:border-gold/20 dark:text-wheat",
-                      )}
-                    >
-                      {item}
-                    </button>
-                  );
-                })}
-              </div>
+              </label>
+              <MultiSelect
+                id="product-cat"
+                value={values.cats}
+                onValueChange={(next) => updateValue("cats", next)}
+                options={CAT_OPTIONS}
+                placeholder="دسته‌بندی را انتخاب کنید"
+                aria-invalid={Boolean(errors.cats)}
+                className={SELECT_TRIGGER}
+              />
               <FieldNote
                 error={errors.cats}
                 hint="می‌توانید چند دسته‌بندی انتخاب کنید"
@@ -437,35 +411,18 @@ export function ProductForm({
             </div>
 
             <div className="space-y-1.5">
-              <span id="product-season-label" className={FIELD_LABEL}>
+              <label htmlFor="product-season" className={FIELD_LABEL}>
                 زیرشاخه (فصل) (چندانتخابی)
-              </span>
-              <div
-                role="group"
-                aria-labelledby="product-season-label"
-                aria-invalid={Boolean(errors.seasons) || undefined}
-                className="flex flex-wrap gap-2"
-              >
-                {SEASONS.map((item) => {
-                  const selected = values.seasons.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      aria-pressed={selected}
-                      onClick={() => toggleMulti("seasons", item)}
-                      className={cn(
-                        "min-h-11 rounded-2xl border px-4 text-sm font-bold transition",
-                        selected
-                          ? "border-gold bg-gold/15 text-navy dark:text-ivory"
-                          : "border-navy/12 text-navy/70 hover:border-gold/45 dark:border-gold/20 dark:text-wheat",
-                      )}
-                    >
-                      {item}
-                    </button>
-                  );
-                })}
-              </div>
+              </label>
+              <MultiSelect
+                id="product-season"
+                value={values.seasons}
+                onValueChange={(next) => updateValue("seasons", next)}
+                options={SEASONS}
+                placeholder="فصل را انتخاب کنید"
+                aria-invalid={Boolean(errors.seasons)}
+                className={SELECT_TRIGGER}
+              />
               <FieldNote
                 error={errors.seasons}
                 hint="می‌توانید چند فصل انتخاب کنید"
